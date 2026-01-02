@@ -69,7 +69,8 @@ export function QuestionsManager() {
   const topicLabels: Record<QuestionTopic, string> = {
     history: 'История',
     culture: 'Культура',
-    laws: 'Законы'
+    laws: 'Законы',
+    geography: 'География'
   };
 
   return (
@@ -85,6 +86,9 @@ export function QuestionsManager() {
             </TabsTrigger>
             <TabsTrigger value="laws" className="gap-2">
               ⚖️ Законы
+            </TabsTrigger>
+            <TabsTrigger value="geography" className="gap-2">
+              🗺️ География
             </TabsTrigger>
           </TabsList>
         </Tabs>
