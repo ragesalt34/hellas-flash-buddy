@@ -3,12 +3,13 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { BookOpen, GraduationCap, Layers, PenTool, History, Palette, Scale, ArrowRight, CheckCircle } from 'lucide-react';
+import { BookOpen, GraduationCap, Layers, PenTool, History, Palette, Scale, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
 
 const topics = [
   { id: 'history', title: 'История Греции', description: 'Древняя Эллада, Византия, современная история', icon: History, color: 'bg-history/10 text-history border-history/20' },
   { id: 'culture', title: 'Культура и традиции', description: 'Праздники, обычаи, символы Греции', icon: Palette, color: 'bg-culture/10 text-culture border-culture/20' },
   { id: 'laws', title: 'Законы и политика', description: 'Конституция, права граждан, госустройство', icon: Scale, color: 'bg-laws/10 text-laws border-laws/20' },
+  { id: 'geography', title: 'География Греции', description: 'Регионы, города, острова, природа', icon: MapPin, color: 'bg-geography/10 text-geography border-geography/20' },
 ];
 
 const learningModes = [
@@ -59,7 +60,7 @@ export default function Index() {
       <section className="py-20 bg-secondary/30">
         <div className="container">
           <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">Темы для изучения</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {topics.map((topic) => (
               <Card key={topic.id} className={`card-hover border ${topic.color}`}>
                 <CardHeader>
