@@ -10,45 +10,50 @@ import { Progress } from '@/components/ui/progress';
 export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user!.id)
-        .single();
+        .maybeSingle();
+      if (error) throw error;
       return data;
     },
     enabled: !!user,
   });
 
-  const { data: examResults } = useQuery({
+  const { data: examResults, isLoading: examsLoading } = useQuery({
     queryKey: ['exam-results', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('exam_results')
         .select('*')
         .eq('user_id', user!.id)
         .order('completed_at', { ascending: false });
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user,
   });
 
-  const { data: progress } = useQuery({
+  const { data: progress, isLoading: progressLoading } = useQuery({
     queryKey: ['user-progress', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_progress')
         .select('*')
         .eq('user_id', user!.id);
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user,
   });
 
-  if (authLoading) {
+  const isDataLoading = profileLoading || examsLoading || progressLoading;
+
+  if (authLoading || (user && isDataLoading)) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
