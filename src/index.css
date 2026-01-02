@@ -140,6 +140,11 @@
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(210 100% 60%) 100%);
   }
 
+  .gradient-greek-radial {
+    background: radial-gradient(ellipse at top, hsl(var(--primary) / 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, hsl(var(--accent) / 0.1) 0%, transparent 50%);
+  }
+
   .text-gradient {
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(210 100% 60%) 100%);
     -webkit-background-clip: text;
@@ -147,8 +152,45 @@
     background-clip: text;
   }
 
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(45 90% 65%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .glass {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-strong {
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(var(--accent) / 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
   .topic-history {
@@ -161,6 +203,32 @@
 
   .topic-laws {
     --topic-color: var(--laws);
+  }
+
+  .topic-geography {
+    --topic-color: var(--geography);
+  }
+
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+  .animate-delay-1000 { animation-delay: 1000ms; }
+  .animate-delay-2000 { animation-delay: 2000ms; }
+  .animate-delay-4000 { animation-delay: 4000ms; }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.3);
   }
 }
 
