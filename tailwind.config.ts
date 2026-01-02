@@ -68,6 +68,7 @@ export default {
         history: "hsl(var(--history))",
         culture: "hsl(var(--culture))",
         laws: "hsl(var(--laws))",
+        geography: "hsl(var(--geography))",
       },
       borderRadius: {
         lg: "var(--radius)",

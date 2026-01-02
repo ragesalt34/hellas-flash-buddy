@@ -11,6 +11,7 @@ import {
   History,
   Palette,
   Scale,
+  MapPin,
   ArrowRight,
   Loader2
 } from 'lucide-react';
@@ -45,6 +46,16 @@ const topics = [
     bgClass: 'bg-laws/10 hover:bg-laws/20',
     textClass: 'text-laws',
     borderClass: 'border-laws/20',
+  },
+  {
+    id: 'geography',
+    title: 'География Греции',
+    description: 'Регионы, города, острова, природа',
+    icon: MapPin,
+    color: 'geography',
+    bgClass: 'bg-geography/10 hover:bg-geography/20',
+    textClass: 'text-geography',
+    borderClass: 'border-geography/20',
   },
 ];
 

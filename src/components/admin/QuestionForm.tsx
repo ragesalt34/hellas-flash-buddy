@@ -103,6 +103,7 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
               <SelectItem value="history">🏛️ История</SelectItem>
               <SelectItem value="culture">🎭 Культура</SelectItem>
               <SelectItem value="laws">⚖️ Законы</SelectItem>
+              <SelectItem value="geography">🗺️ География</SelectItem>
             </SelectContent>
           </Select>
         </div>
