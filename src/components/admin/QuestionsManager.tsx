@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuestionForm } from './QuestionForm';
 import { QuestionsList } from './QuestionsList';
+import { DocumentUpload } from './DocumentUpload';
 import { Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Database } from '@/integrations/supabase/types';
@@ -74,7 +75,11 @@ export function QuestionsManager() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* AI Document Upload */}
+      <DocumentUpload />
+
+      {/* Manual Questions Management */}
       <div className="flex items-center justify-between">
         <Tabs value={selectedTopic} onValueChange={(v) => setSelectedTopic(v as QuestionTopic)}>
           <TabsList>
