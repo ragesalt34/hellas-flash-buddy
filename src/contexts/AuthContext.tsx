@@ -21,48 +21,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Get initial session
+    setIsLoading(true);
+
+    // Set up auth listener FIRST (prevents missing events)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+
+      if (session?.user) {
+        // Do not call Supabase inside the callback synchronously
+        setTimeout(() => {
+          void checkAdminRole(session.user.id);
+        }, 0);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
+    // Then fetch current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        checkAdminRole(session.user.id);
-      }
       setIsLoading(false);
-    });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await checkAdminRole(session.user.id);
-        } else {
-          setIsAdmin(false);
-        }
-        setIsLoading(false);
+      if (session?.user) {
+        setTimeout(() => {
+          void checkAdminRole(session.user.id);
+        }, 0);
+      } else {
+        setIsAdmin(false);
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const checkAdminRole = async (userId: string) => {
-    const { data } = await supabase.rpc('has_role', {
-      _user_id: userId,
-      _role: 'admin'
-    });
-    setIsAdmin(data ?? false);
+    try {
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin',
+      });
+      if (error) throw error;
+      setIsAdmin(Boolean(data));
+    } catch {
+      setIsAdmin(false);
+    }
   };
 
   const signUp = async (email: string, password: string, displayName: string) => {
+    const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { display_name: displayName }
-      }
+        data: { display_name: displayName },
+        emailRedirectTo: redirectUrl,
+      },
     });
     return { error };
   };
