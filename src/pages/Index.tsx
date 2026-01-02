@@ -3,26 +3,30 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { BookOpen, GraduationCap, Layers, PenTool, History, Palette, Scale, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
-
-const topics = [
-  { id: 'history', title: 'История Греции', description: 'Древняя Эллада, Византия, современная история', icon: History, color: 'bg-history/10 text-history border-history/20' },
-  { id: 'culture', title: 'Культура и традиции', description: 'Праздники, обычаи, символы Греции', icon: Palette, color: 'bg-culture/10 text-culture border-culture/20' },
-  { id: 'laws', title: 'Законы и политика', description: 'Конституция, права граждан, госустройство', icon: Scale, color: 'bg-laws/10 text-laws border-laws/20' },
-  { id: 'geography', title: 'География Греции', description: 'Регионы, города, острова, природа', icon: MapPin, color: 'bg-geography/10 text-geography border-geography/20' },
-];
-
-const learningModes = [
-  { id: 'flashcards', title: 'Флэш-карточки', description: 'Изучайте с помощью интерактивных карточек', icon: Layers },
-  { id: 'quiz', title: 'Тест с вариантами', description: 'Проверьте знания в формате теста', icon: BookOpen },
-  { id: 'input', title: 'Ввод ответа', description: 'Введите ответ самостоятельно', icon: PenTool },
-  { id: 'exam', title: 'Экзамен', description: 'Симуляция реального теста с таймером', icon: GraduationCap },
-];
-
-const features = ['Более 300 вопросов', 'Отслеживание прогресса', '4 режима изучения', 'Симуляция экзамена'];
 
 export default function Index() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
+
+  const topics = [
+    { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History, color: 'bg-history/10 text-history border-history/20' },
+    { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette, color: 'bg-culture/10 text-culture border-culture/20' },
+    { id: 'laws', title: t('topic.laws'), description: t('topic.laws.desc'), icon: Scale, color: 'bg-laws/10 text-laws border-laws/20' },
+    { id: 'geography', title: t('topic.geography'), description: t('topic.geography.desc'), icon: MapPin, color: 'bg-geography/10 text-geography border-geography/20' },
+  ];
+
+  const learningModes = [
+    { id: 'flashcards', title: t('mode.flashcards'), description: t('mode.flashcards.desc'), icon: Layers },
+    { id: 'quiz', title: t('mode.quiz'), description: t('mode.quiz.desc'), icon: BookOpen },
+    { id: 'input', title: t('mode.input'), description: t('mode.input.desc'), icon: PenTool },
+    { id: 'exam', title: t('mode.exam'), description: t('mode.exam.desc'), icon: GraduationCap },
+  ];
+
+  const features = language === 'ru' 
+    ? ['Более 300 вопросов', 'Отслеживание прогресса', '4 режима изучения', 'Симуляция экзамена']
+    : ['Πάνω από 300 ερωτήσεις', 'Παρακολούθηση προόδου', '4 τρόποι μάθησης', 'Προσομοίωση εξέτασης'];
 
   return (
     <Layout>
@@ -31,18 +35,22 @@ export default function Index() {
         <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-              Ваш путь к <span className="text-gradient">греческому гражданству</span>
+              {language === 'ru' ? (
+                <>Ваш путь к <span className="text-gradient">греческому гражданству</span></>
+              ) : (
+                <>Ο δρόμος σας προς την <span className="text-gradient">ελληνική ιθαγένεια</span></>
+              )}
             </h1>
             <p className="mt-6 text-lg text-muted-foreground md:text-xl">
-              Подготовьтесь к экзамену на гражданство Греции с помощью интерактивных упражнений
+              {t('index.hero.subtitle')}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               {user ? (
-                <Link to="/learn"><Button size="lg" className="gradient-greek text-primary-foreground gap-2">Начать обучение <ArrowRight className="h-5 w-5" /></Button></Link>
+                <Link to="/learn"><Button size="lg" className="gradient-greek text-primary-foreground gap-2">{t('index.startLearning')} <ArrowRight className="h-5 w-5" /></Button></Link>
               ) : (
                 <>
-                  <Link to="/register"><Button size="lg" className="gradient-greek text-primary-foreground gap-2">Начать бесплатно <ArrowRight className="h-5 w-5" /></Button></Link>
-                  <Link to="/login"><Button variant="outline" size="lg">У меня есть аккаунт</Button></Link>
+                  <Link to="/register"><Button size="lg" className="gradient-greek text-primary-foreground gap-2">{language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'} <ArrowRight className="h-5 w-5" /></Button></Link>
+                  <Link to="/login"><Button variant="outline" size="lg">{language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}</Button></Link>
                 </>
               )}
             </div>
@@ -59,7 +67,9 @@ export default function Index() {
 
       <section className="py-20 bg-secondary/30">
         <div className="container">
-          <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">Темы для изучения</h2>
+          <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">
+            {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
+          </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {topics.map((topic) => (
               <Card key={topic.id} className={`card-hover border ${topic.color}`}>
@@ -76,7 +86,9 @@ export default function Index() {
 
       <section className="py-20">
         <div className="container">
-          <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">Режимы обучения</h2>
+          <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">
+            {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
+          </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {learningModes.map((mode) => (
               <Card key={mode.id} className="card-hover">
@@ -94,9 +106,13 @@ export default function Index() {
       {!user && (
         <section className="py-20 bg-primary text-primary-foreground">
           <div className="container text-center">
-            <h2 className="font-display text-3xl font-bold">Готовы начать подготовку?</h2>
-            <p className="mt-4 text-primary-foreground/80">Зарегистрируйтесь бесплатно и получите доступ ко всем материалам</p>
-            <Link to="/register"><Button size="lg" variant="secondary" className="mt-8 gap-2">Создать аккаунт <ArrowRight className="h-5 w-5" /></Button></Link>
+            <h2 className="font-display text-3xl font-bold">
+              {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
+            </h2>
+            <p className="mt-4 text-primary-foreground/80">
+              {language === 'ru' ? 'Зарегистрируйтесь бесплатно и получите доступ ко всем материалам' : 'Εγγραφείτε δωρεάν και αποκτήστε πρόσβαση σε όλο το υλικό'}
+            </p>
+            <Link to="/register"><Button size="lg" variant="secondary" className="mt-8 gap-2">{language === 'ru' ? 'Создать аккаунт' : 'Δημιουργία λογαριασμού'} <ArrowRight className="h-5 w-5" /></Button></Link>
           </div>
         </section>
       )}

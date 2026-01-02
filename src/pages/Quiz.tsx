@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Loader2, 
@@ -27,20 +28,6 @@ type Question = {
 
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
 
-const topicLabels: Record<TopicType, string> = {
-  history: 'История Греции',
-  culture: 'Культура и традиции',
-  laws: 'Законы и политика',
-  geography: 'География Греции',
-};
-
-const topicColors: Record<TopicType, string> = {
-  history: 'history',
-  culture: 'culture',
-  laws: 'laws',
-  geography: 'geography',
-};
-
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -53,6 +40,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function Quiz() {
   const { topic, mode } = useParams<{ topic: string; mode: string }>();
   const { user, isLoading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -63,7 +51,8 @@ export default function Quiz() {
   const [isFinished, setIsFinished] = useState(false);
 
   const validTopic = topic as TopicType;
-  const isValidTopic = topic && Object.keys(topicLabels).includes(topic);
+  const validTopics = ['history', 'culture', 'laws', 'geography'];
+  const isValidTopic = topic && validTopics.includes(topic);
 
   useEffect(() => {
     if (!isValidTopic || !user) return;
@@ -144,8 +133,8 @@ export default function Quiz() {
     setQuestions(shuffleArray(questions));
   };
 
-  const topicColor = topicColors[validTopic];
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
+  const topicTitle = t(`topic.${validTopic}`);
 
   if (isLoading) {
     return (
@@ -164,16 +153,15 @@ export default function Quiz() {
           <Card className="max-w-2xl mx-auto text-center">
             <CardContent className="py-12">
               <h2 className="text-2xl font-display font-bold mb-4">
-                Вопросов пока нет
+                {t('quiz.noQuestions')}
               </h2>
               <p className="text-muted-foreground mb-6">
-                В теме "{topicLabels[validTopic]}" пока нет вопросов. 
-                Администратор может добавить их в панели управления.
+                {t('quiz.noQuestions.desc')}
               </p>
               <Link to="/learn">
                 <Button>
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Вернуться к темам
+                  {t('quiz.backToTopics')}
                 </Button>
               </Link>
             </CardContent>
@@ -192,7 +180,7 @@ export default function Quiz() {
           <Card className="max-w-2xl mx-auto">
             <CardHeader className="text-center">
               <CardTitle className="font-display text-3xl">
-                Тест завершён!
+                {t('quiz.finished')}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-6">
@@ -207,24 +195,24 @@ export default function Quiz() {
               
               <div>
                 <p className="text-xl font-medium">
-                  Правильных ответов: {score} из {questions.length}
+                  {t('quiz.correctAnswers')} {score} {t('quiz.of')} {questions.length}
                 </p>
                 <p className="text-muted-foreground mt-2">
-                  {percentage >= 70 ? "Отличный результат!" : 
-                   percentage >= 50 ? "Хороший результат, но есть куда расти!" : 
-                   "Нужно больше практики!"}
+                  {percentage >= 70 ? t('quiz.result.great') : 
+                   percentage >= 50 ? t('quiz.result.good') : 
+                   t('quiz.result.practice')}
                 </p>
               </div>
 
               <div className="flex gap-4 justify-center pt-4">
                 <Button variant="outline" onClick={handleRestart}>
                   <RotateCcw className="h-4 w-4 mr-2" />
-                  Пройти снова
+                  {t('quiz.tryAgain')}
                 </Button>
                 <Link to="/learn">
                   <Button>
                     <Home className="h-4 w-4 mr-2" />
-                    К темам
+                    {t('quiz.toTopics')}
                   </Button>
                 </Link>
               </div>
@@ -244,9 +232,9 @@ export default function Quiz() {
         <div className="mb-8">
           <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Назад к темам
+            {t('quiz.backToTopics')}
           </Link>
-          <h1 className="font-display text-2xl font-bold">{topicLabels[validTopic]}</h1>
+          <h1 className="font-display text-2xl font-bold">{topicTitle}</h1>
           <div className="flex items-center gap-4 mt-4">
             <Progress value={progress} className="flex-1" />
             <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -301,7 +289,7 @@ export default function Quiz() {
             {isAnswered && currentQuestion.explanation && (
               <div className="p-4 bg-muted rounded-lg mt-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Объяснение:</strong> {currentQuestion.explanation}
+                  <strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}
                 </p>
               </div>
             )}
@@ -312,12 +300,12 @@ export default function Quiz() {
                 <Button onClick={handleNext} size="lg">
                   {currentIndex < questions.length - 1 ? (
                     <>
-                      Следующий вопрос
+                      {t('quiz.nextQuestion')}
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </>
                   ) : (
                     <>
-                      Завершить тест
+                      {t('quiz.finishTest')}
                       <CheckCircle2 className="h-4 w-4 ml-2" />
                     </>
                   )}
@@ -329,7 +317,7 @@ export default function Quiz() {
 
         {/* Score indicator */}
         <div className="text-center mt-6 text-muted-foreground">
-          Правильных ответов: {score}
+          {t('quiz.correctAnswers')} {score}
         </div>
       </div>
     </Layout>

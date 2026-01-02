@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Layers, 
   BookOpen, 
@@ -16,78 +17,79 @@ import {
   Loader2
 } from 'lucide-react';
 
-const topics = [
-  {
-    id: 'history',
-    title: 'История Греции',
-    description: 'Древняя Эллада, Византия, современная история',
-    icon: History,
-    color: 'history',
-    bgClass: 'bg-history/10 hover:bg-history/20',
-    textClass: 'text-history',
-    borderClass: 'border-history/20',
-  },
-  {
-    id: 'culture',
-    title: 'Культура и традиции',
-    description: 'Праздники, обычаи, символы Греции',
-    icon: Palette,
-    color: 'culture',
-    bgClass: 'bg-culture/10 hover:bg-culture/20',
-    textClass: 'text-culture',
-    borderClass: 'border-culture/20',
-  },
-  {
-    id: 'laws',
-    title: 'Законы и политика',
-    description: 'Конституция, права граждан, госустройство',
-    icon: Scale,
-    color: 'laws',
-    bgClass: 'bg-laws/10 hover:bg-laws/20',
-    textClass: 'text-laws',
-    borderClass: 'border-laws/20',
-  },
-  {
-    id: 'geography',
-    title: 'География Греции',
-    description: 'Регионы, города, острова, природа',
-    icon: MapPin,
-    color: 'geography',
-    bgClass: 'bg-geography/10 hover:bg-geography/20',
-    textClass: 'text-geography',
-    borderClass: 'border-geography/20',
-  },
-];
-
-const modes = [
-  {
-    id: 'flashcards',
-    title: 'Флэш-карточки',
-    description: 'Переворачивайте карточки для изучения',
-    icon: Layers,
-  },
-  {
-    id: 'quiz',
-    title: 'Тест с вариантами',
-    description: 'Выберите правильный ответ из 4 вариантов',
-    icon: BookOpen,
-  },
-  {
-    id: 'input',
-    title: 'Ввод ответа',
-    description: 'Напишите ответ самостоятельно',
-    icon: PenTool,
-  },
-  {
-    id: 'exam',
-    title: 'Экзамен',
-    description: 'Симуляция теста с таймером',
-    icon: GraduationCap,
-  },
-];
-
 export default function Learn() {
   const { user, isLoading } = useAuth();
+  const { t } = useLanguage();
+
+  const topics = [
+    {
+      id: 'history',
+      title: t('topic.history'),
+      description: t('topic.history.desc'),
+      icon: History,
+      color: 'history',
+      bgClass: 'bg-history/10 hover:bg-history/20',
+      textClass: 'text-history',
+      borderClass: 'border-history/20',
+    },
+    {
+      id: 'culture',
+      title: t('topic.culture'),
+      description: t('topic.culture.desc'),
+      icon: Palette,
+      color: 'culture',
+      bgClass: 'bg-culture/10 hover:bg-culture/20',
+      textClass: 'text-culture',
+      borderClass: 'border-culture/20',
+    },
+    {
+      id: 'laws',
+      title: t('topic.laws'),
+      description: t('topic.laws.desc'),
+      icon: Scale,
+      color: 'laws',
+      bgClass: 'bg-laws/10 hover:bg-laws/20',
+      textClass: 'text-laws',
+      borderClass: 'border-laws/20',
+    },
+    {
+      id: 'geography',
+      title: t('topic.geography'),
+      description: t('topic.geography.desc'),
+      icon: MapPin,
+      color: 'geography',
+      bgClass: 'bg-geography/10 hover:bg-geography/20',
+      textClass: 'text-geography',
+      borderClass: 'border-geography/20',
+    },
+  ];
+
+  const modes = [
+    {
+      id: 'flashcards',
+      title: t('mode.flashcards'),
+      description: t('mode.flashcards.desc'),
+      icon: Layers,
+    },
+    {
+      id: 'quiz',
+      title: t('mode.quiz'),
+      description: t('mode.quiz.desc'),
+      icon: BookOpen,
+    },
+    {
+      id: 'input',
+      title: t('mode.input'),
+      description: t('mode.input.desc'),
+      icon: PenTool,
+    },
+    {
+      id: 'exam',
+      title: t('mode.exam'),
+      description: t('mode.exam.desc'),
+      icon: GraduationCap,
+    },
+  ];
 
   if (isLoading) {
     return (
@@ -108,15 +110,15 @@ export default function Learn() {
       <div className="container py-12">
         <div className="mb-12">
           <h1 className="font-display text-3xl font-bold text-foreground">
-            Выберите тему
+            {t('learn.selectTopic')}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Начните изучение с интересующей вас темы
+            {t('learn.selectTopic.desc')}
           </p>
         </div>
 
         {/* Topics */}
-        <div className="grid gap-6 md:grid-cols-3 mb-16">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
@@ -156,17 +158,17 @@ export default function Learn() {
         {/* Exam Section */}
         <div className="mb-12">
           <h2 className="font-display text-2xl font-bold text-foreground mb-6">
-            Или пройдите экзамен
+            {t('learn.takeExam')}
           </h2>
           <Card className="gradient-greek text-primary-foreground">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="font-display text-2xl text-primary-foreground">
-                    Симуляция экзамена
+                    {t('learn.examSimulation')}
                   </CardTitle>
                   <CardDescription className="text-primary-foreground/80 mt-2">
-                    Проверьте свои знания в условиях, приближённых к реальному тесту
+                    {t('learn.examSimulation.desc')}
                   </CardDescription>
                 </div>
                 <GraduationCap className="h-16 w-16 opacity-50" />
@@ -175,7 +177,7 @@ export default function Learn() {
             <CardContent>
               <Link to="/learn/exam">
                 <Button variant="secondary" size="lg" className="gap-2">
-                  Начать экзамен
+                  {t('learn.startExam')}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
