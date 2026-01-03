@@ -142,10 +142,10 @@ export default function Learn() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full justify-start gap-2 text-xs"
+                        className="w-full h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden"
                       >
-                        <mode.icon className="h-3 w-3" />
-                        {mode.title}
+                        <mode.icon className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate">{mode.title}</span>
                       </Button>
                     </Link>
                   ))}
