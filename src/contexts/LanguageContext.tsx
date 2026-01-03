@@ -105,6 +105,32 @@ const translations: Translations = {
   'common.delete': { ru: 'Удалить', el: 'Διαγραφή' },
   'common.edit': { ru: 'Редактировать', el: 'Επεξεργασία' },
   'common.add': { ru: 'Добавить', el: 'Προσθήκη' },
+  
+  // Exam extended
+  'exam.settings': { ru: 'Настройки экзамена', el: 'Ρυθμίσεις εξέτασης' },
+  'exam.questionCount': { ru: 'Количество вопросов', el: 'Αριθμός ερωτήσεων' },
+  'exam.timeLimit': { ru: 'Время (минут)', el: 'Χρόνος (λεπτά)' },
+  'exam.selectTopics': { ru: 'Темы', el: 'Θέματα' },
+  'exam.flagQuestion': { ru: 'Отметить вопрос', el: 'Επισήμανση ερώτησης' },
+  'exam.flagged': { ru: 'Отмечено', el: 'Επισημάνθηκε' },
+  'exam.unansweredWarning': { ru: 'Есть неотвеченные вопросы', el: 'Υπάρχουν αναπάντητες ερωτήσεις' },
+  'exam.topicsBreakdown': { ru: 'Статистика по темам', el: 'Στατιστικά ανά θέμα' },
+  'exam.weakAreas': { ru: 'Слабые места', el: 'Αδύνατα σημεία' },
+  'exam.avgTimePerQuestion': { ru: 'Среднее время на вопрос', el: 'Μέσος χρόνος ανά ερώτηση' },
+  'exam.practiceErrors': { ru: 'Повторить ошибки', el: 'Επανάληψη λαθών' },
+  'exam.exportResults': { ru: 'Экспорт результатов', el: 'Εξαγωγή αποτελεσμάτων' },
+  'exam.viewHistory': { ru: 'История экзаменов', el: 'Ιστορικό εξετάσεων' },
+  'exam.noLimit': { ru: 'Без ограничения', el: 'Χωρίς όριο' },
+  'exam.allQuestions': { ru: 'Все вопросы', el: 'Όλες οι ερωτήσεις' },
+  'exam.passed': { ru: 'Сдан', el: 'Επιτυχία' },
+  'exam.failed': { ru: 'Не сдан', el: 'Αποτυχία' },
+  
+  // Profile extended
+  'profile.examHistory': { ru: 'История экзаменов', el: 'Ιστορικό εξετάσεων' },
+  'profile.progressChart': { ru: 'График прогресса', el: 'Διάγραμμα προόδου' },
+  'profile.averageScore': { ru: 'Средний балл', el: 'Μέση βαθμολογία' },
+  'profile.viewDetails': { ru: 'Подробнее', el: 'Λεπτομέρειες' },
+  'profile.noExams': { ru: 'Нет завершённых экзаменов', el: 'Δεν υπάρχουν ολοκληρωμένες εξετάσεις' },
 };
 
 type LanguageContextType = {

@@ -18,27 +18,42 @@ export type Database = {
         Row: {
           completed_at: string
           correct_answers: number
+          flagged_count: number | null
           id: string
+          question_count: number | null
+          questions_data: Json | null
+          selected_topics: string[] | null
           time_spent_seconds: number
           topic: Database["public"]["Enums"]["question_topic"] | null
+          topics_breakdown: Json | null
           total_questions: number
           user_id: string
         }
         Insert: {
           completed_at?: string
           correct_answers: number
+          flagged_count?: number | null
           id?: string
+          question_count?: number | null
+          questions_data?: Json | null
+          selected_topics?: string[] | null
           time_spent_seconds: number
           topic?: Database["public"]["Enums"]["question_topic"] | null
+          topics_breakdown?: Json | null
           total_questions: number
           user_id: string
         }
         Update: {
           completed_at?: string
           correct_answers?: number
+          flagged_count?: number | null
           id?: string
+          question_count?: number | null
+          questions_data?: Json | null
+          selected_topics?: string[] | null
           time_spent_seconds?: number
           topic?: Database["public"]["Enums"]["question_topic"] | null
+          topics_breakdown?: Json | null
           total_questions?: number
           user_id?: string
         }
