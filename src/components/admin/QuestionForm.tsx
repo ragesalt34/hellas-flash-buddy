@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +36,23 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
     question?.wrong_answers || ['', '', '']
   );
   const [explanation, setExplanation] = useState(question?.explanation || '');
+
+  // Синхронизация полей формы при изменении редактируемого вопроса
+  useEffect(() => {
+    if (question) {
+      setTopic(question.topic);
+      setQuestionText(question.question);
+      setCorrectAnswer(question.correct_answer);
+      setWrongAnswers(question.wrong_answers);
+      setExplanation(question.explanation || '');
+    } else {
+      setTopic(defaultTopic);
+      setQuestionText('');
+      setCorrectAnswer('');
+      setWrongAnswers(['', '', '']);
+      setExplanation('');
+    }
+  }, [question, defaultTopic]);
 
   const mutation = useMutation({
     mutationFn: async () => {
