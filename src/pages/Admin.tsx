@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/layout/Layout';
 import { QuestionsManager } from '@/components/admin/QuestionsManager';
+import { KnowledgeBaseManager } from '@/components/admin/KnowledgeBaseManager';
 import { Loader2, ShieldAlert } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Admin() {
   const { user, isAdmin, isLoading } = useAuth();
@@ -45,11 +47,24 @@ export default function Admin() {
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold">Админ-панель</h1>
           <p className="text-muted-foreground mt-2">
-            Управление вопросами для тестирования
+            Управление вопросами и базой знаний
           </p>
         </div>
         
-        <QuestionsManager />
+        <Tabs defaultValue="questions" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="questions">Вопросы</TabsTrigger>
+            <TabsTrigger value="knowledge">База знаний</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="questions">
+            <QuestionsManager />
+          </TabsContent>
+          
+          <TabsContent value="knowledge">
+            <KnowledgeBaseManager />
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
