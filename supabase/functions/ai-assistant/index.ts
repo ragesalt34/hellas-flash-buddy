@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, language = "ru" } = await req.json();
+    const { messages, language = "ru", skipContext = false } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -29,9 +29,9 @@ serve(async (req) => {
     // Get user's last message for RAG search
     const userMessage = messages[messages.length - 1]?.content || "";
     
-    // Search knowledge base for relevant context
+    // Search knowledge base for relevant context (skip if processing text)
     let knowledgeContext = "";
-    if (userMessage) {
+    if (userMessage && !skipContext) {
       console.log("Searching knowledge base for:", userMessage);
       
       const { data: articles, error: searchError } = await supabase
