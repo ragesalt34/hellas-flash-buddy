@@ -5,11 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { AIAssistant } from '@/components/AIAssistant';
 import { 
   BookOpen, GraduationCap, Layers, PenTool, History, Palette, 
   Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
 } from 'lucide-react';
-
 // Floating decorative element component
 const FloatingOrb = ({ className, delay = "0" }: { className?: string; delay?: string }) => (
   <div 
@@ -311,6 +311,9 @@ export default function Index() {
 
       {/* Footer wave decoration */}
       <div className="h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      
+      {/* AI Assistant */}
+      <AIAssistant />
     </Layout>
   );
 }
