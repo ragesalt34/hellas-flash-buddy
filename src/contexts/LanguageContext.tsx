@@ -63,6 +63,25 @@ const translations: Translations = {
   'quiz.toTopics': { ru: 'К темам', el: 'Στα θέματα' },
   'quiz.of': { ru: 'из', el: 'από' },
   
+  // Flashcards
+  'flashcards.question': { ru: 'Вопрос', el: 'Ερώτηση' },
+  'flashcards.answer': { ru: 'Ответ', el: 'Απάντηση' },
+  'flashcards.clickToFlip': { ru: 'Нажмите, чтобы перевернуть', el: 'Κάντε κλικ για αναστροφή' },
+  'flashcards.know': { ru: 'Знаю', el: 'Ξέρω' },
+  'flashcards.dontKnow': { ru: 'Не знаю', el: 'Δεν ξέρω' },
+  'flashcards.next': { ru: 'Далее', el: 'Επόμενο' },
+  'flashcards.prev': { ru: 'Назад', el: 'Προηγούμενο' },
+  'flashcards.shuffle': { ru: 'Перемешать', el: 'Ανακάτεμα' },
+  'flashcards.finished': { ru: 'Карточки закончились!', el: 'Οι κάρτες τελείωσαν!' },
+  'flashcards.known': { ru: 'Знаю', el: 'Ξέρω' },
+  'flashcards.unknown': { ru: 'Не знаю', el: 'Δεν ξέρω' },
+  
+  // Input mode
+  'input.placeholder': { ru: 'Введите ваш ответ...', el: 'Πληκτρολογήστε την απάντησή σας...' },
+  'input.correct': { ru: 'Правильно!', el: 'Σωστά!' },
+  'input.incorrect': { ru: 'Неправильно', el: 'Λάθος' },
+  'input.correctAnswer': { ru: 'Правильный ответ:', el: 'Σωστή απάντηση:' },
+  
   // Index page
   'index.hero.title': { ru: 'Подготовка к тесту на греческое гражданство', el: 'Προετοιμασία για το τεστ ελληνικής ιθαγένειας' },
   'index.hero.subtitle': { ru: 'Интерактивная платформа для изучения истории, культуры и законов Греции', el: 'Διαδραστική πλατφόρμα για τη μελέτη της ιστορίας, του πολιτισμού και των νόμων της Ελλάδας' },

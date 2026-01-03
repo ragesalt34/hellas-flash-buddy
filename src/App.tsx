@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import Learn from "./pages/Learn";
 import Quiz from "./pages/Quiz";
 import Exam from "./pages/Exam";
+import Flashcards from "./pages/Flashcards";
+import InputMode from "./pages/InputMode";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -31,7 +33,10 @@ const App = () => (
               <Route path="/register" element={<Register />} />
               <Route path="/learn" element={<Learn />} />
               <Route path="/learn/exam" element={<Exam />} />
-              <Route path="/learn/:topic/:mode" element={<Quiz />} />
+              <Route path="/learn/:topic/flashcards" element={<Flashcards />} />
+              <Route path="/learn/:topic/quiz" element={<Quiz />} />
+              <Route path="/learn/:topic/input" element={<InputMode />} />
+              <Route path="/learn/:topic/exam" element={<Exam />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
