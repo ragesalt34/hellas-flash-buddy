@@ -3,9 +3,11 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   BookOpen, GraduationCap, Layers, PenTool, History, Palette, 
-  Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Users, Trophy, Clock
+  Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
 } from 'lucide-react';
 
 // Floating decorative element component
@@ -96,6 +98,19 @@ export default function Index() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
 
+  // Fetch questions count from database
+  const { data: questionsCount } = useQuery({
+    queryKey: ['questions-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('questions')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+
   const topics = [
     { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History },
     { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette },
@@ -116,15 +131,13 @@ export default function Index() {
 
   const stats = language === 'ru'
     ? [
-        { icon: BookOpen, number: '300+', label: 'Вопросов' },
-        { icon: Users, number: '1000+', label: 'Пользователей' },
-        { icon: Trophy, number: '95%', label: 'Успешность' },
+        { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Вопросов' },
+        { icon: TrendingUp, number: '+30%', label: 'Повышение эффективности' },
         { icon: Clock, number: '24/7', label: 'Доступ' },
       ]
     : [
-        { icon: BookOpen, number: '300+', label: 'Ερωτήσεις' },
-        { icon: Users, number: '1000+', label: 'Χρήστες' },
-        { icon: Trophy, number: '95%', label: 'Επιτυχία' },
+        { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Ερωτήσεις' },
+        { icon: TrendingUp, number: '+30%', label: 'Αύξηση αποτελεσματικότητας' },
         { icon: Clock, number: '24/7', label: 'Πρόσβαση' },
       ];
 
@@ -217,7 +230,7 @@ export default function Index() {
       <section className="py-20 relative">
         <div className="absolute inset-0 bg-secondary/30" />
         <div className="container relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((stat, i) => (
               <StatCard key={i} {...stat} delay={`${i * 100}ms`} />
             ))}
