@@ -227,17 +227,17 @@ export default function Quiz() {
 
   return (
     <Layout>
-      <div className="container py-8">
+      <div className="container py-4 sm:py-8 px-4">
         {/* Header */}
-        <div className="mb-8">
-          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+        <div className="mb-6 sm:mb-8">
+          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('quiz.backToTopics')}
           </Link>
-          <h1 className="font-display text-2xl font-bold">{topicTitle}</h1>
-          <div className="flex items-center gap-4 mt-4">
+          <h1 className="font-display text-lg sm:text-2xl font-bold">{topicTitle}</h1>
+          <div className="flex items-center gap-3 mt-4">
             <Progress value={progress} className="flex-1" />
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
               {currentIndex + 1} / {questions.length}
             </span>
           </div>
@@ -245,14 +245,14 @@ export default function Quiz() {
 
         {/* Question Card */}
         <Card className="max-w-3xl mx-auto">
-          <CardHeader>
-            <CardTitle className="font-display text-xl leading-relaxed">
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="font-display text-base sm:text-xl leading-relaxed">
               {currentQuestion.question}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             {/* Answer Options */}
-            <div className="grid gap-3">
+            <div className="grid gap-2 sm:gap-3">
               {shuffledAnswers.map((answer, index) => {
                 const isCorrect = answer === currentQuestion.correct_answer;
                 const isSelected = answer === selectedAnswer;
@@ -263,7 +263,7 @@ export default function Quiz() {
                     onClick={() => handleAnswer(answer)}
                     disabled={isAnswered}
                     className={cn(
-                      "w-full p-4 text-left rounded-lg border-2 transition-all",
+                      "w-full p-3 sm:p-4 text-left rounded-lg border-2 transition-all text-sm sm:text-base",
                       "hover:border-primary/50 hover:bg-accent/50",
                       !isAnswered && "cursor-pointer",
                       isAnswered && isCorrect && "border-green-500 bg-green-50",
@@ -271,13 +271,13 @@ export default function Quiz() {
                       !isAnswered && isSelected && "border-primary bg-primary/5"
                     )}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{answer}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex-1">{answer}</span>
                       {isAnswered && isCorrect && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
                       )}
                       {isAnswered && isSelected && !isCorrect && (
-                        <XCircle className="h-5 w-5 text-red-500" />
+                        <XCircle className="h-5 w-5 text-red-500 shrink-0" />
                       )}
                     </div>
                   </button>
