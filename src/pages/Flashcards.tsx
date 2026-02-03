@@ -15,8 +15,11 @@ import {
   Home,
   ThumbsUp,
   ThumbsDown,
-  Shuffle
+  Shuffle,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+import { useSpeech } from '@/hooks/useSpeech';
 import { cn } from '@/lib/utils';
 
 type Question = {
@@ -48,6 +51,7 @@ export default function Flashcards() {
   const [unknownCount, setUnknownCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
+  const { speak, stop, isSpeaking, isSupported } = useSpeech();
 
   const validTopic = topic as TopicType;
   const validTopics = ['history', 'culture', 'laws', 'geography'];
@@ -283,9 +287,24 @@ export default function Flashcards() {
                 <p className="font-display text-xl leading-relaxed">
                   {currentQuestion.question}
                 </p>
-                <p className="text-sm text-muted-foreground mt-6">
-                  {t('flashcards.clickToFlip')}
-                </p>
+                <div className="flex items-center justify-center gap-2 mt-6">
+                  <p className="text-sm text-muted-foreground">
+                    {t('flashcards.clickToFlip')}
+                  </p>
+                  {isSupported && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        isSpeaking ? stop() : speak(currentQuestion.question);
+                      }}
+                    >
+                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -304,6 +323,19 @@ export default function Flashcards() {
                 <p className="font-display text-xl leading-relaxed text-primary font-medium">
                   {currentQuestion.correct_answer}
                 </p>
+                {isSupported && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 mt-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.correct_answer);
+                    }}
+                  >
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
+                )}
                 {currentQuestion.explanation && (
                   <p className="text-sm text-muted-foreground mt-4">
                     {currentQuestion.explanation}
