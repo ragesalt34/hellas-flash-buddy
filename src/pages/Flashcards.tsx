@@ -236,29 +236,29 @@ export default function Flashcards() {
 
   return (
     <Layout>
-      <div className="container py-8">
+      <div className="container py-4 sm:py-8 px-4">
         {/* Header */}
-        <div className="mb-8">
-          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+        <div className="mb-6 sm:mb-8">
+          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('quiz.backToTopics')}
           </Link>
-          <div className="flex items-center justify-between">
-            <h1 className="font-display text-2xl font-bold">{topicTitle} — {t('mode.flashcards')}</h1>
-            <Button variant="ghost" size="sm" onClick={handleShuffle}>
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">{topicTitle} — {t('mode.flashcards')}</h1>
+            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0">
               <Shuffle className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex items-center gap-4 mt-4">
+          <div className="flex items-center gap-3 mt-4">
             <Progress value={progress} className="flex-1" />
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
               {currentIndex + 1} / {questions.length}
             </span>
           </div>
         </div>
 
         {/* Flashcard */}
-        <div className="max-w-2xl mx-auto perspective-1000">
+        <div className="max-w-2xl mx-auto perspective-1000 px-2">
           <div 
             className={cn(
               "relative w-full h-80 cursor-pointer transition-transform duration-500",
@@ -315,43 +315,49 @@ export default function Flashcards() {
         </div>
 
         {/* Controls */}
-        <div className="max-w-2xl mx-auto mt-8">
-          <div className="flex items-center justify-between">
+        <div className="max-w-2xl mx-auto mt-8 px-4">
+          {/* Know/Don't Know buttons - always visible */}
+          <div className="flex gap-3 justify-center mb-4">
             <Button 
               variant="outline" 
+              className="flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50"
+              onClick={handleDontKnow}
+            >
+              <ThumbsDown className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex-1 sm:flex-none border-green-200 text-green-600 hover:bg-green-50"
+              onClick={handleKnow}
+            >
+              <ThumbsUp className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('flashcards.know')}</span>
+            </Button>
+          </div>
+
+          {/* Navigation buttons */}
+          <div className="flex items-center justify-between gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
               onClick={goToPrev}
               disabled={currentIndex === 0}
+              className="flex-1 sm:flex-none"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('flashcards.prev')}
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('flashcards.prev')}</span>
             </Button>
-
-            <div className="flex gap-4">
-              <Button 
-                variant="outline" 
-                className="border-red-200 text-red-600 hover:bg-red-50"
-                onClick={handleDontKnow}
-              >
-                <ThumbsDown className="h-4 w-4 mr-2" />
-                {t('flashcards.dontKnow')}
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-green-200 text-green-600 hover:bg-green-50"
-                onClick={handleKnow}
-              >
-                <ThumbsUp className="h-4 w-4 mr-2" />
-                {t('flashcards.know')}
-              </Button>
-            </div>
 
             <Button 
               variant="outline" 
+              size="sm"
               onClick={goToNext}
               disabled={currentIndex === questions.length - 1}
+              className="flex-1 sm:flex-none"
             >
-              {t('flashcards.next')}
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <span className="hidden sm:inline">{t('flashcards.next')}</span>
+              <ArrowRight className="h-4 w-4 sm:ml-2" />
             </Button>
           </div>
         </div>

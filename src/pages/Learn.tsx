@@ -107,32 +107,32 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div className="container py-12">
-        <div className="mb-12">
-          <h1 className="font-display text-3xl font-bold text-foreground">
+      <div className="container py-6 sm:py-12 px-4">
+        <div className="mb-8 sm:mb-12">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
             {t('learn.selectTopic')}
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             {t('learn.selectTopic.desc')}
           </p>
         </div>
 
         {/* Topics */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
               className={`card-hover border ${topic.borderClass} ${topic.bgClass} cursor-pointer animate-fade-in`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardHeader>
-                <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${topic.bgClass} ${topic.textClass}`}>
-                  <topic.icon className="h-7 w-7" />
+              <CardHeader className="pb-3 sm:pb-6">
+                <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.bgClass} ${topic.textClass}`}>
+                  <topic.icon className="h-6 sm:h-7 w-6 sm:w-7" />
                 </div>
-                <CardTitle className="font-display text-xl mt-4">{topic.title}</CardTitle>
-                <CardDescription>{topic.description}</CardDescription>
+                <CardTitle className="font-display text-lg sm:text-xl mt-3 sm:mt-4">{topic.title}</CardTitle>
+                <CardDescription className="text-sm">{topic.description}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <div className="grid grid-cols-2 gap-2">
                   {modes.map((mode) => (
                     <Link 
@@ -142,9 +142,9 @@ export default function Learn() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden"
+                        className="w-full h-10 sm:h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden"
                       >
-                        <mode.icon className="h-3 w-3 flex-shrink-0" />
+                        <mode.icon className="h-4 sm:h-3 w-4 sm:w-3 flex-shrink-0" />
                         <span className="truncate">{mode.title}</span>
                       </Button>
                     </Link>
@@ -156,27 +156,27 @@ export default function Learn() {
         </div>
 
         {/* Exam Section */}
-        <div className="mb-12">
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
             {t('learn.takeExam')}
           </h2>
           <Card className="gradient-greek text-primary-foreground">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="font-display text-2xl text-primary-foreground">
+            <CardHeader className="pb-4">
+              <div className="flex items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <CardTitle className="font-display text-xl sm:text-2xl text-primary-foreground">
                     {t('learn.examSimulation')}
                   </CardTitle>
-                  <CardDescription className="text-primary-foreground/80 mt-2">
+                  <CardDescription className="text-primary-foreground/80 mt-2 text-sm sm:text-base">
                     {t('learn.examSimulation.desc')}
                   </CardDescription>
                 </div>
-                <GraduationCap className="h-16 w-16 opacity-50" />
+                <GraduationCap className="h-12 w-12 sm:h-16 sm:w-16 opacity-50 shrink-0" />
               </div>
             </CardHeader>
             <CardContent>
               <Link to="/learn/exam">
-                <Button variant="secondary" size="lg" className="gap-2">
+                <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto">
                   {t('learn.startExam')}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
