@@ -14,8 +14,11 @@ import {
   XCircle, 
   ArrowRight,
   RotateCcw,
-  Home
+  Home,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+import { useSpeech } from '@/hooks/useSpeech';
 import { cn } from '@/lib/utils';
 
 type Question = {
@@ -49,6 +52,7 @@ export default function Quiz() {
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
+  const { speak, stop, isSpeaking, isSupported } = useSpeech();
 
   const validTopic = topic as TopicType;
   const validTopics = ['history', 'culture', 'laws', 'geography'];
@@ -246,9 +250,21 @@ export default function Quiz() {
         {/* Question Card */}
         <Card className="max-w-3xl mx-auto">
           <CardHeader className="px-4 sm:px-6">
-            <CardTitle className="font-display text-base sm:text-xl leading-relaxed">
-              {currentQuestion.question}
-            </CardTitle>
+            <div className="flex items-start justify-between gap-2">
+              <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">
+                {currentQuestion.question}
+              </CardTitle>
+              {isSupported && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question)}
+                >
+                  {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             {/* Answer Options */}
