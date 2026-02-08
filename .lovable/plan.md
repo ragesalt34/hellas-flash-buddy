@@ -1,26 +1,36 @@
 
+# План: Исправить анимированную рамку и "улетающую" карточку
 
-# План: Анимированная "ползущая" рамка для карточек
+## Проблема 1: Анимация рамки не видна
 
-## Текущее состояние
+**Причина**: 
+- `z-index: -1` на псевдо-элементе `::before` прячет рамку за фоном карточки
+- `@property` для CSS-переменных не поддерживается в Safari и старых браузерах
 
-Сейчас карточки используют:
-- **Вопрос (Front)**: класс `rainbow-border` — статичная анимация смещения градиента
-- **Ответ (Back)**: класс `glow-border` — пульсирующее свечение
+**Решение**: 
+- Убрать `z-index: -1`
+- Использовать альтернативный подход — анимация через `background-position` вместо `@property`
 
-Оба эффекта не очень заметны, и рамка не "движется" по периметру карточки.
+## Проблема 2: Карточка улетает вниз при ответе
 
-## Решение
+**Причина**: 
+- `liquid-glass-card:hover` содержит `transform: translateY(-4px)` 
+- Override для `.flashcard-face.liquid-glass-card:hover` ставит `transform: none`
+- Это конфликтует с `transform: rotateY(180deg)` для back face
 
-Создать новый эффект **"animated-border"** — градиент, который плавно вращается вокруг карточки, создавая эффект "бегущего света" по периметру.
+**Решение**: 
+- Использовать более специфичный селектор для flashcard, который полностью отключает transform на hover для обеих сторон
 
 ## Технические изменения
 
-### 1. Добавить в `src/index.css` новый класс
+### `src/index.css`
+
+**1. Переписать `.animated-border` без `@property`:**
 
 ```css
 .animated-border {
   position: relative;
+  overflow: visible;
 }
 
 .animated-border::before {
@@ -28,63 +38,58 @@
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--border-angle, 0deg),
+  background: linear-gradient(
+    90deg,
     hsl(var(--primary)),
-    hsl(var(--accent)),
+    hsl(var(--accent-foreground)),
     hsl(var(--primary) / 0.3),
-    hsl(var(--accent)),
+    hsl(var(--accent-foreground)),
+    hsl(var(--primary)),
+    hsl(var(--accent-foreground)),
     hsl(var(--primary))
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: border-rotate 4s linear infinite;
+  background-size: 300% 100%;
+  animation: border-slide 3s linear infinite;
   pointer-events: none;
 }
 
-@keyframes border-rotate {
-  to {
-    --border-angle: 360deg;
-  }
+.animated-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  pointer-events: none;
 }
 
-@property --border-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
+@keyframes border-slide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
 }
 ```
 
-### 2. Обновить `src/pages/Flashcards.tsx`
+**2. Исправить flashcard hover override:**
 
-| Строка | Изменение |
-|--------|-----------|
-| 273 | Заменить `rainbow-border` на `animated-border` |
-| 303 | Заменить `glow-border` на `animated-border` |
+```css
+/* Полностью отключить hover transforms для flashcard */
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+  transform: none !important;
+}
 
-```tsx
-// Строка 273 — Front (вопрос)
-<Card className="flashcard-face liquid-glass-card animated-border flex items-center justify-center p-8">
-
-// Строка 303 — Back (ответ)  
-<Card className="flashcard-face flashcard-back liquid-glass-card animated-border flex items-center justify-center p-8">
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
+  transform: rotateY(180deg) !important;
+}
 ```
 
 ## Результат
 
-| До | После |
-|----|-------|
-| Статичная рамка | Градиент плавно вращается по периметру карточки |
-| Едва заметный эффект | Хорошо видимая анимированная "ползущая" текстура |
-| Разные эффекты для вопроса/ответа | Единый стильный эффект для обеих сторон |
+| Проблема | Решение |
+|----------|---------|
+| Анимация не видна | Рамка будет "ползти" с помощью background-position |
+| Карточка улетает вниз | Hover transform отключен для flashcard через !important |
 
 ## Файлы для изменения
 
-| Файл | Действие |
-|------|----------|
-| `src/index.css` | Добавить класс `animated-border` и keyframes |
-| `src/pages/Flashcards.tsx` | Заменить `rainbow-border` и `glow-border` на `animated-border` |
-
+- `src/index.css` — переписать animated-border и усилить flashcard override
