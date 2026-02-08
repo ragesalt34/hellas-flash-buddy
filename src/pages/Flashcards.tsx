@@ -270,7 +270,7 @@ export default function Flashcards() {
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face liquid-glass-card rainbow-border flex items-center justify-center p-8">
+            <Card className="flashcard-face liquid-glass-card animated-border flex items-center justify-center p-8">
               <CardContent className="text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.question')}
@@ -300,7 +300,7 @@ export default function Flashcards() {
             </Card>
 
             {/* Back */}
-            <Card className="flashcard-face flashcard-back liquid-glass-card glow-border flex items-center justify-center p-8">
+            <Card className="flashcard-face flashcard-back liquid-glass-card animated-border flex items-center justify-center p-8">
               <CardContent className="text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.answer')}
