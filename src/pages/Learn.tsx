@@ -118,10 +118,10 @@ export default function Learn() {
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
-              className={`group liquid-glass-card cursor-pointer animate-fade-in`}
+              className="group bg-card/60 backdrop-blur-md border border-border/50 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardHeader className="pb-3 sm:pb-6">
+              <CardHeader className="pb-3 sm:pb-4">
                 <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.iconClass} transition-all duration-300`}>
                   <topic.icon className="h-6 sm:h-7 w-6 sm:w-7 transition-colors duration-300" />
                 </div>
@@ -136,11 +136,11 @@ export default function Learn() {
                       to={`/learn/${topic.id}/${mode.id}`}
                     >
                       <Button 
-                        variant="outline" 
+                        variant="ghost" 
                         size="sm" 
-                        className="w-full h-10 sm:h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden liquid-glass-button border-primary/20 hover:border-primary/40"
+                        className="w-full h-9 justify-start gap-2 text-xs bg-muted/50 hover:bg-muted border-0"
                       >
-                        <mode.icon className="h-4 sm:h-3 w-4 sm:w-3 flex-shrink-0" />
+                        <mode.icon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
                         <span className="truncate">{mode.title}</span>
                       </Button>
                     </Link>
