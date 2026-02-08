@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,9 +18,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Pencil, Trash2, CheckCircle2, XCircle, Search, Loader2, AlertTriangle, CheckCheck } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle2, XCircle, AlertTriangle, CheckCheck } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 import type { VerificationResult } from './QuestionsManager';
+import { VerificationPanel } from './VerificationPanel';
 
 type Question = Database['public']['Tables']['questions']['Row'];
 
@@ -42,9 +44,23 @@ export function QuestionsList({
   isVerifying = false,
   onVerify
 }: QuestionsListProps) {
+  const [showOnlyErrors, setShowOnlyErrors] = useState(false);
+  
   const getVerificationStatus = (questionId: string) => {
     return verificationResults.find(r => r.questionId === questionId);
   };
+
+  // Calculate stats for verification panel
+  const correctCount = verificationResults.filter(r => r.isCorrect).length;
+  const incorrectCount = verificationResults.filter(r => !r.isCorrect).length;
+
+  // Filter questions based on error filter
+  const displayedQuestions = showOnlyErrors 
+    ? questions.filter(q => {
+        const result = verificationResults.find(r => r.questionId === q.id);
+        return result && !result.isCorrect;
+      })
+    : questions;
 
   if (questions.length === 0) {
     return (
@@ -63,12 +79,22 @@ export function QuestionsList({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Всего вопросов: {questions.length}
-        </p>
-        
-        {onVerify && (
+      {/* Verification Panel - показываем после проверки */}
+      {verificationResults.length > 0 && onVerify ? (
+        <VerificationPanel
+          totalQuestions={questions.length}
+          correctCount={correctCount}
+          incorrectCount={incorrectCount}
+          showOnlyErrors={showOnlyErrors}
+          onToggleFilter={() => setShowOnlyErrors(!showOnlyErrors)}
+          onVerify={onVerify}
+          isVerifying={isVerifying}
+        />
+      ) : onVerify ? (
+        <div className="liquid-glass-card rounded-xl p-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Всего вопросов: {questions.length}
+          </p>
           <Button 
             variant="outline" 
             size="sm" 
@@ -78,21 +104,32 @@ export function QuestionsList({
           >
             {isVerifying ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 Проверка...
               </>
             ) : (
               <>
-                <Search className="h-4 w-4" />
+                <CheckCheck className="h-4 w-4" />
                 Проверить ответы
               </>
             )}
           </Button>
-        )}
-      </div>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Всего вопросов: {questions.length}
+        </p>
+      )}
+
+      {/* Filter indicator */}
+      {showOnlyErrors && (
+        <p className="text-sm text-yellow-600 dark:text-yellow-400">
+          Показаны только вопросы с ошибками ({displayedQuestions.length} из {questions.length})
+        </p>
+      )}
       
       <TooltipProvider>
-        {questions.map((question) => {
+        {displayedQuestions.map((question) => {
           const verification = getVerificationStatus(question.id);
           
           return (
