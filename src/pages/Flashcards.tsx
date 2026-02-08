@@ -270,64 +270,68 @@ export default function Flashcards() {
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face liquid-glass-card animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
-                  {t('flashcards.question')}
-                </p>
-                <p className="font-display text-2xl leading-relaxed">
-                  {currentQuestion.question}
-                </p>
-                <div className="flex items-center justify-center gap-2 mt-6">
-                  <p className="text-sm text-muted-foreground">
-                    {t('flashcards.clickToFlip')}
+            <div className="flashcard-face animated-border-wrapper">
+              <Card className="liquid-glass-card flex items-center justify-center p-8 h-full">
+                <CardContent className="text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
+                    {t('flashcards.question')}
+                  </p>
+                  <p className="font-display text-2xl leading-relaxed">
+                    {currentQuestion.question}
+                  </p>
+                  <div className="flex items-center justify-center gap-2 mt-6">
+                    <p className="text-sm text-muted-foreground">
+                      {t('flashcards.clickToFlip')}
+                    </p>
+                    {isSupported && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 liquid-glass-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          isSpeaking ? stop() : speak(currentQuestion.question);
+                        }}
+                      >
+                        {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Back */}
+            <div className="flashcard-face flashcard-back animated-border-wrapper">
+              <Card className="liquid-glass-card flex items-center justify-center p-8 h-full">
+                <CardContent className="text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
+                    {t('flashcards.answer')}
+                  </p>
+                  <p className="font-display text-2xl leading-relaxed text-primary font-medium">
+                    {currentQuestion.correct_answer}
                   </p>
                   {isSupported && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 liquid-glass-button"
+                      className="h-8 w-8 mt-4 liquid-glass-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        isSpeaking ? stop() : speak(currentQuestion.question);
+                        isSpeaking ? stop() : speak(currentQuestion.correct_answer);
                       }}
                     >
                       {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </Button>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Back */}
-            <Card className="flashcard-face flashcard-back liquid-glass-card animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
-                  {t('flashcards.answer')}
-                </p>
-                <p className="font-display text-2xl leading-relaxed text-primary font-medium">
-                  {currentQuestion.correct_answer}
-                </p>
-                {isSupported && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 mt-4 liquid-glass-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.correct_answer);
-                    }}
-                  >
-                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
-                )}
-                {currentQuestion.explanation && (
-                  <p className="text-base text-muted-foreground mt-4">
-                    {currentQuestion.explanation}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+                  {currentQuestion.explanation && (
+                    <p className="text-base text-muted-foreground mt-4">
+                      {currentQuestion.explanation}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
