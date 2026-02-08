@@ -99,10 +99,7 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div className="relative container py-6 sm:py-12 px-4 overflow-hidden">
-        {/* Floating decorative elements */}
-        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
-        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+      <div className="relative container py-6 sm:py-12 px-4">
 
         <div className="relative mb-8 sm:mb-12">
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
@@ -156,7 +153,7 @@ export default function Learn() {
           <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
             {t('learn.takeExam')}
           </h2>
-          <Card className="gradient-greek text-primary-foreground shadow-2xl shadow-primary/30 overflow-hidden">
+          <Card className="gradient-greek text-primary-foreground shadow-lg overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
             <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 blur-xl" />
