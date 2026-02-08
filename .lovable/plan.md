@@ -1,47 +1,90 @@
 
-# План: Увеличить размер текста в карточках
+
+# План: Анимированная "ползущая" рамка для карточек
 
 ## Текущее состояние
 
-Сейчас на странице Flashcards текст имеет следующие размеры:
+Сейчас карточки используют:
+- **Вопрос (Front)**: класс `rainbow-border` — статичная анимация смещения градиента
+- **Ответ (Back)**: класс `glow-border` — пульсирующее свечение
 
-| Элемент | Текущий размер | Класс |
-|---------|----------------|-------|
-| Вопрос | `text-xl` (20px) | строка 278 |
-| Ответ | `text-xl` (20px) | строка 308 |
-| Пояснение | `text-sm` (14px) | строка 325 |
+Оба эффекта не очень заметны, и рамка не "движется" по периметру карточки.
 
-## Предлагаемые изменения
+## Решение
 
-Увеличить размер текста на один шаг:
+Создать новый эффект **"animated-border"** — градиент, который плавно вращается вокруг карточки, создавая эффект "бегущего света" по периметру.
 
-| Элемент | Новый размер | Изменение |
-|---------|--------------|-----------|
-| Вопрос | `text-2xl` (24px) | +4px |
-| Ответ | `text-2xl` (24px) | +4px |
-| Пояснение | `text-base` (16px) | +2px |
+## Технические изменения
 
-## Технические изменения в `src/pages/Flashcards.tsx`
+### 1. Добавить в `src/index.css` новый класс
+
+```css
+.animated-border {
+  position: relative;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    hsl(var(--primary)),
+    hsl(var(--accent)),
+    hsl(var(--primary) / 0.3),
+    hsl(var(--accent)),
+    hsl(var(--primary))
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-rotate 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes border-rotate {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+```
+
+### 2. Обновить `src/pages/Flashcards.tsx`
+
+| Строка | Изменение |
+|--------|-----------|
+| 273 | Заменить `rainbow-border` на `animated-border` |
+| 303 | Заменить `glow-border` на `animated-border` |
 
 ```tsx
-// Строка 278: Вопрос
-<p className="font-display text-2xl leading-relaxed">
-  {currentQuestion.question}
-</p>
+// Строка 273 — Front (вопрос)
+<Card className="flashcard-face liquid-glass-card animated-border flex items-center justify-center p-8">
 
-// Строка 308: Ответ  
-<p className="font-display text-2xl leading-relaxed text-primary font-medium">
-  {currentQuestion.correct_answer}
-</p>
-
-// Строка 325: Пояснение
-<p className="text-base text-muted-foreground mt-4">
-  {currentQuestion.explanation}
-</p>
+// Строка 303 — Back (ответ)  
+<Card className="flashcard-face flashcard-back liquid-glass-card animated-border flex items-center justify-center p-8">
 ```
 
 ## Результат
 
-- Текст вопроса и ответа станет крупнее и легче читается
-- Пояснение тоже немного увеличится для лучшей читаемости
-- Сохранится визуальная иерархия между основным текстом и пояснением
+| До | После |
+|----|-------|
+| Статичная рамка | Градиент плавно вращается по периметру карточки |
+| Едва заметный эффект | Хорошо видимая анимированная "ползущая" текстура |
+| Разные эффекты для вопроса/ответа | Единый стильный эффект для обеих сторон |
+
+## Файлы для изменения
+
+| Файл | Действие |
+|------|----------|
+| `src/index.css` | Добавить класс `animated-border` и keyframes |
+| `src/pages/Flashcards.tsx` | Заменить `rainbow-border` и `glow-border` на `animated-border` |
+
