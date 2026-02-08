@@ -1,93 +1,70 @@
 
-# План: Окончательное исправление позиционирования карточки
+Цель: убрать “падение вниз” у карточки ответа при перевороте/наведении на странице flashcards.
 
-## Диагноз
+## Что реально происходит (диагноз по коду)
+Сейчас на элементах карточки стоят классы одновременно:
+- `flashcard-face` (должен делать face абсолютным и накладывать front/back друг на друга)
+- `animated-border` (для бегущей рамки)
 
-Проанализировав скриншоты и код, я нашёл **настоящую проблему**:
+В `src/index.css` порядок правил такой:
+1) `.flashcard-face { position: absolute; inset: 0; ... }`
+2) ниже по файлу объявлено `.animated-border { position: relative; ... }`
 
-1. Контейнер `.flashcard-container` имеет фиксированную высоту `h-80` (320px)
-2. `.flashcard-face` имеет `position: absolute` с `inset: 0`
-3. `.flashcard-inner` имеет `position: relative` и `height: 100%`
-4. При повороте карточки, `transform-style: preserve-3d` на `.flashcard-inner` создаёт новый stacking context
-5. **Проблема**: когда применяется `transform: rotateY(180deg)`, это может влиять на то, как браузер вычисляет позицию элемента в 3D-пространстве
+Оба селектора — классы (одинаковая специфичность), поэтому побеждает то, что ниже в файле:  
+`position: relative` из `.animated-border` перетирает `position: absolute` у `.flashcard-face`.
 
-Однако **главная проблема** — это конфликт с `.liquid-glass-card:hover:not(.flashcard-face)`. Селектор работает правильно, НО есть ещё одна вещь:
+Итог:
+- back-face перестаёт быть “наложенным” поверх front-face
+- при flip он начинает вести себя как обычный блок в потоке, визуально “уезжая” вниз (то, что ты описываешь: “ответ падает вниз, вся карточка”)
 
-**Класс `.flashcard-face` ДОЛЖЕН иметь `transform: none` или `transform: rotateY(180deg)` в зависимости от того, front это или back. Но при hover на ЛЮБОЙ из этих элементов, мы не должны менять transform вообще.**
+Это объясняет, почему прошлые правки про `hover transform` не решали проблему: причина не в `translateY`, а в том, что back-face физически перестал быть absolute-слоем.
 
-## Решение
-
-Нужно изменить подход:
-
-1. **Убрать ВСЕ transitions с transform** для flashcard-face
-2. **Добавить изоляцию transform** — исключить flashcard из ЛЮБЫХ hover effects которые меняют transform
+## Решение (минимально-инвазивное и надёжное)
+Вариант A (предпочтительный): локально переопределить позиционирование flashcard-face ПОСЛЕ блока `animated-border`, чтобы рамка оставалась, но face всегда был absolute.
 
 ### Изменения в `src/index.css`
+1) Оставляем `.animated-border` как есть (он нужен во всём проекте).
+2) Добавляем новый override после блока `.animated-border` / `.animated-border::before`:
 
-Строки 486-499 нужно переписать так:
+Логика:
+- вернуть `position: absolute` именно для `.flashcard-face` внутри флешкарда
+- повторно зафиксировать `inset/width/height`, чтобы никакие другие утилиты не ломали размеры
 
+Пример того, что будет добавлено:
 ```css
-/* Flashcard: completely isolate from hover transforms */
+/* Flashcards: force faces to stay absolute even when animated-border is applied */
 .flashcard-container .flashcard-inner .flashcard-face {
-  /* Remove all transform transitions to prevent any shifting */
-  transition: border-color 0.4s, box-shadow 0.4s !important;
-}
-
-/* Front face: always no transform */
-.flashcard-container .flashcard-inner .flashcard-face:not(.flashcard-back) {
-  transform: none !important;
-}
-
-/* Back face: always rotated 180deg */
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back {
-  transform: rotateY(180deg) !important;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 ```
 
-И также добавить:
+Опционально (если останутся конфликты из-за специфики Tailwind/утилит) — сделать это правило самым “жёстким”:
+- либо добавить `!important` только на `position`
+- либо расширить селектор до `.flashcard-container .flashcard-inner .flashcard-face.animated-border`
 
-```css
-/* Prevent ANY hover effect from changing transform on flashcard faces */
-.flashcard-face:hover {
-  transform: unset !important; /* This won't work, need to be more specific */
-}
-```
+Но начнём с варианта без `!important`, потому что он чище.
 
-На самом деле, лучше всего — **ВООБЩЕ убрать классы liquid-glass-card и animated-border с Card** и применить стили напрямую, ИЛИ создать отдельные стили `.flashcard-glass` без hover transforms.
+### Почему это точно должно сработать
+- Правило будет стоять ниже `.animated-border`, значит перезапишет `position: relative`
+- Оно ограничено по области действия: только внутри `.flashcard-container`, то есть не поломает другие места, где используется `animated-border`
 
-### Рекомендуемое решение
+## План тестирования (обязательно)
+1) Открыть `/learn/history/flashcards`
+2) Навести на карточку до flip: карточка не “прыгает” и не меняет позицию
+3) Клик — flip: back-face появляется ровно на том же месте (не ниже)
+4) Навести на back-face: позиция не меняется
+5) Проверить в нескольких браузерах (Chrome/Edge) и на масштабе 90%/100% (иногда 3D-трансформы показывают артефакты на разных zoom)
 
-Создать новый класс `.flashcard-glass` который копирует стили `.liquid-glass-card` БЕЗ hover transform:
+## Если после этого останется микросдвиг (план B)
+Если окажется, что “падение” — это не размещение back-face ниже, а микросдвиг из‑за 3D/субпикселей, добавим:
+- `transform: translateZ(0);` или `translate3d(0,0,0)` на `.flashcard-inner`
+- `transform-origin: center;`
+- `contain: layout paint;` на `.flashcard-container` для изоляции перерисовки
 
-```css
-.flashcard-glass {
-  /* Copy all styles from liquid-glass-card EXCEPT hover transform */
-  backdrop-filter: blur(40px);
-  background: linear-gradient(...);
-  border: 1px solid hsl(var(--primary) / 0.12);
-  box-shadow: ...;
-  transition: border-color 0.4s, box-shadow 0.4s;
-}
+Но сначала фиксируем главную, 100% воспроизводимую причину: перезапись `position` классом `animated-border`.
 
-.flashcard-glass:hover {
-  border-color: hsl(var(--primary) / 0.25);
-  box-shadow: ...;
-  /* NO transform here! */
-}
-```
-
-И в `Flashcards.tsx` заменить `liquid-glass-card` на `flashcard-glass`.
-
-## Файлы для изменения
-
-| Файл | Изменение |
-|------|-----------|
-| `src/index.css` | Добавить `.flashcard-glass` класс без hover transform |
-| `src/pages/Flashcards.tsx` | Заменить `liquid-glass-card` на `flashcard-glass` на Card elements |
-
-## Результат
-
-- Карточка НЕ будет сдвигаться при hover
-- Карточка сохранит красивый glass-эффект
-- Анимированная рамка продолжит работать
-- Переворот будет работать корректно без сдвигов
+## Файлы, которые будут изменены
+- `src/index.css` (только CSS-правка, без изменений логики React)
