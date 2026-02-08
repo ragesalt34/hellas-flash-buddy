@@ -275,7 +275,7 @@ export default function Flashcards() {
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.question')}
                 </p>
-                <p className="font-display text-xl leading-relaxed">
+                <p className="font-display text-2xl leading-relaxed">
                   {currentQuestion.question}
                 </p>
                 <div className="flex items-center justify-center gap-2 mt-6">
@@ -305,7 +305,7 @@ export default function Flashcards() {
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.answer')}
                 </p>
-                <p className="font-display text-xl leading-relaxed text-primary font-medium">
+                <p className="font-display text-2xl leading-relaxed text-primary font-medium">
                   {currentQuestion.correct_answer}
                 </p>
                 {isSupported && (
@@ -322,7 +322,7 @@ export default function Flashcards() {
                   </Button>
                 )}
                 {currentQuestion.explanation && (
-                  <p className="text-sm text-muted-foreground mt-4">
+                  <p className="text-base text-muted-foreground mt-4">
                     {currentQuestion.explanation}
                   </p>
                 )}
