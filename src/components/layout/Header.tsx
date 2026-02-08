@@ -23,10 +23,10 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full liquid-glass border-b border-primary/10">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-greek">
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-greek shadow-lg shadow-primary/20 transition-all duration-300 group-hover:shadow-primary/40 group-hover:scale-105">
             <span className="text-xl font-bold text-primary-foreground">Ελ</span>
           </div>
           <span className="font-display text-xl font-semibold text-foreground hidden sm:inline">
@@ -40,7 +40,7 @@ export function Header() {
           {user ? (
             <>
               <Link to="/learn">
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-2 liquid-glass-button hover:bg-primary/10">
                   <BookOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">{t('nav.learn')}</span>
                 </Button>
@@ -48,11 +48,11 @@ export function Header() {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-full">
+                  <Button variant="outline" size="icon" className="rounded-full liquid-glass-button border-primary/20 hover:border-primary/40">
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 liquid-glass border-primary/20">
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
@@ -78,10 +78,10 @@ export function Header() {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm">{t('nav.login')}</Button>
+                <Button variant="ghost" size="sm" className="liquid-glass-button hover:bg-primary/10">{t('nav.login')}</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="gradient-greek text-primary-foreground">
+                <Button size="sm" className="gradient-greek text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300">
                   {t('nav.register')}
                 </Button>
               </Link>

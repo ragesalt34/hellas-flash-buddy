@@ -28,9 +28,7 @@ export default function Learn() {
       description: t('topic.history.desc'),
       icon: History,
       color: 'history',
-      bgClass: 'bg-history/10 hover:bg-history/20',
-      textClass: 'text-history',
-      borderClass: 'border-history/20',
+      iconClass: 'bg-history/20 text-history group-hover:bg-history group-hover:text-white',
     },
     {
       id: 'culture',
@@ -38,9 +36,7 @@ export default function Learn() {
       description: t('topic.culture.desc'),
       icon: Palette,
       color: 'culture',
-      bgClass: 'bg-culture/10 hover:bg-culture/20',
-      textClass: 'text-culture',
-      borderClass: 'border-culture/20',
+      iconClass: 'bg-culture/20 text-culture group-hover:bg-culture group-hover:text-white',
     },
     {
       id: 'laws',
@@ -48,9 +44,7 @@ export default function Learn() {
       description: t('topic.laws.desc'),
       icon: Scale,
       color: 'laws',
-      bgClass: 'bg-laws/10 hover:bg-laws/20',
-      textClass: 'text-laws',
-      borderClass: 'border-laws/20',
+      iconClass: 'bg-laws/20 text-laws group-hover:bg-laws group-hover:text-white',
     },
     {
       id: 'geography',
@@ -58,9 +52,7 @@ export default function Learn() {
       description: t('topic.geography.desc'),
       icon: MapPin,
       color: 'geography',
-      bgClass: 'bg-geography/10 hover:bg-geography/20',
-      textClass: 'text-geography',
-      borderClass: 'border-geography/20',
+      iconClass: 'bg-geography/20 text-geography group-hover:bg-geography group-hover:text-white',
     },
   ];
 
@@ -107,8 +99,12 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div className="container py-6 sm:py-12 px-4">
-        <div className="mb-8 sm:mb-12">
+      <div className="relative container py-6 sm:py-12 px-4 overflow-hidden">
+        {/* Floating decorative elements */}
+        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
+        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
+        <div className="relative mb-8 sm:mb-12">
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
             {t('learn.selectTopic')}
           </h1>
@@ -118,16 +114,16 @@ export default function Learn() {
         </div>
 
         {/* Topics */}
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
+        <div className="relative grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
-              className={`card-hover border ${topic.borderClass} ${topic.bgClass} cursor-pointer animate-fade-in`}
+              className={`group liquid-glass-card cursor-pointer animate-fade-in`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardHeader className="pb-3 sm:pb-6">
-                <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.bgClass} ${topic.textClass}`}>
-                  <topic.icon className="h-6 sm:h-7 w-6 sm:w-7" />
+                <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.iconClass} transition-all duration-300`}>
+                  <topic.icon className="h-6 sm:h-7 w-6 sm:w-7 transition-colors duration-300" />
                 </div>
                 <CardTitle className="font-display text-lg sm:text-xl mt-3 sm:mt-4">{topic.title}</CardTitle>
                 <CardDescription className="text-sm">{topic.description}</CardDescription>
@@ -142,7 +138,7 @@ export default function Learn() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full h-10 sm:h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden"
+                        className="w-full h-10 sm:h-9 justify-start gap-2 text-xs whitespace-nowrap overflow-hidden liquid-glass-button border-primary/20 hover:border-primary/40"
                       >
                         <mode.icon className="h-4 sm:h-3 w-4 sm:w-3 flex-shrink-0" />
                         <span className="truncate">{mode.title}</span>
@@ -156,12 +152,16 @@ export default function Learn() {
         </div>
 
         {/* Exam Section */}
-        <div className="mb-8 sm:mb-12">
+        <div className="relative mb-8 sm:mb-12">
           <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
             {t('learn.takeExam')}
           </h2>
-          <Card className="gradient-greek text-primary-foreground">
-            <CardHeader className="pb-4">
+          <Card className="gradient-greek text-primary-foreground shadow-2xl shadow-primary/30 overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 blur-xl" />
+            
+            <CardHeader className="pb-4 relative">
               <div className="flex items-start sm:items-center justify-between gap-4">
                 <div className="flex-1">
                   <CardTitle className="font-display text-xl sm:text-2xl text-primary-foreground">
@@ -174,9 +174,9 @@ export default function Learn() {
                 <GraduationCap className="h-12 w-12 sm:h-16 sm:w-16 opacity-50 shrink-0" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
               <Link to="/learn/exam">
-                <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto">
+                <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   {t('learn.startExam')}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
