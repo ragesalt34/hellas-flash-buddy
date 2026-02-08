@@ -14,10 +14,17 @@ import type { Database } from '@/integrations/supabase/types';
 type QuestionTopic = Database['public']['Enums']['question_topic'];
 type Question = Database['public']['Tables']['questions']['Row'];
 
+export type VerificationResult = {
+  questionId: string;
+  isCorrect: boolean;
+  comment: string;
+};
+
 export function QuestionsManager() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<QuestionTopic>('history');
+  const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
   const queryClient = useQueryClient();
 
   const { data: questions, isLoading } = useQuery({
@@ -52,6 +59,37 @@ export function QuestionsManager() {
     }
   });
 
+  const verifyMutation = useMutation({
+    mutationFn: async (questionsToVerify: Question[]) => {
+      const { data, error } = await supabase.functions.invoke('verify-answers', {
+        body: { 
+          questions: questionsToVerify.map(q => ({
+            id: q.id,
+            question: q.question,
+            correct_answer: q.correct_answer,
+            wrong_answers: q.wrong_answers
+          }))
+        }
+      });
+      
+      if (error) throw error;
+      return data as { results: VerificationResult[] };
+    },
+    onSuccess: (data) => {
+      setVerificationResults(data.results);
+      const incorrectCount = data.results.filter(r => !r.isCorrect).length;
+      if (incorrectCount > 0) {
+        toast.warning(`Найдено ${incorrectCount} потенциальных ошибок`);
+      } else {
+        toast.success('Все ответы проверены — ошибок не найдено!');
+      }
+    },
+    onError: (error) => {
+      console.error('Verification error:', error);
+      toast.error('Ошибка при проверке ответов');
+    }
+  });
+
   const handleEdit = (question: Question) => {
     setEditingQuestion(question);
     setIsFormOpen(true);
@@ -65,6 +103,13 @@ export function QuestionsManager() {
   const handleFormSuccess = () => {
     handleFormClose();
     queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
+    setVerificationResults([]); // Clear verification on changes
+  };
+
+  const handleVerify = () => {
+    if (questions && questions.length > 0) {
+      verifyMutation.mutate(questions);
+    }
   };
 
   const topicLabels: Record<QuestionTopic, string> = {
@@ -74,6 +119,12 @@ export function QuestionsManager() {
     geography: 'География'
   };
 
+  // Clear verification results when topic changes
+  const handleTopicChange = (topic: QuestionTopic) => {
+    setSelectedTopic(topic);
+    setVerificationResults([]);
+  };
+
   return (
     <div className="space-y-8">
       {/* AI Document Upload */}
@@ -81,7 +132,7 @@ export function QuestionsManager() {
 
       {/* Manual Questions Management */}
       <div className="flex items-center justify-between">
-        <Tabs value={selectedTopic} onValueChange={(v) => setSelectedTopic(v as QuestionTopic)}>
+        <Tabs value={selectedTopic} onValueChange={(v) => handleTopicChange(v as QuestionTopic)}>
           <TabsList>
             <TabsTrigger value="history" className="gap-2">
               🏛️ История
@@ -132,6 +183,9 @@ export function QuestionsManager() {
           onEdit={handleEdit}
           onDelete={(id) => deleteMutation.mutate(id)}
           topicLabel={topicLabels[selectedTopic]}
+          verificationResults={verificationResults}
+          isVerifying={verifyMutation.isPending}
+          onVerify={handleVerify}
         />
       )}
     </div>
