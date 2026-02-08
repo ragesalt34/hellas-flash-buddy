@@ -477,34 +477,23 @@
 }
 
 /* Flashcard: limit transitions to avoid GPU lag on heavy effects */
-.flashcard-container .flashcard-face.liquid-glass-card {
+.flashcard-container .flashcard-face .liquid-glass-card {
   transition-property: border-color, box-shadow;
   transition-duration: 0.4s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Flashcard: fully disable hover transforms for front and back */
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card,
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+/* Flashcard: fully disable hover transforms for cards inside flashcard faces */
+.flashcard-container .flashcard-inner .flashcard-face .liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face .liquid-glass-card:hover {
   transform: none !important;
 }
 
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card,
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
-  transform: rotateY(180deg) !important;
-}
-
 /* Animated border - sliding gradient around the card (no @property for Safari compatibility) */
-.animated-border {
+.animated-border-wrapper {
   position: relative;
-  overflow: visible;
-}
-
-.animated-border::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: inherit;
+  padding: 3px;
+  border-radius: var(--radius);
   background: linear-gradient(
     90deg,
     hsl(var(--primary)),
@@ -516,23 +505,11 @@
     hsl(var(--primary))
   );
   background-size: 300% 100%;
-  animation: border-slide 3s linear infinite;
-  pointer-events: none;
-  z-index: 0;
+  animation: border-slide 6s linear infinite;
 }
 
-.animated-border::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: hsl(var(--card));
-  z-index: 1;
-}
-
-.animated-border > * {
-  position: relative;
-  z-index: 2;
+.animated-border-wrapper > * {
+  border-radius: calc(var(--radius) - 2px);
 }
 
 @keyframes border-slide {
