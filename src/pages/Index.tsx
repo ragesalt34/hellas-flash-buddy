@@ -144,21 +144,27 @@ export default function Index() {
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Animated background */}
         <div className="absolute inset-0 gradient-greek-radial" />
-        
-        {/* Floating glass orbs */}
-        <FloatingOrb className="w-[500px] h-[500px] -top-40 -left-40" delay="0s" />
-        <FloatingOrb className="w-[400px] h-[400px] top-1/3 -right-32" delay="2s" />
-        <FloatingOrb className="w-[300px] h-[300px] bottom-10 left-1/4" delay="4s" />
-        <FloatingOrb className="w-[200px] h-[200px] top-20 right-1/4" delay="1s" />
 
-        {/* Decorative glass shapes */}
-        <div className="absolute top-1/4 left-10 w-20 h-20 liquid-glass rounded-2xl rotate-12 opacity-40 animate-float" />
-        <div className="absolute bottom-1/4 right-20 w-16 h-16 liquid-glass rounded-full opacity-30 animate-float-slow" />
-        <div className="absolute top-1/2 left-1/4 w-12 h-12 liquid-glass rounded-xl -rotate-12 opacity-20 animate-float" style={{ animationDelay: '2s' }} />
+        {/* Background decorations (clipped) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          {/* Floating glass orbs */}
+          <FloatingOrb className="w-[420px] h-[420px] -top-24 -left-24" delay="0s" />
+          <FloatingOrb className="w-[380px] h-[380px] top-1/3 -right-24" delay="2s" />
+          <FloatingOrb className="w-[300px] h-[300px] bottom-10 left-1/4" delay="4s" />
+          <FloatingOrb className="w-[200px] h-[200px] top-16 right-1/4" delay="1s" />
+
+          {/* Decorative glass shapes (hidden on mobile to avoid "лишний элемент") */}
+          <div className="hidden sm:block absolute top-1/4 left-10 w-20 h-20 liquid-glass rounded-2xl rotate-12 opacity-40 animate-float" />
+          <div className="hidden sm:block absolute bottom-1/4 right-20 w-16 h-16 liquid-glass rounded-full opacity-30 animate-float-slow" />
+          <div
+            className="hidden sm:block absolute top-1/2 left-1/4 w-12 h-12 liquid-glass rounded-xl -rotate-12 opacity-20 animate-float"
+            style={{ animationDelay: '2s' }}
+          />
+        </div>
 
         {/* Greek pattern decoration */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        
+
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge with liquid glass */}
@@ -170,12 +176,13 @@ export default function Index() {
             </div>
 
             {/* Heading with shimmer effect */}
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
-              {language === 'ru' ? (
-                <>Ваш путь к <span className="block text-shimmer">греческому гражданству</span></>
-              ) : (
-                <>Ο δρόμος σας προς την <span className="block text-shimmer">ελληνική ιθαγένεια</span></>
-              )}
+            <h1 className="font-display font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
+              <span className="block text-4xl sm:text-5xl md:text-6xl">
+                {language === 'ru' ? 'Ваш путь к' : 'Ο δρόμος σας προς την'}
+              </span>
+              <span className="block mt-2 text-5xl sm:text-6xl md:text-7xl text-shimmer">
+                {language === 'ru' ? 'греческому гражданству' : 'ελληνική ιθαγένεια'}
+              </span>
             </h1>
 
             {/* Subtitle */}
@@ -188,7 +195,7 @@ export default function Index() {
               {user ? (
                 <Link to="/learn">
                   <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300">
-                    {t('index.startLearning')} 
+                    {t('index.startLearning')}
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
@@ -196,7 +203,7 @@ export default function Index() {
                 <>
                   <Link to="/register">
                     <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300">
-                      {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'} 
+                      {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'}
                       <ArrowRight className="h-5 w-5" />
                     </Button>
                   </Link>
@@ -210,11 +217,15 @@ export default function Index() {
             </div>
 
             {/* Features list with liquid glass */}
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in-up animate-delay-400">
+            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch opacity-0 animate-fade-in-up animate-delay-400">
               {features.map((feature, i) => (
-                <div key={i} className="flex items-center justify-center gap-2 text-sm text-muted-foreground liquid-glass-button rounded-full py-2 px-4">
-                  <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
-                  <span>{feature}</span>
+                <div
+                  key={i}
+                  className="liquid-glass-button rounded-full py-2.5 px-4 text-sm text-muted-foreground grid grid-cols-[1rem_1fr_1rem] items-center gap-2 min-h-10"
+                >
+                  <CheckCircle className="h-4 w-4 text-success" />
+                  <span className="text-center leading-snug">{feature}</span>
+                  <span className="h-4 w-4" aria-hidden="true" />
                 </div>
               ))}
             </div>
