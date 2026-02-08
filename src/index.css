@@ -546,3 +546,11 @@
   0% { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
+
+/* Flashcard faces: force absolute positioning even when animated-border is applied */
+.flashcard-container .flashcard-inner .flashcard-face.animated-border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
