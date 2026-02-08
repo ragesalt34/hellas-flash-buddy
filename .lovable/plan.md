@@ -1,79 +1,93 @@
 
-# План: Окончательное исправление "падающей" карточки
+# План: Окончательное исправление позиционирования карточки
 
-## Найденная проблема
+## Диагноз
 
-Проблема НЕ в специфичности CSS. Проблема в том, что:
+Проанализировав скриншоты и код, я нашёл **настоящую проблему**:
 
-1. **`.liquid-glass-card:hover`** (строка 262-268) устанавливает `transform: translateY(-4px)`
-2. Мой override с `!important` должен работать, но **он применяется только к элементу `.flashcard-face`**
-3. Однако при hover браузер всё равно применяет базовый `.liquid-glass-card:hover` потому что `!important` у меня стоит только на state без hover и на hover - но эти правила конфликтуют
+1. Контейнер `.flashcard-container` имеет фиксированную высоту `h-80` (320px)
+2. `.flashcard-face` имеет `position: absolute` с `inset: 0`
+3. `.flashcard-inner` имеет `position: relative` и `height: 100%`
+4. При повороте карточки, `transform-style: preserve-3d` на `.flashcard-inner` создаёт новый stacking context
+5. **Проблема**: когда применяется `transform: rotateY(180deg)`, это может влиять на то, как браузер вычисляет позицию элемента в 3D-пространстве
 
-## Корневая причина
+Однако **главная проблема** — это конфликт с `.liquid-glass-card:hover:not(.flashcard-face)`. Селектор работает правильно, НО есть ещё одна вещь:
 
-CSS правило в строках 262-268:
-```css
-.liquid-glass-card:hover {
-  ...
-  transform: translateY(-4px);
-}
-```
-
-Это правило применяется ко ВСЕМ `.liquid-glass-card` элементам при hover, включая flashcards.
-
-Мой override:
-```css
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
-  transform: none !important;
-}
-```
-
-Проблема: Этот селектор **должен** работать, но возможно браузер неправильно интерпретирует из-за **множественных классов** на элементе (`flashcard-face liquid-glass-card animated-border`).
+**Класс `.flashcard-face` ДОЛЖЕН иметь `transform: none` или `transform: rotateY(180deg)` в зависимости от того, front это или back. Но при hover на ЛЮБОЙ из этих элементов, мы не должны менять transform вообще.**
 
 ## Решение
 
-Самое надёжное решение - **убрать `transform` из базового `.liquid-glass-card:hover`** и добавить его только там где нужно, ИЛИ использовать ещё более специфичный селектор.
+Нужно изменить подход:
 
-Я выберу второй подход - добавить `.animated-border` в селектор для полной специфичности:
+1. **Убрать ВСЕ transitions с transform** для flashcard-face
+2. **Добавить изоляцию transform** — исключить flashcard из ЛЮБЫХ hover effects которые меняют transform
 
 ### Изменения в `src/index.css`
 
-Заменить строки 486-495 на:
+Строки 486-499 нужно переписать так:
 
 ```css
-/* Flashcard: fully disable hover transforms for front and back - ultra specific */
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border,
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border:hover,
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+/* Flashcard: completely isolate from hover transforms */
+.flashcard-container .flashcard-inner .flashcard-face {
+  /* Remove all transform transitions to prevent any shifting */
+  transition: border-color 0.4s, box-shadow 0.4s !important;
+}
+
+/* Front face: always no transform */
+.flashcard-container .flashcard-inner .flashcard-face:not(.flashcard-back) {
   transform: none !important;
 }
 
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border,
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border:hover,
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
+/* Back face: always rotated 180deg */
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back {
   transform: rotateY(180deg) !important;
 }
 ```
 
-**Также** изменю сам `.liquid-glass-card:hover` чтобы исключить flashcard-face (альтернативный подход):
+И также добавить:
 
 ```css
-.liquid-glass-card:hover:not(.flashcard-face) {
-  ...
-  transform: translateY(-4px);
+/* Prevent ANY hover effect from changing transform on flashcard faces */
+.flashcard-face:hover {
+  transform: unset !important; /* This won't work, need to be more specific */
 }
 ```
 
-Это гарантирует что `translateY(-4px)` НИКОГДА не применится к flashcard.
+На самом деле, лучше всего — **ВООБЩЕ убрать классы liquid-glass-card и animated-border с Card** и применить стили напрямую, ИЛИ создать отдельные стили `.flashcard-glass` без hover transforms.
+
+### Рекомендуемое решение
+
+Создать новый класс `.flashcard-glass` который копирует стили `.liquid-glass-card` БЕЗ hover transform:
+
+```css
+.flashcard-glass {
+  /* Copy all styles from liquid-glass-card EXCEPT hover transform */
+  backdrop-filter: blur(40px);
+  background: linear-gradient(...);
+  border: 1px solid hsl(var(--primary) / 0.12);
+  box-shadow: ...;
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+
+.flashcard-glass:hover {
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: ...;
+  /* NO transform here! */
+}
+```
+
+И в `Flashcards.tsx` заменить `liquid-glass-card` на `flashcard-glass`.
 
 ## Файлы для изменения
 
 | Файл | Изменение |
 |------|-----------|
-| `src/index.css` | Изменить `.liquid-glass-card:hover` добавив `:not(.flashcard-face)`, и обновить flashcard overrides с более специфичными селекторами |
+| `src/index.css` | Добавить `.flashcard-glass` класс без hover transform |
+| `src/pages/Flashcards.tsx` | Заменить `liquid-glass-card` на `flashcard-glass` на Card elements |
 
 ## Результат
 
-- Карточка НЕ будет падать/подниматься при hover
+- Карточка НЕ будет сдвигаться при hover
+- Карточка сохранит красивый glass-эффект
 - Анимированная рамка продолжит работать
-- Переворот карточки будет работать корректно
+- Переворот будет работать корректно без сдвигов
