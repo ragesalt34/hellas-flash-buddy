@@ -1,97 +1,89 @@
 
-# План: Исправление лага и вращения карточки при наведении
+## Что происходит сейчас (почему «всё равно крутится»)
 
-## Проблема
-При наведении мыши на перевёрнутую карточку она лагает и начинает крутиться. Карточка позиционируется правильно, но анимация ломается при hover.
+Сейчас у `.liquid-glass-card:hover` есть `transform: translateY(-4px)`.  
+На флэшкарте это конфликтует с 3D-переворотом, потому что:
+
+- у **задней стороны** (`.flashcard-back`) постоянно должен быть `transform: rotateY(180deg)`;
+- но при наведении срабатывает `.liquid-glass-card:hover { transform: translateY(-4px) }` (по специфичности сильнее, чем `.flashcard-back`), и **задняя сторона теряет rotateY**;
+- из‑за этого при малейшем движении мыши (hover on/off, попадание на разные элементы внутри карточки) трансформ «прыгает» между состояниями — визуально выглядит как «крутится/дергается» и может сильно лагать.
+
+Важно: наше текущее правило
+```css
+.flashcard-face.liquid-glass-card:hover { transform: none; }
+```
+тоже ухудшает ситуацию, потому что оно **сбрасывает transform и для задней стороны**, а ей `rotateY(180deg)` нужен всегда.
 
 ---
 
-## Причина
+## Как исправим (минимально и правильно)
 
-Класс `.liquid-glass-card:hover` содержит:
-```css
-transform: translateY(-4px);
-```
+### 1) Исправим hover-override так, чтобы:
+- **передняя сторона** при hover не получала translateY;
+- **задняя сторона** при hover сохраняла `rotateY(180deg)` (то есть мы «перепишем» hover только для неё).
 
-Это конфликтует с 3D-трансформацией `.flashcard-inner`:
-- При hover добавляется `translateY(-4px)` к карточке
-- Это перезаписывает/конфликтует с `rotateY(180deg)` на родителе
-- Результат: карточка дёргается, создаётся эффект непрерывного вращения
+План правок в `src/index.css` (внизу, рядом с Flashcard 3D):
 
----
-
-## Решение
-
-### 1. Убрать hover-эффекты с flashcard
-
-Добавим модификатор `.flashcard-face`, который отключит hover-трансформации для карточек внутри флэшкард-контейнера:
-
-```css
-/* В секции Flashcard 3D */
-.flashcard-face.liquid-glass-card:hover {
-  transform: none;
-}
-```
-
-### 2. Альтернатива: Создать отдельный класс для flashcard-карточек
-
-Вместо использования `liquid-glass-card` на flashcard-face, создадим специальный класс:
-
-```css
-.flashcard-glass {
-  background: linear-gradient(
-    145deg,
-    hsl(var(--card) / 0.6) 0%,
-    hsl(var(--card) / 0.3) 100%
-  );
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid hsl(var(--primary) / 0.12);
-  box-shadow: 
-    0 4px 24px hsl(var(--primary) / 0.08),
-    inset 0 1px 0 hsl(0 0% 100% / 0.12);
-  /* НЕТ transition на transform! */
-  transition: border-color 0.4s, box-shadow 0.4s;
-}
-
-.flashcard-glass:hover {
-  border-color: hsl(var(--primary) / 0.25);
-  box-shadow: 
-    0 8px 40px hsl(var(--primary) / 0.15),
-    0 0 60px hsl(var(--primary) / 0.08),
-    inset 0 1px 0 hsl(0 0% 100% / 0.2);
-  /* БЕЗ transform! */
-}
-```
-
----
-
-## Выбранное решение
-
-Первый вариант — проще и минимально инвазивный:
-
-**В `src/index.css`** добавим правило-исключение:
+1. Удалить текущее правило:
 ```css
 .flashcard-face.liquid-glass-card:hover {
   transform: none;
 }
 ```
 
-Это отключит подъём карточки при hover, сохранив остальные эффекты (border-color, box-shadow).
+2. Добавить два правила (в таком порядке):
+
+```css
+/* Flashcard: disable lift on hover (front face) */
+.flashcard-container .flashcard-face.liquid-glass-card:hover {
+  transform: none;
+}
+
+/* Flashcard: keep back face rotated even on hover */
+.flashcard-container .flashcard-face.flashcard-back.liquid-glass-card:hover {
+  transform: rotateY(180deg);
+}
+```
+
+Это устранит «кручение», потому что hover больше не будет ломать 3D-схему.
 
 ---
 
-## Файлы для изменения
+### 2) Снимем часть лагов при наведении (опционально, но рекомендую)
+У `.liquid-glass-card` стоит `transition: all ...` — на тяжелых эффектах (blur/shadow) это может давать микрофризы.
 
-| Файл | Действие |
-|------|----------|
-| `src/index.css` | Добавить CSS-правило для отключения hover-transform на flashcard |
+В пределах флэшкарты переопределим transition, чтобы не трогать transform и лишние свойства:
+
+```css
+.flashcard-container .flashcard-face.liquid-glass-card {
+  transition-property: border-color, box-shadow;
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
 
 ---
 
-## Результат
+### 3) Подсказка браузеру для плавности переворота
+Добавим в `.flashcard-inner`:
 
-- Карточка переворачивается плавно без лагов
-- При наведении мыши карточка не дёргается
-- Сохраняются все визуальные эффекты (свечение, border)
-- Только hover-transform отключён для flashcard
+```css
+.flashcard-inner {
+  will-change: transform;
+}
+```
+
+(Это не меняет поведение, но часто делает анимацию стабильнее.)
+
+---
+
+## Какие файлы будут изменены
+- `src/index.css` — точечные правки hover/transition для флэшкарты.
+
+---
+
+## Как проверим результат
+1. Открыть `/learn/history/flashcards`
+2. Перевернуть карточку кликом.
+3. Поводить мышкой по карточке (включая области с текстом и вокруг кнопок озвучки).
+4. Ожидаемо: карточка больше не «крутится» и не дергается, переворот остается плавным; hover по-прежнему меняет border/shadow, но не двигает карточку и не ломает 3D.
