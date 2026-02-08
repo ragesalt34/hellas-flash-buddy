@@ -1,52 +1,46 @@
 
-# План: Выравнивание карточек тем
+# План: Убрать некрасивые рамки на странице Learn
 
 ## Проблема
 
-Карточка "География Греции" выглядит криво по сравнению с остальными тремя карточками, потому что:
-- У первых трёх карточек описание занимает 2 строки
-- У "Географии" описание занимает 1 строку
-- Из-за этого кнопки режимов (Карточки, Тест, Ввод, Экзамен) находятся на разной высоте
+На странице `/learn` видны две некрасивые "рамки":
+
+1. **Правый верхний угол** — декоративный элемент `floating-orb-glass` создаёт видимую дугу/рамку
+2. **Секция "Симуляция экзамена"** — карточка имеет слишком выраженную тень `shadow-2xl shadow-primary/30`, которая выглядит как рамка
 
 ## Решение
 
-Сделать так, чтобы все карточки имели одинаковую высоту с помощью flexbox:
+1. **Удалить декоративные orb-элементы** со страницы Learn — они не добавляют ценности и выглядят как дефект
+2. **Смягчить тень у Exam Card** — заменить `shadow-2xl shadow-primary/30` на более мягкую тень `shadow-lg`
 
-1. **Добавить `h-full` и `flex flex-col`** на Card - чтобы карточка растягивалась на всю высоту ряда
-2. **Добавить `flex-1`** на CardHeader - чтобы заголовок занимал всё доступное пространство и "выталкивал" кнопки вниз
-3. **Зафиксировать высоту описания** с помощью `min-h-[2.5rem]` - резервирует место минимум для 2 строк текста
+## Изменения в файле
 
-## Изменения в `src/pages/Learn.tsx`
+### `src/pages/Learn.tsx`
 
+| Строки | Изменение |
+|--------|-----------|
+| 104-105 | Удалить два `floating-orb-glass` элемента |
+| 159 | Изменить классы Card с `shadow-2xl shadow-primary/30` на `shadow-lg` |
+
+### До:
 ```tsx
-<Card 
-  key={topic.id}
-  className="group bg-card/60 backdrop-blur-md border border-border/50 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 animate-fade-in h-full flex flex-col"
-  style={{ animationDelay: `${index * 0.1}s` }}
->
-  <CardHeader className="pb-2 pt-6 flex-1">
-    <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.iconClass} transition-all duration-300`}>
-      <topic.icon className="h-6 sm:h-7 w-6 sm:w-7 transition-colors duration-300" />
-    </div>
-    <CardTitle className="font-display text-lg sm:text-xl mt-4">{topic.title}</CardTitle>
-    <CardDescription className="text-sm mt-1 min-h-[2.5rem]">{topic.description}</CardDescription>
-  </CardHeader>
-  <CardContent className="pt-0 mt-auto">
-    ...
-  </CardContent>
-</Card>
+<div className="relative container py-6 sm:py-12 px-4 overflow-hidden">
+  {/* Floating decorative elements */}
+  <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
+  <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+  ...
+  <Card className="gradient-greek text-primary-foreground shadow-2xl shadow-primary/30 overflow-hidden">
+```
+
+### После:
+```tsx
+<div className="relative container py-6 sm:py-12 px-4">
+  ...
+  <Card className="gradient-greek text-primary-foreground shadow-lg overflow-hidden">
 ```
 
 ## Результат
 
-| До | После |
-|----|-------|
-| Кнопки на разной высоте | Все кнопки на одной линии |
-| Карточки разной высоты | Все карточки одинаковой высоты |
-| "География" выглядит криво | Все 4 карточки ровные |
-
-## Файл для изменения
-
-| Файл | Действие |
-|------|----------|
-| `src/pages/Learn.tsx` | Добавить flex-классы и min-height для выравнивания |
+- Исчезнет дуга/рамка в правом верхнем углу
+- Исчезнет рамка вокруг секции экзамена слева
+- Страница будет выглядеть чище и более стильно
