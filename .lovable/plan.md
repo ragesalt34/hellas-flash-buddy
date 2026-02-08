@@ -1,46 +1,47 @@
 
-# План: Убрать некрасивые рамки на странице Learn
+# План: Увеличить размер текста в карточках
 
-## Проблема
+## Текущее состояние
 
-На странице `/learn` видны две некрасивые "рамки":
+Сейчас на странице Flashcards текст имеет следующие размеры:
 
-1. **Правый верхний угол** — декоративный элемент `floating-orb-glass` создаёт видимую дугу/рамку
-2. **Секция "Симуляция экзамена"** — карточка имеет слишком выраженную тень `shadow-2xl shadow-primary/30`, которая выглядит как рамка
+| Элемент | Текущий размер | Класс |
+|---------|----------------|-------|
+| Вопрос | `text-xl` (20px) | строка 278 |
+| Ответ | `text-xl` (20px) | строка 308 |
+| Пояснение | `text-sm` (14px) | строка 325 |
 
-## Решение
+## Предлагаемые изменения
 
-1. **Удалить декоративные orb-элементы** со страницы Learn — они не добавляют ценности и выглядят как дефект
-2. **Смягчить тень у Exam Card** — заменить `shadow-2xl shadow-primary/30` на более мягкую тень `shadow-lg`
+Увеличить размер текста на один шаг:
 
-## Изменения в файле
+| Элемент | Новый размер | Изменение |
+|---------|--------------|-----------|
+| Вопрос | `text-2xl` (24px) | +4px |
+| Ответ | `text-2xl` (24px) | +4px |
+| Пояснение | `text-base` (16px) | +2px |
 
-### `src/pages/Learn.tsx`
+## Технические изменения в `src/pages/Flashcards.tsx`
 
-| Строки | Изменение |
-|--------|-----------|
-| 104-105 | Удалить два `floating-orb-glass` элемента |
-| 159 | Изменить классы Card с `shadow-2xl shadow-primary/30` на `shadow-lg` |
-
-### До:
 ```tsx
-<div className="relative container py-6 sm:py-12 px-4 overflow-hidden">
-  {/* Floating decorative elements */}
-  <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
-  <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
-  ...
-  <Card className="gradient-greek text-primary-foreground shadow-2xl shadow-primary/30 overflow-hidden">
-```
+// Строка 278: Вопрос
+<p className="font-display text-2xl leading-relaxed">
+  {currentQuestion.question}
+</p>
 
-### После:
-```tsx
-<div className="relative container py-6 sm:py-12 px-4">
-  ...
-  <Card className="gradient-greek text-primary-foreground shadow-lg overflow-hidden">
+// Строка 308: Ответ  
+<p className="font-display text-2xl leading-relaxed text-primary font-medium">
+  {currentQuestion.correct_answer}
+</p>
+
+// Строка 325: Пояснение
+<p className="text-base text-muted-foreground mt-4">
+  {currentQuestion.explanation}
+</p>
 ```
 
 ## Результат
 
-- Исчезнет дуга/рамка в правом верхнем углу
-- Исчезнет рамка вокруг секции экзамена слева
-- Страница будет выглядеть чище и более стильно
+- Текст вопроса и ответа станет крупнее и легче читается
+- Пояснение тоже немного увеличится для лучшей читаемости
+- Сохранится визуальная иерархия между основным текстом и пояснением
