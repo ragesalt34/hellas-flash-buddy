@@ -26,10 +26,10 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
   delay: string;
 }) => (
   <div 
-    className={`liquid-glass-card rounded-2xl p-6 text-center opacity-0 animate-fade-in-up`}
+    className="liquid-glass-card rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
     style={{ animationDelay: delay }}
   >
-    <div className="mx-auto w-14 h-14 rounded-xl liquid-glass-button flex items-center justify-center mb-4">
+    <div className="w-14 h-14 rounded-xl liquid-glass-button flex items-center justify-center mb-4">
       <Icon className="h-7 w-7 text-primary" />
     </div>
     <div className="font-display text-3xl font-bold text-foreground mb-1">{number}</div>
@@ -56,7 +56,7 @@ const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
   return (
     <div 
       className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
-        p-6 opacity-0 animate-fade-in-up cursor-pointer`}
+        p-6 text-left opacity-0 animate-fade-in-up cursor-pointer`}
       style={{ animationDelay: `${200 + index * 100}ms` }}
     >
       <div className={`w-14 h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-4
@@ -78,8 +78,7 @@ const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
   
   return (
     <div 
-      className={`group liquid-glass-card rounded-2xl p-6 
-        opacity-0 animate-fade-in-up cursor-pointer`}
+      className="group liquid-glass-card rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer"
       style={{ animationDelay: `${300 + index * 100}ms` }}
     >
       <div className="w-12 h-12 rounded-xl liquid-glass-button flex items-center justify-center mb-4
@@ -173,9 +172,9 @@ export default function Index() {
             {/* Heading with shimmer effect */}
             <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
               {language === 'ru' ? (
-                <>Ваш путь к <br /><span className="text-shimmer">греческому гражданству</span></>
+                <>Ваш путь к <span className="block text-shimmer">греческому гражданству</span></>
               ) : (
-                <>Ο δρόμος σας προς την <br /><span className="text-shimmer">ελληνική ιθαγένεια</span></>
+                <>Ο δρόμος σας προς την <span className="block text-shimmer">ελληνική ιθαγένεια</span></>
               )}
             </h1>
 
@@ -236,7 +235,7 @@ export default function Index() {
         <FloatingOrb className="w-[250px] h-[250px] top-0 right-10" delay="1s" />
         <FloatingOrb className="w-[180px] h-[180px] bottom-0 left-20" delay="3s" />
         <div className="container relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {stats.map((stat, i) => (
               <StatCard key={i} {...stat} delay={`${i * 150}ms`} />
             ))}
@@ -249,7 +248,7 @@ export default function Index() {
         <FloatingOrb className="w-[350px] h-[350px] -top-20 -right-20" delay="0s" />
         <FloatingOrb className="w-[200px] h-[200px] bottom-20 left-10" delay="2s" />
         <div className="container relative">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 px-4">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
               {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
             </h2>
@@ -272,7 +271,7 @@ export default function Index() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/20 to-transparent" />
         <FloatingOrb className="w-[280px] h-[280px] top-1/4 -left-20" delay="1s" />
         <div className="container relative">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 px-4">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
               {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
             </h2>
@@ -302,7 +301,7 @@ export default function Index() {
           <div className="absolute top-1/4 right-1/4 w-24 h-24 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm rotate-12 animate-float" />
           <div className="absolute bottom-1/4 left-1/3 w-16 h-16 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm animate-float-slow" />
           
-          <div className="container relative z-10 text-center">
+          <div className="container relative z-10 text-center px-4">
             <div className="max-w-3xl mx-auto">
               <h2 className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
                 {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
