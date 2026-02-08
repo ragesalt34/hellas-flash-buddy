@@ -270,26 +270,13 @@ export default function Flashcards() {
         </div>
 
         {/* Flashcard */}
-        <div className="relative max-w-2xl mx-auto perspective-1000 px-2">
+        <div className="relative max-w-2xl mx-auto h-80 px-2 flashcard-container">
           <div 
-            className={cn(
-              "relative w-full h-80 cursor-pointer transition-transform duration-500",
-              "transform-style-preserve-3d"
-            )}
+            className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
             onClick={handleFlip}
-            style={{
-              transformStyle: 'preserve-3d',
-              transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            }}
           >
             {/* Front */}
-            <Card 
-              className={cn(
-                "absolute inset-0 w-full h-full flex items-center justify-center p-8",
-                "liquid-glass-card rainbow-border"
-              )}
-              style={{ backfaceVisibility: 'hidden' }}
-            >
+            <Card className="flashcard-face liquid-glass-card rainbow-border flex items-center justify-center p-8">
               <CardContent className="text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.question')}
@@ -319,16 +306,7 @@ export default function Flashcards() {
             </Card>
 
             {/* Back */}
-            <Card 
-              className={cn(
-                "absolute inset-0 w-full h-full flex items-center justify-center p-8",
-                "liquid-glass-card glow-border"
-              )}
-              style={{ 
-                backfaceVisibility: 'hidden',
-                transform: 'rotateY(180deg)'
-              }}
-            >
+            <Card className="flashcard-face flashcard-back liquid-glass-card glow-border flex items-center justify-center p-8">
               <CardContent className="text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.answer')}
