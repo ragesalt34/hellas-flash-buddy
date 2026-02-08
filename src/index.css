@@ -483,52 +483,59 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Flashcard: disable lift on hover (front face) */
-.flashcard-container .flashcard-face.liquid-glass-card:hover {
-  transform: none;
+/* Flashcard: fully disable hover transforms for front and back */
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+  transform: none !important;
 }
 
-/* Flashcard: keep back face rotated even on hover */
-.flashcard-container .flashcard-face.flashcard-back.liquid-glass-card:hover {
-  transform: rotateY(180deg);
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
+  transform: rotateY(180deg) !important;
 }
 
-/* Animated border - crawling gradient around the card */
-@property --border-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
+/* Animated border - sliding gradient around the card (no @property for Safari compatibility) */
 .animated-border {
   position: relative;
+  overflow: visible;
 }
 
 .animated-border::before {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -3px;
   border-radius: inherit;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--border-angle, 0deg),
+  background: linear-gradient(
+    90deg,
     hsl(var(--primary)),
     hsl(var(--accent-foreground)),
     hsl(var(--primary) / 0.3),
     hsl(var(--accent-foreground)),
+    hsl(var(--primary)),
+    hsl(var(--accent-foreground)),
     hsl(var(--primary))
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: border-rotate 4s linear infinite;
+  background-size: 300% 100%;
+  animation: border-slide 3s linear infinite;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 
-@keyframes border-rotate {
-  to {
-    --border-angle: 360deg;
-  }
+.animated-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: hsl(var(--card));
+  z-index: 1;
+}
+
+.animated-border > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes border-slide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
 }
