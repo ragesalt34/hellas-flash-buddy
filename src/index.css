@@ -420,6 +420,7 @@
   height: 100%;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .flashcard-inner.flipped {
@@ -439,7 +440,19 @@
   transform: rotateY(180deg);
 }
 
-/* Disable hover lift effect on flashcards to prevent 3D transform conflicts */
-.flashcard-face.liquid-glass-card:hover {
+/* Flashcard: limit transitions to avoid GPU lag on heavy effects */
+.flashcard-container .flashcard-face.liquid-glass-card {
+  transition-property: border-color, box-shadow;
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Flashcard: disable lift on hover (front face) */
+.flashcard-container .flashcard-face.liquid-glass-card:hover {
   transform: none;
+}
+
+/* Flashcard: keep back face rotated even on hover */
+.flashcard-container .flashcard-face.flashcard-back.liquid-glass-card:hover {
+  transform: rotateY(180deg);
 }
