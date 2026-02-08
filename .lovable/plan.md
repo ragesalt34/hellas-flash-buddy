@@ -1,91 +1,83 @@
 
-# План: Исправление "улетающей" карточки при перевороте
+# План: Исправление лага и вращения карточки при наведении
 
 ## Проблема
-После переворота флэш-карточка смещается вниз страницы вместо того, чтобы оставаться на месте. Это происходит из-за неправильной CSS-структуры для 3D-трансформации.
+При наведении мыши на перевёрнутую карточку она лагает и начинает крутиться. Карточка позиционируется правильно, но анимация ломается при hover.
 
 ---
 
-## Причины проблемы
+## Причина
 
-1. **Отсутствует `perspective`** — класс `perspective-1000` не определён в Tailwind-конфигурации
-2. **Псевдоэлементы мешают 3D** — классы `glow-border` и `rainbow-border` используют `::before`/`::after` с `position: absolute`, что ломает `transform-style: preserve-3d`
-3. **Неправильная структура контейнера** — 3D-контейнер должен иметь фиксированную высоту и правильный `perspective`
+Класс `.liquid-glass-card:hover` содержит:
+```css
+transform: translateY(-4px);
+```
+
+Это конфликтует с 3D-трансформацией `.flashcard-inner`:
+- При hover добавляется `translateY(-4px)` к карточке
+- Это перезаписывает/конфликтует с `rotateY(180deg)` на родителе
+- Результат: карточка дёргается, создаётся эффект непрерывного вращения
 
 ---
 
 ## Решение
 
-### 1. Добавить CSS-классы для 3D-карточки
+### 1. Убрать hover-эффекты с flashcard
 
-В `src/index.css` добавим:
+Добавим модификатор `.flashcard-face`, который отключит hover-трансформации для карточек внутри флэшкард-контейнера:
 
 ```css
-/* Flashcard 3D */
-.flashcard-container {
-  perspective: 1000px;
-}
-
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-}
-
-.flashcard-inner.flipped {
-  transform: rotateY(180deg);
-}
-
-.flashcard-face {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.flashcard-back {
-  transform: rotateY(180deg);
+/* В секции Flashcard 3D */
+.flashcard-face.liquid-glass-card:hover {
+  transform: none;
 }
 ```
 
-### 2. Обновить структуру в Flashcards.tsx
+### 2. Альтернатива: Создать отдельный класс для flashcard-карточек
 
-Заменить текущую реализацию на правильную структуру:
+Вместо использования `liquid-glass-card` на flashcard-face, создадим специальный класс:
 
-```tsx
-{/* Flashcard Container */}
-<div className="relative max-w-2xl mx-auto h-80 px-2 flashcard-container">
-  <div 
-    className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
-    onClick={handleFlip}
-  >
-    {/* Front */}
-    <Card className="flashcard-face liquid-glass-card rainbow-border flex items-center justify-center p-8">
-      {/* ... содержимое ... */}
-    </Card>
+```css
+.flashcard-glass {
+  background: linear-gradient(
+    145deg,
+    hsl(var(--card) / 0.6) 0%,
+    hsl(var(--card) / 0.3) 100%
+  );
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid hsl(var(--primary) / 0.12);
+  box-shadow: 
+    0 4px 24px hsl(var(--primary) / 0.08),
+    inset 0 1px 0 hsl(0 0% 100% / 0.12);
+  /* НЕТ transition на transform! */
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
 
-    {/* Back */}
-    <Card className="flashcard-face flashcard-back liquid-glass-card glow-border flex items-center justify-center p-8">
-      {/* ... содержимое ... */}
-    </Card>
-  </div>
-</div>
+.flashcard-glass:hover {
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 
+    0 8px 40px hsl(var(--primary) / 0.15),
+    0 0 60px hsl(var(--primary) / 0.08),
+    inset 0 1px 0 hsl(0 0% 100% / 0.2);
+  /* БЕЗ transform! */
+}
 ```
 
 ---
 
-## Ключевые изменения
+## Выбранное решение
 
-| Что | Было | Станет |
-|-----|------|--------|
-| Perspective | `perspective-1000` (не работает) | CSS-класс `flashcard-container` |
-| Transform | inline `style` | CSS-класс `flashcard-inner` + `flipped` |
-| Backface | inline `style` | CSS-класс `flashcard-face` |
-| Высота | на внутреннем div | на контейнере |
+Первый вариант — проще и минимально инвазивный:
+
+**В `src/index.css`** добавим правило-исключение:
+```css
+.flashcard-face.liquid-glass-card:hover {
+  transform: none;
+}
+```
+
+Это отключит подъём карточки при hover, сохранив остальные эффекты (border-color, box-shadow).
 
 ---
 
@@ -93,32 +85,13 @@
 
 | Файл | Действие |
 |------|----------|
-| `src/index.css` | Добавить CSS-классы для 3D-карточки |
-| `src/pages/Flashcards.tsx` | Исправить структуру и использовать новые классы |
-
----
-
-## Технические детали
-
-### Почему inline styles ломали карточку
-
-Inline `style={{ transformStyle: 'preserve-3d' }}` конфликтовал с Tailwind-классами. Также `backfaceVisibility` в inline стилях не всегда работает корректно с CSS-анимациями.
-
-### Почему псевдоэлементы влияли
-
-Классы `glow-border::after` и `rainbow-border::before` имеют `position: absolute` и `inset: -2px`, что создавало дополнительные слои внутри 3D-контекста и могло влиять на расчёт трансформации.
-
-### Решение с отдельными CSS-классами
-
-Выделение всей 3D-логики в отдельные классы:
-- Изолирует 3D-трансформацию от других эффектов
-- Обеспечивает правильный порядок применения стилей
-- Работает стабильно во всех браузерах
+| `src/index.css` | Добавить CSS-правило для отключения hover-transform на flashcard |
 
 ---
 
 ## Результат
 
-- Карточка будет переворачиваться на месте без смещения
-- Плавная анимация с cubic-bezier
-- Все эффекты (glow-border, rainbow-border) сохранятся
+- Карточка переворачивается плавно без лагов
+- При наведении мыши карточка не дёргается
+- Сохраняются все визуальные эффекты (свечение, border)
+- Только hover-transform отключён для flashcard
