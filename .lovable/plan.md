@@ -1,89 +1,173 @@
 
-## Что происходит сейчас (почему «всё равно крутится»)
+# План: Исправление вёрстки главной страницы
 
-Сейчас у `.liquid-glass-card:hover` есть `transform: translateY(-4px)`.  
-На флэшкарте это конфликтует с 3D-переворотом, потому что:
+## Выявленные проблемы
 
-- у **задней стороны** (`.flashcard-back`) постоянно должен быть `transform: rotateY(180deg)`;
-- но при наведении срабатывает `.liquid-glass-card:hover { transform: translateY(-4px) }` (по специфичности сильнее, чем `.flashcard-back`), и **задняя сторона теряет rotateY**;
-- из‑за этого при малейшем движении мыши (hover on/off, попадание на разные элементы внутри карточки) трансформ «прыгает» между состояниями — визуально выглядит как «крутится/дергается» и может сильно лагать.
+На основе анализа кода и скриншотов страницы выявлены следующие проблемы:
 
-Важно: наше текущее правило
-```css
-.flashcard-face.liquid-glass-card:hover { transform: none; }
-```
-тоже ухудшает ситуацию, потому что оно **сбрасывает transform и для задней стороны**, а ей `rotateY(180deg)` нужен всегда.
-
----
-
-## Как исправим (минимально и правильно)
-
-### 1) Исправим hover-override так, чтобы:
-- **передняя сторона** при hover не получала translateY;
-- **задняя сторона** при hover сохраняла `rotateY(180deg)` (то есть мы «перепишем» hover только для неё).
-
-План правок в `src/index.css` (внизу, рядом с Flashcard 3D):
-
-1. Удалить текущее правило:
-```css
-.flashcard-face.liquid-glass-card:hover {
-  transform: none;
-}
-```
-
-2. Добавить два правила (в таком порядке):
-
-```css
-/* Flashcard: disable lift on hover (front face) */
-.flashcard-container .flashcard-face.liquid-glass-card:hover {
-  transform: none;
-}
-
-/* Flashcard: keep back face rotated even on hover */
-.flashcard-container .flashcard-face.flashcard-back.liquid-glass-card:hover {
-  transform: rotateY(180deg);
-}
-```
-
-Это устранит «кручение», потому что hover больше не будет ломать 3D-схему.
+| Секция | Проблема |
+|--------|----------|
+| Hero (главный экран) | Заголовок с `<br />` ломает центрирование на мобильных |
+| Stats | Карточки не выровнены по центру на мобильных устройствах |
+| Topics | Заголовок секции не по центру на некоторых экранах |
+| Learning Modes | Иконки и текст смещены влево |
+| CTA | Кнопка регистрации не центрирована |
+| Footer | Текст не центрирован |
 
 ---
 
-### 2) Снимем часть лагов при наведении (опционально, но рекомендую)
-У `.liquid-glass-card` стоит `transition: all ...` — на тяжелых эффектах (blur/shadow) это может давать микрофризы.
+## Решения
 
-В пределах флэшкарты переопределим transition, чтобы не трогать transform и лишние свойства:
+### 1. Hero секция (строки 173-180)
 
-```css
-.flashcard-container .flashcard-face.liquid-glass-card {
-  transition-property: border-color, box-shadow;
-  transition-duration: 0.4s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
+**Проблема:** Тег `<br />` в заголовке создаёт жёсткий перенос, который ломает центрирование на узких экранах.
+
+**Решение:** Убрать `<br />` и использовать `<span className="block">` для контролируемого переноса:
+
+```tsx
+<h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
+  {language === 'ru' ? (
+    <>
+      Ваш путь к{' '}
+      <span className="block text-shimmer">греческому гражданству</span>
+    </>
+  ) : (
+    <>
+      Ο δρόμος σας προς την{' '}
+      <span className="block text-shimmer">ελληνική ιθαγένεια</span>
+    </>
+  )}
+</h1>
+```
+
+### 2. Features grid (строки 214-221)
+
+**Проблема:** На мобильных устройствах 2 колонки могут выглядеть криво из-за разной длины текста.
+
+**Решение:** Добавить `items-stretch` и `text-center` для лучшего выравнивания:
+
+```tsx
+<div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in-up animate-delay-400">
+  {features.map((feature, i) => (
+    <div key={i} className="flex items-center justify-center gap-2 text-sm text-muted-foreground liquid-glass-button rounded-full py-2 px-4 text-center">
+```
+
+### 3. Stats секция (строки 238-244)
+
+**Проблема:** Контейнер не имеет явного центрирования.
+
+**Решение:** Добавить `max-w-4xl mx-auto` для ограничения ширины и центрирования:
+
+```tsx
+<div className="container relative">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    {stats.map((stat, i) => (
+      <StatCard key={i} {...stat} delay={`${i * 150}ms`} />
+    ))}
+  </div>
+</div>
+```
+
+### 4. StatCard компонент (строки 22-38)
+
+**Проблема:** Иконка центрирована через `mx-auto`, но весь контейнер должен быть гарантированно центрирован.
+
+**Решение:** Убедиться что `text-center` работает и добавить `flex flex-col items-center`:
+
+```tsx
+const StatCard = ({ icon: Icon, number, label, delay }: { ... }) => (
+  <div 
+    className="liquid-glass-card rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
+    style={{ animationDelay: delay }}
+  >
+    <div className="w-14 h-14 rounded-xl liquid-glass-button flex items-center justify-center mb-4">
+      <Icon className="h-7 w-7 text-primary" />
+    </div>
+    <div className="font-display text-3xl font-bold text-foreground mb-1">{number}</div>
+    <div className="text-sm text-muted-foreground">{label}</div>
+  </div>
+);
+```
+
+### 5. TopicCard компонент (строки 56-72)
+
+**Проблема:** Карточка использует `p-6` но не центрирует содержимое.
+
+**Решение:** Добавить `text-left` явно для согласованности (так как это карточки с иконками слева):
+
+```tsx
+<div 
+  className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
+    p-6 text-left opacity-0 animate-fade-in-up cursor-pointer`}
+```
+
+### 6. ModeCard компонент (строки 76-93)
+
+**Проблема:** Аналогично TopicCard.
+
+**Решение:** Явно добавить `text-left`:
+
+```tsx
+<div 
+  className={`group liquid-glass-card rounded-2xl p-6 text-left
+    opacity-0 animate-fade-in-up cursor-pointer`}
+```
+
+### 7. Topics секция заголовок (строки 252-261)
+
+**Проблема:** Заголовок по центру, но может быть смещён на мобильных.
+
+**Решение:** Добавить `px-4` для мобильных отступов:
+
+```tsx
+<div className="text-center mb-16 px-4">
+  <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
+```
+
+### 8. Learning Modes секция заголовок (строки 275-283)
+
+**Проблема:** Аналогично Topics.
+
+**Решение:** Добавить `px-4`:
+
+```tsx
+<div className="text-center mb-16 px-4">
+```
+
+### 9. CTA секция (строки 305-321)
+
+**Проблема:** Кнопка может выглядеть не центрированной.
+
+**Решение:** Контейнер уже имеет `text-center`, но добавим `px-4` для мобильных:
+
+```tsx
+<div className="container relative z-10 text-center px-4">
 ```
 
 ---
 
-### 3) Подсказка браузеру для плавности переворота
-Добавим в `.flashcard-inner`:
+## Файлы для изменения
 
-```css
-.flashcard-inner {
-  will-change: transform;
-}
-```
-
-(Это не меняет поведение, но часто делает анимацию стабильнее.)
+| Файл | Что меняем |
+|------|------------|
+| `src/pages/Index.tsx` | Исправления выравнивания в Hero, Stats, Topics, Learning Modes, CTA секциях |
 
 ---
 
-## Какие файлы будут изменены
-- `src/index.css` — точечные правки hover/transition для флэшкарты.
+## Итоговые изменения
+
+1. **Hero заголовок:** `<br />` → `<span className="block">`
+2. **Features grid:** добавить `text-center` к каждому элементу
+3. **Stats grid:** добавить `max-w-4xl mx-auto`
+4. **StatCard:** `text-center` → `flex flex-col items-center text-center`
+5. **TopicCard/ModeCard:** добавить явный `text-left`
+6. **Секции Topics/Learning Modes/CTA:** добавить `px-4` к заголовкам
 
 ---
 
-## Как проверим результат
-1. Открыть `/learn/history/flashcards`
-2. Перевернуть карточку кликом.
-3. Поводить мышкой по карточке (включая области с текстом и вокруг кнопок озвучки).
-4. Ожидаемо: карточка больше не «крутится» и не дергается, переворот остается плавным; hover по-прежнему меняет border/shadow, но не двигает карточку и не ломает 3D.
+## Результат
+
+- Все заголовки будут строго по центру на всех экранах
+- Карточки статистики будут центрированы
+- Текст в карточках тем и режимов будет выровнен слева (как задумано)
+- Мобильная версия будет выглядеть аккуратнее с правильными отступами
