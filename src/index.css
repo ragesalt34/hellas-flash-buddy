@@ -259,7 +259,7 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .liquid-glass-card:hover {
+  .liquid-glass-card:hover:not(.flashcard-face) {
     border-color: hsl(var(--primary) / 0.25);
     box-shadow: 
       0 8px 40px hsl(var(--primary) / 0.15),
@@ -483,14 +483,18 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Flashcard: fully disable hover transforms for front and back */
+/* Flashcard: fully disable hover transforms for front and back - ultra specific */
 .flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card,
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border,
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover,
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border:hover {
   transform: none !important;
 }
 
 .flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card,
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border:hover {
   transform: rotateY(180deg) !important;
 }
 
