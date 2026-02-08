@@ -438,3 +438,8 @@
 .flashcard-back {
   transform: rotateY(180deg);
 }
+
+/* Disable hover lift effect on flashcards to prevent 3D transform conflicts */
+.flashcard-face.liquid-glass-card:hover {
+  transform: none;
+}
