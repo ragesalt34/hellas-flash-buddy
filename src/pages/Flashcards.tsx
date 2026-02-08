@@ -186,10 +186,7 @@ export default function Flashcards() {
     
     return (
       <Layout>
-        <div className="relative container py-12 overflow-hidden">
-          {/* Floating elements */}
-          <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full floating-orb-glass" />
-          <div className="absolute -bottom-20 -left-20 w-[200px] h-[200px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+        <div className="relative container py-12">
 
           <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border">
             <CardContent className="py-12 text-center space-y-6">
@@ -244,10 +241,7 @@ export default function Flashcards() {
 
   return (
     <Layout>
-      <div className="relative container py-4 sm:py-8 px-4 overflow-hidden">
-        {/* Floating elements */}
-        <div className="absolute -top-20 -right-20 w-[250px] h-[250px] rounded-full floating-orb-glass" />
-        <div className="absolute bottom-20 -left-20 w-[150px] h-[150px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+      <div className="relative container py-4 sm:py-8 px-4">
 
         {/* Header */}
         <div className="relative mb-6 sm:mb-8">
