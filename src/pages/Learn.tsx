@@ -121,12 +121,12 @@ export default function Learn() {
               className="group bg-card/60 backdrop-blur-md border border-border/50 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardHeader className="pb-3 sm:pb-4">
+              <CardHeader className="pb-2 pt-6">
                 <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.iconClass} transition-all duration-300`}>
                   <topic.icon className="h-6 sm:h-7 w-6 sm:w-7 transition-colors duration-300" />
                 </div>
-                <CardTitle className="font-display text-lg sm:text-xl mt-3 sm:mt-4">{topic.title}</CardTitle>
-                <CardDescription className="text-sm">{topic.description}</CardDescription>
+                <CardTitle className="font-display text-lg sm:text-xl mt-4">{topic.title}</CardTitle>
+                <CardDescription className="text-sm mt-1">{topic.description}</CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="grid grid-cols-2 gap-2">
