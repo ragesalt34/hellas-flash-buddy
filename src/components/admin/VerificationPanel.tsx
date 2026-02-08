@@ -26,6 +26,8 @@ interface VerificationPanelProps {
   onToggleFilter: () => void;
   onVerify: () => void;
   isVerifying: boolean;
+  onFixAll?: () => void;
+  isFixing?: boolean;
 }
 
 const CircularProgress = ({ percent }: { percent: number }) => {
@@ -86,8 +88,10 @@ const CircularProgress = ({ percent }: { percent: number }) => {
       
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold tabular-nums">{animatedPercent}</span>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">%</span>
+        <div className="flex items-baseline">
+          <span className="text-2xl font-bold tabular-nums">{animatedPercent}</span>
+          <span className="text-sm font-medium text-muted-foreground ml-0.5">%</span>
+        </div>
       </div>
     </div>
   );
@@ -101,6 +105,8 @@ export function VerificationPanel({
   onToggleFilter,
   onVerify,
   isVerifying,
+  onFixAll,
+  isFixing = false,
 }: VerificationPanelProps) {
   const percent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
   const isAllCorrect = incorrectCount === 0;
@@ -158,19 +164,38 @@ export function VerificationPanel({
         </div>
         
         {/* Actions */}
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex flex-wrap gap-2 flex-shrink-0">
+          {/* Fix All Button */}
+          {incorrectCount > 0 && onFixAll && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  size="sm"
+                  onClick={onFixAll}
+                  disabled={isFixing}
+                  className="gap-2 bg-primary hover:bg-primary/90"
+                >
+                  {isFixing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  {isFixing ? 'Исправление...' : 'Исправить'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Автоматически исправить все ошибки с помощью AI</TooltipContent>
+            </Tooltip>
+          )}
+
+          {/* Filter Button */}
           {incorrectCount > 0 && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant={showOnlyErrors ? "default" : "outline"}
+                  variant={showOnlyErrors ? "secondary" : "outline"}
                   size="sm"
                   onClick={onToggleFilter}
-                  className={`gap-2 transition-all ${
-                    showOnlyErrors 
-                      ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
-                      : 'hover:border-yellow-500/50 hover:text-yellow-600'
-                  }`}
+                  className="gap-2"
                 >
                   {showOnlyErrors ? (
                     <>
@@ -186,11 +211,12 @@ export function VerificationPanel({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {showOnlyErrors ? 'Показать все вопросы' : 'Показать только ошибки для исправления'}
+                {showOnlyErrors ? 'Показать все вопросы' : 'Показать только ошибки'}
               </TooltipContent>
             </Tooltip>
           )}
           
+          {/* Verify Button */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 

@@ -18,13 +18,19 @@ interface VerificationResult {
   comment: string;
 }
 
+interface Fix {
+  questionId: string;
+  correct_answer: string;
+  explanation: string;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { questions } = await req.json() as { questions: Question[] };
+    const { questions, mode = 'verify' } = await req.json() as { questions: Question[], mode?: 'verify' | 'fix' };
 
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
       return new Response(
@@ -38,9 +44,80 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // FIX MODE: Correct the answers
+    if (mode === 'fix') {
+      const fixes: Fix[] = [];
+      
+      const batchSize = 5;
+      for (let i = 0; i < questions.length; i += batchSize) {
+        const batch = questions.slice(i, i + batchSize);
+        
+        const prompt = `Ты — эксперт по истории, культуре, законам и географии Греции. Для каждого вопроса укажи ПРАВИЛЬНЫЙ ответ.
+
+Для каждого вопроса верни JSON объект с полями:
+- questionId: ID вопроса  
+- correct_answer: правильный ответ (если текущий правильный — верни его же, если неправильный — исправь)
+- explanation: краткое объяснение почему этот ответ правильный (1-2 предложения)
+
+Вопросы для исправления:
+${batch.map((q, idx) => `
+Вопрос ${idx + 1} (ID: ${q.id}):
+"${q.question}"
+Текущий ответ: "${q.correct_answer}"
+Другие варианты: ${q.wrong_answers.map(a => `"${a}"`).join(", ")}
+`).join("\n")}
+
+Ответь ТОЛЬКО валидным JSON массивом без markdown разметки:
+[{"questionId": "...", "correct_answer": "...", "explanation": "..."}, ...]`;
+
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-flash-preview",
+            messages: [
+              { role: "system", content: "Ты эксперт по Греции. Отвечай только валидным JSON без markdown." },
+              { role: "user", content: prompt }
+            ],
+            temperature: 0.1,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("AI gateway error:", response.status, errorText);
+          throw new Error("AI gateway error");
+        }
+
+        const aiResponse = await response.json();
+        const content = aiResponse.choices?.[0]?.message?.content || "";
+        
+        try {
+          let cleanContent = content.trim();
+          if (cleanContent.startsWith("```json")) cleanContent = cleanContent.slice(7);
+          if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3);
+          if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3);
+          cleanContent = cleanContent.trim();
+
+          const batchFixes = JSON.parse(cleanContent) as Fix[];
+          fixes.push(...batchFixes);
+        } catch (parseError) {
+          console.error("Failed to parse fix response:", content);
+        }
+      }
+
+      return new Response(
+        JSON.stringify({ fixes }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // VERIFY MODE: Check answers (default)
     const results: VerificationResult[] = [];
 
-    // Process questions in batches of 5 for efficiency
     const batchSize = 5;
     for (let i = 0; i < questions.length; i += batchSize) {
       const batch = questions.slice(i, i + batchSize);
@@ -100,26 +177,17 @@ ${batch.map((q, idx) => `
       const aiResponse = await response.json();
       const content = aiResponse.choices?.[0]?.message?.content || "";
       
-      // Parse the AI response
       try {
-        // Clean up potential markdown formatting
         let cleanContent = content.trim();
-        if (cleanContent.startsWith("```json")) {
-          cleanContent = cleanContent.slice(7);
-        }
-        if (cleanContent.startsWith("```")) {
-          cleanContent = cleanContent.slice(3);
-        }
-        if (cleanContent.endsWith("```")) {
-          cleanContent = cleanContent.slice(0, -3);
-        }
+        if (cleanContent.startsWith("```json")) cleanContent = cleanContent.slice(7);
+        if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3);
+        if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3);
         cleanContent = cleanContent.trim();
 
         const batchResults = JSON.parse(cleanContent) as VerificationResult[];
         results.push(...batchResults);
       } catch (parseError) {
         console.error("Failed to parse AI response:", content);
-        // Return fallback results for this batch
         batch.forEach(q => {
           results.push({
             questionId: q.id,

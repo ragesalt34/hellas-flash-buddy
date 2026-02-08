@@ -25,6 +25,7 @@ export function QuestionsManager() {
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<QuestionTopic>('history');
   const [verificationResults, setVerificationResults] = useState<VerificationResult[]>([]);
+  const [isFixing, setIsFixing] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: questions, isLoading } = useQuery({
@@ -112,6 +113,72 @@ export function QuestionsManager() {
     }
   };
 
+  const handleFixAll = async () => {
+    if (!questions) return;
+    
+    // Get questions with errors
+    const incorrectQuestionIds = verificationResults
+      .filter(r => !r.isCorrect)
+      .map(r => r.questionId);
+    
+    const questionsToFix = questions.filter(q => incorrectQuestionIds.includes(q.id));
+    
+    if (questionsToFix.length === 0) {
+      toast.info('Нет вопросов для исправления');
+      return;
+    }
+
+    setIsFixing(true);
+    
+    try {
+      // Call AI to fix each question
+      const { data, error } = await supabase.functions.invoke('verify-answers', {
+        body: { 
+          questions: questionsToFix.map(q => ({
+            id: q.id,
+            question: q.question,
+            correct_answer: q.correct_answer,
+            wrong_answers: q.wrong_answers
+          })),
+          mode: 'fix' // Tell the function to fix, not just verify
+        }
+      });
+
+      if (error) throw error;
+
+      // Update each question in the database
+      const fixes = data.fixes as Array<{
+        questionId: string;
+        correct_answer: string;
+        explanation?: string;
+      }>;
+
+      let fixedCount = 0;
+      for (const fix of fixes) {
+        const { error: updateError } = await supabase
+          .from('questions')
+          .update({ 
+            correct_answer: fix.correct_answer,
+            explanation: fix.explanation 
+          })
+          .eq('id', fix.questionId);
+        
+        if (!updateError) fixedCount++;
+      }
+
+      // Refresh questions and clear verification
+      queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
+      setVerificationResults([]);
+      
+      toast.success(`Исправлено ${fixedCount} вопросов`);
+    } catch (error) {
+      console.error('Fix error:', error);
+      toast.error('Ошибка при исправлении вопросов');
+    } finally {
+      setIsFixing(false);
+    }
+  };
+
   const topicLabels: Record<QuestionTopic, string> = {
     history: 'История',
     culture: 'Культура',
@@ -186,6 +253,8 @@ export function QuestionsManager() {
           verificationResults={verificationResults}
           isVerifying={verifyMutation.isPending}
           onVerify={handleVerify}
+          onFixAll={handleFixAll}
+          isFixing={isFixing}
         />
       )}
     </div>
