@@ -1,95 +1,79 @@
 
-# План: Исправить анимированную рамку и "улетающую" карточку
+# План: Окончательное исправление "падающей" карточки
 
-## Проблема 1: Анимация рамки не видна
+## Найденная проблема
 
-**Причина**: 
-- `z-index: -1` на псевдо-элементе `::before` прячет рамку за фоном карточки
-- `@property` для CSS-переменных не поддерживается в Safari и старых браузерах
+Проблема НЕ в специфичности CSS. Проблема в том, что:
 
-**Решение**: 
-- Убрать `z-index: -1`
-- Использовать альтернативный подход — анимация через `background-position` вместо `@property`
+1. **`.liquid-glass-card:hover`** (строка 262-268) устанавливает `transform: translateY(-4px)`
+2. Мой override с `!important` должен работать, но **он применяется только к элементу `.flashcard-face`**
+3. Однако при hover браузер всё равно применяет базовый `.liquid-glass-card:hover` потому что `!important` у меня стоит только на state без hover и на hover - но эти правила конфликтуют
 
-## Проблема 2: Карточка улетает вниз при ответе
+## Корневая причина
 
-**Причина**: 
-- `liquid-glass-card:hover` содержит `transform: translateY(-4px)` 
-- Override для `.flashcard-face.liquid-glass-card:hover` ставит `transform: none`
-- Это конфликтует с `transform: rotateY(180deg)` для back face
-
-**Решение**: 
-- Использовать более специфичный селектор для flashcard, который полностью отключает transform на hover для обеих сторон
-
-## Технические изменения
-
-### `src/index.css`
-
-**1. Переписать `.animated-border` без `@property`:**
-
+CSS правило в строках 262-268:
 ```css
-.animated-border {
-  position: relative;
-  overflow: visible;
-}
-
-.animated-border::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    hsl(var(--primary)),
-    hsl(var(--accent-foreground)),
-    hsl(var(--primary) / 0.3),
-    hsl(var(--accent-foreground)),
-    hsl(var(--primary)),
-    hsl(var(--accent-foreground)),
-    hsl(var(--primary))
-  );
-  background-size: 300% 100%;
-  animation: border-slide 3s linear infinite;
-  pointer-events: none;
-}
-
-.animated-border::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: inherit;
-  pointer-events: none;
-}
-
-@keyframes border-slide {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+.liquid-glass-card:hover {
+  ...
+  transform: translateY(-4px);
 }
 ```
 
-**2. Исправить flashcard hover override:**
+Это правило применяется ко ВСЕМ `.liquid-glass-card` элементам при hover, включая flashcards.
+
+Мой override:
+```css
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
+  transform: none !important;
+}
+```
+
+Проблема: Этот селектор **должен** работать, но возможно браузер неправильно интерпретирует из-за **множественных классов** на элементе (`flashcard-face liquid-glass-card animated-border`).
+
+## Решение
+
+Самое надёжное решение - **убрать `transform` из базового `.liquid-glass-card:hover`** и добавить его только там где нужно, ИЛИ использовать ещё более специфичный селектор.
+
+Я выберу второй подход - добавить `.animated-border` в селектор для полной специфичности:
+
+### Изменения в `src/index.css`
+
+Заменить строки 486-495 на:
 
 ```css
-/* Полностью отключить hover transforms для flashcard */
-.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card,
+/* Flashcard: fully disable hover transforms for front and back - ultra specific */
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border,
+.flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card.animated-border:hover,
 .flashcard-container .flashcard-inner .flashcard-face.liquid-glass-card:hover {
   transform: none !important;
 }
 
-.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border,
+.flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card.animated-border:hover,
 .flashcard-container .flashcard-inner .flashcard-face.flashcard-back.liquid-glass-card:hover {
   transform: rotateY(180deg) !important;
 }
 ```
 
-## Результат
+**Также** изменю сам `.liquid-glass-card:hover` чтобы исключить flashcard-face (альтернативный подход):
 
-| Проблема | Решение |
-|----------|---------|
-| Анимация не видна | Рамка будет "ползти" с помощью background-position |
-| Карточка улетает вниз | Hover transform отключен для flashcard через !important |
+```css
+.liquid-glass-card:hover:not(.flashcard-face) {
+  ...
+  transform: translateY(-4px);
+}
+```
+
+Это гарантирует что `translateY(-4px)` НИКОГДА не применится к flashcard.
 
 ## Файлы для изменения
 
-- `src/index.css` — переписать animated-border и усилить flashcard override
+| Файл | Изменение |
+|------|-----------|
+| `src/index.css` | Изменить `.liquid-glass-card:hover` добавив `:not(.flashcard-face)`, и обновить flashcard overrides с более специфичными селекторами |
+
+## Результат
+
+- Карточка НЕ будет падать/подниматься при hover
+- Анимированная рамка продолжит работать
+- Переворот карточки будет работать корректно
