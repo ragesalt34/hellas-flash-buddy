@@ -33,6 +33,8 @@ interface QuestionsListProps {
   verificationResults?: VerificationResult[];
   isVerifying?: boolean;
   onVerify?: () => void;
+  onFixAll?: () => void;
+  isFixing?: boolean;
 }
 
 export function QuestionsList({ 
@@ -42,7 +44,9 @@ export function QuestionsList({
   topicLabel,
   verificationResults = [],
   isVerifying = false,
-  onVerify
+  onVerify,
+  onFixAll,
+  isFixing = false
 }: QuestionsListProps) {
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   
@@ -89,6 +93,8 @@ export function QuestionsList({
           onToggleFilter={() => setShowOnlyErrors(!showOnlyErrors)}
           onVerify={onVerify}
           isVerifying={isVerifying}
+          onFixAll={onFixAll}
+          isFixing={isFixing}
         />
       ) : onVerify ? (
         <div className="liquid-glass-card rounded-xl p-4 flex items-center justify-between">
