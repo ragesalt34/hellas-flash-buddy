@@ -154,7 +154,7 @@ export default function Quiz() {
     return (
       <Layout>
         <div className="container py-12">
-          <Card className="max-w-2xl mx-auto text-center">
+          <Card className="max-w-2xl mx-auto text-center liquid-glass-card">
             <CardContent className="py-12">
               <h2 className="text-2xl font-display font-bold mb-4">
                 {t('quiz.noQuestions')}
@@ -163,7 +163,7 @@ export default function Quiz() {
                 {t('quiz.noQuestions.desc')}
               </p>
               <Link to="/learn">
-                <Button>
+                <Button className="liquid-glass-button">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   {t('quiz.backToTopics')}
                 </Button>
@@ -180,8 +180,12 @@ export default function Quiz() {
     
     return (
       <Layout>
-        <div className="container py-12">
-          <Card className="max-w-2xl mx-auto">
+        <div className="relative container py-12 overflow-hidden">
+          {/* Floating elements */}
+          <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full floating-orb-glass" />
+          <div className="absolute -bottom-20 -left-20 w-[200px] h-[200px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
+          <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border">
             <CardHeader className="text-center">
               <CardTitle className="font-display text-3xl">
                 {t('quiz.finished')}
@@ -189,10 +193,10 @@ export default function Quiz() {
             </CardHeader>
             <CardContent className="text-center space-y-6">
               <div className={cn(
-                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold",
-                percentage >= 70 ? "bg-green-100 text-green-600" : 
-                percentage >= 50 ? "bg-yellow-100 text-yellow-600" : 
-                "bg-red-100 text-red-600"
+                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold shadow-2xl",
+                percentage >= 70 ? "bg-success/20 text-success shadow-success/20" : 
+                percentage >= 50 ? "bg-accent/20 text-accent shadow-accent/20" : 
+                "bg-destructive/20 text-destructive shadow-destructive/20"
               )}>
                 {percentage}%
               </div>
@@ -209,12 +213,12 @@ export default function Quiz() {
               </div>
 
               <div className="flex gap-4 justify-center pt-4">
-                <Button variant="outline" onClick={handleRestart}>
+                <Button variant="outline" onClick={handleRestart} className="liquid-glass-button">
                   <RotateCcw className="h-4 w-4 mr-2" />
                   {t('quiz.tryAgain')}
                 </Button>
                 <Link to="/learn">
-                  <Button>
+                  <Button className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
                     <Home className="h-4 w-4 mr-2" />
                     {t('quiz.toTopics')}
                   </Button>
@@ -231,10 +235,14 @@ export default function Quiz() {
 
   return (
     <Layout>
-      <div className="container py-4 sm:py-8 px-4">
+      <div className="relative container py-4 sm:py-8 px-4 overflow-hidden">
+        {/* Floating elements */}
+        <div className="absolute -top-20 -right-20 w-[250px] h-[250px] rounded-full floating-orb-glass" />
+        <div className="absolute bottom-20 -left-20 w-[150px] h-[150px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm">
+        <div className="relative mb-6 sm:mb-8">
+          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm transition-colors">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('quiz.backToTopics')}
           </Link>
@@ -248,7 +256,7 @@ export default function Quiz() {
         </div>
 
         {/* Question Card */}
-        <Card className="max-w-3xl mx-auto">
+        <Card className="relative max-w-3xl mx-auto liquid-glass-card">
           <CardHeader className="px-4 sm:px-6">
             <div className="flex items-start justify-between gap-2">
               <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">
@@ -258,7 +266,7 @@ export default function Quiz() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="shrink-0"
+                  className="shrink-0 liquid-glass-button"
                   onClick={() => isSpeaking ? stop() : speak(currentQuestion.question)}
                 >
                   {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -279,21 +287,21 @@ export default function Quiz() {
                     onClick={() => handleAnswer(answer)}
                     disabled={isAnswered}
                     className={cn(
-                      "w-full p-3 sm:p-4 text-left rounded-lg border-2 transition-all text-sm sm:text-base",
-                      "hover:border-primary/50 hover:bg-accent/50",
+                      "w-full p-3 sm:p-4 text-left rounded-xl border-2 transition-all text-sm sm:text-base",
+                      "hover:border-primary/50 liquid-glass-button",
                       !isAnswered && "cursor-pointer",
-                      isAnswered && isCorrect && "border-green-500 bg-green-50",
-                      isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-50",
-                      !isAnswered && isSelected && "border-primary bg-primary/5"
+                      isAnswered && isCorrect && "border-success bg-success/10 shadow-lg shadow-success/20",
+                      isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 shadow-lg shadow-destructive/20",
+                      !isAnswered && isSelected && "border-primary bg-primary/10"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="flex-1">{answer}</span>
                       {isAnswered && isCorrect && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
                       )}
                       {isAnswered && isSelected && !isCorrect && (
-                        <XCircle className="h-5 w-5 text-red-500 shrink-0" />
+                        <XCircle className="h-5 w-5 text-destructive shrink-0" />
                       )}
                     </div>
                   </button>
@@ -303,7 +311,7 @@ export default function Quiz() {
 
             {/* Explanation */}
             {isAnswered && currentQuestion.explanation && (
-              <div className="p-4 bg-muted rounded-lg mt-4">
+              <div className="p-4 liquid-glass rounded-xl mt-4">
                 <p className="text-sm text-muted-foreground">
                   <strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}
                 </p>
@@ -313,7 +321,7 @@ export default function Quiz() {
             {/* Next Button */}
             {isAnswered && (
               <div className="flex justify-end pt-4">
-                <Button onClick={handleNext} size="lg">
+                <Button onClick={handleNext} size="lg" className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
                   {currentIndex < questions.length - 1 ? (
                     <>
                       {t('quiz.nextQuestion')}
@@ -332,7 +340,7 @@ export default function Quiz() {
         </Card>
 
         {/* Score indicator */}
-        <div className="text-center mt-6 text-muted-foreground">
+        <div className="text-center mt-6 text-muted-foreground liquid-glass-button inline-block mx-auto px-4 py-2 rounded-full">
           {t('quiz.correctAnswers')} {score}
         </div>
       </div>

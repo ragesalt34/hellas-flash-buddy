@@ -169,6 +169,165 @@
     border: 1px solid hsl(var(--border) / 0.5);
   }
 
+  /* Liquid Glass Effect */
+  .liquid-glass {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card) / 0.4) 0%,
+      hsl(var(--card) / 0.2) 50%,
+      hsl(var(--card) / 0.4) 100%
+    );
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(var(--primary) / 0.15);
+    box-shadow: 
+      0 8px 32px hsl(var(--primary) / 0.1),
+      0 4px 16px hsl(var(--primary) / 0.05),
+      inset 0 1px 0 hsl(0 0% 100% / 0.15),
+      inset 0 -1px 0 hsl(var(--primary) / 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .liquid-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.05),
+      hsl(0 0% 100% / 0.1),
+      hsl(var(--primary) / 0.05),
+      transparent
+    );
+    animation: liquid-shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .liquid-glass-card {
+    background: linear-gradient(
+      145deg,
+      hsl(var(--card) / 0.6) 0%,
+      hsl(var(--card) / 0.3) 100%
+    );
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid hsl(var(--primary) / 0.12);
+    box-shadow: 
+      0 4px 24px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(0 0% 100% / 0.12);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-glass-card:hover {
+    border-color: hsl(var(--primary) / 0.25);
+    box-shadow: 
+      0 8px 40px hsl(var(--primary) / 0.15),
+      0 0 60px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(0 0% 100% / 0.2);
+    transform: translateY(-4px);
+  }
+
+  .liquid-glass-button {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.15) 0%,
+      hsl(var(--primary) / 0.08) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--primary) / 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .liquid-glass-button:hover {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.25) 0%,
+      hsl(var(--primary) / 0.15) 100%
+    );
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.2);
+  }
+
+  .glow-border {
+    position: relative;
+  }
+
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.6),
+      hsl(var(--accent) / 0.4),
+      hsl(var(--primary) / 0.6)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: glow-pulse 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .rainbow-border {
+    position: relative;
+  }
+
+  .rainbow-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    background-size: 200% 100%;
+    animation: rainbow-shift 3s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .floating-orb-glass {
+    background: radial-gradient(
+      circle at 30% 30%,
+      hsl(var(--primary) / 0.4) 0%,
+      hsl(var(--primary) / 0.1) 50%,
+      transparent 70%
+    );
+    filter: blur(40px);
+    animation: float-orb 8s ease-in-out infinite;
+  }
+
+  .text-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: text-shimmer 3s linear infinite;
+  }
+
   .glass-strong {
     background: hsl(var(--card) / 0.85);
     backdrop-filter: blur(20px);

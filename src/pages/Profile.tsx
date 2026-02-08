@@ -123,8 +123,12 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="container py-12">
-        <div className="mb-8">
+      <div className="relative container py-12 overflow-hidden">
+        {/* Floating decorative elements */}
+        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
+        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
+        <div className="relative mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">
             {language === 'ru' ? 'Профиль' : 'Προφίλ'}
           </h1>
@@ -134,11 +138,13 @@ export default function Profile() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-6 md:grid-cols-4 mb-12">
-          <Card className="animate-fade-in">
+        <div className="relative grid gap-6 md:grid-cols-4 mb-12">
+          <Card className="liquid-glass-card animate-fade-in">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Target className="h-4 w-4" />
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <Target className="h-4 w-4 text-primary" />
+                </div>
                 <span className="text-sm">{language === 'ru' ? 'Изучено вопросов' : 'Ερωτήσεις που μάθατε'}</span>
               </div>
             </CardHeader>
@@ -147,10 +153,12 @@ export default function Profile() {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <TrendingUp className="h-4 w-4" />
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                </div>
                 <span className="text-sm">{language === 'ru' ? 'Точность ответов' : 'Ακρίβεια απαντήσεων'}</span>
               </div>
             </CardHeader>
@@ -159,10 +167,12 @@ export default function Profile() {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4" />
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <Clock className="h-4 w-4 text-primary" />
+                </div>
                 <span className="text-sm">{language === 'ru' ? 'Пройдено экзаменов' : 'Εξετάσεις που ολοκληρώθηκαν'}</span>
               </div>
             </CardHeader>
@@ -171,10 +181,12 @@ export default function Profile() {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Trophy className="h-4 w-4" />
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <Trophy className="h-4 w-4 text-accent" />
+                </div>
                 <span className="text-sm">{language === 'ru' ? 'Лучший результат' : 'Καλύτερο αποτέλεσμα'}</span>
               </div>
             </CardHeader>
@@ -191,10 +203,12 @@ export default function Profile() {
 
         {/* Progress Chart */}
         {chartData.length > 1 && (
-          <Card className="mb-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <Card className="relative mb-12 liquid-glass-card animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <CardHeader>
               <CardTitle className="font-display flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                </div>
                 {language === 'ru' ? 'График прогресса' : 'Διάγραμμα προόδου'}
               </CardTitle>
               <CardDescription>
@@ -220,9 +234,9 @@ export default function Profile() {
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-popover border rounded-lg p-2 shadow-lg">
+                            <div className="liquid-glass rounded-lg p-3 shadow-xl border border-primary/20">
                               <p className="font-medium">{payload[0].payload.date}</p>
-                              <p className="text-primary">{payload[0].value}%</p>
+                              <p className="text-primary font-bold">{payload[0].value}%</p>
                             </div>
                           );
                         }
@@ -233,8 +247,8 @@ export default function Profile() {
                       type="monotone" 
                       dataKey="score" 
                       stroke="hsl(var(--primary))" 
-                      strokeWidth={2}
-                      dot={{ fill: 'hsl(var(--primary))' }}
+                      strokeWidth={3}
+                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -244,7 +258,7 @@ export default function Profile() {
         )}
 
         {/* Exam History */}
-        <Card className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <Card className="relative liquid-glass-card animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <CardHeader>
             <CardTitle className="font-display">
               {language === 'ru' ? 'История экзаменов' : 'Ιστορικό εξετάσεων'}
@@ -266,26 +280,25 @@ export default function Profile() {
                   return (
                     <div 
                       key={exam.id} 
-                      className="border rounded-lg overflow-hidden"
+                      className="rounded-xl overflow-hidden liquid-glass-card"
                     >
                       {/* Summary row */}
                       <div 
                         className={cn(
-                          "flex items-center justify-between p-4 cursor-pointer transition-colors",
-                          passed ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950",
-                          "hover:bg-opacity-80"
+                          "flex items-center justify-between p-4 cursor-pointer transition-all duration-300",
+                          passed ? "bg-success/10 hover:bg-success/15" : "bg-destructive/10 hover:bg-destructive/15"
                         )}
                         onClick={() => setExpandedExam(isExpanded ? null : exam.id)}
                       >
                         <div className="flex items-center gap-3">
                           <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center",
-                            passed ? "bg-green-100 dark:bg-green-900" : "bg-red-100 dark:bg-red-900"
+                            "w-10 h-10 rounded-full flex items-center justify-center shadow-lg",
+                            passed ? "bg-success/20 shadow-success/20" : "bg-destructive/20 shadow-destructive/20"
                           )}>
                             {passed ? (
-                              <CheckCircle2 className="h-5 w-5 text-green-600" />
+                              <CheckCircle2 className="h-5 w-5 text-success" />
                             ) : (
-                              <XCircle className="h-5 w-5 text-red-600" />
+                              <XCircle className="h-5 w-5 text-destructive" />
                             )}
                           </div>
                           <div>
@@ -306,7 +319,7 @@ export default function Profile() {
                           <div className="text-right">
                             <p className={cn(
                               "text-xl font-bold",
-                              passed ? "text-green-600" : "text-red-600"
+                              passed ? "text-success" : "text-destructive"
                             )}>
                               {percentage}%
                             </p>
@@ -319,12 +332,12 @@ export default function Profile() {
                             <span className="text-sm">{formatTime(exam.time_spent_seconds)}</span>
                           </div>
                           {exam.flagged_count && exam.flagged_count > 0 && (
-                            <div className="flex items-center gap-1 text-orange-500">
+                            <div className="flex items-center gap-1 text-accent">
                               <Flag className="h-4 w-4" />
                               <span className="text-sm">{exam.flagged_count}</span>
                             </div>
                           )}
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="liquid-glass-button">
                             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                           </Button>
                         </div>
@@ -332,7 +345,7 @@ export default function Profile() {
 
                       {/* Expanded details */}
                       {isExpanded && (
-                        <div className="p-4 border-t bg-background">
+                        <div className="p-4 border-t border-primary/10 bg-background/50">
                           {/* Topics breakdown */}
                           {topicsBreakdown && Object.keys(topicsBreakdown).length > 0 && (
                             <div className="mb-4">
@@ -345,13 +358,13 @@ export default function Profile() {
                                     ? Math.round((data.correct / data.total) * 100) 
                                     : 0;
                                   return (
-                                    <div key={topic} className="bg-muted rounded-lg p-3">
+                                    <div key={topic} className="liquid-glass rounded-lg p-3">
                                       <p className="text-xs text-muted-foreground mb-1">
                                         {t(`topic.${topic}`)}
                                       </p>
                                       <p className={cn(
                                         "font-bold",
-                                        topicPercent >= 70 ? "text-green-600" : "text-red-600"
+                                        topicPercent >= 70 ? "text-success" : "text-destructive"
                                       )}>
                                         {data.correct}/{data.total} ({topicPercent}%)
                                       </p>
@@ -373,17 +386,17 @@ export default function Profile() {
                                   <div 
                                     key={idx}
                                     className={cn(
-                                      "flex items-center gap-2 p-2 rounded text-sm",
-                                      q.is_correct ? "bg-green-50 dark:bg-green-950" : "bg-red-50 dark:bg-red-950"
+                                      "flex items-center gap-2 p-2 rounded-lg text-sm liquid-glass",
+                                      q.is_correct ? "bg-success/5" : "bg-destructive/5"
                                     )}
                                   >
                                     <span className={cn(
-                                      "w-5 h-5 rounded-full flex items-center justify-center text-xs",
-                                      q.is_correct ? "bg-green-100 dark:bg-green-900 text-green-600" : "bg-red-100 dark:bg-red-900 text-red-600"
+                                      "w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold",
+                                      q.is_correct ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive"
                                     )}>
                                       {q.is_correct ? '✓' : '✗'}
                                     </span>
-                                    <span className="text-xs px-1.5 py-0.5 bg-muted rounded">
+                                    <span className="text-xs px-1.5 py-0.5 liquid-glass-button rounded">
                                       {t(`topic.${q.topic}`)}
                                     </span>
                                     <span className="text-muted-foreground">
@@ -402,7 +415,9 @@ export default function Profile() {
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                <Trophy className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <div className="mx-auto w-20 h-20 rounded-full liquid-glass-button flex items-center justify-center mb-4">
+                  <Trophy className="h-10 w-10 opacity-50" />
+                </div>
                 <p>{language === 'ru' ? 'Нет завершённых экзаменов' : 'Δεν υπάρχουν ολοκληρωμένες εξετάσεις'}</p>
               </div>
             )}

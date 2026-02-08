@@ -160,7 +160,7 @@ export default function Flashcards() {
     return (
       <Layout>
         <div className="container py-12">
-          <Card className="max-w-2xl mx-auto text-center">
+          <Card className="max-w-2xl mx-auto text-center liquid-glass-card">
             <CardContent className="py-12">
               <h2 className="text-2xl font-display font-bold mb-4">
                 {t('quiz.noQuestions')}
@@ -169,7 +169,7 @@ export default function Flashcards() {
                 {t('quiz.noQuestions.desc')}
               </p>
               <Link to="/learn">
-                <Button>
+                <Button className="liquid-glass-button">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   {t('quiz.backToTopics')}
                 </Button>
@@ -186,44 +186,48 @@ export default function Flashcards() {
     
     return (
       <Layout>
-        <div className="container py-12">
-          <Card className="max-w-2xl mx-auto">
+        <div className="relative container py-12 overflow-hidden">
+          {/* Floating elements */}
+          <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full floating-orb-glass" />
+          <div className="absolute -bottom-20 -left-20 w-[200px] h-[200px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
+          <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border">
             <CardContent className="py-12 text-center space-y-6">
               <h2 className="font-display text-3xl font-bold">
                 {t('flashcards.finished')}
               </h2>
               
               <div className={cn(
-                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold",
-                percentage >= 70 ? "bg-green-100 text-green-600" : 
-                percentage >= 50 ? "bg-yellow-100 text-yellow-600" : 
-                "bg-red-100 text-red-600"
+                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold shadow-2xl",
+                percentage >= 70 ? "bg-success/20 text-success shadow-success/20" : 
+                percentage >= 50 ? "bg-accent/20 text-accent shadow-accent/20" : 
+                "bg-destructive/20 text-destructive shadow-destructive/20"
               )}>
                 {percentage}%
               </div>
               
               <div className="flex justify-center gap-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">{knownCount}</div>
+                <div className="text-center liquid-glass-button rounded-xl p-4">
+                  <div className="text-3xl font-bold text-success">{knownCount}</div>
                   <div className="text-sm text-muted-foreground">{t('flashcards.known')}</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-red-600">{unknownCount}</div>
+                <div className="text-center liquid-glass-button rounded-xl p-4">
+                  <div className="text-3xl font-bold text-destructive">{unknownCount}</div>
                   <div className="text-sm text-muted-foreground">{t('flashcards.unknown')}</div>
                 </div>
               </div>
 
               <div className="flex gap-4 justify-center pt-4">
-                <Button variant="outline" onClick={handleShuffle}>
+                <Button variant="outline" onClick={handleShuffle} className="liquid-glass-button">
                   <Shuffle className="h-4 w-4 mr-2" />
                   {t('flashcards.shuffle')}
                 </Button>
-                <Button variant="outline" onClick={handleRestart}>
+                <Button variant="outline" onClick={handleRestart} className="liquid-glass-button">
                   <RotateCcw className="h-4 w-4 mr-2" />
                   {t('quiz.tryAgain')}
                 </Button>
                 <Link to="/learn">
-                  <Button>
+                  <Button className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
                     <Home className="h-4 w-4 mr-2" />
                     {t('quiz.toTopics')}
                   </Button>
@@ -240,16 +244,20 @@ export default function Flashcards() {
 
   return (
     <Layout>
-      <div className="container py-4 sm:py-8 px-4">
+      <div className="relative container py-4 sm:py-8 px-4 overflow-hidden">
+        {/* Floating elements */}
+        <div className="absolute -top-20 -right-20 w-[250px] h-[250px] rounded-full floating-orb-glass" />
+        <div className="absolute bottom-20 -left-20 w-[150px] h-[150px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm">
+        <div className="relative mb-6 sm:mb-8">
+          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm transition-colors">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('quiz.backToTopics')}
           </Link>
           <div className="flex items-center justify-between gap-2">
             <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">{topicTitle} — {t('mode.flashcards')}</h1>
-            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0">
+            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0 liquid-glass-button">
               <Shuffle className="h-4 w-4" />
             </Button>
           </div>
@@ -262,12 +270,11 @@ export default function Flashcards() {
         </div>
 
         {/* Flashcard */}
-        <div className="max-w-2xl mx-auto perspective-1000 px-2">
+        <div className="relative max-w-2xl mx-auto perspective-1000 px-2">
           <div 
             className={cn(
               "relative w-full h-80 cursor-pointer transition-transform duration-500",
-              "transform-style-preserve-3d",
-              isFlipped && "rotate-y-180"
+              "transform-style-preserve-3d"
             )}
             onClick={handleFlip}
             style={{
@@ -277,7 +284,10 @@ export default function Flashcards() {
           >
             {/* Front */}
             <Card 
-              className="absolute inset-0 w-full h-full flex items-center justify-center p-8 backface-hidden"
+              className={cn(
+                "absolute inset-0 w-full h-full flex items-center justify-center p-8",
+                "liquid-glass-card rainbow-border"
+              )}
               style={{ backfaceVisibility: 'hidden' }}
             >
               <CardContent className="text-center">
@@ -295,7 +305,7 @@ export default function Flashcards() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-8 w-8 liquid-glass-button"
                       onClick={(e) => {
                         e.stopPropagation();
                         isSpeaking ? stop() : speak(currentQuestion.question);
@@ -310,7 +320,10 @@ export default function Flashcards() {
 
             {/* Back */}
             <Card 
-              className="absolute inset-0 w-full h-full flex items-center justify-center p-8 bg-primary/5 backface-hidden"
+              className={cn(
+                "absolute inset-0 w-full h-full flex items-center justify-center p-8",
+                "liquid-glass-card glow-border"
+              )}
               style={{ 
                 backfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)'
@@ -327,7 +340,7 @@ export default function Flashcards() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 mt-4"
+                    className="h-8 w-8 mt-4 liquid-glass-button"
                     onClick={(e) => {
                       e.stopPropagation();
                       isSpeaking ? stop() : speak(currentQuestion.correct_answer);
@@ -347,12 +360,12 @@ export default function Flashcards() {
         </div>
 
         {/* Controls */}
-        <div className="max-w-2xl mx-auto mt-8 px-4">
-          {/* Know/Don't Know buttons - always visible */}
+        <div className="relative max-w-2xl mx-auto mt-8 px-4">
+          {/* Know/Don't Know buttons */}
           <div className="flex gap-3 justify-center mb-4">
             <Button 
               variant="outline" 
-              className="flex-1 sm:flex-none border-red-200 text-red-600 hover:bg-red-50"
+              className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
               onClick={handleDontKnow}
             >
               <ThumbsDown className="h-4 w-4 sm:mr-2" />
@@ -360,7 +373,7 @@ export default function Flashcards() {
             </Button>
             <Button 
               variant="outline" 
-              className="flex-1 sm:flex-none border-green-200 text-green-600 hover:bg-green-50"
+              className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
               onClick={handleKnow}
             >
               <ThumbsUp className="h-4 w-4 sm:mr-2" />
@@ -375,7 +388,7 @@ export default function Flashcards() {
               size="sm"
               onClick={goToPrev}
               disabled={currentIndex === 0}
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none liquid-glass-button"
             >
               <ArrowLeft className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('flashcards.prev')}</span>
@@ -386,7 +399,7 @@ export default function Flashcards() {
               size="sm"
               onClick={goToNext}
               disabled={currentIndex === questions.length - 1}
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none liquid-glass-button"
             >
               <span className="hidden sm:inline">{t('flashcards.next')}</span>
               <ArrowRight className="h-4 w-4 sm:ml-2" />
@@ -395,14 +408,14 @@ export default function Flashcards() {
         </div>
 
         {/* Stats */}
-        <div className="flex justify-center gap-8 mt-6 text-sm">
-          <div className="flex items-center gap-2">
-            <ThumbsUp className="h-4 w-4 text-green-600" />
-            <span className="text-green-600 font-medium">{knownCount}</span>
+        <div className="relative flex justify-center gap-6 mt-6 text-sm">
+          <div className="flex items-center gap-2 liquid-glass-button rounded-full px-4 py-2">
+            <ThumbsUp className="h-4 w-4 text-success" />
+            <span className="text-success font-medium">{knownCount}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <ThumbsDown className="h-4 w-4 text-red-600" />
-            <span className="text-red-600 font-medium">{unknownCount}</span>
+          <div className="flex items-center gap-2 liquid-glass-button rounded-full px-4 py-2">
+            <ThumbsDown className="h-4 w-4 text-destructive" />
+            <span className="text-destructive font-medium">{unknownCount}</span>
           </div>
         </div>
       </div>

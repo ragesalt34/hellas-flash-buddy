@@ -63,11 +63,17 @@ export default function Register() {
 
   return (
     <Layout>
-      <div className="container flex items-center justify-center min-h-[calc(100vh-8rem)] py-12">
-        <Card className="w-full max-w-md animate-scale-in">
+      <div className="relative container flex items-center justify-center min-h-[calc(100vh-8rem)] py-12 overflow-hidden">
+        {/* Floating decorative elements */}
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full floating-orb-glass" />
+        <div className="absolute -bottom-32 -left-32 w-[300px] h-[300px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/3 left-10 w-16 h-16 liquid-glass rounded-2xl -rotate-12 opacity-40 animate-float" />
+        <div className="absolute bottom-1/3 right-10 w-12 h-12 liquid-glass rounded-full opacity-30 animate-float-slow" />
+
+        <Card className="relative w-full max-w-md liquid-glass-card glow-border animate-scale-in">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-lg gradient-greek flex items-center justify-center mb-4">
-              <span className="text-xl font-bold text-primary-foreground">Ελ</span>
+            <div className="mx-auto w-14 h-14 rounded-xl gradient-greek flex items-center justify-center mb-4 shadow-xl shadow-primary/30">
+              <span className="text-2xl font-bold text-primary-foreground">Ελ</span>
             </div>
             <CardTitle className="font-display text-2xl">Создать аккаунт</CardTitle>
             <CardDescription>
@@ -86,7 +92,7 @@ export default function Register() {
                     placeholder="Ваше имя"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 liquid-glass-button border-primary/20 focus:border-primary/40"
                     required
                   />
                 </div>
@@ -102,7 +108,7 @@ export default function Register() {
                     placeholder="example@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 liquid-glass-button border-primary/20 focus:border-primary/40"
                     required
                   />
                 </div>
@@ -118,7 +124,7 @@ export default function Register() {
                     placeholder="Минимум 6 символов"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 liquid-glass-button border-primary/20 focus:border-primary/40"
                     required
                   />
                 </div>
@@ -134,7 +140,7 @@ export default function Register() {
                     placeholder="Повторите пароль"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 liquid-glass-button border-primary/20 focus:border-primary/40"
                     required
                   />
                 </div>
@@ -142,7 +148,7 @@ export default function Register() {
 
               <Button 
                 type="submit" 
-                className="w-full gradient-greek text-primary-foreground"
+                className="w-full gradient-greek text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -9,15 +9,16 @@ import {
   BookOpen, GraduationCap, Layers, PenTool, History, Palette, 
   Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
 } from 'lucide-react';
-// Floating decorative element component
+
+// Floating glass orb component
 const FloatingOrb = ({ className, delay = "0" }: { className?: string; delay?: string }) => (
   <div 
-    className={`absolute rounded-full blur-3xl opacity-30 animate-blob ${className}`}
+    className={`absolute rounded-full floating-orb-glass ${className}`}
     style={{ animationDelay: delay }}
   />
 );
 
-// Stat card component
+// Stat card component with liquid glass
 const StatCard = ({ icon: Icon, number, label, delay }: { 
   icon: React.ElementType; 
   number: string; 
@@ -25,66 +26,64 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
   delay: string;
 }) => (
   <div 
-    className={`glass rounded-2xl p-6 text-center hover-lift opacity-0 animate-fade-in-up`}
+    className={`liquid-glass-card rounded-2xl p-6 text-center opacity-0 animate-fade-in-up`}
     style={{ animationDelay: delay }}
   >
-    <div className="mx-auto w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-      <Icon className="h-6 w-6 text-primary" />
+    <div className="mx-auto w-14 h-14 rounded-xl liquid-glass-button flex items-center justify-center mb-4">
+      <Icon className="h-7 w-7 text-primary" />
     </div>
     <div className="font-display text-3xl font-bold text-foreground mb-1">{number}</div>
     <div className="text-sm text-muted-foreground">{label}</div>
   </div>
 );
 
-// Topic card component with glassmorphism
+// Topic card component with liquid glass
 const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
   const Icon = topic.icon;
   const colorClasses: Record<string, string> = {
-    history: 'from-history/20 to-history/5 border-history/30 hover:border-history/60',
-    culture: 'from-culture/20 to-culture/5 border-culture/30 hover:border-culture/60',
-    laws: 'from-laws/20 to-laws/5 border-laws/30 hover:border-laws/60',
-    geography: 'from-geography/20 to-geography/5 border-geography/30 hover:border-geography/60',
+    history: 'hover:border-history/50',
+    culture: 'hover:border-culture/50',
+    laws: 'hover:border-laws/50',
+    geography: 'hover:border-geography/50',
   };
   const iconColorClasses: Record<string, string> = {
-    history: 'bg-history/20 text-history',
-    culture: 'bg-culture/20 text-culture',
-    laws: 'bg-laws/20 text-laws',
-    geography: 'bg-geography/20 text-geography',
+    history: 'bg-history/20 text-history group-hover:bg-history group-hover:text-white',
+    culture: 'bg-culture/20 text-culture group-hover:bg-culture group-hover:text-white',
+    laws: 'bg-laws/20 text-laws group-hover:bg-laws group-hover:text-white',
+    geography: 'bg-geography/20 text-geography group-hover:bg-geography group-hover:text-white',
   };
   
   return (
     <div 
-      className={`group relative rounded-2xl border bg-gradient-to-br ${colorClasses[topic.id]} 
-        backdrop-blur-sm p-6 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl
-        opacity-0 animate-fade-in-up`}
+      className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
+        p-6 opacity-0 animate-fade-in-up cursor-pointer`}
       style={{ animationDelay: `${200 + index * 100}ms` }}
     >
       <div className={`w-14 h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-4
-        transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-        <Icon className="h-7 w-7" />
+        transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+        <Icon className="h-7 w-7 transition-colors duration-300" />
       </div>
       <h3 className="font-display text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{topic.description}</p>
       <div className="absolute bottom-6 right-6 opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+        <ArrowRight className="h-5 w-5 text-primary" />
       </div>
     </div>
   );
 };
 
-// Learning mode card
+// Learning mode card with liquid glass
 const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
   const Icon = mode.icon;
   
   return (
     <div 
-      className={`group relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 
-        transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:border-primary/30
-        opacity-0 animate-fade-in-up`}
+      className={`group liquid-glass-card rounded-2xl p-6 
+        opacity-0 animate-fade-in-up cursor-pointer`}
       style={{ animationDelay: `${300 + index * 100}ms` }}
     >
-      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4
-        transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+      <div className="w-12 h-12 rounded-xl liquid-glass-button flex items-center justify-center mb-4
+        transition-all duration-300 group-hover:bg-primary group-hover:shadow-lg group-hover:shadow-primary/30">
         <Icon className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
       </div>
       <h3 className="font-display text-lg font-semibold text-foreground mb-2">{mode.title}</h3>
@@ -147,30 +146,36 @@ export default function Index() {
         {/* Animated background */}
         <div className="absolute inset-0 gradient-greek-radial" />
         
-        {/* Floating orbs */}
-        <FloatingOrb className="w-96 h-96 bg-primary -top-20 -left-20" delay="0s" />
-        <FloatingOrb className="w-80 h-80 bg-accent top-1/2 -right-20" delay="2s" />
-        <FloatingOrb className="w-64 h-64 bg-primary/50 bottom-20 left-1/3" delay="4s" />
+        {/* Floating glass orbs */}
+        <FloatingOrb className="w-[500px] h-[500px] -top-40 -left-40" delay="0s" />
+        <FloatingOrb className="w-[400px] h-[400px] top-1/3 -right-32" delay="2s" />
+        <FloatingOrb className="w-[300px] h-[300px] bottom-10 left-1/4" delay="4s" />
+        <FloatingOrb className="w-[200px] h-[200px] top-20 right-1/4" delay="1s" />
+
+        {/* Decorative glass shapes */}
+        <div className="absolute top-1/4 left-10 w-20 h-20 liquid-glass rounded-2xl rotate-12 opacity-40 animate-float" />
+        <div className="absolute bottom-1/4 right-20 w-16 h-16 liquid-glass rounded-full opacity-30 animate-float-slow" />
+        <div className="absolute top-1/2 left-1/4 w-12 h-12 liquid-glass rounded-xl -rotate-12 opacity-20 animate-float" style={{ animationDelay: '2s' }} />
 
         {/* Greek pattern decoration */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 opacity-0 animate-fade-in-up">
+            {/* Badge with liquid glass */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full liquid-glass glow-border mb-8 opacity-0 animate-fade-in-up">
               <Sparkles className="h-4 w-4 text-accent" />
               <span className="text-sm font-medium text-foreground">
                 {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για την ελληνική ιθαγένεια'}
               </span>
             </div>
 
-            {/* Heading */}
+            {/* Heading with shimmer effect */}
             <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
               {language === 'ru' ? (
-                <>Ваш путь к <br /><span className="text-gradient">греческому гражданству</span></>
+                <>Ваш путь к <br /><span className="text-shimmer">греческому гражданству</span></>
               ) : (
-                <>Ο δρόμος σας προς την <br /><span className="text-gradient">ελληνική ιθαγένεια</span></>
+                <>Ο δρόμος σας προς την <br /><span className="text-shimmer">ελληνική ιθαγένεια</span></>
               )}
             </h1>
 
@@ -179,11 +184,11 @@ export default function Index() {
               {t('index.hero.subtitle')}
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons with liquid glass */}
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-up animate-delay-300">
               {user ? (
                 <Link to="/learn">
-                  <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg hover-glow">
+                  <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300">
                     {t('index.startLearning')} 
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
@@ -191,13 +196,13 @@ export default function Index() {
               ) : (
                 <>
                   <Link to="/register">
-                    <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg hover-glow">
+                    <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300">
                       {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'} 
                       <ArrowRight className="h-5 w-5" />
                     </Button>
                   </Link>
                   <Link to="/login">
-                    <Button variant="outline" size="lg" className="px-8 py-6 text-lg glass border-border/50 hover:bg-card/80">
+                    <Button variant="outline" size="lg" className="px-8 py-6 text-lg liquid-glass-button">
                       {language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}
                     </Button>
                   </Link>
@@ -205,11 +210,11 @@ export default function Index() {
               )}
             </div>
 
-            {/* Features list */}
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 opacity-0 animate-fade-in-up animate-delay-400">
+            {/* Features list with liquid glass */}
+            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-0 animate-fade-in-up animate-delay-400">
               {features.map((feature, i) => (
-                <div key={i} className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
+                <div key={i} className="flex items-center justify-center gap-2 text-sm text-muted-foreground liquid-glass-button rounded-full py-2 px-4">
+                  <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
                   <span>{feature}</span>
                 </div>
               ))}
@@ -219,19 +224,21 @@ export default function Index() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up animate-delay-700">
-          <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
-            <div className="w-1.5 h-3 rounded-full bg-muted-foreground/50 animate-float" />
+          <div className="w-8 h-12 rounded-full liquid-glass flex justify-center pt-3">
+            <div className="w-1.5 h-3 rounded-full bg-primary/60 animate-float" />
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
       <section className="py-20 relative">
-        <div className="absolute inset-0 bg-secondary/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/30 via-secondary/50 to-secondary/30" />
+        <FloatingOrb className="w-[250px] h-[250px] top-0 right-10" delay="1s" />
+        <FloatingOrb className="w-[180px] h-[180px] bottom-0 left-20" delay="3s" />
         <div className="container relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((stat, i) => (
-              <StatCard key={i} {...stat} delay={`${i * 100}ms`} />
+              <StatCard key={i} {...stat} delay={`${i * 150}ms`} />
             ))}
           </div>
         </div>
@@ -239,6 +246,8 @@ export default function Index() {
 
       {/* Topics Section */}
       <section className="py-24 relative overflow-hidden">
+        <FloatingOrb className="w-[350px] h-[350px] -top-20 -right-20" delay="0s" />
+        <FloatingOrb className="w-[200px] h-[200px] bottom-20 left-10" delay="2s" />
         <div className="container relative">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
@@ -259,8 +268,10 @@ export default function Index() {
       </section>
 
       {/* Learning Modes Section */}
-      <section className="py-24 relative bg-gradient-to-b from-transparent via-secondary/20 to-transparent">
-        <div className="container">
+      <section className="py-24 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/20 to-transparent" />
+        <FloatingOrb className="w-[280px] h-[280px] top-1/4 -left-20" delay="1s" />
+        <div className="container relative">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
               {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
@@ -279,13 +290,17 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section with liquid glass */}
       {!user && (
         <section className="py-24 relative overflow-hidden">
           {/* Background gradient mesh */}
           <div className="absolute inset-0 gradient-greek opacity-90" />
-          <FloatingOrb className="w-96 h-96 bg-accent/30 -top-20 right-0" delay="0s" />
-          <FloatingOrb className="w-64 h-64 bg-primary-foreground/10 bottom-0 left-20" delay="3s" />
+          <FloatingOrb className="w-[400px] h-[400px] -top-32 right-0 opacity-40" delay="0s" />
+          <FloatingOrb className="w-[300px] h-[300px] bottom-0 -left-20 opacity-30" delay="3s" />
+          
+          {/* Decorative glass elements */}
+          <div className="absolute top-1/4 right-1/4 w-24 h-24 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm rotate-12 animate-float" />
+          <div className="absolute bottom-1/4 left-1/3 w-16 h-16 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm animate-float-slow" />
           
           <div className="container relative z-10 text-center">
             <div className="max-w-3xl mx-auto">
@@ -298,7 +313,7 @@ export default function Index() {
                   : 'Εγγραφείτε δωρεάν και αποκτήστε πρόσβαση σε όλο το υλικό για την προετοιμασία για την εξέταση ελληνικής ιθαγένειας'}
               </p>
               <Link to="/register">
-                <Button size="lg" variant="secondary" className="px-10 py-6 text-lg gap-2 hover-lift">
+                <Button size="lg" variant="secondary" className="px-10 py-6 text-lg gap-2 shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-1">
                   {language === 'ru' ? 'Создать аккаунт' : 'Δημιουργία λογαριασμού'} 
                   <ArrowRight className="h-5 w-5" />
                 </Button>

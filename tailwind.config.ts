@@ -138,6 +138,29 @@ export default {
           "0%": { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "liquid-shimmer": {
+          "0%": { left: "-100%" },
+          "50%": { left: "100%" },
+          "100%": { left: "100%" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+        "rainbow-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "200% 50%" },
+        },
+        "float-orb": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)", opacity: "0.3" },
+          "25%": { transform: "translate(20px, -30px) scale(1.1)", opacity: "0.5" },
+          "50%": { transform: "translate(-15px, -50px) scale(0.95)", opacity: "0.4" },
+          "75%": { transform: "translate(25px, -20px) scale(1.05)", opacity: "0.35" },
+        },
+        "text-shimmer": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "200% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -155,6 +178,11 @@ export default {
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "spin-slow": "spin-slow 20s linear infinite",
         "count-up": "count-up 0.5s ease-out forwards",
+        "liquid-shimmer": "liquid-shimmer 4s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "rainbow-shift": "rainbow-shift 3s linear infinite",
+        "float-orb": "float-orb 8s ease-in-out infinite",
+        "text-shimmer": "text-shimmer 3s linear infinite",
       },
     },
   },
