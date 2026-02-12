@@ -305,7 +305,7 @@ export default function Flashcards() {
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
                   {t('flashcards.answer')}
                 </p>
-                <p className="font-display text-2xl leading-relaxed text-primary font-medium">
+                <p className="font-display text-2xl leading-relaxed text-foreground font-medium">
                   {currentQuestion.correct_answer}
                 </p>
                 {isSupported && (
