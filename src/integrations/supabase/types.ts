@@ -140,36 +140,48 @@ export type Database = {
       questions: {
         Row: {
           correct_answer: string
+          correct_answer_el: string | null
           created_at: string
           created_by: string | null
           explanation: string | null
+          explanation_el: string | null
           id: string
           question: string
+          question_el: string | null
           topic: Database["public"]["Enums"]["question_topic"]
           updated_at: string
           wrong_answers: string[]
+          wrong_answers_el: string[] | null
         }
         Insert: {
           correct_answer: string
+          correct_answer_el?: string | null
           created_at?: string
           created_by?: string | null
           explanation?: string | null
+          explanation_el?: string | null
           id?: string
           question: string
+          question_el?: string | null
           topic: Database["public"]["Enums"]["question_topic"]
           updated_at?: string
           wrong_answers?: string[]
+          wrong_answers_el?: string[] | null
         }
         Update: {
           correct_answer?: string
+          correct_answer_el?: string | null
           created_at?: string
           created_by?: string | null
           explanation?: string | null
+          explanation_el?: string | null
           id?: string
           question?: string
+          question_el?: string | null
           topic?: Database["public"]["Enums"]["question_topic"]
           updated_at?: string
           wrong_answers?: string[]
+          wrong_answers_el?: string[] | null
         }
         Relationships: []
       }

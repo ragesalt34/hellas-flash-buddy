@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { localizeQuestions } from '@/lib/questionLocale';
 import { Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -245,7 +246,7 @@ export default function Exam() {
       ? shuffledQuestions 
       : shuffledQuestions.slice(0, settings.questionCount);
     
-    setQuestions(selectedQuestions);
+    setQuestions(localizeQuestions(selectedQuestions, language));
     setExamStarted(true);
     setStartTime(new Date());
     lastQuestionTime.current = new Date();
