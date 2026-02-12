@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +27,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function Quiz() {
   const { topic, mode } = useParams<{ topic: string; mode: string }>();
   const { user, isLoading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -47,11 +48,11 @@ export default function Quiz() {
       setIsLoading(true);
       const { data, error } = await supabase.from('questions').select('*').eq('topic', validTopic).limit(20);
       if (error) console.error('Error fetching questions:', error);
-      else if (data && data.length > 0) setQuestions(shuffleArray(data));
+      else if (data && data.length > 0) setQuestions(shuffleArray(localizeQuestions(data, language)));
       setIsLoading(false);
     };
     fetchQuestions();
-  }, [validTopic, user, isValidTopic]);
+  }, [validTopic, user, isValidTopic, language]);
 
   useEffect(() => {
     if (questions.length > 0 && currentIndex < questions.length) {

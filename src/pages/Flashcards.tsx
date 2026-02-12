@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,7 +44,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function Flashcards() {
   const { topic } = useParams<{ topic: string }>();
   const { user, isLoading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -64,19 +65,19 @@ export default function Flashcards() {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('questions')
-        .select('id, question, correct_answer, explanation')
+        .select('*')
         .eq('topic', validTopic);
 
       if (error) {
         console.error('Error fetching questions:', error);
       } else if (data && data.length > 0) {
-        setQuestions(shuffleArray(data));
+        setQuestions(shuffleArray(localizeQuestions(data, language)));
       }
       setIsLoading(false);
     };
 
     fetchQuestions();
-  }, [validTopic, user, isValidTopic]);
+  }, [validTopic, user, isValidTopic, language]);
 
   if (authLoading) {
     return (
