@@ -7,28 +7,11 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  Loader2, 
-  ArrowLeft, 
-  CheckCircle2, 
-  XCircle, 
-  ArrowRight,
-  RotateCcw,
-  Home,
-  Volume2,
-  VolumeX
-} from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle2, XCircle, ArrowRight, RotateCcw, Home, Volume2, VolumeX } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
 import { cn } from '@/lib/utils';
 
-type Question = {
-  id: string;
-  question: string;
-  correct_answer: string;
-  wrong_answers: string[];
-  explanation: string | null;
-};
-
+type Question = { id: string; question: string; correct_answer: string; wrong_answers: string[]; explanation: string | null; };
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -60,114 +43,55 @@ export default function Quiz() {
 
   useEffect(() => {
     if (!isValidTopic || !user) return;
-
     const fetchQuestions = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('topic', validTopic)
-        .limit(20);
-
-      if (error) {
-        console.error('Error fetching questions:', error);
-      } else if (data && data.length > 0) {
-        const shuffledQuestions = shuffleArray(data);
-        setQuestions(shuffledQuestions);
-      }
+      const { data, error } = await supabase.from('questions').select('*').eq('topic', validTopic).limit(20);
+      if (error) console.error('Error fetching questions:', error);
+      else if (data && data.length > 0) setQuestions(shuffleArray(data));
       setIsLoading(false);
     };
-
     fetchQuestions();
   }, [validTopic, user, isValidTopic]);
 
   useEffect(() => {
     if (questions.length > 0 && currentIndex < questions.length) {
       const current = questions[currentIndex];
-      const allAnswers = [current.correct_answer, ...current.wrong_answers];
-      setShuffledAnswers(shuffleArray(allAnswers));
+      setShuffledAnswers(shuffleArray([current.correct_answer, ...current.wrong_answers]));
     }
   }, [currentIndex, questions]);
 
-  if (authLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!isValidTopic) {
-    return <Navigate to="/learn" replace />;
-  }
+  if (authLoading) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isValidTopic) return <Navigate to="/learn" replace />;
 
   const handleAnswer = (answer: string) => {
     if (isAnswered) return;
-    
     setSelectedAnswer(answer);
     setIsAnswered(true);
-    
-    if (answer === questions[currentIndex].correct_answer) {
-      setScore(prev => prev + 1);
-    }
+    if (answer === questions[currentIndex].correct_answer) setScore(prev => prev + 1);
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setSelectedAnswer(null);
-      setIsAnswered(false);
-    } else {
-      setIsFinished(true);
-    }
+    if (currentIndex < questions.length - 1) { setCurrentIndex(prev => prev + 1); setSelectedAnswer(null); setIsAnswered(false); }
+    else setIsFinished(true);
   };
 
-  const handleRestart = () => {
-    setCurrentIndex(0);
-    setSelectedAnswer(null);
-    setIsAnswered(false);
-    setScore(0);
-    setIsFinished(false);
-    setQuestions(shuffleArray(questions));
-  };
+  const handleRestart = () => { setCurrentIndex(0); setSelectedAnswer(null); setIsAnswered(false); setScore(0); setIsFinished(false); setQuestions(shuffleArray(questions)); };
 
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
+  if (isLoading) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
 
   if (questions.length === 0) {
     return (
       <Layout>
         <div className="container py-12">
-          <Card className="max-w-2xl mx-auto text-center liquid-glass-card">
+          <Card className="max-w-2xl mx-auto text-center liquid-glass-card rounded-2xl">
             <CardContent className="py-12">
-              <h2 className="text-2xl font-display font-bold mb-4">
-                {t('quiz.noQuestions')}
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                {t('quiz.noQuestions.desc')}
-              </p>
-              <Link to="/learn">
-                <Button className="liquid-glass-button">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  {t('quiz.backToTopics')}
-                </Button>
-              </Link>
+              <h2 className="text-2xl font-display font-bold mb-4">{t('quiz.noQuestions')}</h2>
+              <p className="text-muted-foreground mb-6">{t('quiz.noQuestions.desc')}</p>
+              <Link to="/learn"><Button className="liquid-glass-button rounded-xl"><ArrowLeft className="h-4 w-4 mr-2" />{t('quiz.backToTopics')}</Button></Link>
             </CardContent>
           </Card>
         </div>
@@ -177,52 +101,28 @@ export default function Quiz() {
 
   if (isFinished) {
     const percentage = Math.round((score / questions.length) * 100);
-    
     return (
       <Layout>
         <div className="relative container py-12 overflow-hidden">
-          {/* Floating elements */}
-          <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full floating-orb-glass" />
-          <div className="absolute -bottom-20 -left-20 w-[200px] h-[200px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
-
-          <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border">
-            <CardHeader className="text-center">
-              <CardTitle className="font-display text-3xl">
-                {t('quiz.finished')}
-              </CardTitle>
-            </CardHeader>
+          <div className="absolute -top-24 -right-24 w-[350px] h-[350px] rounded-full aurora-blob" />
+          <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border rounded-2xl">
+            <CardHeader className="text-center"><CardTitle className="font-display text-3xl">{t('quiz.finished')}</CardTitle></CardHeader>
             <CardContent className="text-center space-y-6">
               <div className={cn(
                 "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold shadow-2xl",
-                percentage >= 70 ? "bg-success/20 text-success shadow-success/20" : 
-                percentage >= 50 ? "bg-accent/20 text-accent shadow-accent/20" : 
-                "bg-destructive/20 text-destructive shadow-destructive/20"
-              )}>
-                {percentage}%
-              </div>
-              
+                percentage >= 70 ? "bg-success/15 text-success shadow-success/15" : 
+                percentage >= 50 ? "bg-accent/15 text-accent-foreground shadow-accent/15" : 
+                "bg-destructive/15 text-destructive shadow-destructive/15"
+              )}>{percentage}%</div>
               <div>
-                <p className="text-xl font-medium">
-                  {t('quiz.correctAnswers')} {score} {t('quiz.of')} {questions.length}
-                </p>
+                <p className="text-xl font-medium">{t('quiz.correctAnswers')} {score} {t('quiz.of')} {questions.length}</p>
                 <p className="text-muted-foreground mt-2">
-                  {percentage >= 70 ? t('quiz.result.great') : 
-                   percentage >= 50 ? t('quiz.result.good') : 
-                   t('quiz.result.practice')}
+                  {percentage >= 70 ? t('quiz.result.great') : percentage >= 50 ? t('quiz.result.good') : t('quiz.result.practice')}
                 </p>
               </div>
-
               <div className="flex gap-4 justify-center pt-4">
-                <Button variant="outline" onClick={handleRestart} className="liquid-glass-button">
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  {t('quiz.tryAgain')}
-                </Button>
-                <Link to="/learn">
-                  <Button className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
-                    <Home className="h-4 w-4 mr-2" />
-                    {t('quiz.toTopics')}
-                  </Button>
-                </Link>
+                <Button variant="outline" onClick={handleRestart} className="liquid-glass-button rounded-xl"><RotateCcw className="h-4 w-4 mr-2" />{t('quiz.tryAgain')}</Button>
+                <Link to="/learn"><Button className="gradient-greek text-primary-foreground shadow-lg shadow-primary/20 rounded-xl"><Home className="h-4 w-4 mr-2" />{t('quiz.toTopics')}</Button></Link>
               </div>
             </CardContent>
           </Card>
@@ -236,110 +136,74 @@ export default function Quiz() {
   return (
     <Layout>
       <div className="relative container py-4 sm:py-8 px-4 overflow-hidden">
-        {/* Floating elements */}
-        <div className="absolute -top-20 -right-20 w-[250px] h-[250px] rounded-full floating-orb-glass" />
-        <div className="absolute bottom-20 -left-20 w-[150px] h-[150px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+        <div className="absolute -top-24 -right-24 w-[300px] h-[300px] rounded-full aurora-blob" />
 
         {/* Header */}
         <div className="relative mb-6 sm:mb-8">
           <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm transition-colors">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('quiz.backToTopics')}
+            <ArrowLeft className="h-4 w-4 mr-2" />{t('quiz.backToTopics')}
           </Link>
           <h1 className="font-display text-lg sm:text-2xl font-bold">{topicTitle}</h1>
           <div className="flex items-center gap-3 mt-4">
             <Progress value={progress} className="flex-1" />
-            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
-              {currentIndex + 1} / {questions.length}
-            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">{currentIndex + 1} / {questions.length}</span>
           </div>
         </div>
 
-        {/* Question Card */}
-        <Card className="relative max-w-3xl mx-auto liquid-glass-card">
+        {/* Question */}
+        <Card className="relative max-w-3xl mx-auto liquid-glass-card rounded-2xl">
           <CardHeader className="px-4 sm:px-6">
             <div className="flex items-start justify-between gap-2">
-              <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">
-                {currentQuestion.question}
-              </CardTitle>
+              <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">{currentQuestion.question}</CardTitle>
               {isSupported && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="shrink-0 liquid-glass-button"
-                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question)}
-                >
+                <Button variant="ghost" size="icon" className="shrink-0 liquid-glass-button rounded-xl"
+                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question)}>
                   {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                 </Button>
               )}
             </div>
           </CardHeader>
           <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
-            {/* Answer Options */}
             <div className="grid gap-2 sm:gap-3">
               {shuffledAnswers.map((answer, index) => {
                 const isCorrect = answer === currentQuestion.correct_answer;
                 const isSelected = answer === selectedAnswer;
-                
                 return (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswer(answer)}
-                    disabled={isAnswered}
+                  <button key={index} onClick={() => handleAnswer(answer)} disabled={isAnswered}
                     className={cn(
-                      "w-full p-3 sm:p-4 text-left rounded-xl border-2 transition-all text-sm sm:text-base",
-                      "hover:border-primary/50 liquid-glass-button",
-                      !isAnswered && "cursor-pointer",
-                      isAnswered && isCorrect && "border-success bg-success/10 shadow-lg shadow-success/20",
-                      isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 shadow-lg shadow-destructive/20",
-                      !isAnswered && isSelected && "border-primary bg-primary/10"
-                    )}
-                  >
+                      "w-full p-3 sm:p-4 text-left rounded-xl border transition-all duration-500 spring-transition text-sm sm:text-base",
+                      "liquid-glass-button",
+                      !isAnswered && "cursor-pointer hover:border-primary/30",
+                      isAnswered && isCorrect && "border-success bg-success/8 shadow-lg shadow-success/10",
+                      isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/8 shadow-lg shadow-destructive/10",
+                      !isAnswered && isSelected && "border-primary bg-primary/8"
+                    )}>
                     <div className="flex items-center justify-between gap-2">
                       <span className="flex-1">{answer}</span>
-                      {isAnswered && isCorrect && (
-                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
-                      )}
-                      {isAnswered && isSelected && !isCorrect && (
-                        <XCircle className="h-5 w-5 text-destructive shrink-0" />
-                      )}
+                      {isAnswered && isCorrect && <CheckCircle2 className="h-5 w-5 text-success shrink-0" />}
+                      {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 text-destructive shrink-0" />}
                     </div>
                   </button>
                 );
               })}
             </div>
 
-            {/* Explanation */}
             {isAnswered && currentQuestion.explanation && (
               <div className="p-4 liquid-glass rounded-xl mt-4">
-                <p className="text-sm text-muted-foreground">
-                  <strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}
-                </p>
+                <p className="text-sm text-muted-foreground"><strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}</p>
               </div>
             )}
 
-            {/* Next Button */}
             {isAnswered && (
               <div className="flex justify-end pt-4">
-                <Button onClick={handleNext} size="lg" className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
-                  {currentIndex < questions.length - 1 ? (
-                    <>
-                      {t('quiz.nextQuestion')}
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      {t('quiz.finishTest')}
-                      <CheckCircle2 className="h-4 w-4 ml-2" />
-                    </>
-                  )}
+                <Button onClick={handleNext} size="lg" className="gradient-greek text-primary-foreground shadow-lg shadow-primary/20 rounded-xl">
+                  {currentIndex < questions.length - 1 ? (<>{t('quiz.nextQuestion')}<ArrowRight className="h-4 w-4 ml-2" /></>) : (<>{t('quiz.finishTest')}<CheckCircle2 className="h-4 w-4 ml-2" /></>)}
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Score indicator */}
         <div className="text-center mt-6 text-muted-foreground liquid-glass-button inline-block mx-auto px-4 py-2 rounded-full">
           {t('quiz.correctAnswers')} {score}
         </div>

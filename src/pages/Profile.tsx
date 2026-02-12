@@ -125,8 +125,8 @@ export default function Profile() {
     <Layout>
       <div className="relative container py-12 overflow-hidden">
         {/* Floating decorative elements */}
-        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full floating-orb-glass" />
-        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full floating-orb-glass" style={{ animationDelay: '2s' }} />
+        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full aurora-blob" />
+        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full aurora-blob" style={{ animationDelay: '3s' }} />
 
         <div className="relative mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">
