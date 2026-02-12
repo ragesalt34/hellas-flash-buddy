@@ -1,27 +1,24 @@
 
 
-# Убрать рамки с карточек и разделительные линии
+# Полное удаление рамок
 
-## Что убираем
+## Проблемы
 
-На скриншотах видны три проблемы:
+1. **Рамка карточки**: Компонент `Card` по умолчанию включает Tailwind-класс `border`, который добавляет `border-width: 1px`. CSS-правило `border: none` в `.liquid-glass-card` конфликтует по специфичности с этим классом.
 
-1. **Aurora-блобы** на страницах Register/Login — видны как отчётливые круги на фоне (слишком заметные края)
-2. **Разделительная линия** между секциями Hero и Stats на главной странице
-3. **Рамки у stat-карточек** (168 вопросов, +30%, 24/7)
+2. **Края aurora-блобов**: Блобы все ещё видны как круги несмотря на увеличенный blur до 100px. Нужно ещё больше размыть и уменьшить opacity.
 
 ## Изменения
 
-### 1. `src/index.css` — убрать border у `liquid-glass-card`
-- Убрать `border: 1px solid hsl(var(--primary) / 0.15)` из `.liquid-glass-card`
-- Убрать `border-color` из `.liquid-glass-card:hover`
-- То же для `.flashcard-glass` и `.liquid-glass-button`
+### 1. `src/pages/Register.tsx` и `src/pages/Login.tsx`
+- Добавить класс `border-0` к Card, чтобы Tailwind-класс явно убрал рамку (перебьёт дефолтный `border`):
+  - `className="... liquid-glass-card border-0 ..."`
 
-### 2. `src/index.css` — сделать aurora-blob мягче
-- Увеличить `filter: blur()` с 60px до 100px, чтобы края были плавнее
+### 2. `src/index.css` — aurora-blob
+- Увеличить `filter: blur()` со 100px до 140px
+- Уменьшить opacity до 0.5, чтобы края были совсем незаметны
 
-### 3. `src/pages/Register.tsx` и `src/pages/Login.tsx`
-- Убрать класс `glow-border` с Card (светящаяся рамка вокруг формы)
+### 3. `src/index.css` — глобальная защита
+- В `.liquid-glass-card` добавить `border: none !important` чтобы гарантировать отсутствие рамки при любых Tailwind-классах
+- То же для `.flashcard-glass`
 
-### 4. `src/pages/Index.tsx`
-- Убрать горизонтальную разделительную линию `<div className="h-px bg-gradient-to-r ...">` между секциями (Top accent line и Bottom accent)
