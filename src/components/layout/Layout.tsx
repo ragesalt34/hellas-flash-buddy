@@ -7,12 +7,13 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden">
+    <div className="min-h-screen flex flex-col overflow-x-hidden grain-overlay">
       <Header />
       <main className="flex-1">
         {children}
       </main>
-      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
+      <footer className="relative border-t border-border/30 py-6 text-center text-sm text-muted-foreground">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         <div className="container">
           © 2026 Путь к греческому гражданству. Все права защищены.
         </div>
