@@ -37,7 +37,7 @@ export default function Login() {
         <div className="absolute -top-24 -left-24 w-[450px] h-[450px] rounded-full aurora-blob" />
         <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] rounded-full aurora-blob" style={{ animationDelay: '3s' }} />
 
-        <Card className="relative w-full max-w-md liquid-glass-card glow-border animate-scale-in rounded-2xl">
+        <Card className="relative w-full max-w-md liquid-glass-card animate-scale-in rounded-2xl">
           <CardHeader className="text-center">
             <div className="mx-auto w-13 h-13 rounded-xl gradient-greek flex items-center justify-center mb-4 shadow-xl shadow-primary/20">
               <span className="text-2xl font-bold text-primary-foreground">Ελ</span>
