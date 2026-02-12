@@ -158,7 +158,7 @@ export default function Quiz() {
               <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">{currentQuestion.question}</CardTitle>
               {isSupported && (
                 <Button variant="ghost" size="icon" className="shrink-0 liquid-glass-button rounded-xl"
-                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question)}>
+                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`)}>
                   {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                 </Button>
               )}

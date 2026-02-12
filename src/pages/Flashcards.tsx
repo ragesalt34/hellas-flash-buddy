@@ -290,7 +290,7 @@ export default function Flashcards() {
                       className="h-8 w-8 liquid-glass-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        isSpeaking ? stop() : speak(currentQuestion.question);
+                        isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
                       }}
                     >
                       {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -316,7 +316,7 @@ export default function Flashcards() {
                     className="h-8 w-8 mt-4 liquid-glass-button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.correct_answer);
+                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
                     }}
                   >
                     {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
