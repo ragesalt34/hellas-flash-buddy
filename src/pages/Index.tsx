@@ -150,8 +150,6 @@ export default function Index() {
           <AuroraBlob className="w-[350px] h-[350px] bottom-0 left-1/3" delay="6s" />
         </div>
 
-        {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
 
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
@@ -313,8 +311,6 @@ export default function Index() {
         </section>
       )}
 
-      {/* Bottom accent */}
-      <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </Layout>
   );
 }
