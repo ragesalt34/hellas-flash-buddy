@@ -168,7 +168,7 @@ export default function Index() {
               <span className="block text-4xl sm:text-5xl md:text-6xl">
                 {language === 'ru' ? 'Ваш путь к' : 'Ο δρόμος σας προς την'}
               </span>
-              <span className="block mt-2 text-5xl sm:text-6xl md:text-7xl text-gradient-aurora">
+              <span className="block mt-2 text-5xl sm:text-6xl md:text-7xl text-gradient-aurora pb-2">
                 {language === 'ru' ? 'греческому гражданству' : 'ελληνική ιθαγένεια'}
               </span>
             </h1>
