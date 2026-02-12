@@ -11,13 +11,13 @@
 
 @layer base {
   :root {
-    --background: 222 47% 7%;
+    --background: 225 44% 5%;
     --foreground: 220 20% 93%;
 
-    --card: 222 40% 11%;
+    --card: 222 40% 13%;
     --card-foreground: 220 20% 93%;
 
-    --popover: 222 40% 13%;
+    --popover: 222 38% 15%;
     --popover-foreground: 220 20% 93%;
 
     /* Brighter primary for dark bg contrast */
@@ -27,7 +27,7 @@
     --secondary: 220 14% 35%;
     --secondary-foreground: 220 20% 93%;
 
-    --muted: 220 14% 25%;
+    --muted: 220 14% 22%;
     --muted-foreground: 220 14% 65%;
 
     /* Aurora Accent */
@@ -40,8 +40,8 @@
     --success: 145 55% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 222 25% 16%;
-    --input: 222 25% 16%;
+    --border: 222 20% 20%;
+    --input: 222 20% 20%;
     --ring: 234 85% 68%;
 
     --radius: 1.25rem;
@@ -237,13 +237,13 @@
   .liquid-glass {
     background: linear-gradient(
       135deg,
-      hsl(var(--card) / 0.4) 0%,
-      hsl(var(--card) / 0.2) 50%,
-      hsl(var(--card) / 0.4) 100%
+      hsl(var(--card) / 0.6) 0%,
+      hsl(var(--card) / 0.35) 50%,
+      hsl(var(--card) / 0.6) 100%
     );
     backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
     -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
-    border: 1px solid hsl(var(--primary) / 0.1);
+    border: 1px solid hsl(var(--primary) / 0.15);
     box-shadow:
       0 8px 32px hsl(var(--primary) / 0.06),
       inset 0 1px 0 hsl(0 0% 100% / 0.12),
@@ -274,14 +274,14 @@
   .liquid-glass-card {
     background: linear-gradient(
       145deg,
-      hsl(var(--card) / 0.5) 0%,
-      hsl(var(--card) / 0.3) 100%
+      hsl(var(--card) / 0.7) 0%,
+      hsl(var(--card) / 0.5) 100%
     );
     backdrop-filter: blur(var(--glass-blur)) saturate(170%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
-    border: 1px solid hsl(var(--primary) / 0.08);
+    border: 1px solid hsl(var(--primary) / 0.15);
     box-shadow:
-      0 0 0 1px hsl(0 0% 100% / 0.04) inset,
+      0 0 0 1px hsl(0 0% 100% / 0.07) inset,
       0 4px 24px hsl(var(--primary) / 0.05);
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
@@ -299,14 +299,14 @@
   .flashcard-glass {
     background: linear-gradient(
       145deg,
-      hsl(var(--card) / 0.65) 0%,
-      hsl(var(--card) / 0.35) 100%
+      hsl(var(--card) / 0.75) 0%,
+      hsl(var(--card) / 0.5) 100%
     );
     backdrop-filter: blur(var(--glass-blur)) saturate(170%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
-    border: 1px solid hsl(var(--primary) / 0.08);
+    border: 1px solid hsl(var(--primary) / 0.15);
     box-shadow:
-      0 0 0 1px hsl(0 0% 100% / 0.04) inset,
+      0 0 0 1px hsl(0 0% 100% / 0.07) inset,
       0 4px 24px hsl(var(--primary) / 0.05);
     transition: border-color 0.4s, box-shadow 0.4s;
   }
@@ -328,7 +328,7 @@
     );
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid hsl(var(--primary) / 0.12);
+    border: 1px solid hsl(var(--primary) / 0.18);
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
