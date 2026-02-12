@@ -79,7 +79,7 @@ serve(async (req) => {
           }
 
           // Small delay to avoid rate limiting
-          await new Promise((r) => setTimeout(r, 500));
+          await new Promise((r) => setTimeout(r, 800));
         } catch (e) {
           errors.push(`${task.cacheKey}: ${e instanceof Error ? e.message : "Unknown"}`);
         }
