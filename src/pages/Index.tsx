@@ -120,8 +120,8 @@ export default function Index() {
   ];
 
   const features = language === 'ru' 
-    ? ['Более 300 вопросов', 'Отслеживание прогресса', '4 режима изучения', 'Симуляция экзамена']
-    : ['Πάνω από 300 ερωτήσεις', 'Παρακολούθηση προόδου', '4 τρόποι μάθησης', 'Προσομοίωση εξέτασης'];
+    ? ['Более 300 вопросов', 'Отслеживание прогресса', '3 режима изучения', 'Симуляция экзамена']
+    : ['Πάνω από 300 ερωτήσεις', 'Παρακολούθηση προόδου', '3 τρόποι μάθησης', 'Προσομοίωση εξέτασης'];
 
   const stats = language === 'ru'
     ? [
@@ -274,7 +274,7 @@ export default function Index() {
                 : 'Διάφοροι τρόποι μελέτης για μέγιστη αποτελεσματικότητα'}
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
             {learningModes.map((mode, i) => (
               <ModeCard key={mode.id} mode={mode} index={i} />
             ))}

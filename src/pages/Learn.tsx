@@ -62,7 +62,7 @@ export default function Learn() {
                 <CardDescription className="text-sm mt-1 min-h-[2.5rem]">{topic.description}</CardDescription>
               </CardHeader>
               <CardContent className="pt-0 mt-auto">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {modes.map((mode) => (
                     <Link key={mode.id} to={`/learn/${topic.id}/${mode.id}`}>
                       <Button 
