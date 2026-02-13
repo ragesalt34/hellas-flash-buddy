@@ -492,7 +492,7 @@ export default function Exam() {
                 <label className="text-sm font-medium mb-3 block">
                   {language === 'ru' ? 'Количество вопросов' : 'Αριθμός ερωτήσεων'}
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {QUESTION_OPTIONS.map(count => (
                     <button
                       key={count}
@@ -515,7 +515,7 @@ export default function Exam() {
                 <label className="text-sm font-medium mb-3 block">
                   {language === 'ru' ? 'Время (минут)' : 'Χρόνος (λεπτά)'}
                 </label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {TIME_OPTIONS.map(time => (
                     <button
                       key={time}
