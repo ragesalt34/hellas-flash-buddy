@@ -62,16 +62,16 @@ export default function Learn() {
                 <CardDescription className="text-sm mt-1 min-h-[2.5rem]">{topic.description}</CardDescription>
               </CardHeader>
               <CardContent className="pt-0 mt-auto">
-                <div className="grid grid-cols-3 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {modes.map((mode) => (
                     <Link key={mode.id} to={`/learn/${topic.id}/${mode.id}`}>
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="w-full h-9 justify-start gap-2 text-xs liquid-glass-button rounded-xl border-0"
+                        className="h-9 gap-2 text-xs liquid-glass-button rounded-xl border-0"
                       >
                         <mode.icon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                        <span className="truncate">{mode.title}</span>
+                        <span>{mode.title}</span>
                       </Button>
                     </Link>
                   ))}
