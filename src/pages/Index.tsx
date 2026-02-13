@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
 );
 
 // Topic card
-const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
+const TopicCard = ({ topic, index, isExpanded, onToggle }: { topic: any; index: number; isExpanded: boolean; onToggle: () => void }) => {
   const Icon = topic.icon;
   const colorClasses: Record<string, string> = {
     history: 'hover:border-history/40',
@@ -68,18 +69,20 @@ const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
   return (
     <div 
       className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
-        p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden`}
+        p-5 sm:p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden`}
       style={{ animationDelay: `${200 + index * 100}ms`, backgroundImage: bgGradients[topic.id] }}
+      onClick={onToggle}
     >
       <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-full ${accentColors[topic.id]} opacity-50`} />
-      <div className={`w-14 h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-4
+      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-3 sm:mb-4
         transition-all duration-500 spring-transition group-hover:scale-110 group-hover:rotate-3`}>
-        <Icon className="h-7 w-7 transition-colors duration-300" />
+        <Icon className="h-6 w-6 sm:h-7 sm:w-7 transition-colors duration-300" />
       </div>
-      <h3 className="font-display text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
-      <p className="text-muted-foreground text-sm leading-relaxed">{topic.description}</p>
-      {/* Hover details */}
-      <div className="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-out group-hover:max-h-40 group-hover:opacity-100">
+      <h3 className="font-display text-lg sm:text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
+      <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">{topic.description}</p>
+      {/* Details: hover on desktop, click on mobile */}
+      <div className={`overflow-hidden transition-all duration-500 ease-out
+        ${isExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0 sm:group-hover:max-h-40 sm:group-hover:opacity-100'}`}>
         <ul className="mt-3 space-y-1 border-t border-border/30 pt-3">
           {topic.details?.map((item: string, i: number) => (
             <li key={i} className="text-xs text-muted-foreground/80 flex items-center gap-2">
@@ -89,7 +92,8 @@ const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
           ))}
         </ul>
       </div>
-      <div className="absolute bottom-6 right-6 opacity-0 transform translate-x-4 transition-all duration-500 spring-transition group-hover:opacity-100 group-hover:translate-x-0">
+      <div className={`absolute bottom-5 sm:bottom-6 right-5 sm:right-6 transform transition-all duration-500 spring-transition
+        ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 sm:group-hover:opacity-100 sm:group-hover:translate-x-0'}`}>
         <ArrowRight className="h-5 w-5 text-primary" />
       </div>
     </div>
@@ -121,6 +125,7 @@ const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
 export default function Index() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
+  const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
 
   const { data: questionsCount } = useQuery({
     queryKey: ['questions-count'],
@@ -190,9 +195,9 @@ export default function Index() {
 
         {/* Aurora blobs (subtle, fewer) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <AuroraBlob className="w-[700px] h-[700px] -top-32 -left-32" delay="0s" />
-          <AuroraBlob className="w-[550px] h-[550px] top-1/4 -right-32" delay="3s" />
-          <AuroraBlob className="w-[450px] h-[450px] bottom-0 left-1/3" delay="6s" />
+          <AuroraBlob className="w-[400px] h-[400px] sm:w-[700px] sm:h-[700px] -top-32 -left-32" delay="0s" />
+          <AuroraBlob className="w-[300px] h-[300px] sm:w-[550px] sm:h-[550px] top-1/4 -right-32" delay="3s" />
+          <AuroraBlob className="hidden sm:block w-[450px] h-[450px] bottom-0 left-1/3" delay="6s" />
         </div>
 
 
@@ -208,10 +213,10 @@ export default function Index() {
 
             {/* Heading with aurora gradient text */}
             <h1 className="font-display font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
-              <span className="block text-4xl sm:text-5xl md:text-6xl">
+              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                 {language === 'ru' ? 'Ваш путь к' : 'Ο δρόμος σας προς την'}
               </span>
-              <span className="block mt-2 text-5xl sm:text-6xl md:text-7xl text-gradient-aurora pb-2">
+              <span className="block mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-aurora pb-2">
                 {language === 'ru' ? 'греческому гражданству' : 'ελληνική ιθαγένεια'}
               </span>
             </h1>
@@ -225,7 +230,7 @@ export default function Index() {
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-up animate-delay-300">
               {user ? (
                 <Link to="/learn">
-                  <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
+                  <Button size="lg" className="w-full sm:w-auto gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
                     {t('index.startLearning')}
                     <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -233,13 +238,13 @@ export default function Index() {
               ) : (
                 <>
                   <Link to="/register">
-                    <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
+                    <Button size="lg" className="w-full sm:w-auto gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
                       {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'}
                       <ArrowRight className="h-5 w-5" />
                     </Button>
                   </Link>
                   <Link to="/login">
-                    <Button variant="outline" size="lg" className="px-8 py-6 text-lg liquid-glass-button rounded-xl">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-lg liquid-glass-button rounded-xl">
                       {language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}
                     </Button>
                   </Link>
@@ -264,7 +269,8 @@ export default function Index() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up animate-delay-700">
+        {/* Scroll indicator - hidden on mobile */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up animate-delay-700 hidden sm:block">
           <div className="w-7 h-11 rounded-full liquid-glass-button flex justify-center pt-2.5">
             <div className="w-1.5 h-3 rounded-full bg-primary/50 animate-float" />
           </div>
@@ -288,7 +294,7 @@ export default function Index() {
         <AuroraBlob className="w-[400px] h-[400px] -top-24 -right-24" delay="0s" />
         <div className="container relative">
           <div className="text-center mb-16 px-4">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
               {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0 animate-fade-in-up animate-delay-100">
@@ -297,9 +303,15 @@ export default function Index() {
                 : 'Επιλέξτε ένα θέμα και ξεκινήστε την προετοιμασία για την εξέταση'}
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {topics.map((topic, i) => (
-              <TopicCard key={topic.id} topic={topic} index={i} />
+              <TopicCard 
+                key={topic.id} 
+                topic={topic} 
+                index={i} 
+                isExpanded={expandedTopic === topic.id}
+                onToggle={() => setExpandedTopic(expandedTopic === topic.id ? null : topic.id)}
+              />
             ))}
           </div>
         </div>
@@ -311,7 +323,7 @@ export default function Index() {
         <AuroraBlob className="w-[300px] h-[300px] top-1/4 -left-24" delay="2s" />
         <div className="container relative">
           <div className="text-center mb-16 px-4">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
               {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0 animate-fade-in-up animate-delay-100">
@@ -330,14 +342,14 @@ export default function Index() {
 
       {/* CTA Section */}
       {!user && (
-        <section className="py-24 relative overflow-hidden">
+        <section className="py-12 sm:py-24 relative overflow-hidden">
           <div className="absolute inset-0 gradient-greek opacity-90" />
           <AuroraBlob className="w-[450px] h-[450px] -top-32 right-0 opacity-30" delay="0s" />
           <AuroraBlob className="w-[350px] h-[350px] bottom-0 -left-24 opacity-20" delay="4s" />
           
           <div className="container relative z-10 text-center px-4">
             <div className="max-w-3xl mx-auto">
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
                 {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
               </h2>
               <p className="text-primary-foreground/80 text-lg md:text-xl mb-10">

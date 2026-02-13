@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { LogOut, User, Settings, BookOpen } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSignOut = async () => {
+    setMobileOpen(false);
     await signOut();
     navigate('/');
   };
@@ -36,7 +44,8 @@ export function Header() {
               </span>
             </Link>
 
-            <nav className="flex items-center gap-1.5">
+            {/* Desktop nav */}
+            <nav className="hidden sm:flex items-center gap-1.5">
               <LanguageSwitcher />
               
               {user ? (
@@ -90,6 +99,80 @@ export function Header() {
                 </>
               )}
             </nav>
+
+            {/* Mobile nav */}
+            <div className="flex sm:hidden items-center gap-2">
+              <LanguageSwitcher />
+              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 liquid-glass-button rounded-xl">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-72 liquid-glass border-primary/12 p-0">
+                  <div className="flex flex-col h-full pt-12 pb-8 px-6">
+                    {/* Logo */}
+                    <div className="flex items-center gap-2.5 mb-8">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-greek shadow-lg shadow-primary/15">
+                        <span className="text-lg font-bold text-primary-foreground">Ελ</span>
+                      </div>
+                      <span className="font-display text-lg font-semibold text-foreground">
+                        {t('app.title')}
+                      </span>
+                    </div>
+
+                    {user ? (
+                      <nav className="flex flex-col gap-2 flex-1">
+                        <Link to="/learn" onClick={() => setMobileOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                            <BookOpen className="h-5 w-5" />
+                            {t('nav.learn')}
+                          </Button>
+                        </Link>
+                        <Link to="/profile" onClick={() => setMobileOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                            <User className="h-5 w-5" />
+                            {t('nav.profile')}
+                          </Button>
+                        </Link>
+                        {isAdmin && (
+                          <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                            <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                              <Settings className="h-5 w-5" />
+                              {t('nav.admin')}
+                            </Button>
+                          </Link>
+                        )}
+
+                        <div className="mt-auto">
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start gap-3 h-12 rounded-xl text-destructive hover:bg-destructive/10"
+                            onClick={handleSignOut}
+                          >
+                            <LogOut className="h-5 w-5" />
+                            {t('nav.logout')}
+                          </Button>
+                        </div>
+                      </nav>
+                    ) : (
+                      <nav className="flex flex-col gap-3">
+                        <Link to="/login" onClick={() => setMobileOpen(false)}>
+                          <Button variant="ghost" className="w-full h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                            {t('nav.login')}
+                          </Button>
+                        </Link>
+                        <Link to="/register" onClick={() => setMobileOpen(false)}>
+                          <Button className="w-full h-12 gradient-greek text-primary-foreground shadow-lg shadow-primary/15 rounded-xl">
+                            {t('nav.register')}
+                          </Button>
+                        </Link>
+                      </nav>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>

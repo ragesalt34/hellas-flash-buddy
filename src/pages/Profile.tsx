@@ -138,7 +138,7 @@ export default function Profile() {
         </div>
 
         {/* Stats Grid */}
-        <div className="relative grid gap-6 md:grid-cols-4 mb-12">
+        <div className="relative grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-4 mb-12">
           <Card className="liquid-glass-card animate-fade-in">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -218,7 +218,7 @@ export default function Profile() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[250px]">
+              <div className="h-[180px] sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -285,7 +285,7 @@ export default function Profile() {
                       {/* Summary row */}
                       <div 
                         className={cn(
-                          "flex items-center justify-between p-4 cursor-pointer transition-all duration-300",
+                          "flex flex-col sm:flex-row sm:items-center justify-between p-4 cursor-pointer transition-all duration-300 gap-3",
                           passed ? "bg-success/10 hover:bg-success/15" : "bg-destructive/10 hover:bg-destructive/15"
                         )}
                         onClick={() => setExpandedExam(isExpanded ? null : exam.id)}
@@ -315,7 +315,7 @@ export default function Profile() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4">
                           <div className="text-right">
                             <p className={cn(
                               "text-xl font-bold",
