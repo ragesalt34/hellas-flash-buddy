@@ -137,10 +137,14 @@ export default function Index() {
 
   return (
     <Layout>
+      {/* Hero + Stats wrapper with shared aurora background */}
+      <div className="relative overflow-hidden">
+      {/* Aurora mesh background spanning hero + stats */}
+      <div className="absolute inset-0 aurora-bg" />
+
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        {/* Aurora mesh background */}
-        <div className="absolute inset-0 aurora-bg" />
+      <section className="relative min-h-[90vh] flex items-center">
+        {/* Aurora blobs (subtle, fewer) */}
 
         {/* Aurora blobs (subtle, fewer) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -235,6 +239,7 @@ export default function Index() {
           </div>
         </div>
       </section>
+      </div>
 
       {/* Topics Section */}
       <section className="py-24 relative overflow-hidden">
