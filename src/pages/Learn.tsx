@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
-  Layers, BookOpen, PenTool, GraduationCap,
+  Layers, BookOpen, GraduationCap,
   History, Palette, Scale, MapPin, ArrowRight, Loader2
 } from 'lucide-react';
 
@@ -23,7 +23,6 @@ export default function Learn() {
   const modes = [
     { id: 'flashcards', title: t('mode.flashcards'), description: t('mode.flashcards.desc'), icon: Layers },
     { id: 'quiz', title: t('mode.quiz'), description: t('mode.quiz.desc'), icon: BookOpen },
-    { id: 'input', title: t('mode.input'), description: t('mode.input.desc'), icon: PenTool },
     { id: 'exam', title: t('mode.exam'), description: t('mode.exam.desc'), icon: GraduationCap },
   ];
 

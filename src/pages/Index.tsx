@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  BookOpen, GraduationCap, Layers, PenTool, History, Palette, 
+  BookOpen, GraduationCap, Layers, History, Palette, 
   Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
 } from 'lucide-react';
 
@@ -116,7 +116,6 @@ export default function Index() {
   const learningModes = [
     { id: 'flashcards', title: t('mode.flashcards'), description: t('mode.flashcards.desc'), icon: Layers },
     { id: 'quiz', title: t('mode.quiz'), description: t('mode.quiz.desc'), icon: BookOpen },
-    { id: 'input', title: t('mode.input'), description: t('mode.input.desc'), icon: PenTool },
     { id: 'exam', title: t('mode.exam'), description: t('mode.exam.desc'), icon: GraduationCap },
   ];
 

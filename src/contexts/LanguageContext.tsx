@@ -34,8 +34,6 @@ const translations: Translations = {
   'mode.flashcards.desc': { ru: 'Переворачивайте карточки для изучения', el: 'Γυρίστε τις κάρτες για μελέτη' },
   'mode.quiz': { ru: 'Тест', el: 'Κουίζ' },
   'mode.quiz.desc': { ru: 'Выберите правильный ответ из 4 вариантов', el: 'Επιλέξτε τη σωστή απάντηση από 4 επιλογές' },
-  'mode.input': { ru: 'Ввод', el: 'Πληκτρ.' },
-  'mode.input.desc': { ru: 'Напишите ответ самостоятельно', el: 'Γράψτε την απάντηση μόνοι σας' },
   'mode.exam': { ru: 'Экзамен', el: 'Εξέταση' },
   'mode.exam.desc': { ru: 'Симуляция теста с таймером', el: 'Προσομοίωση τεστ με χρονόμετρο' },
   
@@ -76,11 +74,6 @@ const translations: Translations = {
   'flashcards.known': { ru: 'Знаю', el: 'Ξέρω' },
   'flashcards.unknown': { ru: 'Не знаю', el: 'Δεν ξέρω' },
   
-  // Input mode
-  'input.placeholder': { ru: 'Введите ваш ответ...', el: 'Πληκτρολογήστε την απάντησή σας...' },
-  'input.correct': { ru: 'Правильно!', el: 'Σωστά!' },
-  'input.incorrect': { ru: 'Неправильно', el: 'Λάθος' },
-  'input.correctAnswer': { ru: 'Правильный ответ:', el: 'Σωστή απάντηση:' },
   
   // Index page
   'index.hero.title': { ru: 'Подготовка к тесту на греческое гражданство', el: 'Προετοιμασία για το τεστ ελληνικής ιθαγένειας' },
