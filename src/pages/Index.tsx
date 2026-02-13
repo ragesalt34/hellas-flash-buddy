@@ -29,10 +29,10 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
     className="liquid-glass-card rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
     style={{ animationDelay: delay }}
   >
-    <div className="w-12 h-12 rounded-xl liquid-glass-button flex items-center justify-center mb-4">
-      <Icon className="h-6 w-6 text-primary" />
+    <div className="w-12 h-12 rounded-xl gradient-greek opacity-80 flex items-center justify-center mb-4">
+      <Icon className="h-6 w-6 text-primary-foreground" />
     </div>
-    <div className="font-display text-3xl font-bold text-foreground mb-1">{number}</div>
+    <div className="font-display text-4xl font-bold text-gradient-aurora mb-1 pb-1">{number}</div>
     <div className="text-sm text-muted-foreground">{label}</div>
   </div>
 );
@@ -52,16 +52,29 @@ const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
     laws: 'bg-laws/15 text-laws group-hover:bg-laws group-hover:text-primary-foreground',
     geography: 'bg-geography/15 text-geography group-hover:bg-geography group-hover:text-primary-foreground',
   };
+  const accentColors: Record<string, string> = {
+    history: 'bg-history',
+    culture: 'bg-culture',
+    laws: 'bg-laws',
+    geography: 'bg-geography',
+  };
+  const bgGradients: Record<string, string> = {
+    history: 'radial-gradient(ellipse at 80% 0%, hsl(210 100% 62% / 0.06) 0%, transparent 60%)',
+    culture: 'radial-gradient(ellipse at 80% 0%, hsl(280 70% 68% / 0.06) 0%, transparent 60%)',
+    laws: 'radial-gradient(ellipse at 80% 0%, hsl(145 60% 55% / 0.06) 0%, transparent 60%)',
+    geography: 'radial-gradient(ellipse at 80% 0%, hsl(35 95% 60% / 0.06) 0%, transparent 60%)',
+  };
   
   return (
     <div 
       className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
-        p-6 text-left opacity-0 animate-fade-in-up cursor-pointer`}
-      style={{ animationDelay: `${200 + index * 100}ms` }}
+        p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden`}
+      style={{ animationDelay: `${200 + index * 100}ms`, backgroundImage: bgGradients[topic.id] }}
     >
-      <div className={`w-12 h-12 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-4
+      <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-full ${accentColors[topic.id]} opacity-50`} />
+      <div className={`w-14 h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-4
         transition-all duration-500 spring-transition group-hover:scale-110 group-hover:rotate-3`}>
-        <Icon className="h-6 w-6 transition-colors duration-300" />
+        <Icon className="h-7 w-7 transition-colors duration-300" />
       </div>
       <h3 className="font-display text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{topic.description}</p>
@@ -78,11 +91,14 @@ const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
   
   return (
     <div 
-      className="group liquid-glass-card rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer"
+      className="group relative liquid-glass-card rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden"
       style={{ animationDelay: `${300 + index * 100}ms` }}
     >
+      <span className="absolute top-3 right-4 text-5xl font-bold text-foreground/[0.04] font-display select-none">
+        {String(index + 1).padStart(2, '0')}
+      </span>
       <div className="w-11 h-11 rounded-xl liquid-glass-button flex items-center justify-center mb-4
-        transition-all duration-500 spring-transition group-hover:bg-primary group-hover:shadow-lg group-hover:shadow-primary/20">
+        transition-all duration-500 spring-transition group-hover:gradient-greek group-hover:shadow-lg group-hover:shadow-primary/20">
         <Icon className="h-5 w-5 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
       </div>
       <h3 className="font-display text-lg font-semibold text-foreground mb-2">{mode.title}</h3>
@@ -141,6 +157,7 @@ export default function Index() {
       <div className="relative overflow-hidden">
       {/* Aurora mesh background spanning hero + stats */}
       <div className="absolute inset-0 aurora-bg" />
+      <div className="absolute inset-0 hero-grid-pattern opacity-40" />
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center">
@@ -148,16 +165,16 @@ export default function Index() {
 
         {/* Aurora blobs (subtle, fewer) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <AuroraBlob className="w-[500px] h-[500px] -top-32 -left-32" delay="0s" />
-          <AuroraBlob className="w-[400px] h-[400px] top-1/4 -right-32" delay="3s" />
-          <AuroraBlob className="w-[350px] h-[350px] bottom-0 left-1/3" delay="6s" />
+          <AuroraBlob className="w-[700px] h-[700px] -top-32 -left-32" delay="0s" />
+          <AuroraBlob className="w-[550px] h-[550px] top-1/4 -right-32" delay="3s" />
+          <AuroraBlob className="w-[450px] h-[450px] bottom-0 left-1/3" delay="6s" />
         </div>
 
 
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full liquid-glass-button mb-8 opacity-0 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full liquid-glass-button animated-border mb-8 opacity-0 animate-fade-in-up">
               <Sparkles className="h-4 w-4 text-accent-foreground" />
               <span className="text-sm font-medium text-foreground">
                 {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για την ελληνική ιθαγένεια'}
@@ -183,7 +200,7 @@ export default function Index() {
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-up animate-delay-300">
               {user ? (
                 <Link to="/learn">
-                  <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl">
+                  <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
                     {t('index.startLearning')}
                     <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -191,7 +208,7 @@ export default function Index() {
               ) : (
                 <>
                   <Link to="/register">
-                    <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl">
+                    <Button size="lg" className="gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
                       {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'}
                       <ArrowRight className="h-5 w-5" />
                     </Button>
@@ -242,7 +259,7 @@ export default function Index() {
       </div>
 
       {/* Topics Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-16 relative overflow-hidden">
         <AuroraBlob className="w-[400px] h-[400px] -top-24 -right-24" delay="0s" />
         <div className="container relative">
           <div className="text-center mb-16 px-4">
@@ -264,7 +281,7 @@ export default function Index() {
       </section>
 
       {/* Learning Modes Section */}
-      <section className="py-24 relative">
+      <section className="py-16 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
         <AuroraBlob className="w-[300px] h-[300px] top-1/4 -left-24" delay="2s" />
         <div className="container relative">
