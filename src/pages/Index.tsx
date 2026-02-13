@@ -226,8 +226,7 @@ export default function Index() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/3 to-background" />
+      <section className="pt-8 pb-20 relative">
         <div className="container relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {stats.map((stat, i) => (
