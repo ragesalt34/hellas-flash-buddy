@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { offset = 0, limit = 10 } = await req.json().catch(() => ({}));
+    const { offset = 0, limit = 10, language } = await req.json().catch(() => ({}));
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -44,16 +44,22 @@ serve(async (req) => {
 
     for (const q of questions) {
       // Fields to generate for each language
-      const tasks = [
-        { text: q.question, cacheKey: `${q.id}_question_ru`, lang: "ru" },
-        { text: q.correct_answer, cacheKey: `${q.id}_answer_ru`, lang: "ru" },
-      ];
+      const tasks: { text: string; cacheKey: string; lang: string }[] = [];
 
-      if (q.question_el) {
-        tasks.push({ text: q.question_el, cacheKey: `${q.id}_question_el`, lang: "el" });
+      if (!language || language === "ru") {
+        tasks.push(
+          { text: q.question, cacheKey: `${q.id}_question_ru`, lang: "ru" },
+          { text: q.correct_answer, cacheKey: `${q.id}_answer_ru`, lang: "ru" },
+        );
       }
-      if (q.correct_answer_el) {
-        tasks.push({ text: q.correct_answer_el, cacheKey: `${q.id}_answer_el`, lang: "el" });
+
+      if (!language || language === "el") {
+        if (q.question_el) {
+          tasks.push({ text: q.question_el, cacheKey: `${q.id}_question_el`, lang: "el" });
+        }
+        if (q.correct_answer_el) {
+          tasks.push({ text: q.correct_answer_el, cacheKey: `${q.id}_answer_el`, lang: "el" });
+        }
       }
 
       for (const task of tasks) {
