@@ -78,6 +78,17 @@ const TopicCard = ({ topic, index }: { topic: any; index: number }) => {
       </div>
       <h3 className="font-display text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{topic.description}</p>
+      {/* Hover details */}
+      <div className="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-out group-hover:max-h-40 group-hover:opacity-100">
+        <ul className="mt-3 space-y-1 border-t border-border/30 pt-3">
+          {topic.details?.map((item: string, i: number) => (
+            <li key={i} className="text-xs text-muted-foreground/80 flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="absolute bottom-6 right-6 opacity-0 transform translate-x-4 transition-all duration-500 spring-transition group-hover:opacity-100 group-hover:translate-x-0">
         <ArrowRight className="h-5 w-5 text-primary" />
       </div>
@@ -122,11 +133,25 @@ export default function Index() {
     },
   });
 
+  const topicDetails: Record<string, string[]> = language === 'ru' 
+    ? {
+        history: ['Древняя Эллада и Античность', 'Византийская империя', 'Османский период', 'Война за независимость', 'Современная Греция и ЕС'],
+        culture: ['Национальные праздники', 'Православные традиции', 'Греческая кухня', 'Музыка и танцы', 'Символы и обычаи'],
+        laws: ['Конституция Греции', 'Права и обязанности граждан', 'Структура правительства', 'Избирательная система', 'Процесс натурализации'],
+        geography: ['Регионы и префектуры', 'Крупные города', 'Острова и архипелаги', 'Горы и реки', 'Климат и природа'],
+      }
+    : {
+        history: ['Αρχαία Ελλάδα', 'Βυζαντινή Αυτοκρατορία', 'Οθωμανική περίοδος', 'Πόλεμος Ανεξαρτησίας', 'Σύγχρονη Ελλάδα και ΕΕ'],
+        culture: ['Εθνικές εορτές', 'Ορθόδοξες παραδόσεις', 'Ελληνική κουζίνα', 'Μουσική και χοροί', 'Σύμβολα και έθιμα'],
+        laws: ['Σύνταγμα της Ελλάδας', 'Δικαιώματα και υποχρεώσεις', 'Δομή κυβέρνησης', 'Εκλογικό σύστημα', 'Διαδικασία πολιτογράφησης'],
+        geography: ['Περιφέρειες', 'Μεγάλες πόλεις', 'Νησιά και αρχιπελάγη', 'Βουνά και ποτάμια', 'Κλίμα και φύση'],
+      };
+
   const topics = [
-    { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History },
-    { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette },
-    { id: 'laws', title: t('topic.laws'), description: t('topic.laws.desc'), icon: Scale },
-    { id: 'geography', title: t('topic.geography'), description: t('topic.geography.desc'), icon: MapPin },
+    { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History, details: topicDetails.history },
+    { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette, details: topicDetails.culture },
+    { id: 'laws', title: t('topic.laws'), description: t('topic.laws.desc'), icon: Scale, details: topicDetails.laws },
+    { id: 'geography', title: t('topic.geography'), description: t('topic.geography.desc'), icon: MapPin, details: topicDetails.geography },
   ];
 
   const learningModes = [
