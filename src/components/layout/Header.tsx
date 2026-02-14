@@ -109,14 +109,13 @@ export function Header() {
 
             {/* Mobile nav */}
             <div className="flex sm:hidden items-center gap-2">
-              <LanguageSwitcher />
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-9 w-9 glass-button-v2 rounded-xl">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 liquid-glass-refract border-primary/12 p-0">
+                <SheetContent side="right" className="w-72 bg-background/95 backdrop-blur-xl border-primary/12 p-0">
                   <div className="flex flex-col h-full pt-12 pb-8 px-6">
                     {/* Logo */}
                     <div className="flex items-center gap-2.5 mb-8">
@@ -151,7 +150,8 @@ export function Header() {
                           </Link>
                         )}
 
-                        <div className="mt-auto">
+                        <div className="mt-auto flex flex-col gap-2">
+                          <LanguageSwitcher />
                           <Button 
                             variant="ghost" 
                             className="w-full justify-start gap-3 h-12 rounded-xl text-destructive hover:bg-destructive/10"
@@ -174,6 +174,9 @@ export function Header() {
                             {t('nav.register')}
                           </Button>
                         </Link>
+                        <div className="mt-4">
+                          <LanguageSwitcher />
+                        </div>
                       </nav>
                     )}
                   </div>
