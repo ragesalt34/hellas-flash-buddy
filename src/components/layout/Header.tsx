@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { LogOut, User, Settings, BookOpen, Menu, X } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, Menu } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +23,13 @@ export function Header() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleSignOut = async () => {
     setMobileOpen(false);
@@ -33,7 +40,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="mx-3 mt-2">
-        <div className="rounded-2xl liquid-glass border-b-0 border border-primary/8">
+        <div className={`rounded-2xl liquid-glass-refract ${scrolled ? 'header-scrolled' : ''} border-b-0`}>
           <div className="container flex h-14 items-center justify-between">
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-greek shadow-lg shadow-primary/15 transition-all duration-500 group-hover:shadow-primary/30 group-hover:scale-105 spring-transition">
@@ -51,7 +58,7 @@ export function Header() {
               {user ? (
                 <>
                   <Link to="/learn">
-                    <Button variant="ghost" size="sm" className="gap-2 liquid-glass-button hover:bg-primary/10 rounded-xl">
+                    <Button variant="ghost" size="sm" className="gap-2 glass-button-v2 hover:bg-primary/10 rounded-xl">
                       <BookOpen className="h-4 w-4" />
                       <span className="hidden sm:inline">{t('nav.learn')}</span>
                     </Button>
@@ -59,11 +66,11 @@ export function Header() {
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full liquid-glass-button border-primary/12 hover:border-primary/25 h-9 w-9">
+                      <Button variant="outline" size="icon" className="rounded-full glass-button-v2 border-primary/12 hover:border-primary/25 h-9 w-9">
                         <User className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 liquid-glass border-primary/12 rounded-xl">
+                    <DropdownMenuContent align="end" className="w-48 liquid-glass-refract border-primary/12 rounded-xl">
                       <DropdownMenuItem asChild>
                         <Link to="/profile" className="cursor-pointer">
                           <User className="mr-2 h-4 w-4" />
@@ -89,7 +96,7 @@ export function Header() {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="ghost" size="sm" className="liquid-glass-button hover:bg-primary/10 rounded-xl">{t('nav.login')}</Button>
+                    <Button variant="ghost" size="sm" className="glass-button-v2 hover:bg-primary/10 rounded-xl">{t('nav.login')}</Button>
                   </Link>
                   <Link to="/register">
                     <Button size="sm" className="gradient-greek text-primary-foreground shadow-lg shadow-primary/15 hover:shadow-primary/30 transition-all duration-500 spring-transition rounded-xl">
@@ -105,11 +112,11 @@ export function Header() {
               <LanguageSwitcher />
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 liquid-glass-button rounded-xl">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 glass-button-v2 rounded-xl">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 liquid-glass border-primary/12 p-0">
+                <SheetContent side="right" className="w-72 liquid-glass-refract border-primary/12 p-0">
                   <div className="flex flex-col h-full pt-12 pb-8 px-6">
                     {/* Logo */}
                     <div className="flex items-center gap-2.5 mb-8">
@@ -124,20 +131,20 @@ export function Header() {
                     {user ? (
                       <nav className="flex flex-col gap-2 flex-1">
                         <Link to="/learn" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
                             <BookOpen className="h-5 w-5" />
                             {t('nav.learn')}
                           </Button>
                         </Link>
                         <Link to="/profile" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                          <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
                             <User className="h-5 w-5" />
                             {t('nav.profile')}
                           </Button>
                         </Link>
                         {isAdmin && (
                           <Link to="/admin" onClick={() => setMobileOpen(false)}>
-                            <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                            <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
                               <Settings className="h-5 w-5" />
                               {t('nav.admin')}
                             </Button>
@@ -158,7 +165,7 @@ export function Header() {
                     ) : (
                       <nav className="flex flex-col gap-3">
                         <Link to="/login" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full h-12 rounded-xl liquid-glass-button hover:bg-primary/10">
+                          <Button variant="ghost" className="w-full h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
                             {t('nav.login')}
                           </Button>
                         </Link>
