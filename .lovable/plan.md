@@ -1,95 +1,31 @@
 
+# Фиксы мобильной версии
 
-# Апгрейд дизайна: Apple Liquid Glass 2025/2026
+## Найденные проблемы
 
-## Что сейчас актуально
+1. **Мобильное меню (Sheet) почти невидимо** -- класс `liquid-glass-refract` делает фон полупрозрачным, и на фоне темного оверлея содержимое Sheet практически не читается.
+2. **Переключатель языка дублируется** -- на мобильных отображаются две кнопки рядом (глобус + гамбургер), что путает. Глобус нужно убрать из хедера на мобильных и поместить переключатель только внутри Sheet-меню.
 
-Apple представила **Liquid Glass** в iOS 26 / macOS Tahoe (WWDC 2025) — это эволюция glassmorphism с добавлением:
-- **Рефракция (lensing)** — фон за стеклом искажается, а не просто размывается
-- **Specular highlights** — блики света на краях стекла
-- **Многослойность** — highlight layer + shadow layer + illumination
-- **Динамические тени** — тени реагируют на контент за стеклом
-- **Tinted glass** — стекло может быть окрашено в цвет контекста
+## Что исправим
 
-## Что изменим
+### Файл: `src/components/layout/Header.tsx`
 
-### 1. Новый Liquid Glass эффект (SVG filter + CSS)
-Добавить настоящий liquid glass через SVG filter (feTurbulence + feDisplacementMap) для ключевых элементов:
-- **Header** — рефракция фона за навигацией (не просто blur, а искажение)
-- **Карточки на главной** — легкий specular highlight по краям
-- **Кнопки CTA** — стеклянный блик, который двигается при наведении
+**1. Убрать LanguageSwitcher из мобильного хедера:**
+- Обернуть `<LanguageSwitcher />` в mobile-nav div в `hidden` (уже скрыт на десктопе, но на мобильных рядом с гамбургером -- убрать)
+- Внутри SheetContent добавить `<LanguageSwitcher />` для мобильных
 
-### 2. Header — прозрачное стекло с рефракцией
-- Заменить `liquid-glass` на новый `liquid-glass-refract` с SVG фильтром
-- Добавить тонкий specular highlight (белая полоска сверху, имитация отражения)
-- При скролле — header становится чуть более непрозрачным (scroll-aware opacity)
+**2. Сделать SheetContent непрозрачным:**
+- Заменить `liquid-glass-refract` на обычный `bg-background` с легким glass-эффектом (`backdrop-blur-xl`) чтобы содержимое было читаемым
+- Или добавить `!bg-background` для принудительного непрозрачного фона
 
-### 3. Карточки — многослойное стекло
-- Добавить `.liquid-glass-card-v2` с тремя слоями:
-  - Base layer: размытый фон (backdrop-filter)
-  - Specular layer: тонкий белый блик по верхнему краю
-  - Shadow layer: мягкая тень снизу с цветовым оттенком
-- При hover — блик "перетекает" (анимация `specular-shift`)
+### Детали реализации
 
-### 4. Кнопки — стеклянный hover-эффект
-- Новый `.glass-button-v2`: при наведении — перемещающийся блик (radial-gradient следует за курсором через CSS custom property)
-- Эффект "внутреннего свечения" (inset glow)
+В мобильном div (`flex sm:hidden`):
+- Убрать `<LanguageSwitcher />`
+- Оставить только кнопку-гамбургер с Sheet
 
-### 5. Hero Section — глубина и движение
-- Добавить parallax-эффект: при скролле aurora-блобы двигаются с другой скоростью
-- Заголовок — добавить легкий text-shadow с цветом aurora для "свечения"
-- Фоновый noise/grain — уменьшить opacity до 0.008 (сейчас 0.015) для более чистого вида
+В SheetContent:
+- Заменить `liquid-glass-refract` на `bg-background/95 backdrop-blur-xl`
+- Добавить `<LanguageSwitcher />` внутри Sheet-меню (под навигационными ссылками, перед кнопкой Выход)
 
-### 6. Секция Stats — стеклянные карточки с рефракцией
-- Каждая stat-карточка получает мини-SVG фильтр для легкого искажения фона
-- Числа — добавить `text-shadow` для ощущения глубины
-
-### 7. Footer — минимальный liquid glass
-- Применить тонкий glass-эффект к footer (backdrop-blur + specular)
-
-### 8. Новые микро-анимации
-- `specular-shift` — блик скользит по поверхности карточки
-- `glass-breathe` — карточка "дышит" (очень легкое изменение opacity фона)
-- Плавный scroll-reveal через Intersection Observer для секций
-
-## Технические детали
-
-### Файлы для изменения:
-
-**1. `src/index.css`** — основные изменения:
-- Добавить SVG filter (inline в CSS через `url("data:image/svg+xml,...")`) для displacement map
-- Новые классы:
-  - `.liquid-glass-refract` — стекло с рефракцией (SVG filter + backdrop-filter + specular)
-  - `.liquid-glass-card-v2` — многослойная карточка с бликом
-  - `.glass-specular` — белый блик по верхнему краю
-  - `.glass-button-v2` — кнопка со скользящим бликом
-- Новые keyframes: `specular-shift`, `glass-breathe`
-- Уменьшить grain opacity: `0.015` -> `0.008`
-- Scroll-aware header transition
-
-**2. `tailwind.config.ts`**:
-- Добавить keyframes: `specular-shift`, `glass-breathe`
-- Добавить animations для них
-
-**3. `src/components/layout/Header.tsx`**:
-- Заменить `liquid-glass` на `liquid-glass-refract`
-- Добавить specular highlight div
-- Добавить scroll listener для динамической opacity (через useState + useEffect)
-
-**4. `src/pages/Index.tsx`**:
-- Обновить StatCard, TopicCard, ModeCard — использовать `liquid-glass-card-v2`
-- Hero: добавить text-shadow на заголовок, parallax на блобы (CSS transform на scroll)
-- Добавить Intersection Observer для scroll-reveal анимаций секций
-- Feature pills: обновить на `.glass-button-v2`
-
-**5. `src/components/layout/Layout.tsx`**:
-- Footer: добавить glass-эффект
-
-**6. `src/pages/Login.tsx` и `src/pages/Register.tsx`**:
-- Обновить карточку на `liquid-glass-card-v2`
-
-**7. `src/pages/Learn.tsx`**:
-- Обновить карточки тем и экзамена на новый стиль
-
-**Итого: 7 файлов. Никакой новой логики — только визуальный апгрейд на уровень Apple Liquid Glass 2025/2026.**
-
+**Итого: 1 файл, минимальные изменения**
