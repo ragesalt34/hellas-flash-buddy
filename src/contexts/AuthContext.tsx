@@ -7,8 +7,8 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   isAdmin: boolean;
-  signUp: (email: string, password: string, displayName: string) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (username: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (username: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -72,23 +72,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string, displayName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+  const toFakeEmail = (username: string) =>
+    `${username.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}@hellas.local`;
+
+  const signUp = async (username: string, password: string) => {
+    const fakeEmail = toFakeEmail(username);
     const { error } = await supabase.auth.signUp({
-      email,
+      email: fakeEmail,
       password,
       options: {
-        data: { display_name: displayName },
-        emailRedirectTo: redirectUrl,
+        data: { display_name: username },
       },
     });
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (username: string, password: string) => {
+    const fakeEmail = toFakeEmail(username);
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+      email: fakeEmail,
+      password,
     });
     return { error };
   };

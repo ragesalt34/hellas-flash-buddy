@@ -7,10 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, Lock, User } from 'lucide-react';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
@@ -20,9 +20,9 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(username, password);
     if (error) {
-      toast({ title: 'Ошибка входа', description: 'Неверный email или пароль', variant: 'destructive' });
+      toast({ title: 'Ошибка входа', description: 'Неверный никнейм или пароль', variant: 'destructive' });
     } else {
       toast({ title: 'Добро пожаловать!', description: 'Вы успешно вошли в систему' });
       navigate('/learn');
@@ -33,7 +33,6 @@ export default function Login() {
   return (
     <Layout>
       <div className="relative container flex items-center justify-center min-h-[calc(100vh-8rem)] py-12 overflow-hidden">
-        {/* Aurora blobs */}
         <div className="absolute -top-24 -left-24 w-[450px] h-[450px] rounded-full aurora-blob" />
         <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] rounded-full aurora-blob" style={{ animationDelay: '3s' }} />
 
@@ -43,17 +42,17 @@ export default function Login() {
               <span className="text-2xl font-bold text-primary-foreground">Ελ</span>
             </div>
             <CardTitle className="font-display text-2xl">Вход в аккаунт</CardTitle>
-            <CardDescription>Введите свои данные для входа</CardDescription>
+            <CardDescription>Введите свой никнейм и пароль</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Никнейм</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="email" type="email" placeholder="example@email.com"
-                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    id="username" type="text" placeholder="Ваш никнейм"
+                    value={username} onChange={(e) => setUsername(e.target.value)}
                     className="pl-10 liquid-glass-button border-primary/12 input-glow rounded-xl" required
                   />
                 </div>
