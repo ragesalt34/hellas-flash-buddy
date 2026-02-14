@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,39 @@ import {
   Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
 } from 'lucide-react';
 
-// Aurora blob component (replaces FloatingOrb)
+// Aurora blob component
 const AuroraBlob = ({ className, delay = "0" }: { className?: string; delay?: string }) => (
   <div 
     className={`absolute rounded-full aurora-blob ${className}`}
     style={{ animationDelay: delay }}
   />
 );
+
+// Scroll reveal hook
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('revealed');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+const ScrollReveal = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+  const ref = useScrollReveal();
+  return <div ref={ref} className={`scroll-reveal ${className}`}>{children}</div>;
+};
 
 // Stat card
 const StatCard = ({ icon: Icon, number, label, delay }: { 
@@ -27,13 +53,13 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
   delay: string;
 }) => (
   <div 
-    className="liquid-glass-card rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
+    className="liquid-glass-card-v2 rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
     style={{ animationDelay: delay }}
   >
     <div className="w-12 h-12 rounded-xl gradient-greek opacity-80 flex items-center justify-center mb-4">
       <Icon className="h-6 w-6 text-primary-foreground" />
     </div>
-    <div className="font-display text-4xl font-bold text-gradient-aurora mb-1 pb-1">{number}</div>
+    <div className="font-display text-4xl font-bold text-gradient-aurora mb-1 pb-1" style={{ textShadow: '0 0 30px hsl(234 89% 74% / 0.2)' }}>{number}</div>
     <div className="text-sm text-muted-foreground">{label}</div>
   </div>
 );
@@ -68,8 +94,8 @@ const TopicCard = ({ topic, index, isExpanded, onToggle }: { topic: any; index: 
   
   return (
     <div 
-      className={`group relative liquid-glass-card rounded-2xl ${colorClasses[topic.id]} 
-        p-5 sm:p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden`}
+      className={`group relative liquid-glass-card-v2 rounded-2xl ${colorClasses[topic.id]} 
+        p-5 sm:p-6 text-left opacity-0 animate-fade-in-up cursor-pointer`}
       style={{ animationDelay: `${200 + index * 100}ms`, backgroundImage: bgGradients[topic.id] }}
       onClick={onToggle}
     >
@@ -106,13 +132,13 @@ const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
   
   return (
     <div 
-      className="group relative liquid-glass-card rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer overflow-hidden"
+      className="group relative liquid-glass-card-v2 rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer"
       style={{ animationDelay: `${300 + index * 100}ms` }}
     >
       <span className="absolute top-3 right-4 text-5xl font-bold text-foreground/[0.04] font-display select-none">
         {String(index + 1).padStart(2, '0')}
       </span>
-      <div className="w-11 h-11 rounded-xl liquid-glass-button flex items-center justify-center mb-4
+      <div className="w-11 h-11 rounded-xl glass-button-v2 flex items-center justify-center mb-4
         transition-all duration-500 spring-transition group-hover:gradient-greek group-hover:shadow-lg group-hover:shadow-primary/20">
         <Icon className="h-5 w-5 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
       </div>
@@ -191,32 +217,29 @@ export default function Index() {
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center">
-        {/* Aurora blobs (subtle, fewer) */}
-
-        {/* Aurora blobs (subtle, fewer) */}
+        {/* Aurora blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
           <AuroraBlob className="w-[400px] h-[400px] sm:w-[700px] sm:h-[700px] -top-32 -left-32" delay="0s" />
           <AuroraBlob className="w-[300px] h-[300px] sm:w-[550px] sm:h-[550px] top-1/4 -right-32" delay="3s" />
           <AuroraBlob className="hidden sm:block w-[450px] h-[450px] bottom-0 left-1/3" delay="6s" />
         </div>
 
-
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full liquid-glass-button animated-border mb-8 opacity-0 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-button-v2 animated-border mb-8 opacity-0 animate-fade-in-up">
               <Sparkles className="h-4 w-4 text-accent-foreground" />
               <span className="text-sm font-medium text-foreground">
                 {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για την ελληνική ιθαγένεια'}
               </span>
             </div>
 
-            {/* Heading with aurora gradient text */}
+            {/* Heading with aurora gradient text + glow */}
             <h1 className="font-display font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
-              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl hero-glow-text">
                 {language === 'ru' ? 'Ваш путь к' : 'Ο δρόμος σας προς την'}
               </span>
-              <span className="block mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-aurora pb-2">
+              <span className="block mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-aurora pb-2 hero-glow-text">
                 {language === 'ru' ? 'греческому гражданству' : 'ελληνική ιθαγένεια'}
               </span>
             </h1>
@@ -244,7 +267,7 @@ export default function Index() {
                     </Button>
                   </Link>
                   <Link to="/login">
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-lg liquid-glass-button rounded-xl">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-lg glass-button-v2 rounded-xl">
                       {language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}
                     </Button>
                   </Link>
@@ -257,7 +280,7 @@ export default function Index() {
               {features.map((feature, i) => (
                 <div
                   key={i}
-                  className="liquid-glass-button rounded-full py-2.5 px-4 text-sm text-muted-foreground grid grid-cols-[1rem_1fr_1rem] items-center gap-2 min-h-10"
+                  className="glass-button-v2 rounded-full py-2.5 px-4 text-sm text-muted-foreground grid grid-cols-[1rem_1fr_1rem] items-center gap-2 min-h-10"
                 >
                   <CheckCircle className="h-4 w-4 text-success" />
                   <span className="text-center leading-snug">{feature}</span>
@@ -268,10 +291,9 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         {/* Scroll indicator - hidden on mobile */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up animate-delay-700 hidden sm:block">
-          <div className="w-7 h-11 rounded-full liquid-glass-button flex justify-center pt-2.5">
+          <div className="w-7 h-11 rounded-full glass-button-v2 flex justify-center pt-2.5">
             <div className="w-1.5 h-3 rounded-full bg-primary/50 animate-float" />
           </div>
         </div>
@@ -293,16 +315,18 @@ export default function Index() {
       <section className="py-16 relative overflow-hidden">
         <AuroraBlob className="w-[400px] h-[400px] -top-24 -right-24" delay="0s" />
         <div className="container relative">
-          <div className="text-center mb-16 px-4">
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
-              {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0 animate-fade-in-up animate-delay-100">
-              {language === 'ru' 
-                ? 'Выберите тему и начните подготовку к экзамену' 
-                : 'Επιλέξτε ένα θέμα και ξεκινήστε την προετοιμασία για την εξέταση'}
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-16 px-4">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+                {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                {language === 'ru' 
+                  ? 'Выберите тему и начните подготовку к экзамену' 
+                  : 'Επιλέξτε ένα θέμα και ξεκινήστε την προετοιμασία για την εξέταση'}
+              </p>
+            </div>
+          </ScrollReveal>
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {topics.map((topic, i) => (
               <TopicCard 
@@ -322,16 +346,18 @@ export default function Index() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
         <AuroraBlob className="w-[300px] h-[300px] top-1/4 -left-24" delay="2s" />
         <div className="container relative">
-          <div className="text-center mb-16 px-4">
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 opacity-0 animate-fade-in-up">
-              {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0 animate-fade-in-up animate-delay-100">
-              {language === 'ru' 
-                ? 'Различные способы изучения материала для максимальной эффективности' 
-                : 'Διάφοροι τρόποι μελέτης για μέγιστη αποτελεσματικότητα'}
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-16 px-4">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+                {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                {language === 'ru' 
+                  ? 'Различные способы изучения материала для максимальной эффективности' 
+                  : 'Διάφοροι τρόποι μελέτης για μέγιστη αποτελεσματικότητα'}
+              </p>
+            </div>
+          </ScrollReveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
             {learningModes.map((mode, i) => (
               <ModeCard key={mode.id} mode={mode} index={i} />

@@ -51,7 +51,7 @@ export default function Learn() {
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
-              className="group liquid-glass-card rounded-2xl shadow-sm animate-fade-in h-full flex flex-col"
+              className="group liquid-glass-card-v2 rounded-2xl shadow-sm animate-fade-in h-full flex flex-col"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardHeader className="pb-2 pt-6 flex-1">
