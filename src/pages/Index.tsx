@@ -59,7 +59,7 @@ const StatCard = ({ icon: Icon, number, label, delay }: {
     <div className="w-12 h-12 rounded-xl gradient-greek opacity-80 flex items-center justify-center mb-4">
       <Icon className="h-6 w-6 text-primary-foreground" />
     </div>
-    <div className="font-display text-4xl font-bold text-gradient-aurora mb-1 pb-1" style={{ textShadow: '0 0 30px hsl(234 89% 74% / 0.2)' }}>{number}</div>
+    <div className="font-display text-2xl sm:text-4xl font-bold text-gradient-aurora mb-1 pb-1" style={{ textShadow: '0 0 30px hsl(234 89% 74% / 0.2)' }}>{number}</div>
     <div className="text-sm text-muted-foreground">{label}</div>
   </div>
 );
@@ -198,12 +198,12 @@ export default function Index() {
   const stats = language === 'ru'
     ? [
         { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Вопросов' },
-        { icon: TrendingUp, number: '+30%', label: 'Повышение эффективности' },
+        { icon: Sparkles, number: 'Бесплатно', label: 'Полный доступ навсегда' },
         { icon: Clock, number: '24/7', label: 'Доступ' },
       ]
     : [
         { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Ερωτήσεις' },
-        { icon: TrendingUp, number: '+30%', label: 'Αύξηση αποτελεσματικότητας' },
+        { icon: Sparkles, number: 'Δωρεάν', label: 'Πλήρης πρόσβαση για πάντα' },
         { icon: Clock, number: '24/7', label: 'Πρόσβαση' },
       ];
 
