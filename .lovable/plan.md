@@ -1,93 +1,95 @@
 
-# Полноценная мобильная версия
 
-## Обзор текущего состояния
-Приложение уже частично адаптировано: используются `sm:`, `md:`, `lg:` брейкпоинты, но есть ряд проблем на мобильных устройствах (390px), которые нужно исправить.
+# Апгрейд дизайна: Apple Liquid Glass 2025/2026
 
-## Что нужно улучшить
+## Что сейчас актуально
 
-### 1. Header (src/components/layout/Header.tsx)
-- На мобильных все кнопки сжаты в одну строку -- нет "гамбургер-меню"
-- Добавить мобильное меню через Sheet (выезжающая панель) для навигации
-- Показывать логотип + гамбургер-иконку на мобильных, полную навигацию -- на десктопе
-- В мобильном меню: ссылки на Обучение, Профиль, Админ (если admin), смена языка, выход
+Apple представила **Liquid Glass** в iOS 26 / macOS Tahoe (WWDC 2025) — это эволюция glassmorphism с добавлением:
+- **Рефракция (lensing)** — фон за стеклом искажается, а не просто размывается
+- **Specular highlights** — блики света на краях стекла
+- **Многослойность** — highlight layer + shadow layer + illumination
+- **Динамические тени** — тени реагируют на контент за стеклом
+- **Tinted glass** — стекло может быть окрашено в цвет контекста
 
-### 2. Главная страница Index.tsx
-- Hero: уменьшить aurora-блобы на мобильных (они визуально перегружают маленький экран)
-- Hero заголовок: уменьшить `text-4xl`/`text-5xl` до `text-3xl`/`text-4xl` на маленьких экранах
-- Hero CTA кнопки: сделать полную ширину на мобильных (`w-full`)
-- Feature pills: сетка `grid-cols-2` уже есть, но сами пиллы слишком тесные -- увеличить padding
-- Stats: `grid-cols-1` уже стоит для мобильных -- ок
-- Topics: на мобильных карточки идут в 1 колонку -- добавить `grid-cols-1` и уменьшить padding
-- Hover-описание на карточках тем: на мобильных hover не работает. Сделать клик-toggle через state вместо `group-hover`
-- Scroll indicator: скрыть на мобильных (занимает место)
-- CTA секция внизу: уменьшить padding (`py-24` -> `py-12` на мобильных)
+## Что изменим
 
-### 3. Learn.tsx
-- Уже неплохо адаптировано, но кнопки режимов (Карточки/Тест/Экзамен) на мобильных слишком мелкие
-- Увеличить размер кнопок режимов на мобильных
+### 1. Новый Liquid Glass эффект (SVG filter + CSS)
+Добавить настоящий liquid glass через SVG filter (feTurbulence + feDisplacementMap) для ключевых элементов:
+- **Header** — рефракция фона за навигацией (не просто blur, а искажение)
+- **Карточки на главной** — легкий specular highlight по краям
+- **Кнопки CTA** — стеклянный блик, который двигается при наведении
 
-### 4. Flashcards.tsx
-- Flashcard container (`h-80`) может быть слишком высоким/маленьким на разных мобильных
-- Сделать высоту адаптивной: `h-64 sm:h-80`
-- Текст вопроса/ответа: уменьшить `text-2xl` до `text-lg` на мобильных
-- Кнопки управления: уже есть `flex-1 sm:flex-none` -- ок
+### 2. Header — прозрачное стекло с рефракцией
+- Заменить `liquid-glass` на новый `liquid-glass-refract` с SVG фильтром
+- Добавить тонкий specular highlight (белая полоска сверху, имитация отражения)
+- При скролле — header становится чуть более непрозрачным (scroll-aware opacity)
 
-### 5. Quiz.tsx
-- Уже хорошо адаптирован с `px-4`, `text-base sm:text-xl` и т.д.
+### 3. Карточки — многослойное стекло
+- Добавить `.liquid-glass-card-v2` с тремя слоями:
+  - Base layer: размытый фон (backdrop-filter)
+  - Specular layer: тонкий белый блик по верхнему краю
+  - Shadow layer: мягкая тень снизу с цветовым оттенком
+- При hover — блик "перетекает" (анимация `specular-shift`)
 
-### 6. Exam.tsx (1002 строки)
-- Настройки экзамена: `grid-cols-4` для кнопок -- может быть тесно, уменьшить до `grid-cols-2` на мобильных
-- Навигация по вопросам (question grid): адаптировать под мобильные
+### 4. Кнопки — стеклянный hover-эффект
+- Новый `.glass-button-v2`: при наведении — перемещающийся блик (radial-gradient следует за курсором через CSS custom property)
+- Эффект "внутреннего свечения" (inset glow)
 
-### 7. Profile.tsx
-- Сетка stats `md:grid-cols-4` -- на мобильных все в 1 колонку, сделать `grid-cols-2` для мобильных
-- Развернутые детали экзамена: на мобильных `flex items-center justify-between` может быть слишком тесным -- сделать `flex-col` на мобильных
-- График: `h-[250px]` -- уменьшить до `h-[180px]` на мобильных
+### 5. Hero Section — глубина и движение
+- Добавить parallax-эффект: при скролле aurora-блобы двигаются с другой скоростью
+- Заголовок — добавить легкий text-shadow с цветом aurora для "свечения"
+- Фоновый noise/grain — уменьшить opacity до 0.008 (сейчас 0.015) для более чистого вида
 
-### 8. Login/Register
-- Уже хорошо адаптированы
+### 6. Секция Stats — стеклянные карточки с рефракцией
+- Каждая stat-карточка получает мини-SVG фильтр для легкого искажения фона
+- Числа — добавить `text-shadow` для ощущения глубины
 
-### 9. Footer (Layout.tsx)
-- Уже минималистичен, ок
+### 7. Footer — минимальный liquid glass
+- Применить тонкий glass-эффект к footer (backdrop-blur + specular)
 
-### 10. Глобальные стили (index.css)
-- Добавить `touch-action: manipulation` для интерактивных элементов (предотвращает задержку 300ms на тач-устройствах)
-- Добавить `safe-area-inset` для устройств с вырезом (notch)
+### 8. Новые микро-анимации
+- `specular-shift` — блик скользит по поверхности карточки
+- `glass-breathe` — карточка "дышит" (очень легкое изменение opacity фона)
+- Плавный scroll-reveal через Intersection Observer для секций
 
 ## Технические детали
 
 ### Файлы для изменения:
 
-1. **src/components/layout/Header.tsx**
-   - Импортировать Sheet из `@/components/ui/sheet`
-   - Добавить состояние `isOpen` для мобильного меню
-   - На `sm:` и выше -- текущая навигация
-   - На мобильных -- кнопка-гамбургер (Menu icon) + Sheet с навигацией
-   - Внутри Sheet: все ссылки (Обучение, Профиль, Админ), LanguageSwitcher, кнопка Выход
+**1. `src/index.css`** — основные изменения:
+- Добавить SVG filter (inline в CSS через `url("data:image/svg+xml,...")`) для displacement map
+- Новые классы:
+  - `.liquid-glass-refract` — стекло с рефракцией (SVG filter + backdrop-filter + specular)
+  - `.liquid-glass-card-v2` — многослойная карточка с бликом
+  - `.glass-specular` — белый блик по верхнему краю
+  - `.glass-button-v2` — кнопка со скользящим бликом
+- Новые keyframes: `specular-shift`, `glass-breathe`
+- Уменьшить grain opacity: `0.015` -> `0.008`
+- Scroll-aware header transition
 
-2. **src/pages/Index.tsx**
-   - Hero: `text-3xl sm:text-4xl md:text-5xl` и `text-4xl sm:text-5xl md:text-6xl` (уменьшить базу)
-   - Aurora blobs: добавить `hidden sm:block` для третьего блоба, уменьшить первые два на мобильных через Tailwind
-   - CTA кнопки: `w-full sm:w-auto`
-   - TopicCard: заменить `group-hover` на click-toggle. Добавить state `expandedTopic` в Index, передавать в TopicCard. На мобильных -- клик открывает/закрывает, на десктопе -- hover
-   - Scroll indicator: `hidden sm:block`
-   - CTA секция: `py-12 sm:py-24`
+**2. `tailwind.config.ts`**:
+- Добавить keyframes: `specular-shift`, `glass-breathe`
+- Добавить animations для них
 
-3. **src/pages/Flashcards.tsx**
-   - Flashcard: `h-64 sm:h-80`
-   - Текст: `text-lg sm:text-2xl`
+**3. `src/components/layout/Header.tsx`**:
+- Заменить `liquid-glass` на `liquid-glass-refract`
+- Добавить specular highlight div
+- Добавить scroll listener для динамической opacity (через useState + useEffect)
 
-4. **src/pages/Exam.tsx**
-   - Settings grid: `grid-cols-2 sm:grid-cols-4`
-   
-5. **src/pages/Profile.tsx**
-   - Stats grid: `grid-cols-2 md:grid-cols-4`
-   - Exam history row: адаптировать flex для мобильных
-   - Chart: `h-[180px] sm:h-[250px]`
+**4. `src/pages/Index.tsx`**:
+- Обновить StatCard, TopicCard, ModeCard — использовать `liquid-glass-card-v2`
+- Hero: добавить text-shadow на заголовок, parallax на блобы (CSS transform на scroll)
+- Добавить Intersection Observer для scroll-reveal анимаций секций
+- Feature pills: обновить на `.glass-button-v2`
 
-6. **src/index.css**
-   - Добавить safe-area padding для body
-   - `touch-action: manipulation` для button, a, input
+**5. `src/components/layout/Layout.tsx`**:
+- Footer: добавить glass-эффект
 
-**Итого: 6 файлов, только визуальные и UX изменения**
+**6. `src/pages/Login.tsx` и `src/pages/Register.tsx`**:
+- Обновить карточку на `liquid-glass-card-v2`
+
+**7. `src/pages/Learn.tsx`**:
+- Обновить карточки тем и экзамена на новый стиль
+
+**Итого: 7 файлов. Никакой новой логики — только визуальный апгрейд на уровень Apple Liquid Glass 2025/2026.**
+
