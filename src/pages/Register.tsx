@@ -7,11 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Lock, User } from 'lucide-react';
 
 export default function Register() {
-  const [displayName, setDisplayName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +20,10 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (username.length < 3) {
+      toast({ title: 'Ошибка', description: 'Никнейм должен содержать минимум 3 символа', variant: 'destructive' });
+      return;
+    }
     if (password !== confirmPassword) {
       toast({ title: 'Ошибка', description: 'Пароли не совпадают', variant: 'destructive' });
       return;
@@ -30,9 +33,12 @@ export default function Register() {
       return;
     }
     setIsLoading(true);
-    const { error } = await signUp(email, password, displayName);
+    const { error } = await signUp(username, password);
     if (error) {
-      toast({ title: 'Ошибка регистрации', description: error.message, variant: 'destructive' });
+      const msg = error.message.includes('already registered')
+        ? 'Этот никнейм уже занят'
+        : error.message;
+      toast({ title: 'Ошибка регистрации', description: msg, variant: 'destructive' });
     } else {
       toast({ title: 'Регистрация успешна!', description: 'Добро пожаловать в систему' });
       navigate('/learn');
@@ -52,25 +58,16 @@ export default function Register() {
               <span className="text-2xl font-bold text-primary-foreground">Ελ</span>
             </div>
             <CardTitle className="font-display text-2xl">Создать аккаунт</CardTitle>
-            <CardDescription>Зарегистрируйтесь для доступа к материалам</CardDescription>
+            <CardDescription>Придумайте никнейм и пароль</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="displayName">Имя</Label>
+                <Label htmlFor="username">Никнейм</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="displayName" type="text" placeholder="Ваше имя" value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="pl-10 liquid-glass-button border-primary/12 input-glow rounded-xl" required />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="email" type="email" placeholder="example@email.com" value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                  <Input id="username" type="text" placeholder="Ваш никнейм" value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="pl-10 liquid-glass-button border-primary/12 input-glow rounded-xl" required />
                 </div>
               </div>
