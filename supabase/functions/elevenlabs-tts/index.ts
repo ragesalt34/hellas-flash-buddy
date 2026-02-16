@@ -15,6 +15,32 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check - require authenticated user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { text, language, cacheKey } = await req.json();
 
     if (!text) {
@@ -24,8 +50,7 @@ serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    // Use service role for storage operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // If cacheKey provided, check storage first
@@ -38,7 +63,7 @@ serve(async (req) => {
       if (existingFile && existingFile.length > 0) {
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
           .from("tts-audio")
-          .createSignedUrl(fileName, 3600); // 1 hour expiry
+          .createSignedUrl(fileName, 3600);
 
         if (!signedUrlError && signedUrlData?.signedUrl) {
           return new Response(

@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 serve(async (req) => {
@@ -11,6 +12,48 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check - require admin role
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub as string;
+
+    // Check admin role
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: hasRole, error: roleError } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+
+    if (roleError || !hasRole) {
+      return new Response(
+        JSON.stringify({ error: "Admin access required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { documentText, topic } = await req.json();
     
     if (!documentText) {
@@ -106,17 +149,10 @@ serve(async (req) => {
       throw new Error("No content in AI response");
     }
 
-    // Parse JSON from response (remove markdown code blocks if present)
     let jsonContent = content.trim();
-    if (jsonContent.startsWith("```json")) {
-      jsonContent = jsonContent.slice(7);
-    }
-    if (jsonContent.startsWith("```")) {
-      jsonContent = jsonContent.slice(3);
-    }
-    if (jsonContent.endsWith("```")) {
-      jsonContent = jsonContent.slice(0, -3);
-    }
+    if (jsonContent.startsWith("```json")) jsonContent = jsonContent.slice(7);
+    if (jsonContent.startsWith("```")) jsonContent = jsonContent.slice(3);
+    if (jsonContent.endsWith("```")) jsonContent = jsonContent.slice(0, -3);
     jsonContent = jsonContent.trim();
 
     const questions = JSON.parse(jsonContent);

@@ -13,14 +13,50 @@ serve(async (req) => {
   }
 
   try {
-    const { offset = 0, limit = 10, language } = await req.json().catch(() => ({}));
+    // Auth check - require admin role
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub as string;
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: hasRole, error: roleError } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+
+    if (roleError || !hasRole) {
+      return new Response(
+        JSON.stringify({ error: "Admin access required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { offset = 0, limit = 10, language } = await req.json().catch(() => ({}));
 
     const ttsUrl = `${supabaseUrl}/functions/v1/elevenlabs-tts`;
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
     // Fetch questions
     const { data: questions, error } = await supabase
@@ -43,7 +79,6 @@ serve(async (req) => {
     const errors: string[] = [];
 
     for (const q of questions) {
-      // Fields to generate for each language
       const tasks: { text: string; cacheKey: string; lang: string }[] = [];
 
       if (!language || language === "ru") {
@@ -64,11 +99,12 @@ serve(async (req) => {
 
       for (const task of tasks) {
         try {
+          // Pass through the admin's auth token to elevenlabs-tts
           const resp = await fetch(ttsUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${anonKey}`,
+              Authorization: authHeader,
             },
             body: JSON.stringify({
               text: task.text,
@@ -84,7 +120,6 @@ serve(async (req) => {
             processed++;
           }
 
-          // Small delay to avoid rate limiting
           await new Promise((r) => setTimeout(r, 500));
         } catch (e) {
           errors.push(`${task.cacheKey}: ${e instanceof Error ? e.message : "Unknown"}`);

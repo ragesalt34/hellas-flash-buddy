@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
-const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 // In-memory cache of audio URLs across component instances
 const urlCache = new Map<string, string>();
@@ -37,11 +37,18 @@ export function useSpeech() {
         return;
       }
 
+      // Get user's JWT token
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+
       const response = await fetch(TTS_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${ANON_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ text, cacheKey }),
       });

@@ -3,16 +3,41 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Auth check - require authenticated user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { messages, language = "ru", skipContext = false } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -21,15 +46,13 @@ serve(async (req) => {
       throw new Error("AI service is not configured");
     }
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Use service role for DB queries
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get user's last message for RAG search
     const userMessage = messages[messages.length - 1]?.content || "";
     
-    // Search knowledge base for relevant context (skip if processing text)
+    // Search knowledge base for relevant context
     let knowledgeContext = "";
     if (userMessage && !skipContext) {
       console.log("Searching knowledge base for:", userMessage);
@@ -42,11 +65,13 @@ serve(async (req) => {
 
       if (searchError) {
         console.log("Text search failed, trying simple search:", searchError.message);
-        // Fallback to simple ILIKE search
+        // Sanitize search term to prevent injection via .or() string interpolation
+        const searchTerm = userMessage.split(" ")[0].replace(/[%_\\]/g, "\\$&").slice(0, 100);
+        
         const { data: fallbackArticles } = await supabase
           .from("knowledge_base")
           .select("title, content, category")
-          .or(`title.ilike.%${userMessage.split(" ")[0]}%,content.ilike.%${userMessage.split(" ")[0]}%`)
+          .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
           .limit(3);
         
         if (fallbackArticles && fallbackArticles.length > 0) {

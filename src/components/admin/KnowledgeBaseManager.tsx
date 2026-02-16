@@ -76,11 +76,15 @@ export function KnowledgeBaseManager() {
 
     setAiProcessing(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('Not authenticated');
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           messages: [{ role: 'user', content: `${action.prompt}\n\n${formData.content}` }],
@@ -145,11 +149,15 @@ export function KnowledgeBaseManager() {
 
     setAiProcessing(true);
     try {
+      const { data: { session: sess } } = await supabase.auth.getSession();
+      const tkn = sess?.access_token;
+      if (!tkn) throw new Error('Not authenticated');
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          'Authorization': `Bearer ${tkn}`,
         },
         body: JSON.stringify({
           messages: [{ 

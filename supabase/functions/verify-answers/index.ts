@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,6 +31,47 @@ serve(async (req) => {
   }
 
   try {
+    // Auth check - require admin role
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub as string;
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: hasRole, error: roleError } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+
+    if (roleError || !hasRole) {
+      return new Response(
+        JSON.stringify({ error: "Admin access required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { questions, mode = 'verify' } = await req.json() as { questions: Question[], mode?: 'verify' | 'fix' };
 
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
@@ -44,10 +86,9 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // FIX MODE: Correct the answers
+    // FIX MODE
     if (mode === 'fix') {
       const fixes: Fix[] = [];
-      
       const batchSize = 5;
       for (let i = 0; i < questions.length; i += batchSize) {
         const batch = questions.slice(i, i + batchSize);
@@ -101,7 +142,6 @@ ${batch.map((q, idx) => `
           if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3);
           if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3);
           cleanContent = cleanContent.trim();
-
           const batchFixes = JSON.parse(cleanContent) as Fix[];
           fixes.push(...batchFixes);
         } catch (parseError) {
@@ -115,9 +155,8 @@ ${batch.map((q, idx) => `
       );
     }
 
-    // VERIFY MODE: Check answers (default)
+    // VERIFY MODE (default)
     const results: VerificationResult[] = [];
-
     const batchSize = 5;
     for (let i = 0; i < questions.length; i += batchSize) {
       const batch = questions.slice(i, i + batchSize);
@@ -183,7 +222,6 @@ ${batch.map((q, idx) => `
         if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3);
         if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3);
         cleanContent = cleanContent.trim();
-
         const batchResults = JSON.parse(cleanContent) as VerificationResult[];
         results.push(...batchResults);
       } catch (parseError) {
