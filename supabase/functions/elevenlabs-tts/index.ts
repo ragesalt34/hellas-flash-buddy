@@ -36,14 +36,16 @@ serve(async (req) => {
         .list("", { search: fileName });
 
       if (existingFile && existingFile.length > 0) {
-        const { data: urlData } = supabase.storage
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
           .from("tts-audio")
-          .getPublicUrl(fileName);
+          .createSignedUrl(fileName, 3600); // 1 hour expiry
 
-        return new Response(
-          JSON.stringify({ audioUrl: urlData.publicUrl }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        if (!signedUrlError && signedUrlData?.signedUrl) {
+          return new Response(
+            JSON.stringify({ audioUrl: signedUrlData.signedUrl }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       }
     }
 
@@ -102,14 +104,16 @@ serve(async (req) => {
       if (uploadError) {
         console.error("Storage upload error:", uploadError);
       } else {
-        const { data: urlData } = supabase.storage
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
           .from("tts-audio")
-          .getPublicUrl(fileName);
+          .createSignedUrl(fileName, 3600);
 
-        return new Response(
-          JSON.stringify({ audioUrl: urlData.publicUrl }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        if (!signedUrlError && signedUrlData?.signedUrl) {
+          return new Response(
+            JSON.stringify({ audioUrl: signedUrlData.signedUrl }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       }
     }
 
