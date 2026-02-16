@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Bot, User, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 type Message = {
@@ -40,11 +41,18 @@ export function AIAssistant() {
     setIsLoading(true);
 
     try {
+      // Get user's JWT token
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        throw new Error("Необходимо войти в систему");
+      }
+
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ 
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
@@ -106,9 +114,7 @@ export function AIAssistant() {
       const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка';
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: language === 'ru' 
-          ? `❌ ${errorMessage}` 
-          : `❌ ${errorMessage}`
+        content: `❌ ${errorMessage}`
       }]);
     } finally {
       setIsLoading(false);
