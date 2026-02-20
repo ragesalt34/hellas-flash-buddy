@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, ArrowLeft, CheckCircle2, XCircle, ArrowRight, RotateCcw, Home, Volume2, VolumeX } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
+import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 
 type Question = { id: string; question: string; correct_answer: string; wrong_answers: string[]; explanation: string | null; };
@@ -37,6 +38,7 @@ export default function Quiz() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
   const { speak, stop, isSpeaking, isSupported } = useSpeech();
+  useStudyTimer('quiz');
 
   const validTopic = topic as TopicType;
   const validTopics = ['history', 'culture', 'laws', 'geography'];
