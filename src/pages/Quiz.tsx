@@ -155,7 +155,7 @@ export default function Quiz() {
         <Card className="relative max-w-3xl mx-auto liquid-glass-card rounded-2xl">
           <CardHeader className="px-4 sm:px-6">
             <div className="flex items-start justify-between gap-2">
-              <CardTitle className="font-display text-base sm:text-xl leading-relaxed flex-1">{currentQuestion.question}</CardTitle>
+              <CardTitle className="font-display text-lg sm:text-2xl font-semibold leading-relaxed flex-1">{currentQuestion.question}</CardTitle>
               {isSupported && (
                 <Button variant="ghost" size="icon" className="shrink-0 liquid-glass-button rounded-xl"
                   onClick={() => isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`)}>
@@ -172,7 +172,7 @@ export default function Quiz() {
                 return (
                   <button key={index} onClick={() => handleAnswer(answer)} disabled={isAnswered}
                     className={cn(
-                      "w-full p-3 sm:p-4 text-left rounded-xl border transition-all duration-500 spring-transition text-sm sm:text-base",
+                      "w-full p-3 sm:p-4 text-left rounded-xl border transition-all duration-500 spring-transition text-base sm:text-lg font-medium",
                       "liquid-glass-button",
                       !isAnswered && "cursor-pointer hover:border-primary/30",
                       isAnswered && isCorrect && "border-success bg-success/8 shadow-lg shadow-success/10",
@@ -191,7 +191,7 @@ export default function Quiz() {
 
             {isAnswered && currentQuestion.explanation && (
               <div className="p-4 liquid-glass rounded-xl mt-4">
-                <p className="text-sm text-muted-foreground"><strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}</p>
+                <p className="text-base text-foreground/80"><strong>{t('quiz.explanation')}</strong> {currentQuestion.explanation}</p>
               </div>
             )}
 
