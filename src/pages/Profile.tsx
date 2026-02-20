@@ -11,6 +11,7 @@ import { Loader2, Trophy, Target, Clock, TrendingUp, ChevronDown, ChevronUp, Bar
 import { Progress } from '@/components/ui/progress';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
+import { StudyTimeWidget } from '@/components/StudyTimeWidget';
 
 type TopicsBreakdown = {
   [topic: string]: { total: number; correct: number };
@@ -199,6 +200,11 @@ export default function Profile() {
               </p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Study Time Widget */}
+        <div className="mb-12">
+          <StudyTimeWidget />
         </div>
 
         {/* Progress Chart */}

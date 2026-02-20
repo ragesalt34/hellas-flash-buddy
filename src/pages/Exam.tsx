@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useStudyTimer } from '@/hooks/useStudyTimer';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -93,6 +94,7 @@ export default function Exam() {
   const { user, isLoading: authLoading } = useAuth();
   const { t, language } = useLanguage();
   const { toast } = useToast();
+  useStudyTimer('exam');
   
   // Settings state
   const [settings, setSettings] = useState<ExamSettings>({

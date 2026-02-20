@@ -185,6 +185,36 @@ export type Database = {
         }
         Relationships: []
       }
+      study_sessions: {
+        Row: {
+          activity_type: string
+          created_at: string
+          duration_seconds: number
+          ended_at: string | null
+          id: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_type?: string
+          created_at?: string
+          duration_seconds?: number
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          duration_seconds?: number
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           correct_count: number

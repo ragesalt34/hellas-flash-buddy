@@ -21,6 +21,7 @@ import {
   VolumeX
 } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
+import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 
 type Question = {
@@ -53,6 +54,7 @@ export default function Flashcards() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
   const { speak, stop, isSpeaking, isSupported } = useSpeech();
+  useStudyTimer('flashcards');
 
   const validTopic = topic as TopicType;
   const validTopics = ['history', 'culture', 'laws', 'geography'];
