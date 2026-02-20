@@ -761,17 +761,17 @@ export default function Exam() {
                             <span className="text-xs px-2 py-0.5 bg-muted rounded">{t(`topic.${q.topic}`)}</span>
                             {wasFlagged && <Flag className="h-3 w-3 text-orange-500" />}
                           </div>
-                          <p className="font-medium text-sm mb-1">{q.question}</p>
+                          <p className="font-medium text-base mb-1">{q.question}</p>
                           {answers[index] && (
                             <p className={cn(
-                              "text-xs",
+                              "text-sm",
                               isCorrect ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"
                             )}>
                               {language === 'ru' ? 'Ваш ответ:' : 'Η απάντησή σας:'} {answers[index]}
                             </p>
                           )}
                           {!isCorrect && (
-                            <p className="text-xs text-muted-foreground mt-1">
+                            <p className="text-sm text-muted-foreground mt-1">
                               {language === 'ru' ? 'Правильный ответ:' : 'Σωστή απάντηση:'} {q.correct_answer}
                             </p>
                           )}
@@ -942,7 +942,7 @@ export default function Exam() {
                   : (language === 'ru' ? 'Отметить' : 'Επισήμανση')}
               </Button>
             </div>
-            <CardTitle className="font-display text-xl leading-relaxed">
+            <CardTitle className="font-display text-xl sm:text-2xl font-semibold leading-relaxed">
               {currentQuestion.question}
             </CardTitle>
           </CardHeader>
@@ -956,7 +956,7 @@ export default function Exam() {
                     key={index}
                     onClick={() => handleAnswer(answer)}
                     className={cn(
-                      "w-full p-4 text-left rounded-lg border-2 transition-all",
+                      "w-full p-4 text-left rounded-lg border-2 transition-all text-base sm:text-lg font-medium",
                       "hover:border-primary/50 hover:bg-accent/50",
                       isSelected && "border-primary bg-primary/5"
                     )}
