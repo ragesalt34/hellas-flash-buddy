@@ -1,31 +1,31 @@
 
-# Фиксы мобильной версии
+## Улучшение читаемости вопросов и ответов
 
-## Найденные проблемы
+### Проблема
+Текст на карточках с вопросами и ответами слишком мелкий и плохо читается:
+- **Quiz**: вопрос `text-base sm:text-xl`, ответы `text-sm sm:text-base`
+- **Exam**: вопрос `text-xl`, ответы без указания размера (default ~14-16px), обзор результатов `text-sm`
+- **Flashcards**: вопрос/ответ `text-lg sm:text-2xl`, пояснение `text-base`
 
-1. **Мобильное меню (Sheet) почти невидимо** -- класс `liquid-glass-refract` делает фон полупрозрачным, и на фоне темного оверлея содержимое Sheet практически не читается.
-2. **Переключатель языка дублируется** -- на мобильных отображаются две кнопки рядом (глобус + гамбургер), что путает. Глобус нужно убрать из хедера на мобильных и поместить переключатель только внутри Sheet-меню.
+### Что будет сделано
 
-## Что исправим
+**1. Quiz (`src/pages/Quiz.tsx`)**
+- Вопрос: `text-base sm:text-xl` --> `text-lg sm:text-2xl` + `font-semibold`
+- Варианты ответов: `text-sm sm:text-base` --> `text-base sm:text-lg` + `font-medium`
+- Пояснение: `text-sm text-muted-foreground` --> `text-base text-foreground/80`
 
-### Файл: `src/components/layout/Header.tsx`
+**2. Exam (`src/pages/Exam.tsx`)**
+- Вопрос (активный экзамен): `text-xl` --> `text-xl sm:text-2xl` + `font-semibold`
+- Варианты ответов: добавить `text-base sm:text-lg font-medium`
+- Обзор результатов: вопрос `text-sm` --> `text-base`, ответы `text-xs` --> `text-sm`
 
-**1. Убрать LanguageSwitcher из мобильного хедера:**
-- Обернуть `<LanguageSwitcher />` в mobile-nav div в `hidden` (уже скрыт на десктопе, но на мобильных рядом с гамбургером -- убрать)
-- Внутри SheetContent добавить `<LanguageSwitcher />` для мобильных
+**3. Flashcards (`src/pages/Flashcards.tsx`)**
+- Вопрос и ответ: `text-lg sm:text-2xl` --> `text-xl sm:text-3xl` + `font-semibold`
+- Пояснение: `text-base text-muted-foreground` --> `text-base sm:text-lg text-foreground/70`
 
-**2. Сделать SheetContent непрозрачным:**
-- Заменить `liquid-glass-refract` на обычный `bg-background` с легким glass-эффектом (`backdrop-blur-xl`) чтобы содержимое было читаемым
-- Или добавить `!bg-background` для принудительного непрозрачного фона
+### Технические детали
 
-### Детали реализации
-
-В мобильном div (`flex sm:hidden`):
-- Убрать `<LanguageSwitcher />`
-- Оставить только кнопку-гамбургер с Sheet
-
-В SheetContent:
-- Заменить `liquid-glass-refract` на `bg-background/95 backdrop-blur-xl`
-- Добавить `<LanguageSwitcher />` внутри Sheet-меню (под навигационными ссылками, перед кнопкой Выход)
-
-**Итого: 1 файл, минимальные изменения**
+Файлы для изменения:
+- `src/pages/Quiz.tsx` -- строки 158, 175, 194
+- `src/pages/Exam.tsx` -- строки 764, 769, 774, 945, 959, 964
+- `src/pages/Flashcards.tsx` -- строки 279, 309, 326
