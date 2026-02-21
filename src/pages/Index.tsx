@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { StudyTimeWidget } from '@/components/StudyTimeWidget';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -365,6 +366,15 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Study Time Widget for logged-in users */}
+      {user && (
+        <section className="py-16 relative">
+          <div className="container relative max-w-2xl mx-auto">
+            <StudyTimeWidget />
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       {!user && (
