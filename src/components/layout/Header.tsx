@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { LogOut, User, Settings, BookOpen, Menu } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, Menu, BarChart3 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +61,12 @@ export function Header() {
                     <Button variant="ghost" size="sm" className="gap-2 glass-button-v2 hover:bg-primary/10 rounded-xl">
                       <BookOpen className="h-4 w-4" />
                       <span className="hidden sm:inline">{t('nav.learn')}</span>
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button variant="outline" size="icon" className="rounded-full glass-button-v2 border-primary/12 hover:border-primary/25 h-9 w-9" title={t('nav.profile')}>
+                      <BarChart3 className="h-4 w-4" />
                     </Button>
                   </Link>
                   
@@ -137,7 +143,7 @@ export function Header() {
                         </Link>
                         <Link to="/profile" onClick={() => setMobileOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
-                            <User className="h-5 w-5" />
+                            <BarChart3 className="h-5 w-5" />
                             {t('nav.profile')}
                           </Button>
                         </Link>
