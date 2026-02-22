@@ -38,6 +38,14 @@ export function StudyTimeWidget() {
   const { data: weekData } = useQuery({
     queryKey: ['study-time-week', user?.id],
     queryFn: async () => {
+      // Helper: local date string YYYY-MM-DD
+      const toLocalDateStr = (d: Date) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+
       const now = new Date();
       const sevenDaysAgo = new Date(now);
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
@@ -52,18 +60,19 @@ export function StudyTimeWidget() {
 
       if (error) throw error;
 
-      // Group by day
+      // Group by LOCAL day
       const dayMap: Record<string, number> = {};
       for (let i = 0; i < 7; i++) {
         const d = new Date(sevenDaysAgo);
         d.setDate(d.getDate() + i);
-        dayMap[d.toISOString().slice(0, 10)] = 0;
+        dayMap[toLocalDateStr(d)] = 0;
       }
 
       (data || []).forEach((s: any) => {
-        const day = s.started_at.slice(0, 10);
-        if (dayMap[day] !== undefined) {
-          dayMap[day] += (s.duration_seconds || 0) / 60;
+        // Convert UTC timestamp to local date
+        const localDay = toLocalDateStr(new Date(s.started_at));
+        if (dayMap[localDay] !== undefined) {
+          dayMap[localDay] += (s.duration_seconds || 0) / 60;
         }
       });
 
@@ -78,7 +87,8 @@ export function StudyTimeWidget() {
 
   if (!weekData) return null;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const todayMinutes = weekData.find(d => d.date === todayStr)?.minutes || 0;
   const todayPercent = Math.min(100, (todayMinutes / RECOMMENDED_DAILY_MINUTES) * 100);
   const maxMinutes = Math.max(...weekData.map(d => d.minutes), RECOMMENDED_DAILY_MINUTES);
