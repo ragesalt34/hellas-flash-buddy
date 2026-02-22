@@ -4,62 +4,98 @@ import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * Tracks study time for the current session.
- * Automatically saves elapsed time to study_sessions when the session ends (unmount or pause).
+ * Uses fetch with keepalive for reliable saves during navigation/unload.
  */
 export function useStudyTimer(activityType: string = 'quiz') {
   const { user } = useAuth();
   const startTimeRef = useRef<number | null>(null);
-  const sessionIdRef = useRef<string | null>(null);
   const savedRef = useRef(false);
 
-  const saveSession = useCallback(async () => {
-    if (!user || !startTimeRef.current || savedRef.current) return;
-    
+  const buildPayload = useCallback(() => {
+    if (!user || !startTimeRef.current) return null;
     const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
-    if (durationSeconds < 5) return; // ignore very short sessions
-    
+    if (durationSeconds < 5) return null;
+    return {
+      user_id: user.id,
+      duration_seconds: durationSeconds,
+      activity_type: activityType,
+      started_at: new Date(startTimeRef.current).toISOString(),
+      ended_at: new Date().toISOString(),
+    };
+  }, [user, activityType]);
+
+  const sendViaFetch = useCallback((payload: object, token: string) => {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/study_sessions`;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        'Authorization': `Bearer ${token}`,
+        'Prefer': 'return=minimal',
+      },
+      keepalive: true,
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  }, []);
+
+  // Async save — gets fresh token, used for unmount & visibilitychange
+  const saveAsync = useCallback(() => {
+    if (savedRef.current) return;
+    const payload = buildPayload();
+    if (!payload) return;
     savedRef.current = true;
 
+    supabase.auth.getSession().then(({ data }) => {
+      const token = data.session?.access_token;
+      if (token) sendViaFetch(payload, token);
+    });
+  }, [buildPayload, sendViaFetch]);
+
+  // Sync save — reads token from localStorage, used for beforeunload
+  const saveSync = useCallback(() => {
+    if (savedRef.current) return;
+    const payload = buildPayload();
+    if (!payload) return;
+    savedRef.current = true;
+
+    const storageKey = `sb-${import.meta.env.VITE_SUPABASE_PROJECT_ID}-auth-token`;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) return;
+
     try {
-      await supabase.from('study_sessions').insert({
-        user_id: user.id,
-        duration_seconds: durationSeconds,
-        activity_type: activityType,
-        started_at: new Date(startTimeRef.current).toISOString(),
-        ended_at: new Date().toISOString(),
-      } as any);
-    } catch (e) {
-      console.error('Failed to save study session:', e);
-    }
-  }, [user, activityType]);
+      const parsed = JSON.parse(stored);
+      const token = parsed.access_token;
+      if (token) sendViaFetch(payload, token);
+    } catch {}
+  }, [buildPayload, sendViaFetch]);
 
   useEffect(() => {
     if (!user) return;
-    
+
     startTimeRef.current = Date.now();
     savedRef.current = false;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        saveSession();
+        saveAsync();
       } else {
-        // Resumed - start new tracking
         startTimeRef.current = Date.now();
         savedRef.current = false;
       }
     };
 
     const handleBeforeUnload = () => {
-      saveSession();
+      saveSync();
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      saveSession();
+      saveAsync(); // SPA navigation — page still alive
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, saveSession]);
+  }, [user, saveAsync, saveSync]);
 }
