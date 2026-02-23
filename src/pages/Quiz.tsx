@@ -12,6 +12,7 @@ import { Loader2, ArrowLeft, CheckCircle2, XCircle, ArrowRight, RotateCcw, Home,
 import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
+import { upsertProgress } from '@/lib/progressHelper';
 
 type Question = { id: string; question: string; correct_answer: string; wrong_answers: string[]; explanation: string | null; };
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
@@ -71,7 +72,11 @@ export default function Quiz() {
     if (isAnswered) return;
     setSelectedAnswer(answer);
     setIsAnswered(true);
-    if (answer === questions[currentIndex].correct_answer) setScore(prev => prev + 1);
+    const isCorrect = answer === questions[currentIndex].correct_answer;
+    if (isCorrect) setScore(prev => prev + 1);
+    if (user) {
+      upsertProgress(user.id, questions[currentIndex].id, isCorrect);
+    }
   };
 
   const handleNext = () => {

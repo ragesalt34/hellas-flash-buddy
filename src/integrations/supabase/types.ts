@@ -289,6 +289,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      upsert_progress: {
+        Args: {
+          p_correct: boolean
+          p_known?: boolean
+          p_question_id: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
