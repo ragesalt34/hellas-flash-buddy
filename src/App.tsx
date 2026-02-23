@@ -14,6 +14,7 @@ import Exam from "./pages/Exam";
 import Flashcards from "./pages/Flashcards";
 
 import Profile from "./pages/Profile";
+import Stats from "./pages/Stats";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,7 @@ const App = () => (
               
               <Route path="/learn/:topic/exam" element={<Exam />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/stats" element={<Stats />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

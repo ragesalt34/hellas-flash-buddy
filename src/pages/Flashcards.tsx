@@ -23,6 +23,7 @@ import {
 import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
+import { upsertProgress } from '@/lib/progressHelper';
 
 type Question = {
   id: string;
@@ -105,11 +106,17 @@ export default function Flashcards() {
 
   const handleKnow = () => {
     setKnownCount(prev => prev + 1);
+    if (user) {
+      upsertProgress(user.id, questions[currentIndex].id, true, true);
+    }
     goToNext();
   };
 
   const handleDontKnow = () => {
     setUnknownCount(prev => prev + 1);
+    if (user) {
+      upsertProgress(user.id, questions[currentIndex].id, false, false);
+    }
     goToNext();
   };
 

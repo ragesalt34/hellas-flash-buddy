@@ -20,7 +20,7 @@ import {
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -64,8 +64,8 @@ export function Header() {
                     </Button>
                   </Link>
 
-                  <Link to="/profile">
-                    <Button variant="outline" size="icon" className="rounded-full glass-button-v2 border-primary/12 hover:border-primary/25 h-9 w-9" title={t('nav.profile')}>
+                  <Link to="/stats">
+                    <Button variant="outline" size="icon" className="rounded-full glass-button-v2 border-primary/12 hover:border-primary/25 h-9 w-9" title={language === 'ru' ? 'Статистика' : 'Στατιστικά'}>
                       <BarChart3 className="h-4 w-4" />
                     </Button>
                   </Link>
@@ -141,10 +141,10 @@ export function Header() {
                             {t('nav.learn')}
                           </Button>
                         </Link>
-                        <Link to="/profile" onClick={() => setMobileOpen(false)}>
+                        <Link to="/stats" onClick={() => setMobileOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start gap-3 h-12 rounded-xl glass-button-v2 hover:bg-primary/10">
                             <BarChart3 className="h-5 w-5" />
-                            {t('nav.profile')}
+                            {language === 'ru' ? 'Статистика' : 'Στατιστικά'}
                           </Button>
                         </Link>
                         {isAdmin && (
