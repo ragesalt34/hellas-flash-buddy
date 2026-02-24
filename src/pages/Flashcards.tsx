@@ -54,6 +54,7 @@ export default function Flashcards() {
   const [unknownCount, setUnknownCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
+  const [restartCount, setRestartCount] = useState(0);
   const { speak, stop, isSpeaking, isSupported } = useSpeech();
   useStudyTimer('flashcards');
 
@@ -66,21 +67,54 @@ export default function Flashcards() {
 
     const fetchQuestions = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('topic', validTopic);
 
-      if (error) {
-        console.error('Error fetching questions:', error);
-      } else if (data && data.length > 0) {
-        setQuestions(shuffleArray(localizeQuestions(data, language)));
+      // Fetch questions and user progress in parallel
+      const [questionsResult, progressResult] = await Promise.all([
+        supabase.from('questions').select('*').eq('topic', validTopic),
+        supabase
+          .from('user_progress')
+          .select('question_id, correct_count, incorrect_count, next_review_at')
+          .eq('user_id', user.id),
+      ]);
+
+      if (questionsResult.error) {
+        console.error('Error fetching questions:', questionsResult.error);
+        setIsLoading(false);
+        return;
       }
+
+      const data = questionsResult.data || [];
+      if (data.length === 0) {
+        setQuestions([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const localized = localizeQuestions(data, language);
+      const progressMap = Object.fromEntries(
+        (progressResult.data || []).map(p => [p.question_id, p])
+      );
+
+      const now = Date.now();
+
+      // Same priority groups as Quiz — show all cards but due/hard ones first
+      const scored = localized.map(q => {
+        const p = progressMap[q.id];
+        if (!p) return { q, group: 0, ts: 0 };
+        const reviewTs = p.next_review_at ? new Date(p.next_review_at).getTime() : 0;
+        const isDue = reviewTs <= now;
+        if (isDue) return { q, group: 1, ts: reviewTs };
+        if (p.incorrect_count > p.correct_count) return { q, group: 2, ts: reviewTs };
+        return { q, group: 3, ts: reviewTs };
+      });
+
+      scored.sort((a, b) => a.group !== b.group ? a.group - b.group : a.ts - b.ts);
+      setQuestions(scored.map(s => s.q));
       setIsLoading(false);
     };
 
     fetchQuestions();
-  }, [validTopic, user, isValidTopic, language]);
+  }, [validTopic, user, isValidTopic, language, restartCount]);
 
   if (authLoading) {
     return (
@@ -151,6 +185,7 @@ export default function Flashcards() {
     setKnownCount(0);
     setUnknownCount(0);
     setIsFinished(false);
+    setRestartCount(c => c + 1); // re-fetch with fresh priority order
   };
 
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;

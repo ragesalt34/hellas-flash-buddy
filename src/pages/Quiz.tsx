@@ -67,23 +67,28 @@ export default function Quiz() {
       // Fetch user progress for weighted selection
       const { data: progressData } = await supabase
         .from('user_progress')
-        .select('question_id, correct_count, incorrect_count, last_reviewed_at')
+        .select('question_id, correct_count, incorrect_count, last_reviewed_at, next_review_at')
         .eq('user_id', user.id);
 
       const progressMap = Object.fromEntries(
         (progressData || []).map(p => [p.question_id, p])
       );
 
-      // Priority groups:
-      //   0 = never seen   → highest priority
-      //   1 = incorrect > correct (struggling), oldest reviewed first
-      //   2 = well-known, oldest reviewed first (recently-mastered last)
+      const now = Date.now();
+
+      // Priority groups (spaced repetition):
+      //   0 = never seen          → always first
+      //   1 = due for review      → most overdue first (ascending next_review_at)
+      //   2 = not due, struggling → ascending next_review_at
+      //   3 = not due, well-known → ascending next_review_at (recently studied last)
       const scored = localized.map(q => {
         const p = progressMap[q.id];
         if (!p) return { q, group: 0, ts: 0 };
-        const ts = p.last_reviewed_at ? new Date(p.last_reviewed_at).getTime() : 0;
-        if (p.incorrect_count > p.correct_count) return { q, group: 1, ts };
-        return { q, group: 2, ts };
+        const reviewTs = p.next_review_at ? new Date(p.next_review_at).getTime() : 0;
+        const isDue = reviewTs <= now;
+        if (isDue) return { q, group: 1, ts: reviewTs };
+        if (p.incorrect_count > p.correct_count) return { q, group: 2, ts: reviewTs };
+        return { q, group: 3, ts: reviewTs };
       });
 
       scored.sort((a, b) => a.group !== b.group ? a.group - b.group : a.ts - b.ts);
