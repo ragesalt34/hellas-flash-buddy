@@ -40,6 +40,7 @@ export default function Quiz() {
   const [isFinished, setIsFinished] = useState(false);
   const { speak, stop, isSpeaking, isSupported } = useSpeech();
   useStudyTimer('quiz');
+  const [restartCount, setRestartCount] = useState(0);
 
   const validTopic = topic as TopicType;
   const validTopics = ['history', 'culture', 'laws', 'geography'];
@@ -49,13 +50,48 @@ export default function Quiz() {
     if (!isValidTopic || !user) return;
     const fetchQuestions = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase.from('questions').select('*').eq('topic', validTopic).limit(20);
-      if (error) console.error('Error fetching questions:', error);
-      else if (data && data.length > 0) setQuestions(shuffleArray(localizeQuestions(data, language)));
+      const { data, error } = await supabase.from('questions').select('*').eq('topic', validTopic).limit(200);
+      if (error) {
+        console.error('Error fetching questions:', error);
+        setIsLoading(false);
+        return;
+      }
+      if (!data || data.length === 0) {
+        setQuestions([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const localized = localizeQuestions(data, language);
+
+      // Fetch user progress for weighted selection
+      const { data: progressData } = await supabase
+        .from('user_progress')
+        .select('question_id, correct_count, incorrect_count, last_reviewed_at')
+        .eq('user_id', user.id);
+
+      const progressMap = Object.fromEntries(
+        (progressData || []).map(p => [p.question_id, p])
+      );
+
+      const scored = localized.map(q => {
+        const p = progressMap[q.id];
+        if (!p) return { q, score: 0 }; // never seen → highest priority
+        const total = p.correct_count + p.incorrect_count;
+        const ratio = total > 0 ? p.correct_count / total : 0;
+        const daysSince = p.last_reviewed_at
+          ? (Date.now() - new Date(p.last_reviewed_at).getTime()) / 86400000
+          : 999;
+        return { q, score: ratio - daysSince * 0.1 };
+      });
+
+      scored.sort((a, b) => a.score - b.score); // lowest score = highest priority
+      const selected = shuffleArray(scored.slice(0, 20).map(s => s.q));
+      setQuestions(selected);
       setIsLoading(false);
     };
     fetchQuestions();
-  }, [validTopic, user, isValidTopic, language]);
+  }, [validTopic, user, isValidTopic, language, restartCount]);
 
   useEffect(() => {
     if (questions.length > 0 && currentIndex < questions.length) {
@@ -84,7 +120,7 @@ export default function Quiz() {
     else setIsFinished(true);
   };
 
-  const handleRestart = () => { setCurrentIndex(0); setSelectedAnswer(null); setIsAnswered(false); setScore(0); setIsFinished(false); setQuestions(shuffleArray(questions)); };
+  const handleRestart = () => { setCurrentIndex(0); setSelectedAnswer(null); setIsAnswered(false); setScore(0); setIsFinished(false); setRestartCount(c => c + 1); };
 
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
