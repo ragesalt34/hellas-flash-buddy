@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Loader2, Trophy, Target, TrendingUp, Flame, BarChart3,
-  AlertTriangle, BookOpen, ArrowRight,
+  AlertTriangle, BookOpen, ArrowRight, Clock,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -94,6 +94,7 @@ export default function Stats() {
 
   // ── Calculations ───────────────────────────────────────────────────────────
 
+  const now = new Date();
   const totalQuestionsCount = allQuestions?.length || 0;
 
   // Total questions per topic
@@ -108,19 +109,24 @@ export default function Stats() {
   const totalAnswered = totalCorrect + totalIncorrect;
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
 
-  // Readiness:
-  //   ruReadiness = quiz-based mastery: correct_count > 0 AND correct_count >= incorrect_count
-  //   elReadiness = flashcard-based: is_known = true
+  // Readiness: quiz-based mastery (correct_count > 0 AND correct_count >= incorrect_count)
   const masteredCount = progress?.filter(
     p => p.correct_count > 0 && p.correct_count >= p.incorrect_count,
   ).length || 0;
-  const ruReadiness = totalQuestionsCount > 0
+  const readiness = totalQuestionsCount > 0
     ? Math.round((masteredCount / totalQuestionsCount) * 100)
     : 0;
-  const isKnownCount = progress?.filter(p => p.is_known).length || 0;
-  const elReadiness = totalQuestionsCount > 0
-    ? Math.round((isKnownCount / totalQuestionsCount) * 100)
-    : 0;
+
+  // Cards due for SRS review today
+  const dueForReviewCount = progress?.filter(p => {
+    if (!p.next_review_at) return false;
+    return new Date(p.next_review_at) <= now;
+  }).length || 0;
+
+  // Total study time in minutes
+  const totalStudyMinutes = Math.round(
+    (studySessions?.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) || 0) / 60
+  );
 
   // Mastered per topic (for progress rows)
   const topicMastered: Record<string, number> = {};
@@ -180,23 +186,38 @@ export default function Stats() {
       date: new Date(exam.completed_at).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'el-GR'),
     })) || [];
 
-  // 30-day activity calendar
+  // 30-day activity calendar with intensity (minutes per day)
   const toDateKey = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const thirtyDayCalendar = (() => {
-    const days: Record<string, boolean> = {};
-    const now = new Date();
+    const days: Record<string, number> = {}; // minutes per day
     for (let i = 29; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      days[toDateKey(d)] = false;
+      days[toDateKey(d)] = 0;
     }
     studySessions?.forEach(s => {
       const key = toDateKey(new Date(s.started_at));
-      if (key in days) days[key] = true;
+      if (key in days) days[key] += Math.round((s.duration_seconds || 0) / 60);
     });
-    return Object.entries(days).map(([date, active]) => ({ date, active }));
+    return Object.entries(days).map(([date, minutes]) => ({ date, minutes }));
   })();
+
+  // Intensity level: 0 = none, 1 = <10min, 2 = <30min, 3 = <60min, 4 = 60min+
+  const getCalendarIntensity = (minutes: number): 0 | 1 | 2 | 3 | 4 => {
+    if (minutes === 0) return 0;
+    if (minutes < 10) return 1;
+    if (minutes < 30) return 2;
+    if (minutes < 60) return 3;
+    return 4;
+  };
+  const calendarIntensityClass: Record<0 | 1 | 2 | 3 | 4, string> = {
+    0: 'bg-muted/40',
+    1: 'bg-primary/20',
+    2: 'bg-primary/40',
+    3: 'bg-primary/65',
+    4: 'bg-primary/90',
+  };
 
   // Top 5 hardest questions by incorrect_count
   const top5Hardest = [...(progress || [])]
@@ -204,13 +225,13 @@ export default function Stats() {
     .sort((a, b) => b.incorrect_count - a.incorrect_count)
     .slice(0, 5);
 
-  // Review today: incorrect > correct, oldest reviewed first (up to 10)
+  // Review today: SRS-based (next_review_at <= now), most overdue first, up to 10
   const reviewToday = [...(progress || [])]
-    .filter(p => p.incorrect_count > p.correct_count)
+    .filter(p => p.next_review_at && new Date(p.next_review_at) <= now)
     .sort((a, b) => {
-      const aTime = a.last_reviewed_at ? new Date(a.last_reviewed_at).getTime() : 0;
-      const bTime = b.last_reviewed_at ? new Date(b.last_reviewed_at).getTime() : 0;
-      return aTime - bTime;
+      const aTime = a.next_review_at ? new Date(a.next_review_at).getTime() : 0;
+      const bTime = b.next_review_at ? new Date(b.next_review_at).getTime() : 0;
+      return aTime - bTime; // most overdue first
     })
     .slice(0, 10);
 
@@ -305,19 +326,54 @@ export default function Stats() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <div className="p-2 rounded-lg liquid-glass-button">
-                      <Trophy className="h-4 w-4 text-accent" />
+                      <Clock className="h-4 w-4 text-accent" />
                     </div>
-                    <span className="text-sm">{language === 'ru' ? 'Экзаменов' : 'Εξετάσεις'}</span>
+                    <span className="text-sm">{language === 'ru' ? 'Время обучения' : 'Χρόνος μάθησης'}</span>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-foreground">{examResults?.length || 0}</p>
+                  <p className="text-3xl font-bold text-foreground">
+                    {totalStudyMinutes >= 60
+                      ? `${Math.floor(totalStudyMinutes / 60)}ч`
+                      : `${totalStudyMinutes}м`}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {language === 'ru' ? 'пройдено' : 'ολοκληρώθηκαν'}
+                    {language === 'ru' ? 'всего' : 'συνολικά'}
                   </p>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Due for review badge */}
+            {dueForReviewCount > 0 && (
+              <Card className="liquid-glass-card animate-fade-in border-primary/30" style={{ animationDelay: '0.35s' }}>
+                <CardContent className="py-4 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">
+                        {language === 'ru'
+                          ? `${dueForReviewCount} карточек ждут повторения сегодня`
+                          : `${dueForReviewCount} κάρτες περιμένουν σήμερα`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {language === 'ru'
+                          ? 'По расписанию интервального повторения'
+                          : 'Σύμφωνα με το πρόγραμμα επανάληψης'}
+                      </p>
+                    </div>
+                  </div>
+                  <Link to="/learn">
+                    <Button size="sm" className="liquid-glass-button shrink-0">
+                      {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Study time widget */}
             <StudyTimeWidget />
@@ -388,7 +444,7 @@ export default function Stats() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
-                {ruReadiness >= 80 && (
+                {readiness >= 80 && (
                   <div className="flex items-center gap-3 p-4 bg-success/10 border border-success/30 rounded-xl text-success">
                     <Trophy className="h-5 w-5 shrink-0" />
                     <p className="font-medium text-sm">
@@ -399,36 +455,37 @@ export default function Stats() {
                   </div>
                 )}
 
-                {/* Quiz-based readiness */}
+                {/* Unified readiness */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="font-medium">
-                      {language === 'ru' ? 'Готовность (по тестам)' : 'Ετοιμότητα (από κουίζ)'}
+                      {language === 'ru' ? 'Готовность к экзамену' : 'Ετοιμότητα εξέτασης'}
                     </span>
-                    <span className="font-bold text-primary">{ruReadiness}%</span>
+                    <span className="font-bold text-primary">{readiness}%</span>
                   </div>
-                  <Progress value={ruReadiness} className="h-3" />
+                  <Progress value={readiness} className="h-3" />
                   <p className="text-xs text-muted-foreground">
                     {language === 'ru'
-                      ? `${masteredCount} из ${totalQuestionsCount} вопросов освоено`
-                      : `${masteredCount} από ${totalQuestionsCount} ερωτήσεις κατεκτήθηκαν`}
+                      ? `${masteredCount} из ${totalQuestionsCount} вопросов освоено (≥80% для допуска)`
+                      : `${masteredCount} από ${totalQuestionsCount} ερωτήσεις κατεκτήθηκαν (≥80% για εξέταση)`}
                   </p>
                 </div>
 
-                {/* Flashcard-based readiness */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">
-                      {language === 'ru' ? 'Карточки (знаю)' : 'Κάρτες (γνωρίζω)'}
+                {/* Progress milestones */}
+                <div className="flex gap-2 flex-wrap">
+                  {[25, 50, 75, 80, 100].map(milestone => (
+                    <span
+                      key={milestone}
+                      className={cn(
+                        'text-xs px-2 py-1 rounded-full',
+                        readiness >= milestone
+                          ? 'bg-primary/20 text-primary font-medium'
+                          : 'bg-muted/30 text-muted-foreground',
+                      )}
+                    >
+                      {milestone}%
                     </span>
-                    <span className="font-bold text-accent">{elReadiness}%</span>
-                  </div>
-                  <Progress value={elReadiness} className="h-3 [&>div]:bg-accent" />
-                  <p className="text-xs text-muted-foreground">
-                    {language === 'ru'
-                      ? `${isKnownCount} из ${totalQuestionsCount} карточек`
-                      : `${isKnownCount} από ${totalQuestionsCount} κάρτες`}
-                  </p>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -515,25 +572,25 @@ export default function Stats() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-10 gap-1.5">
-                  {thirtyDayCalendar.map(({ date, active }) => (
-                    <div
-                      key={date}
-                      title={date}
-                      className={cn(
-                        'aspect-square rounded-sm',
-                        active ? 'bg-primary/70' : 'bg-muted/40',
-                      )}
-                    />
-                  ))}
+                  {thirtyDayCalendar.map(({ date, minutes }) => {
+                    const level = getCalendarIntensity(minutes);
+                    return (
+                      <div
+                        key={date}
+                        title={`${date}${minutes > 0 ? ` — ${minutes} ${language === 'ru' ? 'мин' : 'λεπτά'}` : ''}`}
+                        className={cn('aspect-square rounded-sm', calendarIntensityClass[level])}
+                      />
+                    );
+                  })}
                 </div>
-                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-primary/70 inline-block" />
-                    {language === 'ru' ? 'Занимался' : 'Μελέτησε'}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-muted/40 inline-block" />
-                    {language === 'ru' ? 'Пропустил' : 'Παράλειψε'}
+                <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground flex-wrap">
+                  <span>{language === 'ru' ? 'Меньше' : 'Λιγότερο'}</span>
+                  {([0, 1, 2, 3, 4] as const).map(lvl => (
+                    <span key={lvl} className={cn('w-3 h-3 rounded-sm inline-block', calendarIntensityClass[lvl])} />
+                  ))}
+                  <span>{language === 'ru' ? 'Больше' : 'Περισσότερο'}</span>
+                  <span className="ml-auto opacity-60">
+                    {language === 'ru' ? '< 10м / < 30м / < 60м / 60м+' : '< 10λ / < 30λ / < 60λ / 60λ+'}
                   </span>
                 </div>
               </CardContent>
@@ -599,8 +656,8 @@ export default function Stats() {
                 </CardTitle>
                 <CardDescription>
                   {language === 'ru'
-                    ? 'Вопросы, где ошибок больше, чем правильных ответов'
-                    : 'Ερωτήσεις με περισσότερα λάθη από σωστές απαντήσεις'}
+                    ? 'Вопросы, которые пора повторить по расписанию SRS'
+                    : 'Ερωτήσεις που πρέπει να επαναληφθούν σύμφωνα με το SRS'}
                 </CardDescription>
               </CardHeader>
               <CardContent>

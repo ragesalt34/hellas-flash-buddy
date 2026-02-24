@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { localizeQuestions } from '@/lib/questionLocale';
 import { Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
@@ -95,6 +96,23 @@ export default function Exam() {
   const { t, language } = useLanguage();
   const { toast } = useToast();
   useStudyTimer('exam');
+
+  // Fetch last exam score for comparison
+  const { data: lastExamScore } = useQuery({
+    queryKey: ['last-exam-score', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exam_results')
+        .select('correct_answers, total_questions')
+        .eq('user_id', user!.id)
+        .order('completed_at', { ascending: false })
+        .limit(1);
+      if (error) throw error;
+      if (!data || data.length === 0) return null;
+      return Math.round((data[0].correct_answers / data[0].total_questions) * 100);
+    },
+    enabled: !!user,
+  });
   
   // Settings state
   const [settings, setSettings] = useState<ExamSettings>({
@@ -660,11 +678,33 @@ export default function Exam() {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Score */}
-              <div className={cn(
-                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold",
-                passed ? "bg-green-100 dark:bg-green-900 text-green-600" : "bg-red-100 dark:bg-red-900 text-red-600"
-              )}>
-                {percentage}%
+              <div className="flex flex-col items-center gap-2">
+                <div className={cn(
+                  "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold",
+                  passed ? "bg-green-100 dark:bg-green-900 text-green-600" : "bg-red-100 dark:bg-red-900 text-red-600"
+                )}>
+                  {percentage}%
+                </div>
+                {lastExamScore != null && (
+                  <div className={cn(
+                    "flex items-center gap-1 text-sm font-medium px-3 py-1 rounded-full",
+                    percentage > lastExamScore
+                      ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400"
+                      : percentage < lastExamScore
+                      ? "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400"
+                      : "bg-muted text-muted-foreground",
+                  )}>
+                    {percentage > lastExamScore
+                      ? `▲ +${percentage - lastExamScore}%`
+                      : percentage < lastExamScore
+                      ? `▼ ${percentage - lastExamScore}%`
+                      : '= '}
+                    <span className="opacity-70 text-xs ml-1">
+                      {language === 'ru' ? 'vs прошлый' : 'vs προηγ.'}
+                      {' '}{lastExamScore}%
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Stats */}

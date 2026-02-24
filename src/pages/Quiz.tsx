@@ -106,6 +106,25 @@ export default function Quiz() {
     }
   }, [currentIndex, questions]);
 
+  // Keyboard shortcuts: 1/2/3/4 = select answer, Enter/Space = next question
+  useEffect(() => {
+    if (isFinished || isLoading || questions.length === 0) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (!isAnswered) {
+        const idx = ['1', '2', '3', '4'].indexOf(e.key);
+        if (idx !== -1 && idx < shuffledAnswers.length) {
+          handleAnswer(shuffledAnswers[idx]);
+        }
+      } else if (e.code === 'Enter' || e.code === 'Space') {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isFinished, isLoading, questions.length, isAnswered, shuffledAnswers, currentIndex]);
+
   if (authLoading) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isValidTopic) return <Navigate to="/learn" replace />;
@@ -229,6 +248,7 @@ export default function Quiz() {
                       !isAnswered && isSelected && "border-primary bg-primary/8"
                     )}>
                     <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground mr-2 shrink-0 opacity-60">{index + 1}</span>
                       <span className="flex-1">{answer}</span>
                       {isAnswered && isCorrect && <CheckCircle2 className="h-5 w-5 text-success shrink-0" />}
                       {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 text-destructive shrink-0" />}

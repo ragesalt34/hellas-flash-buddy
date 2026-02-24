@@ -52,6 +52,7 @@ export default function Flashcards() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [knownCount, setKnownCount] = useState(0);
   const [unknownCount, setUnknownCount] = useState(0);
+  const [unknownQuestions, setUnknownQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
   const [restartCount, setRestartCount] = useState(0);
@@ -148,6 +149,7 @@ export default function Flashcards() {
 
   const handleDontKnow = () => {
     setUnknownCount(prev => prev + 1);
+    setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
     if (user) {
       upsertProgress(user.id, questions[currentIndex].id, false, false);
     }
@@ -176,6 +178,7 @@ export default function Flashcards() {
     setIsFlipped(false);
     setKnownCount(0);
     setUnknownCount(0);
+    setUnknownQuestions([]);
     setIsFinished(false);
   };
 
@@ -184,9 +187,49 @@ export default function Flashcards() {
     setIsFlipped(false);
     setKnownCount(0);
     setUnknownCount(0);
+    setUnknownQuestions([]);
     setIsFinished(false);
     setRestartCount(c => c + 1); // re-fetch with fresh priority order
   };
+
+  const handleRestartUnknown = () => {
+    if (unknownQuestions.length === 0) return;
+    setQuestions(unknownQuestions);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setKnownCount(0);
+    setUnknownCount(0);
+    setUnknownQuestions([]);
+    setIsFinished(false);
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (isFinished || isLoading || questions.length === 0) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          handleFlip();
+          break;
+        case 'ArrowRight':
+          if (isFlipped) handleKnow();
+          break;
+        case 'ArrowLeft':
+          if (isFlipped) handleDontKnow();
+          break;
+        case 'ArrowUp':
+          goToPrev();
+          break;
+        case 'ArrowDown':
+          goToNext();
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isFinished, isLoading, questions.length, isFlipped, currentIndex]);
 
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
@@ -259,7 +302,19 @@ export default function Flashcards() {
                 </div>
               </div>
 
-              <div className="flex gap-4 justify-center pt-4">
+              <div className="flex flex-wrap gap-3 justify-center pt-4">
+                {unknownQuestions.length > 0 && (
+                  <Button
+                    variant="outline"
+                    onClick={handleRestartUnknown}
+                    className="liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    {language === 'ru'
+                      ? `Повторить незнакомые (${unknownQuestions.length})`
+                      : `Επανάληψη άγνωστων (${unknownQuestions.length})`}
+                  </Button>
+                )}
                 <Button variant="outline" onClick={handleShuffle} className="liquid-glass-button">
                   <Shuffle className="h-4 w-4 mr-2" />
                   {t('flashcards.shuffle')}
@@ -378,25 +433,38 @@ export default function Flashcards() {
 
         {/* Controls */}
         <div className="relative max-w-2xl mx-auto mt-8 px-4">
-          {/* Know/Don't Know buttons */}
-          <div className="flex gap-3 justify-center mb-4">
-            <Button 
-              variant="outline" 
-              className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
-              onClick={handleDontKnow}
-            >
-              <ThumbsDown className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
-              onClick={handleKnow}
-            >
-              <ThumbsUp className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('flashcards.know')}</span>
-            </Button>
-          </div>
+          {/* Know/Don't Know buttons — visible only after flip */}
+          {isFlipped ? (
+            <div className="flex gap-3 justify-center mb-4">
+              <Button
+                variant="outline"
+                className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+                onClick={handleDontKnow}
+              >
+                <ThumbsDown className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
+                <span className="hidden sm:inline text-xs opacity-50 ml-1">←</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
+                onClick={handleKnow}
+              >
+                <ThumbsUp className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('flashcards.know')}</span>
+                <span className="hidden sm:inline text-xs opacity-50 ml-1">→</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center mb-4">
+              <p className="text-sm text-muted-foreground">
+                {language === 'ru'
+                  ? 'Переверните карточку, чтобы оценить ответ'
+                  : 'Αναποδογυρίστε την κάρτα για να αξιολογήσετε'}{' '}
+                <span className="opacity-50">(Space)</span>
+              </p>
+            </div>
+          )}
 
           {/* Navigation buttons */}
           <div className="flex items-center justify-between gap-2">

@@ -4,14 +4,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { 
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
   Layers, BookOpen, GraduationCap,
-  History, Palette, Scale, MapPin, ArrowRight, Loader2
+  History, Palette, Scale, MapPin, ArrowRight, Loader2, Bell
 } from 'lucide-react';
 
 export default function Learn() {
   const { user, isLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // Count cards due for SRS review today
+  const { data: dueCount } = useQuery({
+    queryKey: ['due-review-count', user?.id],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('id')
+        .eq('user_id', user!.id)
+        .lte('next_review_at', now);
+      if (error) throw error;
+      return data?.length || 0;
+    },
+    enabled: !!user,
+  });
 
   const topics = [
     { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History, color: 'history', iconClass: 'bg-history/12 text-history group-hover:bg-history group-hover:text-primary-foreground' },
@@ -45,6 +63,23 @@ export default function Learn() {
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">{t('learn.selectTopic')}</h1>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">{t('learn.selectTopic.desc')}</p>
         </div>
+
+        {/* Due for review banner */}
+        {dueCount != null && dueCount > 0 && (
+          <div className="relative mb-6 flex items-center gap-3 p-3 rounded-xl liquid-glass-card border-primary/30 animate-fade-in">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <Bell className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-sm font-medium flex-1">
+              {language === 'ru'
+                ? `${dueCount} карточек ждут повторения сегодня`
+                : `${dueCount} κάρτες περιμένουν σήμερα`}
+            </p>
+            <span className="text-xs text-muted-foreground opacity-60">
+              {language === 'ru' ? 'Выберите тему и начни' : 'Επιλέξτε θέμα'}
+            </span>
+          </div>
+        )}
 
         {/* Topics */}
         <div className="relative grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
