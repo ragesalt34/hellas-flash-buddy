@@ -56,6 +56,7 @@ export default function Flashcards() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
   const [restartCount, setRestartCount] = useState(0);
+  const [ratedIndices, setRatedIndices] = useState<Set<number>>(new Set());
   const { speak, stop, isSpeaking, isSupported } = useSpeech();
   useStudyTimer('flashcards');
 
@@ -140,18 +141,24 @@ export default function Flashcards() {
   };
 
   const handleKnow = () => {
-    setKnownCount(prev => prev + 1);
-    if (user) {
-      upsertProgress(user.id, questions[currentIndex].id, true, true);
+    if (!ratedIndices.has(currentIndex)) {
+      setRatedIndices(prev => new Set([...prev, currentIndex]));
+      setKnownCount(prev => prev + 1);
+      if (user) {
+        upsertProgress(user.id, questions[currentIndex].id, true);
+      }
     }
     goToNext();
   };
 
   const handleDontKnow = () => {
-    setUnknownCount(prev => prev + 1);
-    setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
-    if (user) {
-      upsertProgress(user.id, questions[currentIndex].id, false, false);
+    if (!ratedIndices.has(currentIndex)) {
+      setRatedIndices(prev => new Set([...prev, currentIndex]));
+      setUnknownCount(prev => prev + 1);
+      setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
+      if (user) {
+        upsertProgress(user.id, questions[currentIndex].id, false);
+      }
     }
     goToNext();
   };
@@ -180,6 +187,7 @@ export default function Flashcards() {
     setUnknownCount(0);
     setUnknownQuestions([]);
     setIsFinished(false);
+    setRatedIndices(new Set());
   };
 
   const handleRestart = () => {
@@ -189,6 +197,7 @@ export default function Flashcards() {
     setUnknownCount(0);
     setUnknownQuestions([]);
     setIsFinished(false);
+    setRatedIndices(new Set());
     setRestartCount(c => c + 1); // re-fetch with fresh priority order
   };
 
@@ -201,6 +210,7 @@ export default function Flashcards() {
     setUnknownCount(0);
     setUnknownQuestions([]);
     setIsFinished(false);
+    setRatedIndices(new Set());
   };
 
   // Keyboard shortcuts
