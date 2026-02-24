@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Loader2, Trophy, Target, TrendingUp, Flame, BarChart3,
-  AlertTriangle, BookOpen, ArrowRight, Clock,
+  AlertTriangle, BookOpen, ArrowRight, Clock, Languages,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -24,7 +24,7 @@ type TopicKey = typeof TOPICS[number];
 
 export default function Stats() {
   const { user, isLoading: authLoading } = useAuth();
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   // ── Queries ────────────────────────────────────────────────────────────────
 
@@ -344,6 +344,36 @@ export default function Stats() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Greek switch banner */}
+            {accuracy >= 80 && language === 'ru' && (
+              <Card className="liquid-glass-card animate-fade-in border-accent/40 bg-gradient-to-r from-accent/5 to-primary/5" style={{ animationDelay: '0.35s' }}>
+                <CardContent className="py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-accent/15 shrink-0">
+                      <Languages className="h-5 w-5 text-accent" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">
+                        🇬🇷 Вы готовы учиться на греческом!
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Точность {accuracy}% — отличный результат. Попробуйте отвечать на вопросы на греческом языке.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="shrink-0 bg-accent/20 hover:bg-accent/30 text-accent border border-accent/30 hover:border-accent/50"
+                    variant="outline"
+                    onClick={() => setLanguage('el')}
+                  >
+                    Переключиться на греческий
+                    <ArrowRight className="h-3 w-3 ml-1" />
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Due for review badge */}
             {dueForReviewCount > 0 && (
