@@ -370,29 +370,29 @@ export default function Flashcards() {
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face flashcard-glass animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
+            <Card className="flashcard-face flashcard-glass animated-border overflow-hidden">
+              <CardContent className="p-0 h-full flex flex-col items-center justify-center text-center gap-3 px-8 py-6">
+                <p className="text-xs text-muted-foreground uppercase tracking-widest">
                   {t('flashcards.question')}
                 </p>
-                <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed">
+                <p className="font-display text-xl sm:text-2xl font-semibold leading-snug flex-1 flex items-center">
                   {currentQuestion.question}
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-6">
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex items-center justify-center gap-2 shrink-0">
+                  <p className="text-xs text-muted-foreground">
                     {t('flashcards.clickToFlip')}
                   </p>
                   {isSupported && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 liquid-glass-button"
+                      className="h-7 w-7 liquid-glass-button"
                       onClick={(e) => {
                         e.stopPropagation();
                         isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
                       }}
                     >
-                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
                     </Button>
                   )}
                 </div>
@@ -400,32 +400,34 @@ export default function Flashcards() {
             </Card>
 
             {/* Back */}
-            <Card className="flashcard-face flashcard-back flashcard-glass animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
+            <Card className="flashcard-face flashcard-back flashcard-glass animated-border overflow-hidden">
+              <CardContent className="p-0 h-full flex flex-col items-center justify-center text-center gap-3 px-8 py-6">
+                <p className="text-xs text-muted-foreground uppercase tracking-widest">
                   {t('flashcards.answer')}
                 </p>
-                <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-foreground">
+                <p className="font-display text-xl sm:text-2xl font-semibold leading-snug flex-1 flex items-center text-foreground">
                   {currentQuestion.correct_answer}
                 </p>
-                {isSupported && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 mt-4 liquid-glass-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
-                    }}
-                  >
-                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
-                )}
-                {currentQuestion.explanation && (
-                  <p className="text-base sm:text-lg text-foreground/70 mt-4">
-                    {currentQuestion.explanation}
-                  </p>
-                )}
+                <div className="flex flex-col items-center gap-2 shrink-0">
+                  {currentQuestion.explanation && (
+                    <p className="text-sm text-foreground/60 leading-snug max-w-xs">
+                      {currentQuestion.explanation}
+                    </p>
+                  )}
+                  {isSupported && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 liquid-glass-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                      }}
+                    >
+                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
