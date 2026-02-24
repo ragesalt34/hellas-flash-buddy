@@ -74,18 +74,19 @@ export default function Quiz() {
         (progressData || []).map(p => [p.question_id, p])
       );
 
+      // Priority groups:
+      //   0 = never seen   → highest priority
+      //   1 = incorrect > correct (struggling), oldest reviewed first
+      //   2 = well-known, oldest reviewed first (recently-mastered last)
       const scored = localized.map(q => {
         const p = progressMap[q.id];
-        if (!p) return { q, score: 0 }; // never seen → highest priority
-        const total = p.correct_count + p.incorrect_count;
-        const ratio = total > 0 ? p.correct_count / total : 0;
-        const daysSince = p.last_reviewed_at
-          ? (Date.now() - new Date(p.last_reviewed_at).getTime()) / 86400000
-          : 999;
-        return { q, score: ratio - daysSince * 0.1 };
+        if (!p) return { q, group: 0, ts: 0 };
+        const ts = p.last_reviewed_at ? new Date(p.last_reviewed_at).getTime() : 0;
+        if (p.incorrect_count > p.correct_count) return { q, group: 1, ts };
+        return { q, group: 2, ts };
       });
 
-      scored.sort((a, b) => a.score - b.score); // lowest score = highest priority
+      scored.sort((a, b) => a.group !== b.group ? a.group - b.group : a.ts - b.ts);
       const selected = shuffleArray(scored.slice(0, 20).map(s => s.q));
       setQuestions(selected);
       setIsLoading(false);
