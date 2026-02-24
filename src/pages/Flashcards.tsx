@@ -375,7 +375,7 @@ export default function Flashcards() {
                 <p className="text-xs text-muted-foreground uppercase tracking-widest">
                   {t('flashcards.question')}
                 </p>
-                <p className="font-display text-xl sm:text-2xl font-semibold leading-snug flex-1 flex items-center">
+                <p className="font-display text-xl sm:text-3xl font-semibold leading-snug flex-1 flex items-center">
                   {currentQuestion.question}
                 </p>
                 <div className="flex items-center justify-center gap-2 shrink-0">
@@ -405,7 +405,7 @@ export default function Flashcards() {
                 <p className="text-xs text-muted-foreground uppercase tracking-widest">
                   {t('flashcards.answer')}
                 </p>
-                <p className="font-display text-xl sm:text-2xl font-semibold leading-snug flex-1 flex items-center text-foreground">
+                <p className="font-display text-xl sm:text-3xl font-semibold leading-snug flex-1 flex items-center text-foreground">
                   {currentQuestion.correct_answer}
                 </p>
                 <div className="flex flex-col items-center gap-2 shrink-0">
@@ -458,14 +458,7 @@ export default function Flashcards() {
               </Button>
             </div>
           ) : (
-            <div className="flex justify-center mb-4">
-              <p className="text-sm text-muted-foreground">
-                {language === 'ru'
-                  ? 'Переверните карточку, чтобы оценить ответ'
-                  : 'Αναποδογυρίστε την κάρτα για να αξιολογήσετε'}{' '}
-                <span className="opacity-50">(Space)</span>
-              </p>
-            </div>
+            <div className="mb-4" />
           )}
 
           {/* Navigation buttons */}
