@@ -1,34 +1,34 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Trophy, Target, Clock, TrendingUp, ChevronDown, ChevronUp, BarChart3, CheckCircle2, XCircle, Flag } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Loader2, Camera, User, Lock, Check, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { StudyTimeWidget } from '@/components/StudyTimeWidget';
-
-type TopicsBreakdown = {
-  [topic: string]: { total: number; correct: number };
-};
-
-type QuestionData = {
-  question_id: string;
-  user_answer: string | null;
-  is_correct: boolean;
-  time_spent: number;
-  topic: string;
-};
 
 export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
-  const { language, t } = useLanguage();
-  const [expandedExam, setExpandedExam] = useState<string | null>(null);
+  const { language } = useLanguage();
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [displayName, setDisplayName] = useState('');
+  const [nameSuccess, setNameSuccess] = useState(false);
+  const [nameError, setNameError] = useState('');
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -39,41 +39,97 @@ export default function Profile() {
         .eq('id', user!.id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      if (data) setDisplayName((data as any).display_name || '');
+      return data as any;
     },
     enabled: !!user,
   });
 
-  const { data: examResults, isLoading: examsLoading } = useQuery({
-    queryKey: ['exam-results', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('exam_results')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('completed_at', { ascending: false });
+  const updateNameMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ display_name: name, updated_at: new Date().toISOString() })
+        .eq('id', user!.id);
       if (error) throw error;
-      return data || [];
     },
-    enabled: !!user,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      setNameSuccess(true);
+      setNameError('');
+      setTimeout(() => setNameSuccess(false), 3000);
+    },
+    onError: () => {
+      setNameError(language === 'ru' ? 'Ошибка при сохранении' : 'Σφάλμα αποθήκευσης');
+    },
   });
 
-  const { data: progress, isLoading: progressLoading } = useQuery({
-    queryKey: ['user-progress', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', user!.id);
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!user,
-  });
+  const handleSaveName = () => {
+    const trimmed = displayName.trim();
+    if (!trimmed) return;
+    updateNameMutation.mutate(trimmed);
+  };
 
-  const isDataLoading = profileLoading || examsLoading || progressLoading;
+  const handlePasswordChange = async () => {
+    setPasswordError('');
+    setPasswordSuccess(false);
 
-  if (authLoading || (user && isDataLoading)) {
+    if (newPassword.length < 6) {
+      setPasswordError(language === 'ru' ? 'Минимум 6 символов' : 'Τουλάχιστον 6 χαρακτήρες');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError(language === 'ru' ? 'Пароли не совпадают' : 'Οι κωδικοί δεν ταιριάζουν');
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      setPasswordError(language === 'ru' ? 'Ошибка при смене пароля' : 'Σφάλμα αλλαγής κωδικού');
+    } else {
+      setPasswordSuccess(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => setPasswordSuccess(false), 3000);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setAvatarUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(path, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(path);
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+    } catch {
+      // silently fail
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  if (authLoading || (user && profileLoading)) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -83,352 +139,191 @@ export default function Profile() {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
 
-  const knownCount = progress?.filter(p => p.is_known).length || 0;
-  const totalCorrect = progress?.reduce((acc, p) => acc + p.correct_count, 0) || 0;
-  const totalIncorrect = progress?.reduce((acc, p) => acc + p.incorrect_count, 0) || 0;
-  const accuracy = totalCorrect + totalIncorrect > 0 
-    ? Math.round((totalCorrect / (totalCorrect + totalIncorrect)) * 100) 
-    : 0;
-
-  const bestExam = examResults?.reduce((best, exam) => {
-    const score = (exam.correct_answers / exam.total_questions) * 100;
-    const bestScore = best ? (best.correct_answers / best.total_questions) * 100 : 0;
-    return score > bestScore ? exam : best;
-  }, null as typeof examResults[0] | null);
-
-  const averageScore = examResults && examResults.length > 0
-    ? Math.round(examResults.reduce((sum, exam) => 
-        sum + (exam.correct_answers / exam.total_questions) * 100, 0
-      ) / examResults.length)
-    : 0;
-
-  // Prepare chart data (last 10 exams, reversed for chronological order)
-  const chartData = examResults
-    ?.slice(0, 10)
-    .reverse()
-    .map((exam, index) => ({
-      name: `#${index + 1}`,
-      score: Math.round((exam.correct_answers / exam.total_questions) * 100),
-      date: new Date(exam.completed_at).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'el-GR'),
-    })) || [];
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  const avatarUrl = profile?.avatar_url;
+  const initials = (profile?.display_name || user.email || '?')
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <Layout>
-      <div className="relative container py-12 overflow-hidden">
-        {/* Floating decorative elements */}
+      <div className="relative container py-8 sm:py-12 overflow-hidden max-w-2xl">
         <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full aurora-blob" />
-        <div className="absolute bottom-20 -left-20 w-[250px] h-[250px] rounded-full aurora-blob" style={{ animationDelay: '3s' }} />
 
         <div className="relative mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">
             {language === 'ru' ? 'Профиль' : 'Προφίλ'}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {profile?.display_name || user.email}
+            {language === 'ru' ? 'Настройки аккаунта' : 'Ρυθμίσεις λογαριασμού'}
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="relative grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-4 mb-12">
+        <div className="relative space-y-6">
+
+          {/* Avatar + name header */}
           <Card className="liquid-glass-card animate-fade-in">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <div className="p-2 rounded-lg liquid-glass-button">
-                  <Target className="h-4 w-4 text-primary" />
+            <CardContent className="pt-6 flex flex-col sm:flex-row items-center gap-6">
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                <div className="w-24 h-24 rounded-full overflow-hidden liquid-glass-button flex items-center justify-center">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-bold text-primary">{initials}</span>
+                  )}
                 </div>
-                <span className="text-sm">{language === 'ru' ? 'Изучено вопросов' : 'Ερωτήσεις που μάθατε'}</span>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={avatarUploading}
+                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+                >
+                  {avatarUploading
+                    ? <Loader2 className="h-4 w-4 text-primary-foreground animate-spin" />
+                    : <Camera className="h-4 w-4 text-primary-foreground" />
+                  }
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-foreground">{knownCount}</p>
+
+              <div>
+                <p className="font-display text-xl font-semibold">
+                  {profile?.display_name || '—'}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {user.email}
+                </p>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Display name */}
           <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <div className="p-2 rounded-lg liquid-glass-button">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm">{language === 'ru' ? 'Точность ответов' : 'Ακρίβεια απαντήσεων'}</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-foreground">{accuracy}%</p>
-            </CardContent>
-          </Card>
-
-          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <div className="p-2 rounded-lg liquid-glass-button">
-                  <Clock className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm">{language === 'ru' ? 'Пройдено экзаменов' : 'Εξετάσεις που ολοκληρώθηκαν'}</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-foreground">{examResults?.length || 0}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <div className="p-2 rounded-lg liquid-glass-button">
-                  <Trophy className="h-4 w-4 text-accent" />
-                </div>
-                <span className="text-sm">{language === 'ru' ? 'Лучший результат' : 'Καλύτερο αποτέλεσμα'}</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-foreground">
-                {bestExam 
-                  ? `${Math.round((bestExam.correct_answers / bestExam.total_questions) * 100)}%`
-                  : '—'
-                }
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Study Time Widget */}
-        <div className="mb-12">
-          <StudyTimeWidget />
-        </div>
-
-        {/* Progress Chart */}
-        {chartData.length > 1 && (
-          <Card className="relative mb-12 liquid-glass-card animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <CardHeader>
-              <CardTitle className="font-display flex items-center gap-2">
+              <CardTitle className="font-display flex items-center gap-2 text-lg">
                 <div className="p-2 rounded-lg liquid-glass-button">
-                  <BarChart3 className="h-5 w-5 text-primary" />
+                  <User className="h-4 w-4 text-primary" />
                 </div>
-                {language === 'ru' ? 'График прогресса' : 'Διάγραμμα προόδου'}
+                {language === 'ru' ? 'Никнейм' : 'Ψευδώνυμο'}
               </CardTitle>
               <CardDescription>
-                {language === 'ru' 
-                  ? `Средний балл: ${averageScore}% за последние ${chartData.length} экзаменов`
-                  : `Μέση βαθμολογία: ${averageScore}% για τις τελευταίες ${chartData.length} εξετάσεις`}
+                {language === 'ru' ? 'Отображаемое имя в приложении' : 'Εμφανιζόμενο όνομα στην εφαρμογή'}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-[180px] sm:h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis 
-                      dataKey="name" 
-                      className="text-xs fill-muted-foreground"
-                    />
-                    <YAxis 
-                      domain={[0, 100]} 
-                      className="text-xs fill-muted-foreground"
-                    />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="liquid-glass rounded-lg p-3 shadow-xl border border-primary/20">
-                              <p className="font-medium">{payload[0].payload.date}</p>
-                              <p className="text-primary font-bold">{payload[0].value}%</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="score" 
-                      stroke="hsl(var(--primary))" 
-                      strokeWidth={3}
-                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="displayName">
+                  {language === 'ru' ? 'Имя' : 'Όνομα'}
+                </Label>
+                <Input
+                  id="displayName"
+                  value={displayName}
+                  onChange={e => setDisplayName(e.target.value)}
+                  placeholder={language === 'ru' ? 'Ваш никнейм' : 'Το ψευδώνυμό σας'}
+                  className="liquid-glass"
+                  onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+                />
               </div>
+
+              {nameError && (
+                <div className="flex items-center gap-2 text-destructive text-sm">
+                  <AlertCircle className="h-4 w-4" />
+                  {nameError}
+                </div>
+              )}
+              {nameSuccess && (
+                <div className="flex items-center gap-2 text-success text-sm">
+                  <Check className="h-4 w-4" />
+                  {language === 'ru' ? 'Сохранено!' : 'Αποθηκεύτηκε!'}
+                </div>
+              )}
+
+              <Button
+                onClick={handleSaveName}
+                disabled={updateNameMutation.isPending || !displayName.trim()}
+                className="liquid-glass-button"
+                variant="outline"
+              >
+                {updateNameMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {language === 'ru' ? 'Сохранить' : 'Αποθήκευση'}
+              </Button>
             </CardContent>
           </Card>
-        )}
 
-        {/* Exam History */}
-        <Card className="relative liquid-glass-card animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <CardHeader>
-            <CardTitle className="font-display">
-              {language === 'ru' ? 'История экзаменов' : 'Ιστορικό εξετάσεων'}
-            </CardTitle>
-            <CardDescription>
-              {language === 'ru' ? 'Все ваши результаты' : 'Όλα τα αποτελέσματά σας'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {examResults && examResults.length > 0 ? (
-              <div className="space-y-3">
-                {examResults.map((exam) => {
-                  const percentage = Math.round((exam.correct_answers / exam.total_questions) * 100);
-                  const passed = percentage >= 70;
-                  const isExpanded = expandedExam === exam.id;
-                  const topicsBreakdown = exam.topics_breakdown as TopicsBreakdown | null;
-                  const questionsData = exam.questions_data as QuestionData[] | null;
-
-                  return (
-                    <div 
-                      key={exam.id} 
-                      className="rounded-xl overflow-hidden liquid-glass-card"
-                    >
-                      {/* Summary row */}
-                      <div 
-                        className={cn(
-                          "flex flex-col sm:flex-row sm:items-center justify-between p-4 cursor-pointer transition-all duration-300 gap-3",
-                          passed ? "bg-success/10 hover:bg-success/15" : "bg-destructive/10 hover:bg-destructive/15"
-                        )}
-                        onClick={() => setExpandedExam(isExpanded ? null : exam.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center shadow-lg",
-                            passed ? "bg-success/20 shadow-success/20" : "bg-destructive/20 shadow-destructive/20"
-                          )}>
-                            {passed ? (
-                              <CheckCircle2 className="h-5 w-5 text-success" />
-                            ) : (
-                              <XCircle className="h-5 w-5 text-destructive" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">
-                              {new Date(exam.completed_at).toLocaleDateString(
-                                language === 'ru' ? 'ru-RU' : 'el-GR',
-                                { day: 'numeric', month: 'long', year: 'numeric' }
-                              )}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {exam.selected_topics?.length === 4 || !exam.selected_topics
-                                ? (language === 'ru' ? 'Все темы' : 'Όλα τα θέματα')
-                                : exam.selected_topics.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 sm:gap-4">
-                          <div className="text-right">
-                            <p className={cn(
-                              "text-xl font-bold",
-                              passed ? "text-success" : "text-destructive"
-                            )}>
-                              {percentage}%
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {exam.correct_answers}/{exam.total_questions}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            <Clock className="h-4 w-4" />
-                            <span className="text-sm">{formatTime(exam.time_spent_seconds)}</span>
-                          </div>
-                          {exam.flagged_count && exam.flagged_count > 0 && (
-                            <div className="flex items-center gap-1 text-accent">
-                              <Flag className="h-4 w-4" />
-                              <span className="text-sm">{exam.flagged_count}</span>
-                            </div>
-                          )}
-                          <Button variant="ghost" size="sm" className="liquid-glass-button">
-                            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Expanded details */}
-                      {isExpanded && (
-                        <div className="p-4 border-t border-primary/10 bg-background/50">
-                          {/* Topics breakdown */}
-                          {topicsBreakdown && Object.keys(topicsBreakdown).length > 0 && (
-                            <div className="mb-4">
-                              <h4 className="font-medium mb-3 text-sm">
-                                {language === 'ru' ? 'По темам:' : 'Ανά θέμα:'}
-                              </h4>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                {Object.entries(topicsBreakdown).map(([topic, data]) => {
-                                  const topicPercent = data.total > 0 
-                                    ? Math.round((data.correct / data.total) * 100) 
-                                    : 0;
-                                  return (
-                                    <div key={topic} className="liquid-glass rounded-lg p-3">
-                                      <p className="text-xs text-muted-foreground mb-1">
-                                        {t(`topic.${topic}`)}
-                                      </p>
-                                      <p className={cn(
-                                        "font-bold",
-                                        topicPercent >= 70 ? "text-success" : "text-destructive"
-                                      )}>
-                                        {data.correct}/{data.total} ({topicPercent}%)
-                                      </p>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Questions list */}
-                          {questionsData && questionsData.length > 0 && (
-                            <div>
-                              <h4 className="font-medium mb-3 text-sm">
-                                {language === 'ru' ? 'Детали ответов:' : 'Λεπτομέρειες απαντήσεων:'}
-                              </h4>
-                              <div className="max-h-[200px] overflow-y-auto space-y-1">
-                                {questionsData.map((q, idx) => (
-                                  <div 
-                                    key={idx}
-                                    className={cn(
-                                      "flex items-center gap-2 p-2 rounded-lg text-sm liquid-glass",
-                                      q.is_correct ? "bg-success/5" : "bg-destructive/5"
-                                    )}
-                                  >
-                                    <span className={cn(
-                                      "w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold",
-                                      q.is_correct ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive"
-                                    )}>
-                                      {q.is_correct ? '✓' : '✗'}
-                                    </span>
-                                    <span className="text-xs px-1.5 py-0.5 liquid-glass-button rounded">
-                                      {t(`topic.${q.topic}`)}
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                      {q.time_spent > 0 ? `${q.time_spent}с` : '—'}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="mx-auto w-20 h-20 rounded-full liquid-glass-button flex items-center justify-center mb-4">
-                  <Trophy className="h-10 w-10 opacity-50" />
+          {/* Password */}
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <CardHeader>
+              <CardTitle className="font-display flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <Lock className="h-4 w-4 text-primary" />
                 </div>
-                <p>{language === 'ru' ? 'Нет завершённых экзаменов' : 'Δεν υπάρχουν ολοκληρωμένες εξετάσεις'}</p>
+                {language === 'ru' ? 'Пароль' : 'Κωδικός'}
+              </CardTitle>
+              <CardDescription>
+                {language === 'ru' ? 'Смените пароль от аккаунта' : 'Αλλάξτε τον κωδικό σας'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">
+                  {language === 'ru' ? 'Новый пароль' : 'Νέος κωδικός'}
+                </Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="liquid-glass"
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">
+                  {language === 'ru' ? 'Повторите пароль' : 'Επανάληψη κωδικού'}
+                </Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="liquid-glass"
+                  onKeyDown={e => e.key === 'Enter' && handlePasswordChange()}
+                />
+              </div>
+
+              {passwordError && (
+                <div className="flex items-center gap-2 text-destructive text-sm">
+                  <AlertCircle className="h-4 w-4" />
+                  {passwordError}
+                </div>
+              )}
+              {passwordSuccess && (
+                <div className="flex items-center gap-2 text-success text-sm">
+                  <Check className="h-4 w-4" />
+                  {language === 'ru' ? 'Пароль изменён!' : 'Ο κωδικός άλλαξε!'}
+                </div>
+              )}
+
+              <Button
+                onClick={handlePasswordChange}
+                disabled={!newPassword || !confirmPassword}
+                className="liquid-glass-button"
+                variant="outline"
+              >
+                {language === 'ru' ? 'Изменить пароль' : 'Αλλαγή κωδικού'}
+              </Button>
+            </CardContent>
+          </Card>
+
+        </div>
       </div>
     </Layout>
   );
