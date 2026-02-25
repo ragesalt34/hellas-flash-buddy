@@ -466,14 +466,7 @@ export default function Flashcards() {
               </Button>
             </div>
           ) : (
-            <div className="flex justify-center mb-4">
-              <p className="text-sm text-muted-foreground">
-                {language === 'ru'
-                  ? 'Переверните карточку, чтобы оценить ответ'
-                  : 'Αναποδογυρίστε την κάρτα για να αξιολογήσετε'}{' '}
-                <span className="opacity-50">(Space)</span>
-              </p>
-            </div>
+            <div className="flex justify-center mb-4" />
           )}
 
           {/* Navigation buttons */}
