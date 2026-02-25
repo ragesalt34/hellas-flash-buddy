@@ -76,7 +76,7 @@ export default function Learn() {
                 : `${dueCount} κάρτες περιμένουν σήμερα`}
             </p>
             <span className="text-xs text-muted-foreground opacity-60">
-              {language === 'ru' ? 'Выберите тему и начни' : 'Επιλέξτε θέμα'}
+              {language === 'ru' ? 'Выберите тему и начните' : 'Επιλέξτε ένα θέμα'}
             </span>
           </div>
         )}

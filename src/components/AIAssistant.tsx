@@ -51,7 +51,7 @@ export function AIAssistant() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) {
-        throw new Error("Необходимо войти в систему");
+        throw new Error(language === 'ru' ? 'Необходимо войти в систему' : 'Πρέπει να συνδεθείτε');
       }
 
       const resp = await fetch(CHAT_URL, {
@@ -69,10 +69,10 @@ export function AIAssistant() {
 
       if (!resp.ok) {
         const errorData = await resp.json().catch(() => ({}));
-        throw new Error(errorData.error || `Request failed with status ${resp.status}`);
+        throw new Error(errorData.error || (language === 'ru' ? 'Ошибка сервера' : 'Σφάλμα διακομιστή'));
       }
 
-      if (!resp.body) throw new Error('No response body');
+      if (!resp.body) throw new Error(language === 'ru' ? 'Пустой ответ от сервера' : 'Κενή απάντηση από τον διακομιστή');
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
