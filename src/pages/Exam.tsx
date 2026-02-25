@@ -150,7 +150,7 @@ export default function Exam() {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(interval);
-          finishExam();
+          finishExamRef.current();
           return 0;
         }
         
@@ -335,6 +335,10 @@ export default function Exam() {
       }
     }
   }, [questions, calculateResults, user, flagged, settings.topics, currentIndex]);
+
+  // Keep a ref so the timer interval always calls the latest finishExam
+  const finishExamRef = useRef(finishExam);
+  useEffect(() => { finishExamRef.current = finishExam; }, [finishExam]);
 
   const handleFinishClick = () => {
     const unanswered = questions.length - Object.keys(answers).length;

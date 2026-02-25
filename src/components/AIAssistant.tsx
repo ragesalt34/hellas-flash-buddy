@@ -20,6 +20,7 @@ export function AIAssistant() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,6 +37,11 @@ export function AIAssistant() {
   }, [isOpen]);
 
   const streamChat = async (userMessage: string) => {
+    // Abort any previous in-flight stream
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     const newMessages: Message[] = [...messages, { role: 'user', content: userMessage }];
     setMessages(newMessages);
     setIsLoading(true);
@@ -54,10 +60,11 @@ export function AIAssistant() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
-          language 
+          language
         }),
+        signal: controller.signal,
       });
 
       if (!resp.ok) {
@@ -110,10 +117,11 @@ export function AIAssistant() {
         }
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
       console.error('Chat error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка';
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
+      setMessages(prev => [...prev, {
+        role: 'assistant',
         content: `❌ ${errorMessage}`
       }]);
     } finally {
@@ -131,7 +139,9 @@ export function AIAssistant() {
   };
 
   const clearHistory = () => {
+    abortControllerRef.current?.abort();
     setMessages([]);
+    setIsLoading(false);
   };
 
   const placeholderText = language === 'ru' 
@@ -198,7 +208,7 @@ export function AIAssistant() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsOpen(false)}
+              onClick={() => { abortControllerRef.current?.abort(); setIsOpen(false); }}
               className="h-8 w-8 text-muted-foreground"
             >
               <X className="h-4 w-4" />

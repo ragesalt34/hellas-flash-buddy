@@ -54,6 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setIsAdmin(false);
       }
+    }).catch(() => {
+      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
