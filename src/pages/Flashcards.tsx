@@ -388,11 +388,8 @@ export default function Flashcards() {
                 <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed">
                   {currentQuestion.question}
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-6">
-                  <p className="text-sm text-muted-foreground">
-                    {t('flashcards.clickToFlip')}
-                  </p>
-                  {isSupported && (
+                {isSupported && (
+                  <div className="flex items-center justify-center mt-6">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -404,8 +401,8 @@ export default function Flashcards() {
                     >
                       {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -466,14 +463,7 @@ export default function Flashcards() {
               </Button>
             </div>
           ) : (
-            <div className="flex justify-center mb-4">
-              <p className="text-sm text-muted-foreground">
-                {language === 'ru'
-                  ? 'Переверните карточку, чтобы оценить ответ'
-                  : 'Αναποδογυρίστε την κάρτα για να αξιολογήσετε'}{' '}
-                <span className="opacity-50">(Space)</span>
-              </p>
-            </div>
+            <div className="flex justify-center mb-4" />
           )}
 
           {/* Navigation buttons */}
