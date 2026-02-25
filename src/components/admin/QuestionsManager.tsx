@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuestionForm } from './QuestionForm';
 import { QuestionsList } from './QuestionsList';
@@ -222,23 +222,21 @@ export function QuestionsManager() {
         </Button>
       </div>
 
-      {isFormOpen && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
+      <Dialog open={isFormOpen} onOpenChange={(open) => { if (!open) handleFormClose(); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
               {editingQuestion ? 'Редактировать вопрос' : 'Новый вопрос'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <QuestionForm
-              question={editingQuestion}
-              defaultTopic={selectedTopic}
-              onSuccess={handleFormSuccess}
-              onCancel={handleFormClose}
-            />
-          </CardContent>
-        </Card>
-      )}
+            </DialogTitle>
+          </DialogHeader>
+          <QuestionForm
+            question={editingQuestion}
+            defaultTopic={selectedTopic}
+            onSuccess={handleFormSuccess}
+            onCancel={handleFormClose}
+          />
+        </DialogContent>
+      </Dialog>
 
       {isLoading ? (
         <div className="flex justify-center py-12">
