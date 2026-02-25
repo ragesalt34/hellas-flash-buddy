@@ -41,8 +41,9 @@ BEGIN
   WHERE  user_id = p_user_id AND question_id = p_question_id;
 
   -- New running totals
-  v_new_correct   := v_correct_count   + CASE WHEN p_correct THEN 1 ELSE 0 END;
-  v_new_incorrect := v_incorrect_count + CASE WHEN p_correct THEN 0 ELSE 1 END;
+  -- COALESCE guards against NULL when SELECT INTO finds no existing row (first answer)
+  v_new_correct   := COALESCE(v_correct_count, 0)   + CASE WHEN p_correct THEN 1 ELSE 0 END;
+  v_new_incorrect := COALESCE(v_incorrect_count, 0) + CASE WHEN p_correct THEN 0 ELSE 1 END;
 
   -- Simplified SRS intervals:
   --   wrong answer, OR still more errors than correct → review tomorrow
