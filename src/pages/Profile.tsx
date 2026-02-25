@@ -9,7 +9,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Camera, User, Lock, Check, AlertCircle } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Profile() {
@@ -105,6 +111,29 @@ export default function Profile() {
       passwordTimerRef.current = setTimeout(() => setPasswordSuccess(false), 3000);
     }
   };
+
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      const uid = user!.id;
+      await Promise.all([
+        supabase.from('user_progress').delete().eq('user_id', uid),
+        supabase.from('exam_results').delete().eq('user_id', uid),
+        supabase.from('study_sessions').delete().eq('user_id', uid),
+      ]);
+      Object.keys(localStorage)
+        .filter(k => k.startsWith(`streak_milestone_${uid}_`))
+        .forEach(k => localStorage.removeItem(k));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-progress-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['exam-results-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['study-sessions-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['due-review-count'] });
+      queryClient.invalidateQueries({ queryKey: ['topic-accuracy'] });
+      queryClient.invalidateQueries({ queryKey: ['last-exam-score'] });
+      queryClient.invalidateQueries({ queryKey: ['study-time-week'] });
+    },
+  });
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -331,6 +360,65 @@ export default function Profile() {
               >
                 {language === 'ru' ? 'Изменить пароль' : 'Αλλαγή κωδικού'}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Danger zone */}
+          <Card className="liquid-glass-card animate-fade-in border-destructive/30" style={{ animationDelay: '0.3s' }}>
+            <CardHeader>
+              <CardTitle className="font-display flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg bg-destructive/10">
+                  <RotateCcw className="h-4 w-4 text-destructive" />
+                </div>
+                {language === 'ru' ? 'Сбросить прогресс' : 'Επαναφορά προόδου'}
+              </CardTitle>
+              <CardDescription>
+                {language === 'ru'
+                  ? 'Удалит всю историю ответов, результаты экзаменов и сессии обучения. Начнёте с нуля.'
+                  : 'Διαγράφει όλο το ιστορικό απαντήσεων, αποτελέσματα εξετάσεων και συνεδρίες μελέτης.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="gap-2" disabled={resetMutation.isPending}>
+                    {resetMutation.isPending
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <RotateCcw className="h-4 w-4" />}
+                    {language === 'ru' ? 'Сбросить весь прогресс' : 'Επαναφορά όλης της προόδου'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {language === 'ru' ? 'Вы уверены?' : 'Είστε σίγουροι;'}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {language === 'ru'
+                        ? 'Это действие необратимо. Весь прогресс обучения, результаты экзаменов и история сессий будут удалены навсегда.'
+                        : 'Αυτή η ενέργεια είναι μη αναστρέψιμη. Όλη η πρόοδος μελέτης, τα αποτελέσματα εξετάσεων και το ιστορικό συνεδριών θα διαγραφούν οριστικά.'}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>
+                      {language === 'ru' ? 'Отмена' : 'Ακύρωση'}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive hover:bg-destructive/90"
+                      onClick={() => resetMutation.mutate()}
+                    >
+                      {language === 'ru' ? 'Сбросить' : 'Επαναφορά'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              {resetMutation.isSuccess && (
+                <p className="mt-3 text-sm text-success flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  {language === 'ru' ? 'Прогресс сброшен!' : 'Η πρόοδος επαναφέρθηκε!'}
+                </p>
+              )}
             </CardContent>
           </Card>
 
