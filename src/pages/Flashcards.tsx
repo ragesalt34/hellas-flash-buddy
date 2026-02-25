@@ -453,31 +453,27 @@ export default function Flashcards() {
 
         {/* Controls */}
         <div className="relative max-w-2xl mx-auto mt-8 px-4">
-          {/* Know/Don't Know buttons — visible only after flip */}
-          {isFlipped ? (
-            <div className="flex gap-3 justify-center mb-4">
-              <Button
-                variant="outline"
-                className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
-                onClick={handleDontKnow}
-              >
-                <ThumbsDown className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
-                <span className="hidden sm:inline text-xs opacity-50 ml-1">←</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
-                onClick={handleKnow}
-              >
-                <ThumbsUp className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">{t('flashcards.know')}</span>
-                <span className="hidden sm:inline text-xs opacity-50 ml-1">→</span>
-              </Button>
-            </div>
-          ) : (
-            <div className="flex justify-center mb-4" />
-          )}
+          {/* Know/Don't Know buttons — always rendered, invisible until flipped */}
+          <div className={cn("flex gap-3 justify-center mb-4", !isFlipped && "invisible")}>
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+              onClick={handleDontKnow}
+            >
+              <ThumbsDown className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
+              <span className="hidden sm:inline text-xs opacity-50 ml-1">←</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
+              onClick={handleKnow}
+            >
+              <ThumbsUp className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('flashcards.know')}</span>
+              <span className="hidden sm:inline text-xs opacity-50 ml-1">→</span>
+            </Button>
+          </div>
 
           {/* Navigation buttons */}
           <div className="flex items-center justify-between gap-2">
