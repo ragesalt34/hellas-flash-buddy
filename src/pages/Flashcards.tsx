@@ -380,58 +380,71 @@ export default function Flashcards() {
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face flashcard-glass animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
-                  {t('flashcards.question')}
-                </p>
-                <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed">
-                  {currentQuestion.question}
-                </p>
-                {isSupported && (
-                  <div className="flex items-center justify-center mt-6">
+            <Card className="flashcard-face flashcard-glass animated-border flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0 w-full">
+                {/* Header row */}
+                <div className="flex items-center justify-between px-5 pt-5">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-primary/60 border border-primary/20 rounded-full px-3 py-1 bg-primary/5">
+                    {t('flashcards.question')}
+                  </span>
+                  {isSupported && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 liquid-glass-button"
+                      className="h-7 w-7 opacity-50 hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
                         isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
                       }}
                     >
-                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
+                {/* Centered text */}
+                <div className="flex-1 flex items-center justify-center px-8 pb-8 pt-2">
+                  <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-center">
+                    {currentQuestion.question}
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
             {/* Back */}
-            <Card className="flashcard-face flashcard-back flashcard-glass animated-border flex items-center justify-center p-8">
-              <CardContent className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
-                  {t('flashcards.answer')}
-                </p>
-                <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-foreground">
-                  {currentQuestion.correct_answer}
-                </p>
-                {isSupported && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 mt-4 liquid-glass-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
-                    }}
-                  >
-                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
-                )}
-                {currentQuestion.explanation && (
-                  <p className="text-base sm:text-lg text-foreground/70 mt-4">
-                    {currentQuestion.explanation}
+            <Card className="flashcard-face flashcard-back flashcard-glass animated-border flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0 w-full">
+                {/* Header row */}
+                <div className="flex items-center justify-between px-5 pt-5">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400/70 border border-emerald-400/20 rounded-full px-3 py-1 bg-emerald-400/5">
+                    {t('flashcards.answer')}
+                  </span>
+                  {isSupported && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 opacity-50 hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                      }}
+                    >
+                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                    </Button>
+                  )}
+                </div>
+                {/* Centered text */}
+                <div className="flex-1 flex items-center justify-center px-8 pt-2 pb-4">
+                  <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-center text-foreground">
+                    {currentQuestion.correct_answer}
                   </p>
+                </div>
+                {/* Explanation footer */}
+                {currentQuestion.explanation && (
+                  <div className="px-6 pb-5 border-t border-white/10 pt-3">
+                    <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
+                      {currentQuestion.explanation}
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>
