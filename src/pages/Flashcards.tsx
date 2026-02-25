@@ -388,11 +388,8 @@ export default function Flashcards() {
                 <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed">
                   {currentQuestion.question}
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-6">
-                  <p className="text-sm text-muted-foreground">
-                    {t('flashcards.clickToFlip')}
-                  </p>
-                  {isSupported && (
+                {isSupported && (
+                  <div className="flex items-center justify-center mt-6">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -404,8 +401,8 @@ export default function Flashcards() {
                     >
                       {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

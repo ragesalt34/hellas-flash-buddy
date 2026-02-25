@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
   const { language } = useLanguage();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [displayName, setDisplayName] = useState('');
@@ -123,13 +124,8 @@ export default function Profile() {
         .forEach(k => localStorage.removeItem(k));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-progress-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['exam-results-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['study-sessions-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['due-review-count'] });
-      queryClient.invalidateQueries({ queryKey: ['topic-accuracy'] });
-      queryClient.invalidateQueries({ queryKey: ['last-exam-score'] });
-      queryClient.invalidateQueries({ queryKey: ['study-time-week'] });
+      queryClient.clear();
+      navigate('/stats');
     },
     onError: () => {
       toast.error(language === 'ru' ? 'Ошибка при сбросе прогресса' : 'Σφάλμα επαναφοράς προόδου');

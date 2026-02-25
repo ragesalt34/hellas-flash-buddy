@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export async function upsertProgress(
   userId: string,
@@ -12,5 +13,8 @@ export async function upsertProgress(
     p_correct: correct,
     p_known: known ?? null,
   });
-  if (error) console.error('Error saving progress:', error);
+  if (error) {
+    console.error('Error saving progress:', error);
+    toast.error('Ошибка записи прогресса', { description: error.message });
+  }
 }
