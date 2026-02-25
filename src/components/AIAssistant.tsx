@@ -36,6 +36,11 @@ export function AIAssistant() {
     }
   }, [isOpen]);
 
+  // Abort any in-flight request when component unmounts
+  useEffect(() => {
+    return () => { abortControllerRef.current?.abort(); };
+  }, []);
+
   const streamChat = async (userMessage: string) => {
     // Abort any previous in-flight stream
     abortControllerRef.current?.abort();

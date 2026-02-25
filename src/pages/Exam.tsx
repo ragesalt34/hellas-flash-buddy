@@ -276,12 +276,13 @@ export default function Exam() {
     setIsLoading(false);
   };
 
-  const calculateResults = useCallback(() => {
+  const calculateResults = useCallback((timesOverride?: Record<number, number>) => {
+    const effectiveTimes = timesOverride ?? questionTimes;
     const questionsData: QuestionData[] = questions.map((q, index) => ({
       question_id: q.id,
       user_answer: answers[index] || null,
       is_correct: answers[index] === q.correct_answer,
-      time_spent: questionTimes[index] || 0,
+      time_spent: effectiveTimes[index] || 0,
       topic: q.topic,
     }));
 
@@ -303,18 +304,20 @@ export default function Exam() {
   }, [questions, answers, questionTimes, startTime]);
 
   const finishExam = useCallback(async () => {
-    // Track time for last question
+    // Track time for last question — compute locally so calculateResults gets fresh data
+    // (setQuestionTimes is async and the state wouldn't be ready in time)
     const now = new Date();
     const timeSpentOnLast = Math.floor((now.getTime() - lastQuestionTime.current.getTime()) / 1000);
-    setQuestionTimes(prev => ({
-      ...prev,
-      [currentIndex]: (prev[currentIndex] || 0) + timeSpentOnLast
-    }));
+    const finalQuestionTimes = {
+      ...questionTimes,
+      [currentIndex]: (questionTimes[currentIndex] || 0) + timeSpentOnLast,
+    };
+    setQuestionTimes(finalQuestionTimes);
 
     setIsFinished(true);
     setShowFinishDialog(false);
-    
-    const { questionsData, topicsBreakdown, score, timeSpent } = calculateResults();
+
+    const { questionsData, topicsBreakdown, score, timeSpent } = calculateResults(finalQuestionTimes);
     
     // Save result to database
     if (user) {
