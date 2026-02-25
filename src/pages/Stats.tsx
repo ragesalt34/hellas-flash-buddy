@@ -12,6 +12,8 @@ import {
   Loader2, Trophy, Target, TrendingUp, Flame, BarChart3,
   AlertTriangle, BookOpen, ArrowRight, Clock, Languages,
 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, LineChart, Line,
@@ -25,6 +27,7 @@ type TopicKey = typeof TOPICS[number];
 export default function Stats() {
   const { user, isLoading: authLoading } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const { toast } = useToast();
 
   // ── Queries ────────────────────────────────────────────────────────────────
 
@@ -177,6 +180,28 @@ export default function Stats() {
   };
   const streak = calculateStreak();
 
+  // Streak milestone toasts
+  useEffect(() => {
+    if (!user || streak === 0) return;
+    const MILESTONES = [3, 7, 14, 30];
+    if (!MILESTONES.includes(streak)) return;
+    const key = `streak_milestone_${user.id}_${streak}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, '1');
+    const messages: Record<number, { ru: string; el: string }> = {
+      3:  { ru: '🔥 3 дня подряд! Отличный старт!', el: '🔥 3 μέρες σερί! Εξαιρετική αρχή!' },
+      7:  { ru: '🔥 Неделя подряд! Так держать!', el: '🔥 Μία εβδομάδα σερί! Συνεχίστε!' },
+      14: { ru: '💪 2 недели подряд! Вы на верном пути!', el: '💪 2 εβδομάδες σερί! Είστε στο σωστό δρόμο!' },
+      30: { ru: '🏆 30 дней подряд! Невероятно!', el: '🏆 30 μέρες σερί! Απίστευτο!' },
+    };
+    toast({
+      title: language === 'ru' ? messages[streak].ru : messages[streak].el,
+      description: language === 'ru'
+        ? `Серия ${streak} дней — продолжайте учиться каждый день!`
+        : `Σερί ${streak} ημερών — συνεχίστε να μαθαίνετε κάθε μέρα!`,
+    });
+  }, [streak, user?.id]);
+
   // Exam line chart
   const examChartData = examResults
     ?.slice(0, 10)
@@ -225,6 +250,15 @@ export default function Stats() {
     .filter(p => p.incorrect_count > 0)
     .sort((a, b) => b.incorrect_count - a.incorrect_count)
     .slice(0, 5);
+
+  // Weakest topic (most errors) — used for "Practice hardest" button
+  const hardestTopicCounts: Record<string, number> = {};
+  top5Hardest.forEach(p => {
+    const topic = ((p.questions as any)?.topic as string) || 'history';
+    hardestTopicCounts[topic] = (hardestTopicCounts[topic] || 0) + p.incorrect_count;
+  });
+  const weakestTopic = Object.entries(hardestTopicCounts)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'history';
 
   // Review today: SRS-based (next_review_at <= now), most overdue first, up to 10
   const reviewToday = [...(progress || [])]
@@ -671,6 +705,14 @@ export default function Stats() {
                         </div>
                       );
                     })}
+                    <div className="pt-2">
+                      <Link to={`/learn/${weakestTopic}/quiz`}>
+                        <Button size="sm" variant="outline" className="w-full liquid-glass-button gap-1.5">
+                          {language === 'ru' ? 'Потренировать сложные вопросы' : 'Εξάσκηση δύσκολων ερωτήσεων'}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 )}
               </CardContent>
