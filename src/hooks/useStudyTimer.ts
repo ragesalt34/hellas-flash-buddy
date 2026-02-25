@@ -4,12 +4,19 @@ import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * Tracks study time for the current session.
+ * Only counts time while the user is actively interacting (click / keydown / touch).
+ * After 5 minutes of no interaction the current segment is saved and the timer
+ * pauses — the next interaction starts a fresh segment.
  * Uses fetch with keepalive for reliable saves during navigation/unload.
  */
+
+const INACTIVITY_MS = 5 * 60 * 1000; // 5 minutes
+
 export function useStudyTimer(activityType: string = 'quiz') {
   const { user } = useAuth();
   const startTimeRef = useRef<number | null>(null);
   const savedRef = useRef(false);
+  const inactivityRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const buildPayload = useCallback(() => {
     if (!user || !startTimeRef.current) return null;
@@ -70,18 +77,51 @@ export function useStudyTimer(activityType: string = 'quiz') {
     } catch {}
   }, [buildPayload, sendViaFetch]);
 
+  const clearInactivity = useCallback(() => {
+    if (inactivityRef.current) {
+      clearTimeout(inactivityRef.current);
+      inactivityRef.current = null;
+    }
+  }, []);
+
+  const scheduleInactivity = useCallback((onInactive: () => void) => {
+    clearInactivity();
+    inactivityRef.current = setTimeout(onInactive, INACTIVITY_MS);
+  }, [clearInactivity]);
+
   useEffect(() => {
     if (!user) return;
 
     startTimeRef.current = Date.now();
     savedRef.current = false;
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        saveAsync();
-      } else {
+    const onInactive = () => {
+      // User hasn't interacted for 5 min — save and pause
+      saveAsync();
+    };
+
+    // Schedule initial inactivity check
+    scheduleInactivity(onInactive);
+
+    const handleActivity = () => {
+      // If session was saved (paused due to inactivity), restart it
+      if (savedRef.current || !startTimeRef.current) {
         startTimeRef.current = Date.now();
         savedRef.current = false;
+      }
+      // Reset the inactivity countdown
+      scheduleInactivity(onInactive);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInactivity();
+        saveAsync();
+      } else {
+        // Tab is visible again — restart timer and inactivity check
+        startTimeRef.current = Date.now();
+        savedRef.current = false;
+        scheduleInactivity(onInactive);
       }
     };
 
@@ -89,13 +129,18 @@ export function useStudyTimer(activityType: string = 'quiz') {
       saveSync();
     };
 
+    // Only genuine interactions count as study activity
+    const ACTIVITY_EVENTS = ['click', 'keydown', 'touchstart'] as const;
+    ACTIVITY_EVENTS.forEach(e => document.addEventListener(e, handleActivity, { passive: true }));
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      clearInactivity();
       saveAsync(); // SPA navigation — page still alive
+      ACTIVITY_EVENTS.forEach(e => document.removeEventListener(e, handleActivity));
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, saveAsync, saveSync]);
+  }, [user, saveAsync, saveSync, scheduleInactivity, clearInactivity]);
 }
