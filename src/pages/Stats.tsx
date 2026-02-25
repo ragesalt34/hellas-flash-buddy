@@ -84,6 +84,42 @@ export default function Stats() {
 
   const isDataLoading = progressLoading || examsLoading || sessionsLoading || questionsLoading;
 
+  // Streak milestone toasts — MUST be before any early returns (Rules of Hooks)
+  useEffect(() => {
+    if (!user || !studySessions || studySessions.length === 0) return;
+    const uniqueDays = new Set(
+      studySessions.map(s => {
+        const d = new Date(s.started_at);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }),
+    );
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    let s = 0;
+    const checkDate = new Date(today);
+    if (!uniqueDays.has(todayStr)) checkDate.setDate(checkDate.getDate() - 1);
+    while (true) {
+      const ds = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+      if (uniqueDays.has(ds)) { s++; checkDate.setDate(checkDate.getDate() - 1); } else break;
+    }
+    if (s === 0 || ![3, 7, 14, 30].includes(s)) return;
+    const key = `streak_milestone_${user.id}_${s}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, '1');
+    const msgs: Record<number, { ru: string; el: string }> = {
+      3:  { ru: '🔥 3 дня подряд! Отличный старт!', el: '🔥 3 μέρες σερί! Εξαιρετική αρχή!' },
+      7:  { ru: '🔥 Неделя подряд! Так держать!', el: '🔥 Μία εβδομάδα σερί! Συνεχίστε!' },
+      14: { ru: '💪 2 недели подряд! Вы на верном пути!', el: '💪 2 εβδομάδες σερί! Είστε στο σωστό δρόμο!' },
+      30: { ru: '🏆 30 дней подряд! Невероятно!', el: '🏆 30 μέρες σερί! Απίστευτο!' },
+    };
+    toast({
+      title: language === 'ru' ? msgs[s].ru : msgs[s].el,
+      description: language === 'ru'
+        ? `Серия ${s} дней — продолжайте учиться каждый день!`
+        : `Σερί ${s} ημερών — συνεχίστε να μαθαίνετε κάθε μέρα!`,
+    });
+  }, [studySessions, user?.id, language]);
+
   if (authLoading || (user && isDataLoading)) {
     return (
       <Layout>
@@ -179,28 +215,6 @@ export default function Stats() {
     return streak;
   };
   const streak = calculateStreak();
-
-  // Streak milestone toasts
-  useEffect(() => {
-    if (!user || streak === 0) return;
-    const MILESTONES = [3, 7, 14, 30];
-    if (!MILESTONES.includes(streak)) return;
-    const key = `streak_milestone_${user.id}_${streak}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, '1');
-    const messages: Record<number, { ru: string; el: string }> = {
-      3:  { ru: '🔥 3 дня подряд! Отличный старт!', el: '🔥 3 μέρες σερί! Εξαιρετική αρχή!' },
-      7:  { ru: '🔥 Неделя подряд! Так держать!', el: '🔥 Μία εβδομάδα σερί! Συνεχίστε!' },
-      14: { ru: '💪 2 недели подряд! Вы на верном пути!', el: '💪 2 εβδομάδες σερί! Είστε στο σωστό δρόμο!' },
-      30: { ru: '🏆 30 дней подряд! Невероятно!', el: '🏆 30 μέρες σερί! Απίστευτο!' },
-    };
-    toast({
-      title: language === 'ru' ? messages[streak].ru : messages[streak].el,
-      description: language === 'ru'
-        ? `Серия ${streak} дней — продолжайте учиться каждый день!`
-        : `Σερί ${streak} ημερών — συνεχίστε να μαθαίνετε κάθε μέρα!`,
-    });
-  }, [streak, user?.id]);
 
   // Exam line chart
   const examChartData = examResults
