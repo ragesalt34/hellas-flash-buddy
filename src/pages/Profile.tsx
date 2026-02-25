@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
   AlertDialogContent, AlertDialogDescription,
@@ -115,11 +116,8 @@ export default function Profile() {
   const resetMutation = useMutation({
     mutationFn: async () => {
       const uid = user!.id;
-      await Promise.all([
-        supabase.from('user_progress').delete().eq('user_id', uid),
-        supabase.from('exam_results').delete().eq('user_id', uid),
-        supabase.from('study_sessions').delete().eq('user_id', uid),
-      ]);
+      const { error } = await supabase.rpc('reset_user_progress', { p_user_id: uid });
+      if (error) throw error;
       Object.keys(localStorage)
         .filter(k => k.startsWith(`streak_milestone_${uid}_`))
         .forEach(k => localStorage.removeItem(k));
@@ -132,6 +130,9 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ['topic-accuracy'] });
       queryClient.invalidateQueries({ queryKey: ['last-exam-score'] });
       queryClient.invalidateQueries({ queryKey: ['study-time-week'] });
+    },
+    onError: () => {
+      toast.error(language === 'ru' ? 'Ошибка при сбросе прогресса' : 'Σφάλμα επαναφοράς προόδου');
     },
   });
 
