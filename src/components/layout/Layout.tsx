@@ -14,7 +14,7 @@ export function Layout({ children }: LayoutProps) {
       </main>
       <footer className="relative liquid-glass-footer py-6 text-center text-sm text-muted-foreground">
         <div className="container">
-          © 2026 Путь к греческому гражданству. Все права защищены.
+          © {new Date().getFullYear()} Путь к греческому гражданству. Все права защищены.
         </div>
       </footer>
     </div>

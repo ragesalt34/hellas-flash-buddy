@@ -40,7 +40,10 @@ export function useSpeech() {
       }
 
       // Skip if an identical request is already in-flight
-      if (cacheKey && pendingKeys.has(cacheKey)) return;
+      if (cacheKey && pendingKeys.has(cacheKey)) {
+        setIsSpeaking(false);
+        return;
+      }
       if (cacheKey) pendingKeys.add(cacheKey);
 
       // Get user's JWT token
