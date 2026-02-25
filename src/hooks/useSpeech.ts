@@ -5,6 +5,8 @@ const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tt
 
 // In-memory cache of audio URLs across component instances
 const urlCache = new Map<string, string>();
+// Tracks in-flight fetches to prevent duplicate requests for the same key
+const pendingKeys = new Set<string>();
 
 export function useSpeech() {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -37,10 +39,15 @@ export function useSpeech() {
         return;
       }
 
+      // Skip if an identical request is already in-flight
+      if (cacheKey && pendingKeys.has(cacheKey)) return;
+      if (cacheKey) pendingKeys.add(cacheKey);
+
       // Get user's JWT token
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) {
+        if (cacheKey) pendingKeys.delete(cacheKey);
         throw new Error("Not authenticated");
       }
 
@@ -52,6 +59,8 @@ export function useSpeech() {
         },
         body: JSON.stringify({ text, cacheKey }),
       });
+
+      if (cacheKey) pendingKeys.delete(cacheKey);
 
       if (!response.ok) {
         throw new Error(`TTS failed: ${response.status}`);
@@ -66,8 +75,10 @@ export function useSpeech() {
         const data = await response.json();
         audioUrl = data.audioUrl;
       } else {
-        // Got raw audio blob
+        // Got raw audio blob; revoke any previous blob for this key to avoid memory leak
         const blob = await response.blob();
+        const existing = cacheKey ? urlCache.get(cacheKey) : undefined;
+        if (existing?.startsWith('blob:')) URL.revokeObjectURL(existing);
         audioUrl = URL.createObjectURL(blob);
       }
 

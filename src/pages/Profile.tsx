@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,6 +30,15 @@ export default function Profile() {
 
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  const nameTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const passwordTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    return () => {
+      clearTimeout(nameTimerRef.current);
+      clearTimeout(passwordTimerRef.current);
+    };
+  }, []);
+
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
@@ -57,7 +66,8 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       setNameSuccess(true);
       setNameError('');
-      setTimeout(() => setNameSuccess(false), 3000);
+      clearTimeout(nameTimerRef.current);
+      nameTimerRef.current = setTimeout(() => setNameSuccess(false), 3000);
     },
     onError: () => {
       setNameError(language === 'ru' ? 'Ошибка при сохранении' : 'Σφάλμα αποθήκευσης');
@@ -91,7 +101,8 @@ export default function Profile() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setTimeout(() => setPasswordSuccess(false), 3000);
+      clearTimeout(passwordTimerRef.current);
+      passwordTimerRef.current = setTimeout(() => setPasswordSuccess(false), 3000);
     }
   };
 

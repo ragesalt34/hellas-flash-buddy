@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Layers, BookOpen, GraduationCap,
-  History, Palette, Scale, MapPin, ArrowRight, Loader2, Bell
+  History, Palette, Scale, MapPin, ArrowRight, Loader2, Bell, TrendingDown
 } from 'lucide-react';
 
 export default function Learn() {
@@ -27,6 +27,33 @@ export default function Learn() {
         .lte('next_review_at', now);
       if (error) throw error;
       return data?.length || 0;
+    },
+    enabled: !!user,
+  });
+
+  // Per-topic accuracy for weak topic hints
+  const { data: topicAccuracy } = useQuery({
+    queryKey: ['topic-accuracy', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('correct_count, incorrect_count, questions(topic)')
+        .eq('user_id', user!.id);
+      if (error) throw error;
+      const stats: Record<string, { correct: number; total: number }> = {};
+      (data || []).forEach((p: any) => {
+        const topic = p.questions?.topic as string;
+        if (!topic) return;
+        if (!stats[topic]) stats[topic] = { correct: 0, total: 0 };
+        stats[topic].correct += p.correct_count;
+        stats[topic].total += p.correct_count + p.incorrect_count;
+      });
+      return Object.fromEntries(
+        Object.entries(stats).map(([topic, s]) => [
+          topic,
+          s.total > 0 ? Math.round((s.correct / s.total) * 100) : null,
+        ])
+      ) as Record<string, number | null>;
     },
     enabled: !!user,
   });
@@ -76,7 +103,7 @@ export default function Learn() {
                 : `${dueCount} κάρτες περιμένουν σήμερα`}
             </p>
             <span className="text-xs text-muted-foreground opacity-60">
-              {language === 'ru' ? 'Выберите тему и начни' : 'Επιλέξτε θέμα'}
+              {language === 'ru' ? 'Выберите тему и начните' : 'Επιλέξτε ένα θέμα'}
             </span>
           </div>
         )}
@@ -95,6 +122,20 @@ export default function Learn() {
                 </div>
                 <CardTitle className="font-display text-lg sm:text-xl mt-4">{topic.title}</CardTitle>
                 <CardDescription className="text-sm mt-1 min-h-[2.5rem]">{topic.description}</CardDescription>
+                {topicAccuracy?.[topic.id] != null && (
+                  <div className={`inline-flex items-center gap-1 mt-2 text-xs px-2 py-0.5 rounded-full w-fit ${
+                    (topicAccuracy[topic.id] as number) < 50
+                      ? 'bg-destructive/10 text-destructive'
+                      : (topicAccuracy[topic.id] as number) < 75
+                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                      : 'bg-success/10 text-success'
+                  }`}>
+                    {(topicAccuracy[topic.id] as number) < 75 && <TrendingDown className="h-3 w-3" />}
+                    {language === 'ru'
+                      ? `Точность: ${topicAccuracy[topic.id]}%`
+                      : `Ακρίβεια: ${topicAccuracy[topic.id]}%`}
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="pt-0 mt-auto">
                 <div className="grid grid-cols-3 gap-2">
