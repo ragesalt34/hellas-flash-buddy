@@ -1080,62 +1080,103 @@
 }
 
 /* ── Liquid Glass Bubble hover effect ── */
-.liquid-hover {
+.liquid-hover{
+  --mx: 50%;
+  --my: 50%;
   position: relative;
-  isolation: isolate;
   overflow: hidden;
   border-radius: inherit;
+  isolation: isolate;
 }
 
-/* Cursor-following specular highlight */
-.liquid-hover::before {
-  content: '';
-  pointer-events: none;
+.liquid-hover > *{
+  position: relative;
+  z-index: 2;
+}
+
+.liquid-hover::before{
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background: radial-gradient(
-    160px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(255,255,255,0.42) 0%,
-    rgba(255,255,255,0.12) 40%,
-    transparent 70%
-  );
+  inset: -2px;
   opacity: 0;
-  transition: opacity 0.25s ease;
-}
-.liquid-hover:hover::before { opacity: 1; }
-
-/* Bubble layer */
-.liquid-hover::after {
-  content: '';
+  transition: opacity 220ms ease;
   pointer-events: none;
-  position: absolute;
-  inset: 0;
   z-index: 0;
-  border-radius: inherit;
+
   background:
-    radial-gradient(circle, rgba(255,255,255,0.60) 0%, transparent 55%) -20px 100% / 14px 14px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 55%)  30px 100% / 10px 10px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 55%)  65px 100% / 12px 12px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.38) 0%, transparent 55%)  90px 100% /  8px  8px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.50) 0%, transparent 55%) 120px 100% / 11px 11px no-repeat;
+    radial-gradient(140px 120px at var(--mx) var(--my),
+      rgba(255,255,255,0.85),
+      rgba(255,255,255,0.0) 60%),
+    radial-gradient(220px 180px at calc(var(--mx) + 14%) calc(var(--my) - 10%),
+      rgba(239,175,160,0.35),
+      rgba(239,175,160,0.0) 70%),
+    radial-gradient(240px 200px at calc(var(--mx) - 18%) calc(var(--my) + 12%),
+      rgba(125,138,87,0.28),
+      rgba(125,138,87,0.0) 72%);
+  filter: blur(10px) saturate(1.15);
+}
+
+.liquid-hover::after{
+  content: "";
+  position: absolute;
+  inset: 0;
   opacity: 0;
-  animation: none;
-}
-.liquid-hover:hover::after {
-  opacity: 1;
-  animation: bubbles-rise 1.6s ease-in infinite;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+  z-index: 1;
+
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(circle 10px, rgba(255,255,255,0.55) 0 42%, rgba(255,255,255,0) 70%),
+    radial-gradient(circle 7px,  rgba(255,255,255,0.45) 0 45%, rgba(255,255,255,0) 72%),
+    radial-gradient(circle 12px, rgba(255,255,255,0.35) 0 40%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle 6px,  rgba(255,255,255,0.40) 0 45%, rgba(255,255,255,0) 72%),
+    radial-gradient(circle 9px,  rgba(255,255,255,0.32) 0 42%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle 5px,  rgba(255,255,255,0.35) 0 48%, rgba(255,255,255,0) 76%);
+
+  background-position:
+    calc(var(--mx) + 8%) 120%,
+    calc(var(--mx) - 14%) 130%,
+    22% 118%,
+    62% 128%,
+    84% 138%,
+    calc(var(--mx) + 22%) 140%;
+
+  filter: blur(0.2px);
 }
 
-@keyframes bubbles-rise {
-  0%   { background-position: -20px 110%, 30px 110%, 65px 110%, 90px 110%, 120px 110%; opacity: 0; }
-  10%  { opacity: 1; }
-  80%  { opacity: 0.7; }
-  100% { background-position: -20px -20%, 30px -15%, 65px -25%, 90px -10%, 120px -20%; opacity: 0; }
+.liquid-hover:hover::before{ opacity: 1; animation: liquidDrift 2.8s ease-in-out infinite; }
+.liquid-hover:hover::after{ opacity: 1; animation: bubbleRise 1.8s linear infinite; }
+
+@keyframes bubbleRise{
+  0%{
+    background-position:
+      calc(var(--mx) + 8%) 120%,
+      calc(var(--mx) - 14%) 130%,
+      22% 118%,
+      62% 128%,
+      84% 138%,
+      calc(var(--mx) + 22%) 140%;
+  }
+  100%{
+    background-position:
+      calc(var(--mx) + 8%) -30%,
+      calc(var(--mx) - 14%) -40%,
+      22% -28%,
+      62% -38%,
+      84% -48%,
+      calc(var(--mx) + 22%) -55%;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .liquid-hover::after { animation: none !important; opacity: 0 !important; }
-  .liquid-hover:hover::before { opacity: 0.5; }
+@keyframes liquidDrift{
+  0%,100%{ transform: translate3d(0,0,0) scale(1); }
+  50%{ transform: translate3d(0,-1px,0) scale(1.01); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .liquid-hover:hover::before,
+  .liquid-hover:hover::after{
+    animation: none !important;
+  }
 }
