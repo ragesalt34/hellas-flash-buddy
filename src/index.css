@@ -1079,104 +1079,114 @@
   transition: height 0.5s ease;
 }
 
-/* ── Liquid Glass Bubble hover effect ── */
-.liquid-hover{
+/* ══════════════════════════════════════════
+   Apple Liquid Glass  —  .apple-liquid
+   Technique: SVG feTurbulence + feDisplacementMap
+   for refraction/distortion; CSS ::before for the
+   specular edge highlight; ::after for the inner
+   vibrancy tint. Text stays on z-index:2 above.
+══════════════════════════════════════════ */
+
+.apple-liquid {
   --mx: 50%;
   --my: 50%;
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   border-radius: inherit;
-  isolation: isolate;
+  /* Apply static refraction at rest */
+  filter: url(#liquidGlass);
+  transition: filter 200ms ease, box-shadow 200ms ease;
 }
 
-.liquid-hover > *{
+/* Keep children above pseudo-elements */
+.apple-liquid > * {
   position: relative;
   z-index: 2;
 }
 
-.liquid-hover::before{
+/* ── ::before  →  specular edge highlight + inner vibrancy ── */
+.apple-liquid::before {
   content: "";
-  position: absolute;
-  inset: -2px;
-  opacity: 0;
-  transition: opacity 220ms ease;
   pointer-events: none;
-  z-index: 0;
-
-  background:
-    radial-gradient(140px 120px at var(--mx) var(--my),
-      rgba(255,255,255,0.85),
-      rgba(255,255,255,0.0) 60%),
-    radial-gradient(220px 180px at calc(var(--mx) + 14%) calc(var(--my) - 10%),
-      rgba(239,175,160,0.35),
-      rgba(239,175,160,0.0) 70%),
-    radial-gradient(240px 200px at calc(var(--mx) - 18%) calc(var(--my) + 12%),
-      rgba(125,138,87,0.28),
-      rgba(125,138,87,0.0) 72%);
-  filter: blur(10px) saturate(1.15);
-}
-
-.liquid-hover::after{
-  content: "";
   position: absolute;
   inset: 0;
-  opacity: 0;
-  transition: opacity 220ms ease;
-  pointer-events: none;
   z-index: 1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 200ms ease;
 
-  background-repeat: no-repeat;
-  background-image:
-    radial-gradient(circle 10px, rgba(255,255,255,0.55) 0 42%, rgba(255,255,255,0) 70%),
-    radial-gradient(circle 7px,  rgba(255,255,255,0.45) 0 45%, rgba(255,255,255,0) 72%),
-    radial-gradient(circle 12px, rgba(255,255,255,0.35) 0 40%, rgba(255,255,255,0) 75%),
-    radial-gradient(circle 6px,  rgba(255,255,255,0.40) 0 45%, rgba(255,255,255,0) 72%),
-    radial-gradient(circle 9px,  rgba(255,255,255,0.32) 0 42%, rgba(255,255,255,0) 75%),
-    radial-gradient(circle 5px,  rgba(255,255,255,0.35) 0 48%, rgba(255,255,255,0) 76%);
-
-  background-position:
-    calc(var(--mx) + 8%) 120%,
-    calc(var(--mx) - 14%) 130%,
-    22% 118%,
-    62% 128%,
-    84% 138%,
-    calc(var(--mx) + 22%) 140%;
-
-  filter: blur(0.2px);
+  /* Cursor-tracking primary specular */
+  background:
+    /* sharp specular at cursor */
+    radial-gradient(
+      ellipse 80px 60px at var(--mx) var(--my),
+      rgba(255,255,255,0.72) 0%,
+      rgba(255,255,255,0.20) 45%,
+      transparent 70%
+    ),
+    /* softer chromatic halo — warm */
+    radial-gradient(
+      ellipse 160px 120px at calc(var(--mx) + 12%) calc(var(--my) - 8%),
+      rgba(255,240,220,0.28) 0%,
+      transparent 65%
+    ),
+    /* softer chromatic halo — cool */
+    radial-gradient(
+      ellipse 180px 140px at calc(var(--mx) - 15%) calc(var(--my) + 10%),
+      rgba(200,220,255,0.22) 0%,
+      transparent 68%
+    );
+  filter: blur(4px) saturate(1.25);
 }
 
-.liquid-hover:hover::before{ opacity: 1; animation: liquidDrift 2.8s ease-in-out infinite; }
-.liquid-hover:hover::after{ opacity: 1; animation: bubbleRise 1.8s linear infinite; }
+/* ── ::after  →  thin specular rim around the perimeter ── */
+.apple-liquid::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 200ms ease;
 
-@keyframes bubbleRise{
-  0%{
-    background-position:
-      calc(var(--mx) + 8%) 120%,
-      calc(var(--mx) - 14%) 130%,
-      22% 118%,
-      62% 128%,
-      84% 138%,
-      calc(var(--mx) + 22%) 140%;
+  /* Inset "glass edge" — bright top-left, darker bottom-right */
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,0.60),
+    inset -1px -1px 0 rgba(255,255,255,0.12),
+    inset 0 0 12px rgba(255,255,255,0.08);
+}
+
+/* ── Hover state ── */
+.apple-liquid:hover {
+  /* Switch to stronger displacement on hover */
+  filter: url(#liquidGlassHover);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.45),
+    0 4px 24px rgba(0,0,0,0.10),
+    0 1px 0 rgba(255,255,255,0.55) inset;
+}
+
+.apple-liquid:hover::before {
+  opacity: 1;
+}
+
+.apple-liquid:hover::after {
+  opacity: 1;
+}
+
+/* ── prefers-reduced-motion: keep blur + static highlight, no animation ── */
+@media (prefers-reduced-motion: reduce) {
+  .apple-liquid {
+    filter: none !important;
+    transition: none !important;
   }
-  100%{
-    background-position:
-      calc(var(--mx) + 8%) -30%,
-      calc(var(--mx) - 14%) -40%,
-      22% -28%,
-      62% -38%,
-      84% -48%,
-      calc(var(--mx) + 22%) -55%;
+  .apple-liquid:hover::before {
+    opacity: 0.6;
+    filter: blur(6px);
   }
-}
-
-@keyframes liquidDrift{
-  0%,100%{ transform: translate3d(0,0,0) scale(1); }
-  50%{ transform: translate3d(0,-1px,0) scale(1.01); }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .liquid-hover:hover::before,
-  .liquid-hover:hover::after{
-    animation: none !important;
+  .apple-liquid:hover::after {
+    opacity: 0.8;
   }
 }

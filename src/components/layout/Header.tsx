@@ -42,7 +42,7 @@ export function Header() {
     return location.pathname.startsWith(path);
   };
 
-  const handleLiquidMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleGlassMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
     const cx = e.clientX, cy = e.clientY;
     requestAnimationFrame(() => {
@@ -51,7 +51,7 @@ export function Header() {
       el.style.setProperty('--my', `${cy - rect.top}px`);
     });
   };
-  const handleLiquidLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleGlassLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.currentTarget.style.setProperty('--mx', '50%');
     e.currentTarget.style.setProperty('--my', '50%');
   };
@@ -78,9 +78,9 @@ export function Header() {
             <Link
               key={link.to}
               to={link.to}
-              className="liquid-hover"
-              onMouseMove={handleLiquidMove}
-              onMouseLeave={handleLiquidLeave}
+              className="apple-liquid"
+              onMouseMove={handleGlassMove}
+              onMouseLeave={handleGlassLeave}
               style={{
                 color: '#2F3532',
                 opacity: isActive(link.to) ? 1 : 0.5,
