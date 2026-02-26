@@ -13,6 +13,8 @@ const TOPICS = [
   { id: 'geography', emoji: '🗺️', subtitle: 'Regions & Cities' },
 ];
 
+const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
 
 export default function Index() {
   const { user } = useAuth();
@@ -65,7 +67,17 @@ export default function Index() {
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicSeen[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
-      return { accuracy, studyTime, topicAccuracy };
+      const now = new Date();
+      const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(d.getDate() - 6 + i);
+        return d.toISOString().split('T')[0];
+      });
+      const sessionDays = new Set(sessions.map((s: any) => s.started_at.split('T')[0]));
+      const streak = weekDays.map(day => sessionDays.has(day));
+      const streakCount = streak.filter(Boolean).length;
+
+      return { accuracy, studyTime, topicAccuracy, streak, streakCount };
     },
     enabled: !!user,
   });
@@ -80,8 +92,8 @@ export default function Index() {
       <Layout>
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 relative z-10">
 
-          {/* === SECTION 1: 2-column top grid === */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* === SECTION 1: 3-column top grid === */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center">
               <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>
@@ -100,6 +112,33 @@ export default function Index() {
                   <ArrowRight style={{ width: '14px', height: '14px' }} />
                 </button>
               </Link>
+            </div>
+
+            {/* Weekly Streak */}
+            <div className="glass-panel flex flex-col gap-3">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                  {language === 'ru' ? 'Серия недели' : 'Weekly Streak'}
+                </span>
+                <span style={{ fontWeight: 700, fontSize: '18px', color: '#2F3532' }}>
+                  {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'days'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
+                {WEEK_DAYS.map((day, i) => {
+                  const isActive = studyStats?.streak[i];
+                  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+                  return (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`}
+                        style={{ width: '30px', height: '30px' }}
+                      />
+                      <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Focus of Day */}
