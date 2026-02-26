@@ -2,12 +2,10 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-import { useState, useCallback } from 'react';
 import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
-import { upsertProgress } from '@/lib/progressHelper';
 
 const TOPICS = [
   { id: 'history',   emoji: '🏛️', subtitle: 'Modern & Ancient' },
@@ -79,50 +77,6 @@ export default function Index() {
     enabled: !!user,
   });
 
-  const queryClient = useQueryClient();
-
-  // Active Session flashcard
-  const [sessionCardFlipped, setSessionCardFlipped] = useState(false);
-  const [sessionCardIndex, setSessionCardIndex] = useState(0);
-
-  const { data: sessionCardData, refetch: refetchSessionCard } = useQuery({
-    queryKey: ['session-card', user?.id],
-    queryFn: async () => {
-      const now = new Date().toISOString();
-      // Get due cards first, fall back to all progress, else random question
-      const [dueRes, allProgressRes, randomQRes] = await Promise.all([
-        supabase
-          .from('user_progress')
-          .select('question_id, correct_count, incorrect_count, questions(id, question_el, question, correct_answer_el, correct_answer, topic)')
-          .eq('user_id', user!.id)
-          .lte('next_review_at', now)
-          .limit(20),
-        supabase
-          .from('user_progress')
-          .select('question_id')
-          .eq('user_id', user!.id),
-        supabase
-          .from('questions')
-          .select('id, question_el, question, correct_answer_el, correct_answer, topic')
-          .limit(50),
-      ]);
-
-      const dueCards = (dueRes.data || []).filter((r: any) => r.questions);
-      if (dueCards.length > 0) {
-        const card = dueCards[Math.floor(Math.random() * dueCards.length)] as any;
-        return { question: card.questions, isDue: true };
-      }
-
-      // Fall back: unseen question
-      const seenIds = new Set((allProgressRes.data || []).map((p: any) => p.question_id));
-      const unseen = (randomQRes.data || []).filter((q: any) => !seenIds.has(q.id));
-      const pool = unseen.length > 0 ? unseen : (randomQRes.data || []);
-      if (pool.length === 0) return null;
-      return { question: pool[Math.floor(Math.random() * pool.length)], isDue: false };
-    },
-    enabled: !!user,
-  });
-
   // Weekly Performance data
   const { data: weeklyData } = useQuery({
     queryKey: ['weekly-performance', user?.id],
@@ -161,24 +115,6 @@ export default function Index() {
     enabled: !!user,
   });
 
-  const handleSessionAnswer = useCallback(async (correct: boolean | null) => {
-    const card = sessionCardData?.question;
-    if (!card || !user) return;
-    if (correct !== null) {
-      await upsertProgress(user.id, card.id, correct);
-      queryClient.invalidateQueries({ queryKey: ['index-study-stats', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['weekly-performance', user.id] });
-    }
-    setSessionCardFlipped(false);
-    setTimeout(() => refetchSessionCard(), 300);
-  }, [sessionCardData, user, queryClient, refetchSessionCard]);
-
-  const topicColors: Record<string, string> = {
-    history: 'hsl(var(--history))',
-    culture: 'hsl(var(--culture))',
-    laws: 'hsl(var(--laws))',
-    geography: 'hsl(var(--geography))',
-  };
 
   const features = language === 'ru'
     ? ['Более 300 вопросов', 'Отслеживание прогресса', '3 режима изучения', 'Симуляция экзамена']
@@ -361,152 +297,6 @@ export default function Index() {
                 </div>
               </Link>
             ))}
-          </div>
-
-          {/* === SECTION 5: Active Session === */}
-          <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px', marginTop: '8px' }}>
-            {language === 'ru' ? 'Активная сессия' : 'Active Session'}
-          </h2>
-          <div className="glass-panel mb-8" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {sessionCardData ? (() => {
-              const q = sessionCardData.question as any;
-              const topicColor = topicColors[q.topic] || 'hsl(var(--history))';
-              const questionText = language === 'el' ? (q.question_el || q.question) : q.question;
-              const answerText = language === 'el' ? (q.correct_answer_el || q.correct_answer) : q.correct_answer;
-              const answerEl = q.correct_answer_el;
-              return (
-                <>
-                  <div
-                    style={{
-                      maxWidth: '560px', width: '100%', height: '300px', cursor: 'pointer',
-                      perspective: '1500px',
-                    }}
-                    onClick={() => setSessionCardFlipped(f => !f)}
-                  >
-                    <div style={{
-                      width: '100%', height: '100%',
-                      position: 'relative',
-                      transformStyle: 'preserve-3d',
-                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
-                      transform: sessionCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                    }}>
-                      {/* Front */}
-                      <div style={{
-                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                        borderRadius: '20px',
-                        background: '#FFFFFF',
-                        boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
-                        border: '1px solid rgba(255,255,255,0.8)',
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        padding: '40px 36px', textAlign: 'center',
-                        backfaceVisibility: 'hidden',
-                        WebkitBackfaceVisibility: 'hidden',
-                      }}>
-                        <span style={{
-                          position: 'absolute', top: '20px',
-                          fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                          color: topicColor,
-                        }}>
-                          {t(`topic.${q.topic}`)} • {q.topic === 'history' ? (language === 'ru' ? '1940-е' : '1940s') : ''}
-                        </span>
-                        <p style={{ fontSize: '22px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
-                          {questionText}
-                        </p>
-                        <span style={{
-                          position: 'absolute', bottom: '20px',
-                          fontSize: '13px', color: 'hsl(var(--muted-foreground))', opacity: 0.7,
-                        }}>
-                          {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Click to flip'}
-                        </span>
-                      </div>
-
-                      {/* Back */}
-                      <div style={{
-                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                        borderRadius: '20px',
-                        background: '#F8F7F5',
-                        boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
-                        border: '1px solid rgba(255,255,255,0.8)',
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        padding: '40px 36px', textAlign: 'center',
-                        backfaceVisibility: 'hidden',
-                        WebkitBackfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
-                      }}>
-                        <span style={{
-                          position: 'absolute', top: '20px',
-                          fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                          color: 'hsl(var(--muted-foreground))',
-                        }}>
-                          {language === 'ru' ? 'Ответ' : 'Answer'}
-                        </span>
-                        <p style={{ fontSize: '26px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
-                          {answerText}
-                        </p>
-                        {answerEl && answerEl !== answerText && (
-                          <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '10px' }}>
-                            ({answerEl})
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Controls */}
-                  <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-                    <button
-                      onClick={() => handleSessionAnswer(false)}
-                      style={{
-                        width: '52px', height: '52px', borderRadius: '50%',
-                        border: '1px solid rgba(255,255,255,0.7)',
-                        background: 'rgba(255,255,255,0.5)',
-                        cursor: 'pointer', fontSize: '18px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'hsl(var(--geography))',
-                        transition: 'transform 0.2s, background 0.2s',
-                      }}
-                      title={language === 'ru' ? 'Неправильно' : 'Wrong'}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
-                    >✕</button>
-                    <button
-                      onClick={() => handleSessionAnswer(null)}
-                      style={{
-                        width: '52px', height: '52px', borderRadius: '50%',
-                        border: '1px solid rgba(255,255,255,0.7)',
-                        background: 'rgba(255,255,255,0.5)',
-                        cursor: 'pointer', fontSize: '18px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'hsl(var(--muted-foreground))',
-                        transition: 'transform 0.2s, background 0.2s',
-                      }}
-                      title={language === 'ru' ? 'Пропустить' : 'Skip'}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
-                    >↺</button>
-                    <button
-                      onClick={() => handleSessionAnswer(true)}
-                      style={{
-                        width: '52px', height: '52px', borderRadius: '50%',
-                        border: '1px solid rgba(255,255,255,0.7)',
-                        background: 'rgba(255,255,255,0.5)',
-                        cursor: 'pointer', fontSize: '18px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'hsl(var(--laws))',
-                        transition: 'transform 0.2s, background 0.2s',
-                      }}
-                      title={language === 'ru' ? 'Правильно' : 'Correct'}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
-                    >✓</button>
-                  </div>
-                </>
-              );
-            })() : (
-              <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>
-                {language === 'ru' ? 'Загрузка карточки…' : 'Loading card…'}
-              </p>
-            )}
           </div>
 
           {/* === SECTION 6: Weekly Performance === */}
