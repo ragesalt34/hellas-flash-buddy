@@ -377,78 +377,78 @@ export default function Index() {
               return (
                 <>
                   <div
-                    className="flashcard-container"
-                    style={{ maxWidth: '560px', width: '100%', height: '300px', cursor: 'pointer' }}
+                    style={{
+                      maxWidth: '560px', width: '100%', height: '300px', cursor: 'pointer',
+                      perspective: '1500px',
+                    }}
                     onClick={() => setSessionCardFlipped(f => !f)}
                   >
-                    {/* Front */}
-                    <div className="flashcard-face" style={{
-                      borderRadius: '20px',
-                      background: '#FFFFFF',
-                      boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '40px 36px',
-                      textAlign: 'center',
+                    <div style={{
+                      width: '100%', height: '100%',
                       position: 'relative',
-                      backfaceVisibility: sessionCardFlipped ? 'visible' : 'hidden',
+                      transformStyle: 'preserve-3d',
+                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
                       transform: sessionCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
                     }}>
-                      <span style={{
-                        position: 'absolute', top: '20px',
-                        fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                        color: topicColor,
+                      {/* Front */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        borderRadius: '20px',
+                        background: '#FFFFFF',
+                        boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                        border: '1px solid rgba(255,255,255,0.8)',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        padding: '40px 36px', textAlign: 'center',
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
                       }}>
-                        {t(`topic.${q.topic}`)} • {q.topic === 'history' ? (language === 'ru' ? '1940-е' : '1940s') : ''}
-                      </span>
-                      <p style={{ fontSize: '22px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
-                        {questionText}
-                      </p>
-                      <span style={{
-                        position: 'absolute', bottom: '20px',
-                        fontSize: '13px', color: 'hsl(var(--muted-foreground))', opacity: 0.7,
-                      }}>
-                        {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Click to flip'}
-                      </span>
-                    </div>
-
-                    {/* Back */}
-                    <div className="flashcard-face" style={{
-                      borderRadius: '20px',
-                      background: '#F8F7F5',
-                      boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '40px 36px',
-                      textAlign: 'center',
-                      position: 'absolute',
-                      top: 0, left: 0, width: '100%', height: '100%',
-                      backfaceVisibility: sessionCardFlipped ? 'hidden' : 'visible',
-                      transform: sessionCardFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
-                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
-                    }}>
-                      <span style={{
-                        position: 'absolute', top: '20px',
-                        fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                        color: 'hsl(var(--muted-foreground))',
-                      }}>
-                        {language === 'ru' ? 'Ответ' : 'Answer'}
-                      </span>
-                      <p style={{ fontSize: '26px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
-                        {answerText}
-                      </p>
-                      {answerEl && answerEl !== answerText && (
-                        <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '10px' }}>
-                          ({answerEl})
+                        <span style={{
+                          position: 'absolute', top: '20px',
+                          fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                          color: topicColor,
+                        }}>
+                          {t(`topic.${q.topic}`)} • {q.topic === 'history' ? (language === 'ru' ? '1940-е' : '1940s') : ''}
+                        </span>
+                        <p style={{ fontSize: '22px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
+                          {questionText}
                         </p>
-                      )}
+                        <span style={{
+                          position: 'absolute', bottom: '20px',
+                          fontSize: '13px', color: 'hsl(var(--muted-foreground))', opacity: 0.7,
+                        }}>
+                          {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Click to flip'}
+                        </span>
+                      </div>
+
+                      {/* Back */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        borderRadius: '20px',
+                        background: '#F8F7F5',
+                        boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                        border: '1px solid rgba(255,255,255,0.8)',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        padding: '40px 36px', textAlign: 'center',
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)',
+                      }}>
+                        <span style={{
+                          position: 'absolute', top: '20px',
+                          fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                          color: 'hsl(var(--muted-foreground))',
+                        }}>
+                          {language === 'ru' ? 'Ответ' : 'Answer'}
+                        </span>
+                        <p style={{ fontSize: '26px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
+                          {answerText}
+                        </p>
+                        {answerEl && answerEl !== answerText && (
+                          <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '10px' }}>
+                            ({answerEl})
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
