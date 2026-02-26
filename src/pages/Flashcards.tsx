@@ -601,7 +601,7 @@ export default function Flashcards() {
 
           {/* Know / Don't Know — revealed after flip */}
           <div style={{
-            display: 'flex', gap: '12px', justifyContent: 'center',
+            display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '8px',
             visibility: isFlipped ? 'visible' : 'hidden',
           }}>
             <button
@@ -619,7 +619,7 @@ export default function Flashcards() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'none'; }}
             >
               <ThumbsDown style={{ width: '16px', height: '16px' }} />
-              {language === 'ru' ? 'Не знаю' : t('flashcards.dontKnow')}
+              {language === 'ru' ? `Не знаю · ${unknownCount}` : `${t('flashcards.dontKnow')} · ${unknownCount}`}
             </button>
             <button
               onClick={handleKnow}
@@ -636,20 +636,8 @@ export default function Flashcards() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'none'; }}
             >
               <ThumbsUp style={{ width: '16px', height: '16px' }} />
-              {language === 'ru' ? 'Знаю' : t('flashcards.know')}
+              {language === 'ru' ? `Знаю · ${knownCount}` : `${t('flashcards.know')} · ${knownCount}`}
             </button>
-          </div>
-
-          {/* Score counters */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.45)', borderRadius: '100px', padding: '6px 16px' }}>
-              <ThumbsUp style={{ width: '14px', height: '14px', color: '#7D8A57' }} />
-              <span style={{ color: '#7D8A57', fontWeight: 600, fontSize: '14px' }}>{knownCount}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.45)', borderRadius: '100px', padding: '6px 16px' }}>
-              <ThumbsDown style={{ width: '14px', height: '14px', color: '#E06C6C' }} />
-              <span style={{ color: '#E06C6C', fontWeight: 600, fontSize: '14px' }}>{unknownCount}</span>
-            </div>
           </div>
         </div>
 
