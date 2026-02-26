@@ -2,9 +2,12 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
+import { upsertProgress } from '@/lib/progressHelper';
 
 const TOPICS = [
   { id: 'history',   emoji: '🏛️', subtitle: 'Modern & Ancient' },
@@ -76,6 +79,107 @@ export default function Index() {
     enabled: !!user,
   });
 
+  const queryClient = useQueryClient();
+
+  // Active Session flashcard
+  const [sessionCardFlipped, setSessionCardFlipped] = useState(false);
+  const [sessionCardIndex, setSessionCardIndex] = useState(0);
+
+  const { data: sessionCardData, refetch: refetchSessionCard } = useQuery({
+    queryKey: ['session-card', user?.id],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      // Get due cards first, fall back to all progress, else random question
+      const [dueRes, allProgressRes, randomQRes] = await Promise.all([
+        supabase
+          .from('user_progress')
+          .select('question_id, correct_count, incorrect_count, questions(id, question_el, question, correct_answer_el, correct_answer, topic)')
+          .eq('user_id', user!.id)
+          .lte('next_review_at', now)
+          .limit(20),
+        supabase
+          .from('user_progress')
+          .select('question_id')
+          .eq('user_id', user!.id),
+        supabase
+          .from('questions')
+          .select('id, question_el, question, correct_answer_el, correct_answer, topic')
+          .limit(50),
+      ]);
+
+      const dueCards = (dueRes.data || []).filter((r: any) => r.questions);
+      if (dueCards.length > 0) {
+        const card = dueCards[Math.floor(Math.random() * dueCards.length)] as any;
+        return { question: card.questions, isDue: true };
+      }
+
+      // Fall back: unseen question
+      const seenIds = new Set((allProgressRes.data || []).map((p: any) => p.question_id));
+      const unseen = (randomQRes.data || []).filter((q: any) => !seenIds.has(q.id));
+      const pool = unseen.length > 0 ? unseen : (randomQRes.data || []);
+      if (pool.length === 0) return null;
+      return { question: pool[Math.floor(Math.random() * pool.length)], isDue: false };
+    },
+    enabled: !!user,
+  });
+
+  // Weekly Performance data
+  const { data: weeklyData } = useQuery({
+    queryKey: ['weekly-performance', user?.id],
+    queryFn: async () => {
+      const now = new Date();
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - 6);
+      weekStart.setHours(0, 0, 0, 0);
+
+      const { data } = await supabase
+        .from('user_progress')
+        .select('last_reviewed_at, is_known')
+        .eq('user_id', user!.id)
+        .gte('last_reviewed_at', weekStart.toISOString());
+
+      const mastered = (data || []).filter((p: any) => p.is_known).length;
+
+      // Group by day of week (Mon=0..Sun=6)
+      const dayCounts = Array(7).fill(0);
+      (data || []).forEach((p: any) => {
+        if (!p.last_reviewed_at) return;
+        const d = new Date(p.last_reviewed_at);
+        const dayIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
+        dayCounts[dayIdx]++;
+      });
+
+      // Get all mastered for ranking
+      const { count: totalMastered } = await supabase
+        .from('user_progress')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user!.id)
+        .eq('is_known', true);
+
+      return { dayCounts, mastered: totalMastered ?? mastered };
+    },
+    enabled: !!user,
+  });
+
+  const handleSessionAnswer = useCallback(async (correct: boolean | null) => {
+    const card = sessionCardData?.question;
+    if (!card || !user) return;
+    if (correct !== null) {
+      await upsertProgress(user.id, card.id, correct);
+      queryClient.invalidateQueries({ queryKey: ['index-study-stats', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['weekly-performance', user.id] });
+    }
+    setSessionCardFlipped(false);
+    setTimeout(() => refetchSessionCard(), 300);
+  }, [sessionCardData, user, queryClient, refetchSessionCard]);
+
+  const topicColors: Record<string, string> = {
+    history: 'hsl(var(--history))',
+    culture: 'hsl(var(--culture))',
+    laws: 'hsl(var(--laws))',
+    geography: 'hsl(var(--geography))',
+  };
+
   const features = language === 'ru'
     ? ['Более 300 вопросов', 'Отслеживание прогресса', '3 режима изучения', 'Симуляция экзамена']
     : ['Πάνω από 300 ερωτήσεις', 'Παρακολούθηση προόδου', '3 τρόποι μάθησης', 'Προσομοίωση εξέτασης'];
@@ -121,7 +225,8 @@ export default function Index() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
                 {WEEK_DAYS.map((day, i) => {
                   const isActive = studyStats?.streak[i];
-                  const isToday = i === new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+                  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+                  const isToday = i === todayIdx;
                   return (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                       <div className={`pebble${isActive ? (i === (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) ? ' pebble-current' : ' pebble-active') : ''}`}
@@ -256,6 +361,219 @@ export default function Index() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          {/* === SECTION 5: Active Session === */}
+          <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px', marginTop: '8px' }}>
+            {language === 'ru' ? 'Активная сессия' : 'Active Session'}
+          </h2>
+          <div className="glass-panel mb-8" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {sessionCardData ? (() => {
+              const q = sessionCardData.question as any;
+              const topicColor = topicColors[q.topic] || 'hsl(var(--history))';
+              const questionText = language === 'el' ? (q.question_el || q.question) : q.question;
+              const answerText = language === 'el' ? (q.correct_answer_el || q.correct_answer) : q.correct_answer;
+              const answerEl = q.correct_answer_el;
+              return (
+                <>
+                  <div
+                    className="flashcard-container"
+                    style={{ maxWidth: '560px', width: '100%', height: '300px', cursor: 'pointer' }}
+                    onClick={() => setSessionCardFlipped(f => !f)}
+                  >
+                    {/* Front */}
+                    <div className="flashcard-face" style={{
+                      borderRadius: '20px',
+                      background: '#FFFFFF',
+                      boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                      border: '1px solid rgba(255,255,255,0.8)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '40px 36px',
+                      textAlign: 'center',
+                      position: 'relative',
+                      backfaceVisibility: sessionCardFlipped ? 'visible' : 'hidden',
+                      transform: sessionCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
+                    }}>
+                      <span style={{
+                        position: 'absolute', top: '20px',
+                        fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                        color: topicColor,
+                      }}>
+                        {t(`topic.${q.topic}`)} • {q.topic === 'history' ? (language === 'ru' ? '1940-е' : '1940s') : ''}
+                      </span>
+                      <p style={{ fontSize: '22px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
+                        {questionText}
+                      </p>
+                      <span style={{
+                        position: 'absolute', bottom: '20px',
+                        fontSize: '13px', color: 'hsl(var(--muted-foreground))', opacity: 0.7,
+                      }}>
+                        {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Click to flip'}
+                      </span>
+                    </div>
+
+                    {/* Back */}
+                    <div className="flashcard-face" style={{
+                      borderRadius: '20px',
+                      background: '#F8F7F5',
+                      boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                      border: '1px solid rgba(255,255,255,0.8)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '40px 36px',
+                      textAlign: 'center',
+                      position: 'absolute',
+                      top: 0, left: 0, width: '100%', height: '100%',
+                      backfaceVisibility: sessionCardFlipped ? 'hidden' : 'visible',
+                      transform: sessionCardFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
+                      transition: 'transform 0.6s cubic-bezier(0.4,0.2,0.2,1)',
+                    }}>
+                      <span style={{
+                        position: 'absolute', top: '20px',
+                        fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                        color: 'hsl(var(--muted-foreground))',
+                      }}>
+                        {language === 'ru' ? 'Ответ' : 'Answer'}
+                      </span>
+                      <p style={{ fontSize: '26px', fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.4 }}>
+                        {answerText}
+                      </p>
+                      {answerEl && answerEl !== answerText && (
+                        <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '10px' }}>
+                          ({answerEl})
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Controls */}
+                  <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
+                    <button
+                      onClick={() => handleSessionAnswer(false)}
+                      style={{
+                        width: '52px', height: '52px', borderRadius: '50%',
+                        border: '1px solid rgba(255,255,255,0.7)',
+                        background: 'rgba(255,255,255,0.5)',
+                        cursor: 'pointer', fontSize: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'hsl(var(--geography))',
+                        transition: 'transform 0.2s, background 0.2s',
+                      }}
+                      title={language === 'ru' ? 'Неправильно' : 'Wrong'}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+                    >✕</button>
+                    <button
+                      onClick={() => handleSessionAnswer(null)}
+                      style={{
+                        width: '52px', height: '52px', borderRadius: '50%',
+                        border: '1px solid rgba(255,255,255,0.7)',
+                        background: 'rgba(255,255,255,0.5)',
+                        cursor: 'pointer', fontSize: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'hsl(var(--muted-foreground))',
+                        transition: 'transform 0.2s, background 0.2s',
+                      }}
+                      title={language === 'ru' ? 'Пропустить' : 'Skip'}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+                    >↺</button>
+                    <button
+                      onClick={() => handleSessionAnswer(true)}
+                      style={{
+                        width: '52px', height: '52px', borderRadius: '50%',
+                        border: '1px solid rgba(255,255,255,0.7)',
+                        background: 'rgba(255,255,255,0.5)',
+                        cursor: 'pointer', fontSize: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'hsl(var(--laws))',
+                        transition: 'transform 0.2s, background 0.2s',
+                      }}
+                      title={language === 'ru' ? 'Правильно' : 'Correct'}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'white')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+                    >✓</button>
+                  </div>
+                </>
+              );
+            })() : (
+              <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>
+                {language === 'ru' ? 'Загрузка карточки…' : 'Loading card…'}
+              </p>
+            )}
+          </div>
+
+          {/* === SECTION 6: Weekly Performance === */}
+          <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
+            {language === 'ru' ? 'Недельная активность' : 'Weekly Performance'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {/* Bar chart panel */}
+            <div className="glass-panel md:col-span-2">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '20px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>
+                  {language === 'ru' ? 'Активность' : 'Study Activity'}
+                </span>
+                <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
+                  {language === 'ru' ? 'Эта неделя' : 'This Week'}
+                </span>
+              </div>
+              <div style={{ height: '160px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={(weeklyData?.dayCounts ?? Array(7).fill(0)).map((v: number, i: number) => ({
+                      day: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],
+                      count: v,
+                    }))}
+                    margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
+                    barCategoryGap="30%"
+                  >
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                      {(weeklyData?.dayCounts ?? Array(7).fill(0)).map((_: number, index: number) => (
+                        <Cell key={index} fill={`hsl(var(--history) / ${(weeklyData?.dayCounts?.[index] ?? 0) > 0 ? '0.7' : '0.12'})`} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', paddingLeft: '2px', paddingRight: '2px' }}>
+                {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+                  <span key={d} style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 600, flex: 1, textAlign: 'center' }}>{d}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Badge panels */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <span style={{ fontSize: '28px' }}>🏆</span>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '17px', color: 'hsl(var(--foreground))' }}>
+                    {language === 'ru' ? 'Топ 5%' : 'Top 5%'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
+                    {language === 'ru' ? 'Среди начинающих' : 'Among beginners'}
+                  </div>
+                </div>
+              </div>
+              <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <span style={{ fontSize: '28px' }}>🔥</span>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '17px', color: 'hsl(var(--foreground))' }}>
+                    {weeklyData?.mastered ?? 0}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
+                    {language === 'ru' ? 'Освоено карточек' : 'Cards mastered'}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
