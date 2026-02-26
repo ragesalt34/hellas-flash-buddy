@@ -1,63 +1,40 @@
 
+## Add Weekly Performance & Active Flashcard Sections to Dashboard
 
-# Statistics and Progress Tracking
+### What the design adds to the existing dashboard
 
-## Problem
-Currently only study **time** is tracked. Quiz and Flashcard results are displayed during the session but never saved to the database. The `user_progress` table exists but nothing writes to it. Only Exam results are persisted.
+The provided mockup matches the current app's visual style exactly (bone background, glass panels, DM Sans, topic colors). The dashboard (`/`) already has the greeting, streak, focus card, stats row, and topic grid. The design introduces two new sections currently missing from the home page:
 
-## Solution
-
-### 1. Save Quiz results after each answer
-After each answer in Quiz mode, upsert a record to `user_progress` with `correct_count` / `incorrect_count` incremented. This gives per-question accuracy data across all sessions.
-
-### 2. Save Flashcard results (know/don't know)
-When the user clicks "Know" or "Don't Know" in Flashcards, upsert `user_progress` similarly -- "Know" increments `correct_count`, "Don't Know" increments `incorrect_count`, and "Know" sets `is_known = true`.
-
-### 3. Create a dedicated `/stats` page
-A new page at `/stats` (linked from the header stats icon) with:
-
-- **Overall accuracy** -- % correct across all quiz + flashcard answers
-- **Questions mastered** -- count of questions marked `is_known`
-- **Total questions answered** -- sum of all attempts
-- **Study streak** -- consecutive days with activity (from `study_sessions`)
-- **Study time widget** (existing component, moved here)
-- **Accuracy by topic** -- bar chart showing % correct per topic (history, culture, laws, geography)
-- **Exam history chart** -- existing progress chart from Profile (last 10 exams)
-- **Recent activity feed** -- last 7 days of sessions with type and duration
-
-### 4. Update header stats button
-Change the stats icon link from `/profile` to `/stats`.
+1. **Active Session** — an embedded flip-card showing a random due flashcard, with ✕ / ↺ / ✓ controls
+2. **Weekly Performance** — a bar chart (Mon–Sun activity) + two achievement badges (ranking & mastered count)
 
 ---
 
-## Technical Details
+### Plan
 
-### Files to modify:
-- **`src/pages/Quiz.tsx`** -- add `upsertProgress()` call in `handleAnswer()` to save correct/incorrect to `user_progress`
-- **`src/pages/Flashcards.tsx`** -- add `upsertProgress()` call in `handleKnow()` / `handleDontKnow()` to save to `user_progress`
-- **`src/pages/Stats.tsx`** (new) -- dedicated stats page querying `user_progress`, `study_sessions`, and `exam_results`
-- **`src/components/layout/Header.tsx`** -- change stats icon link to `/stats`
-- **`src/App.tsx`** -- add `/stats` route
+#### 1. Add "Active Session" mini-flashcard to Index.tsx
 
-### Progress upsert logic (shared helper):
-```text
-upsert into user_progress:
-  - match on (user_id, question_id)
-  - on conflict: increment correct_count or incorrect_count
-  - set is_known = true when user marks "Know" in flashcards
-  - update last_reviewed_at
-```
+- Pull one random flashcard from the user's progress (prioritising cards that are due for review today, falling back to any unseen card)
+- Render a 3D flip-card inside a glass panel using the existing CSS 3D technique already present in `Flashcards.tsx`
+- Three controls below: ✕ (wrong → mark incorrect), ↺ (skip), ✓ (correct → mark correct) — reusing the existing `upsert_progress` RPC
+- Card shows the question face ("History • topic tag" + Greek question text) and answer face (Greek answer + transliteration)
 
-This requires a database function for atomic increment-on-conflict since the Supabase JS client doesn't support `ON CONFLICT DO UPDATE SET col = col + 1` directly. A small SQL migration will add an `upsert_progress` RPC function.
+#### 2. Add "Weekly Performance" section to Index.tsx
 
-### Database migration:
-```text
-CREATE FUNCTION upsert_progress(
-  p_user_id uuid, p_question_id uuid, p_correct boolean, p_known boolean default null
-)
-- INSERT or UPDATE user_progress
-- Atomically increment correct_count or incorrect_count
-- Optionally set is_known
-```
+- A glass panel showing a 7-bar chart (Mon–Sun of current week) using Recharts `BarChart` — same library already used in Stats.tsx
+- Bar height = number of questions answered that day (from `user_progress.last_reviewed_at` grouped by day of week)
+- Two right-side badge panels:
+  - 🏆 Ranking pill (computes percentile from total `user_progress` mastered count across all users, or shows a static encouraging label if insufficient data)
+  - 🔥 Cards mastered count
 
-No new tables needed -- the existing `user_progress`, `study_sessions`, and `exam_results` tables have all the data we need.
+#### 3. Technical details
+
+- All new queries use existing `supabase` client and existing tables: `user_progress`, `questions`
+- No DB migrations needed
+- Flip-card CSS is already defined in `index.css` (`.flashcard-face`, `.flipped` classes) — reuse directly
+- The new sections are appended below the existing Learning Modes section in the authenticated branch of `Index.tsx`
+- Bar chart uses `recharts` `BarChart` already imported in the project
+
+#### Files changed
+
+- `src/pages/Index.tsx` — add two new sections (Active Session + Weekly Performance) to the authenticated dashboard view only
