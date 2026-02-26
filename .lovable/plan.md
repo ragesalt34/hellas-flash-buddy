@@ -1,72 +1,15 @@
 
-## Улучшение визуального стиля флэш-карточек
+## Remove Active Session from Dashboard
 
-### Что сейчас
+### What changes
+The dashboard (`src/pages/Index.tsx`) has an "Активная сессия" (Active Session) section — a full embedded flip-card widget — that the user wants removed. The flashcard experience should live exclusively on the dedicated `/flashcards` page.
 
-Флэш-карточки используют `flashcard-glass` класс — это просто белый прямоугольник с лёгкой тенью. Дизайн функциональный, но нейтральный. Не хватает:
-- цветового акцента, связывающего карту с темой (история = синий, культура = фиолетовый, и т.д.)
-- визуального разграничения лицевой и обратной сторон
-- более выразительной прогресс-строки
-- изящных кнопок управления в стиле дашборда (стеклянные круги ✕ ↺ ✓)
-- маленького «бейджа» темы на лицевой стороне карточки
+### Files changed
+- **`src/pages/Index.tsx`** — remove:
+  1. The `sessionCardFlipped`, `sessionCardIndex` state variables
+  2. The `sessionCardData` / `refetchSessionCard` useQuery hook and its query function
+  3. The `handleSessionAnswer` callback
+  4. The entire "SECTION 5: Active Session" JSX block (heading + glass-panel with the flip card and ✕↺✓ buttons)
+  - Keep the Weekly Performance section (Section 6) intact
 
----
-
-### Изменения
-
-#### 1. Цветной акцент по теме (`src/pages/Flashcards.tsx`)
-
-Добавить `topicAccent` объект с цветами тем:
-```
-history  → #5B8DB8  (стальной синий)
-culture  → #9B7EC8  (фиолетовый)
-laws     → #7D8A57  (оливковый)
-geography → #D4874A (терракотовый)
-```
-
-Использовать этот цвет:
-- как верхняя цветная полоска на лицевой стороне карточки (4px высота)
-- как цвет fill в прогресс-баре (заменить стандартный `<Progress>` на кастомный div)
-- как фоновый оттенок бейджа темы
-
-#### 2. Лицевая сторона — тег темы + вопрос
-
-Добавить над вопросом маленький `pill`-бейдж:
-- `«История • 1940-е»` — цвет фона `topicAccent + 15% opacity`, текст `topicAccent`
-- Текст вопроса оставить крупным и жирным (уже есть)
-- Внизу: `«Нажмите, чтобы перевернуть»` — мелкий серый hint
-
-#### 3. Обратная сторона — цветной фон
-
-Фон задней карточки заменить с белого на очень светлый оттенок цвета темы (5–8% opacity), чтобы пользователь мгновенно видел что карта перевёрнута:
-- добавить радиальный градиент `radial-gradient(circle at 30% 20%, topicColor + 12%, transparent 70%)`
-- бейдж «Ответ» сверху
-
-#### 4. Кнопки управления — круглые стеклянные (как в дашборде)
-
-Заменить `<Button variant="outline">` на круглые кнопки в стиле дашборда:
-- `✕` — тёмный контур, при hover розоватый bg
-- `↺` — нейтральный ghost
-- `✓` — тёмный контур, при hover зеленоватый bg
-- Все три — `56x56px`, `border-radius: 50%`, glass `rgba(255,255,255,0.5)`, border `rgba(255,255,255,0.7)`
-
-#### 5. Прогресс-строка — цвет темы
-
-Заменить стандартный `<Progress>` компонент (синий) на `<div>` прогресс-бар с fill цвета `topicAccent` (75% opacity), тонкий 3px.
-
-#### 6. Экран завершения — glass-panel
-
-Обернуть результирующий экран в `glass-panel` div вместо старого `flashcard-glass Card` — тот же стиль что Stats/Learn.
-
----
-
-### Файлы
-
-- `src/pages/Flashcards.tsx` — все изменения только здесь
-- `src/index.css` — добавить 1 утилитный класс `.flashcard-topic-pill` для бейджа темы (опционально inline стили)
-
-### Что НЕ меняется
-
-- Логика flip, прогресс, keyboard shortcuts — не трогаем
-- 3D CSS анимация — не трогаем
-- Размеры шрифтов текста вопроса/ответа — оставить крупными
+Everything else on the dashboard (greeting, stats, topic grid, weekly performance) stays exactly as-is.
