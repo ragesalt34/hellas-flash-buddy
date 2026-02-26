@@ -286,7 +286,7 @@ export default function Flashcards() {
       <Layout>
         <div className="relative container py-12">
 
-          <Card className="relative max-w-2xl mx-auto liquid-glass-card glow-border">
+          <Card className="relative max-w-2xl mx-auto flashcard-glass rounded-2xl">
             <CardContent className="py-12 text-center space-y-6">
               <h2 className="font-display text-3xl font-bold">
                 {t('flashcards.finished')}
@@ -302,11 +302,11 @@ export default function Flashcards() {
               </div>
               
               <div className="flex justify-center gap-8">
-                <div className="text-center liquid-glass-button rounded-xl p-4">
+                <div className="text-center bg-muted/50 rounded-xl p-4">
                   <div className="text-3xl font-bold text-success">{knownCount}</div>
                   <div className="text-sm text-muted-foreground">{t('flashcards.known')}</div>
                 </div>
-                <div className="text-center liquid-glass-button rounded-xl p-4">
+                <div className="text-center bg-muted/50 rounded-xl p-4">
                   <div className="text-3xl font-bold text-destructive">{unknownCount}</div>
                   <div className="text-sm text-muted-foreground">{t('flashcards.unknown')}</div>
                 </div>
@@ -317,7 +317,7 @@ export default function Flashcards() {
                   <Button
                     variant="outline"
                     onClick={handleRestartUnknown}
-                    className="liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10"
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
                   >
                     <RotateCcw className="h-4 w-4 mr-2" />
                     {language === 'ru'
@@ -325,11 +325,11 @@ export default function Flashcards() {
                       : `Επανάληψη άγνωστων (${unknownQuestions.length})`}
                   </Button>
                 )}
-                <Button variant="outline" onClick={handleShuffle} className="liquid-glass-button">
+                <Button variant="outline" onClick={handleShuffle}>
                   <Shuffle className="h-4 w-4 mr-2" />
                   {t('flashcards.shuffle')}
                 </Button>
-                <Button variant="outline" onClick={handleRestart} className="liquid-glass-button">
+                <Button variant="outline" onClick={handleRestart}>
                   <RotateCcw className="h-4 w-4 mr-2" />
                   {t('quiz.tryAgain')}
                 </Button>
@@ -361,7 +361,7 @@ export default function Flashcards() {
           </Link>
           <div className="flex items-center justify-between gap-2">
             <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">{topicTitle} — {t('mode.flashcards')}</h1>
-            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0 liquid-glass-button">
+            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0">
               <Shuffle className="h-4 w-4" />
             </Button>
           </div>
@@ -374,36 +374,31 @@ export default function Flashcards() {
         </div>
 
         {/* Flashcard */}
-        <div className="relative max-w-2xl mx-auto h-64 sm:h-80 px-2 flashcard-container">
+        <div className="relative max-w-2xl mx-auto h-72 sm:h-96 px-2 flashcard-container">
           <div 
             className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face flashcard-glass animated-border flex flex-col overflow-hidden">
+            <Card className="flashcard-face flashcard-glass flex flex-col overflow-hidden rounded-2xl">
               <CardContent className="flex flex-col h-full p-0 w-full">
-                {/* Header row */}
-                <div className="flex items-center justify-between px-5 pt-5">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-primary/60 border border-primary/20 rounded-full px-3 py-1 bg-primary/5">
-                    {t('flashcards.question')}
-                  </span>
-                  {isSupported && (
+                {isSupported && (
+                  <div className="flex justify-end px-5 pt-4">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 opacity-50 hover:opacity-100 transition-opacity"
+                      className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
                       }}
                     >
-                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </Button>
-                  )}
-                </div>
-                {/* Centered text */}
-                <div className="flex-1 flex items-center justify-center px-8 pb-8 pt-2">
-                  <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-center">
+                  </div>
+                )}
+                <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-8">
+                  <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center">
                     {currentQuestion.question}
                   </p>
                 </div>
@@ -411,34 +406,28 @@ export default function Flashcards() {
             </Card>
 
             {/* Back */}
-            <Card className="flashcard-face flashcard-back flashcard-glass animated-border flex flex-col overflow-hidden">
+            <Card className="flashcard-face flashcard-back flashcard-glass flex flex-col overflow-hidden rounded-2xl">
               <CardContent className="flex flex-col h-full p-0 w-full">
-                {/* Header row */}
-                <div className="flex items-center justify-between px-5 pt-5">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400/70 border border-emerald-400/20 rounded-full px-3 py-1 bg-emerald-400/5">
-                    {t('flashcards.answer')}
-                  </span>
-                  {isSupported && (
+                {isSupported && (
+                  <div className="flex justify-end px-5 pt-4">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 opacity-50 hover:opacity-100 transition-opacity"
+                      className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
                       }}
                     >
-                      {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </Button>
-                  )}
-                </div>
-                {/* Centered text */}
-                <div className="flex-1 flex items-center justify-center px-8 pt-2 pb-4">
-                  <p className="font-display text-xl sm:text-3xl font-semibold leading-relaxed text-center text-foreground">
+                  </div>
+                )}
+                <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-4">
+                  <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center text-foreground">
                     {currentQuestion.correct_answer}
                   </p>
                 </div>
-                {/* Explanation footer */}
                 {currentQuestion.explanation && (
                   <div className="px-6 pb-5 border-t border-white/10 pt-3">
                     <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
@@ -457,7 +446,7 @@ export default function Flashcards() {
           <div className={cn("flex gap-3 justify-center mb-4", !isFlipped && "invisible")}>
             <Button
               variant="outline"
-              className="flex-1 sm:flex-none liquid-glass-button border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+              className="flex-1 sm:flex-none border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
               onClick={handleDontKnow}
             >
               <ThumbsDown className="h-4 w-4 sm:mr-2" />
@@ -466,7 +455,7 @@ export default function Flashcards() {
             </Button>
             <Button
               variant="outline"
-              className="flex-1 sm:flex-none liquid-glass-button border-success/30 text-success hover:bg-success/10 hover:border-success/50"
+              className="flex-1 sm:flex-none border-success/30 text-success hover:bg-success/10 hover:border-success/50"
               onClick={handleKnow}
             >
               <ThumbsUp className="h-4 w-4 sm:mr-2" />
@@ -482,7 +471,7 @@ export default function Flashcards() {
               size="sm"
               onClick={goToPrev}
               disabled={currentIndex === 0}
-              className="flex-1 sm:flex-none liquid-glass-button"
+              className="flex-1 sm:flex-none"
             >
               <ArrowLeft className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('flashcards.prev')}</span>
@@ -493,7 +482,7 @@ export default function Flashcards() {
               size="sm"
               onClick={goToNext}
               disabled={currentIndex === questions.length - 1}
-              className="flex-1 sm:flex-none liquid-glass-button"
+              className="flex-1 sm:flex-none"
             >
               <span className="hidden sm:inline">{t('flashcards.next')}</span>
               <ArrowRight className="h-4 w-4 sm:ml-2" />
@@ -503,11 +492,11 @@ export default function Flashcards() {
 
         {/* Stats */}
         <div className="relative flex justify-center gap-6 mt-6 text-sm">
-          <div className="flex items-center gap-2 liquid-glass-button rounded-full px-4 py-2">
+          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-4 py-2">
             <ThumbsUp className="h-4 w-4 text-success" />
             <span className="text-success font-medium">{knownCount}</span>
           </div>
-          <div className="flex items-center gap-2 liquid-glass-button rounded-full px-4 py-2">
+          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-4 py-2">
             <ThumbsDown className="h-4 w-4 text-destructive" />
             <span className="text-destructive font-medium">{unknownCount}</span>
           </div>
