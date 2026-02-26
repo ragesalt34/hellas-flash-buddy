@@ -1,40 +1,39 @@
 
-## Add Weekly Performance & Active Flashcard Sections to Dashboard
+## Redesign Topics (Learn) and Stats Pages to Match Dashboard Style
 
-### What the design adds to the existing dashboard
+### Problem
+The **Topics** (`/learn`) and **Stats** (`/stats`) pages use an older visual style: `liquid-glass-card` Card components with dark aurora blobs, while the Dashboard (`/`) was redesigned to use the new bone-background glass panel aesthetic (DM Sans, `glass-panel` class, `--bg-bone`, transparent panels). The user wants consistent beautiful design across all pages.
 
-The provided mockup matches the current app's visual style exactly (bone background, glass panels, DM Sans, topic colors). The dashboard (`/`) already has the greeting, streak, focus card, stats row, and topic grid. The design introduces two new sections currently missing from the home page:
+### What Changes
 
-1. **Active Session** — an embedded flip-card showing a random due flashcard, with ✕ / ↺ / ✓ controls
-2. **Weekly Performance** — a bar chart (Mon–Sun activity) + two achievement badges (ranking & mastered count)
+#### 1. Stats page (`src/pages/Stats.tsx`) — Full visual redesign
+Replace all `liquid-glass-card` Card components with `glass-panel` divs matching the dashboard style:
 
----
+- **Header** — Remove old aurora blob. Add bone-style page title.
+- **Tab bar** — Replace `TabsList` with custom glass pill switcher (matching dashboard button style).
+- **Summary stat cards** — Replace 4 `Card` components with the same `glass-panel` stat boxes as Section 2 of Index.tsx (big number + label + micro uppercase header).
+- **Topic accuracy chart** — Keep Recharts BarChart but wrap in `glass-panel`, remove CartesianGrid, style bars with topic colors.
+- **Exam progress line chart** — Same treatment.
+- **Readiness progress** — Replace Progress component with custom thin progress bar (same style as topic cards on dashboard).
+- **Study calendar** — Keep the 30-day heatmap but style cells in bone palette.
+- **Hardest questions / Errors tab** — Glass panels with clean rows.
 
-### Plan
+#### 2. Learn page (`src/pages/Learn.tsx`) — Topics grid redesign
+The `/learn` page hosts topic selection. It needs the same 4-column topic card grid as the dashboard but richer: each card shows topic color accent top border, icon, name, mastery progress bar, and a count of due cards.
 
-#### 1. Add "Active Session" mini-flashcard to Index.tsx
+### Technical Approach
 
-- Pull one random flashcard from the user's progress (prioritising cards that are due for review today, falling back to any unseen card)
-- Render a 3D flip-card inside a glass panel using the existing CSS 3D technique already present in `Flashcards.tsx`
-- Three controls below: ✕ (wrong → mark incorrect), ↺ (skip), ✓ (correct → mark correct) — reusing the existing `upsert_progress` RPC
-- Card shows the question face ("History • topic tag" + Greek question text) and answer face (Greek answer + transliteration)
+**Stats page:**
+- Remove Card/CardHeader/CardContent imports
+- Remove `aurora-blob` div
+- Replace `<Tabs>` styled tab triggers with custom glass buttons using `useState` for active tab
+- Replace every `Card` block with `<div className="glass-panel">` inline-styled just like Index.tsx
+- Keep all data-fetching logic identical — only UI changes
 
-#### 2. Add "Weekly Performance" section to Index.tsx
+**Learn page:**
+- Read the current file first to understand exact structure
+- Replace old topic cards with the dashboard-style glass-panel cards that include: emoji circle, topic name, subtitle, progress bar, "due cards" count, and colored accent bar at top
 
-- A glass panel showing a 7-bar chart (Mon–Sun of current week) using Recharts `BarChart` — same library already used in Stats.tsx
-- Bar height = number of questions answered that day (from `user_progress.last_reviewed_at` grouped by day of week)
-- Two right-side badge panels:
-  - 🏆 Ranking pill (computes percentile from total `user_progress` mastered count across all users, or shows a static encouraging label if insufficient data)
-  - 🔥 Cards mastered count
-
-#### 3. Technical details
-
-- All new queries use existing `supabase` client and existing tables: `user_progress`, `questions`
-- No DB migrations needed
-- Flip-card CSS is already defined in `index.css` (`.flashcard-face`, `.flipped` classes) — reuse directly
-- The new sections are appended below the existing Learning Modes section in the authenticated branch of `Index.tsx`
-- Bar chart uses `recharts` `BarChart` already imported in the project
-
-#### Files changed
-
-- `src/pages/Index.tsx` — add two new sections (Active Session + Weekly Performance) to the authenticated dashboard view only
+### Files Changed
+- `src/pages/Stats.tsx` — visual redesign
+- `src/pages/Learn.tsx` — topic cards redesign
