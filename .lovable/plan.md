@@ -1,39 +1,72 @@
 
-## Redesign Topics (Learn) and Stats Pages to Match Dashboard Style
+## Улучшение визуального стиля флэш-карточек
 
-### Problem
-The **Topics** (`/learn`) and **Stats** (`/stats`) pages use an older visual style: `liquid-glass-card` Card components with dark aurora blobs, while the Dashboard (`/`) was redesigned to use the new bone-background glass panel aesthetic (DM Sans, `glass-panel` class, `--bg-bone`, transparent panels). The user wants consistent beautiful design across all pages.
+### Что сейчас
 
-### What Changes
+Флэш-карточки используют `flashcard-glass` класс — это просто белый прямоугольник с лёгкой тенью. Дизайн функциональный, но нейтральный. Не хватает:
+- цветового акцента, связывающего карту с темой (история = синий, культура = фиолетовый, и т.д.)
+- визуального разграничения лицевой и обратной сторон
+- более выразительной прогресс-строки
+- изящных кнопок управления в стиле дашборда (стеклянные круги ✕ ↺ ✓)
+- маленького «бейджа» темы на лицевой стороне карточки
 
-#### 1. Stats page (`src/pages/Stats.tsx`) — Full visual redesign
-Replace all `liquid-glass-card` Card components with `glass-panel` divs matching the dashboard style:
+---
 
-- **Header** — Remove old aurora blob. Add bone-style page title.
-- **Tab bar** — Replace `TabsList` with custom glass pill switcher (matching dashboard button style).
-- **Summary stat cards** — Replace 4 `Card` components with the same `glass-panel` stat boxes as Section 2 of Index.tsx (big number + label + micro uppercase header).
-- **Topic accuracy chart** — Keep Recharts BarChart but wrap in `glass-panel`, remove CartesianGrid, style bars with topic colors.
-- **Exam progress line chart** — Same treatment.
-- **Readiness progress** — Replace Progress component with custom thin progress bar (same style as topic cards on dashboard).
-- **Study calendar** — Keep the 30-day heatmap but style cells in bone palette.
-- **Hardest questions / Errors tab** — Glass panels with clean rows.
+### Изменения
 
-#### 2. Learn page (`src/pages/Learn.tsx`) — Topics grid redesign
-The `/learn` page hosts topic selection. It needs the same 4-column topic card grid as the dashboard but richer: each card shows topic color accent top border, icon, name, mastery progress bar, and a count of due cards.
+#### 1. Цветной акцент по теме (`src/pages/Flashcards.tsx`)
 
-### Technical Approach
+Добавить `topicAccent` объект с цветами тем:
+```
+history  → #5B8DB8  (стальной синий)
+culture  → #9B7EC8  (фиолетовый)
+laws     → #7D8A57  (оливковый)
+geography → #D4874A (терракотовый)
+```
 
-**Stats page:**
-- Remove Card/CardHeader/CardContent imports
-- Remove `aurora-blob` div
-- Replace `<Tabs>` styled tab triggers with custom glass buttons using `useState` for active tab
-- Replace every `Card` block with `<div className="glass-panel">` inline-styled just like Index.tsx
-- Keep all data-fetching logic identical — only UI changes
+Использовать этот цвет:
+- как верхняя цветная полоска на лицевой стороне карточки (4px высота)
+- как цвет fill в прогресс-баре (заменить стандартный `<Progress>` на кастомный div)
+- как фоновый оттенок бейджа темы
 
-**Learn page:**
-- Read the current file first to understand exact structure
-- Replace old topic cards with the dashboard-style glass-panel cards that include: emoji circle, topic name, subtitle, progress bar, "due cards" count, and colored accent bar at top
+#### 2. Лицевая сторона — тег темы + вопрос
 
-### Files Changed
-- `src/pages/Stats.tsx` — visual redesign
-- `src/pages/Learn.tsx` — topic cards redesign
+Добавить над вопросом маленький `pill`-бейдж:
+- `«История • 1940-е»` — цвет фона `topicAccent + 15% opacity`, текст `topicAccent`
+- Текст вопроса оставить крупным и жирным (уже есть)
+- Внизу: `«Нажмите, чтобы перевернуть»` — мелкий серый hint
+
+#### 3. Обратная сторона — цветной фон
+
+Фон задней карточки заменить с белого на очень светлый оттенок цвета темы (5–8% opacity), чтобы пользователь мгновенно видел что карта перевёрнута:
+- добавить радиальный градиент `radial-gradient(circle at 30% 20%, topicColor + 12%, transparent 70%)`
+- бейдж «Ответ» сверху
+
+#### 4. Кнопки управления — круглые стеклянные (как в дашборде)
+
+Заменить `<Button variant="outline">` на круглые кнопки в стиле дашборда:
+- `✕` — тёмный контур, при hover розоватый bg
+- `↺` — нейтральный ghost
+- `✓` — тёмный контур, при hover зеленоватый bg
+- Все три — `56x56px`, `border-radius: 50%`, glass `rgba(255,255,255,0.5)`, border `rgba(255,255,255,0.7)`
+
+#### 5. Прогресс-строка — цвет темы
+
+Заменить стандартный `<Progress>` компонент (синий) на `<div>` прогресс-бар с fill цвета `topicAccent` (75% opacity), тонкий 3px.
+
+#### 6. Экран завершения — glass-panel
+
+Обернуть результирующий экран в `glass-panel` div вместо старого `flashcard-glass Card` — тот же стиль что Stats/Learn.
+
+---
+
+### Файлы
+
+- `src/pages/Flashcards.tsx` — все изменения только здесь
+- `src/index.css` — добавить 1 утилитный класс `.flashcard-topic-pill` для бейджа темы (опционально inline стили)
+
+### Что НЕ меняется
+
+- Логика flip, прогресс, keyboard shortcuts — не трогаем
+- 3D CSS анимация — не трогаем
+- Размеры шрифтов текста вопроса/ответа — оставить крупными
