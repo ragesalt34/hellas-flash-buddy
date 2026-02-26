@@ -119,11 +119,11 @@ export default function Flashcards() {
 
       const scored = localized.map(q => {
         const p = progressMap[q.id];
-        if (!p) return { q, group: 2, ts: 0 };
+        if (!p) return { q, group: 0, ts: 0 };
         const reviewTs = p.next_review_at ? new Date(p.next_review_at).getTime() : 0;
         const isDue = reviewTs <= now;
-        if (isDue) return { q, group: 0, ts: reviewTs };
-        if (p.incorrect_count > p.correct_count) return { q, group: 1, ts: reviewTs };
+        if (isDue) return { q, group: 1, ts: reviewTs };
+        if (p.incorrect_count > p.correct_count) return { q, group: 2, ts: reviewTs };
         return { q, group: 3, ts: reviewTs };
       });
 
@@ -151,7 +151,7 @@ export default function Flashcards() {
     if (!ratedIndices.has(currentIndex)) {
       setRatedIndices(prev => new Set([...prev, currentIndex]));
       setKnownCount(prev => prev + 1);
-      if (user) upsertProgress(user.id, questions[currentIndex].id, true);
+      if (user) void upsertProgress(user.id, questions[currentIndex].id, true);
     }
     goToNext();
   };
@@ -161,7 +161,7 @@ export default function Flashcards() {
       setRatedIndices(prev => new Set([...prev, currentIndex]));
       setUnknownCount(prev => prev + 1);
       setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
-      if (user) upsertProgress(user.id, questions[currentIndex].id, false);
+      if (user) void upsertProgress(user.id, questions[currentIndex].id, false);
     }
     goToNext();
   };
@@ -220,7 +220,7 @@ export default function Flashcards() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isFinished, isLoading, questions.length, isFlipped, currentIndex]);
+  }, [isFinished, isLoading, questions.length, isFlipped, currentIndex, ratedIndices]);
 
   if (authLoading) {
     return (
