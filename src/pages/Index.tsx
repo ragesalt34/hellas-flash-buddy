@@ -305,23 +305,8 @@ export default function Index() {
             {TOPICS.map(topic => {
               const acc = studyStats?.topicAccuracy[topic.id] ?? 0;
               return (
-                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
-                   <div
-                     className="glass-panel apple-liquid"
-                     onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
-                       const el = e.currentTarget;
-                       const cx = e.clientX, cy = e.clientY;
-                       requestAnimationFrame(() => {
-                         const rect = el.getBoundingClientRect();
-                         el.style.setProperty('--mx', `${cx - rect.left}px`);
-                         el.style.setProperty('--my', `${cy - rect.top}px`);
-                       });
-                     }}
-                     onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
-                       e.currentTarget.style.setProperty('--mx', '50%');
-                       e.currentTarget.style.setProperty('--my', '50%');
-                     }}
-                     style={{ height: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '20px' }}>
+                <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
+                  <div className="glass-panel" style={{ height: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '20px' }}>
                     <div>
                       <div style={{
                         width: '44px', height: '44px', borderRadius: '50%',

@@ -42,20 +42,6 @@ export function Header() {
     return location.pathname.startsWith(path);
   };
 
-  const handleGlassMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const el = e.currentTarget;
-    const cx = e.clientX, cy = e.clientY;
-    requestAnimationFrame(() => {
-      const rect = el.getBoundingClientRect();
-      el.style.setProperty('--mx', `${cx - rect.left}px`);
-      el.style.setProperty('--my', `${cy - rect.top}px`);
-    });
-  };
-  const handleGlassLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.setProperty('--mx', '50%');
-    e.currentTarget.style.setProperty('--my', '50%');
-  };
-
   return (
     <header className="sticky top-4 z-50 px-4 mb-8">
       <div className="max-w-[1200px] mx-auto pill-header flex items-center justify-between h-[60px] px-5">
@@ -78,9 +64,6 @@ export function Header() {
             <Link
               key={link.to}
               to={link.to}
-              className="apple-liquid"
-              onMouseMove={handleGlassMove}
-              onMouseLeave={handleGlassLeave}
               style={{
                 color: '#2F3532',
                 opacity: isActive(link.to) ? 1 : 0.5,
@@ -88,8 +71,6 @@ export function Header() {
                 fontSize: '15px',
                 textDecoration: 'none',
                 transition: 'opacity 0.2s',
-                padding: '6px 10px',
-                borderRadius: '8px',
               }}
             >
               {link.label}

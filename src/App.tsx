@@ -25,57 +25,6 @@ const App = () => (
     <TooltipProvider>
       <LanguageProvider>
         <AuthProvider>
-          {/* ── Apple Liquid Glass SVG filter (hidden, referenced by CSS) ── */}
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}
-          >
-            <defs>
-              {/* Static refraction / displacement */}
-              <filter id="liquidGlass" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-                <feTurbulence
-                  type="fractalNoise"
-                  baseFrequency="0.018 0.022"
-                  numOctaves="3"
-                  seed="8"
-                  result="noise"
-                />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="noise"
-                  scale="6"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                  result="displaced"
-                />
-                <feGaussianBlur in="displaced" stdDeviation="0.4" result="blurred" />
-                <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
-              </filter>
-
-              {/* Hover state — stronger displacement */}
-              <filter id="liquidGlassHover" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-                <feTurbulence
-                  type="fractalNoise"
-                  baseFrequency="0.018 0.022"
-                  numOctaves="3"
-                  seed="8"
-                  result="noise"
-                />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="noise"
-                  scale="12"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                  result="displaced"
-                />
-                <feGaussianBlur in="displaced" stdDeviation="0.6" result="blurred" />
-                <feComposite in="blurred" in2="SourceGraphic" operator="atop" />
-              </filter>
-            </defs>
-          </svg>
-
           <Toaster />
           <Sonner />
           <BrowserRouter>

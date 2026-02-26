@@ -1,141 +1,40 @@
 
-## Liquid Glass Bubble hover-эффект для навигации и topic cards
+## Add Weekly Performance & Active Flashcard Sections to Dashboard
 
-### Что делается
+### What the design adds to the existing dashboard
 
-Добавляется чисто CSS-анимация «пузырьки + блик за курсором» поверх существующих элементов, **без изменения логики, роутинга или текстов**.
+The provided mockup matches the current app's visual style exactly (bone background, glass panels, DM Sans, topic colors). The dashboard (`/`) already has the greeting, streak, focus card, stats row, and topic grid. The design introduces two new sections currently missing from the home page:
 
----
-
-### Файл 1: `src/index.css` — добавить CSS-блок в конец файла
-
-```css
-/* ── Liquid Glass Bubble hover effect ── */
-.liquid-hover {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-/* Cursor-following specular highlight */
-.liquid-hover::before {
-  content: '';
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background: radial-gradient(
-    160px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(255,255,255,0.38) 0%,
-    rgba(255,255,255,0.10) 40%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.liquid-hover:hover::before { opacity: 1; }
-
-/* Bubble layer */
-.liquid-hover::after {
-  content: '';
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 55%) -20px 100% / 14px 14px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.40) 0%, transparent 55%)  30px 100% / 10px 10px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.50) 0%, transparent 55%)  65px 100% / 12px 12px no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 55%)  90px 100% / 8px  8px  no-repeat,
-    radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 55%) 120px 100% / 11px 11px no-repeat;
-  opacity: 0;
-  animation: none;
-}
-
-.liquid-hover:hover::after {
-  opacity: 1;
-  animation: bubbles-rise 1.6s ease-in infinite;
-}
-
-@keyframes bubbles-rise {
-  0%   { background-position: -20px 110%, 30px 110%, 65px 110%, 90px 110%, 120px 110%; opacity: 0; }
-  10%  { opacity: 1; }
-  80%  { opacity: 0.7; }
-  100% { background-position: -20px -20%, 30px -15%, 65px -25%, 90px -10%, 120px -20%; opacity: 0; }
-}
-
-/* Reduced motion: keep subtle glow, no animation */
-@media (prefers-reduced-motion: reduce) {
-  .liquid-hover::after { animation: none !important; opacity: 0 !important; }
-  .liquid-hover:hover::before { opacity: 0.5; }
-}
-```
+1. **Active Session** — an embedded flip-card showing a random due flashcard, with ✕ / ↺ / ✓ controls
+2. **Weekly Performance** — a bar chart (Mon–Sun activity) + two achievement badges (ranking & mastered count)
 
 ---
 
-### Файл 2: `src/components/layout/Header.tsx` — навигационные ссылки
+### Plan
 
-Добавить `className="liquid-hover"` + `onMouseMove`/`onMouseLeave` для установки `--mx`/`--my` через `requestAnimationFrame` к каждому элементу `<Link>` в desktop nav (строки 63–78).
+#### 1. Add "Active Session" mini-flashcard to Index.tsx
 
-```tsx
-// helper (добавить перед return)
-const handleLiquidMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-  const el = e.currentTarget;
-  requestAnimationFrame(() => {
-    const rect = el.getBoundingClientRect();
-    el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-    el.style.setProperty('--my', `${e.clientY - rect.top}px`);
-  });
-};
-const handleLiquidLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-  e.currentTarget.style.setProperty('--mx', '50%');
-  e.currentTarget.style.setProperty('--my', '50%');
-};
-```
+- Pull one random flashcard from the user's progress (prioritising cards that are due for review today, falling back to any unseen card)
+- Render a 3D flip-card inside a glass panel using the existing CSS 3D technique already present in `Flashcards.tsx`
+- Three controls below: ✕ (wrong → mark incorrect), ↺ (skip), ✓ (correct → mark correct) — reusing the existing `upsert_progress` RPC
+- Card shows the question face ("History • topic tag" + Greek question text) and answer face (Greek answer + transliteration)
 
-К каждому `<Link>` в `nav`:
-```tsx
-<Link
-  ...existing props...
-  className="liquid-hover"
-  onMouseMove={handleLiquidMove}
-  onMouseLeave={handleLiquidLeave}
-  style={{ ...existing style..., padding: '6px 10px', borderRadius: '8px' }}
->
-```
+#### 2. Add "Weekly Performance" section to Index.tsx
 
----
+- A glass panel showing a 7-bar chart (Mon–Sun of current week) using Recharts `BarChart` — same library already used in Stats.tsx
+- Bar height = number of questions answered that day (from `user_progress.last_reviewed_at` grouped by day of week)
+- Two right-side badge panels:
+  - 🏆 Ranking pill (computes percentile from total `user_progress` mastered count across all users, or shows a static encouraging label if insufficient data)
+  - 🔥 Cards mastered count
 
-### Файл 3: `src/pages/Index.tsx` — topic cards
+#### 3. Technical details
 
-Добавить аналогичный helper для `div` (или обернуть в него `<div className="liquid-hover">`). К `<div className="glass-panel"` внутри topic cards (строки 309–331):
+- All new queries use existing `supabase` client and existing tables: `user_progress`, `questions`
+- No DB migrations needed
+- Flip-card CSS is already defined in `index.css` (`.flashcard-face`, `.flipped` classes) — reuse directly
+- The new sections are appended below the existing Learning Modes section in the authenticated branch of `Index.tsx`
+- Bar chart uses `recharts` `BarChart` already imported in the project
 
-```tsx
-const handleLiquidMove = (e: React.MouseEvent<HTMLDivElement>) => { ... };
-const handleLiquidLeave = (e: React.MouseEvent<HTMLDivElement>) => { ... };
-```
+#### Files changed
 
-```tsx
-<div
-  className="glass-panel liquid-hover"
-  onMouseMove={handleLiquidMove}
-  onMouseLeave={handleLiquidLeave}
-  style={{ height: '180px', ... }}
->
-```
-
----
-
-### Итог изменений по файлам
-
-| Файл | Что меняется |
-|------|-------------|
-| `src/index.css` | +55 строк CSS в конец: `.liquid-hover` с `::before`/`::after` + `@keyframes bubbles-rise` + `prefers-reduced-motion` |
-| `src/components/layout/Header.tsx` | +helper-функции `handleLiquidMove`/`handleLiquidLeave`, `className="liquid-hover"` + handlers на nav `<Link>` |
-| `src/pages/Index.tsx` | +helper-функции, `className="… liquid-hover"` + handlers на topic card `<div>`s |
-
-Логика, роутинг, тексты, структура компонентов — не затронуты.
+- `src/pages/Index.tsx` — add two new sections (Active Session + Weekly Performance) to the authenticated dashboard view only

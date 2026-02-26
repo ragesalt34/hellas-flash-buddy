@@ -556,10 +556,52 @@ export default function Flashcards() {
         {/* Controls */}
         <div style={{ maxWidth: '640px', width: '100%', margin: '0 auto' }}>
           {/* Prev / Next */}
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '12px' }}>
+            <button
+              onClick={goToPrev}
+              disabled={currentIndex === 0}
+              style={{
+                padding: '12px 28px', borderRadius: '100px',
+                background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.6)',
+                color: 'hsl(var(--foreground))', fontWeight: 500, fontSize: '15px',
+                cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+                opacity: currentIndex === 0 ? 0.5 : 1,
+                transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                minWidth: '140px', justifyContent: 'center',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={e => { if (currentIndex > 0) { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.transform = 'translateY(-1px)'; } }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <ArrowLeft style={{ width: '16px', height: '16px' }} />
+              {language === 'ru' ? 'Назад' : 'Back'}
+            </button>
+            <button
+              onClick={goToNext}
+              disabled={currentIndex === questions.length - 1}
+              style={{
+                padding: '12px 28px', borderRadius: '100px',
+                background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.6)',
+                color: 'hsl(var(--foreground))', fontWeight: 500, fontSize: '15px',
+                cursor: currentIndex === questions.length - 1 ? 'not-allowed' : 'pointer',
+                opacity: currentIndex === questions.length - 1 ? 0.5 : 1,
+                transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                minWidth: '140px', justifyContent: 'center',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={e => { if (currentIndex < questions.length - 1) { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.transform = 'translateY(-1px)'; } }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              {language === 'ru' ? 'Далее' : 'Next'}
+              <ArrowRight style={{ width: '16px', height: '16px' }} />
+            </button>
+          </div>
 
           {/* Know / Don't Know — revealed after flip */}
           <div style={{
-            display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '8px',
+            display: 'flex', gap: '12px', justifyContent: 'center',
             visibility: isFlipped ? 'visible' : 'hidden',
           }}>
             <button
@@ -577,7 +619,7 @@ export default function Flashcards() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'none'; }}
             >
               <ThumbsDown style={{ width: '16px', height: '16px' }} />
-              {language === 'ru' ? `Не знаю · ${unknownCount}` : `${t('flashcards.dontKnow')} · ${unknownCount}`}
+              {language === 'ru' ? 'Не знаю' : t('flashcards.dontKnow')}
             </button>
             <button
               onClick={handleKnow}
@@ -594,8 +636,20 @@ export default function Flashcards() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'none'; }}
             >
               <ThumbsUp style={{ width: '16px', height: '16px' }} />
-              {language === 'ru' ? `Знаю · ${knownCount}` : `${t('flashcards.know')} · ${knownCount}`}
+              {language === 'ru' ? 'Знаю' : t('flashcards.know')}
             </button>
+          </div>
+
+          {/* Score counters */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.45)', borderRadius: '100px', padding: '6px 16px' }}>
+              <ThumbsUp style={{ width: '14px', height: '14px', color: '#7D8A57' }} />
+              <span style={{ color: '#7D8A57', fontWeight: 600, fontSize: '14px' }}>{knownCount}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.45)', borderRadius: '100px', padding: '6px 16px' }}>
+              <ThumbsDown style={{ width: '14px', height: '14px', color: '#E06C6C' }} />
+              <span style={{ color: '#E06C6C', fontWeight: 600, fontSize: '14px' }}>{unknownCount}</span>
+            </div>
           </div>
         </div>
 
