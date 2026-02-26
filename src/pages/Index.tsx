@@ -35,7 +35,7 @@ export default function Index() {
     queryKey: ['index-study-stats', user?.id],
     queryFn: async () => {
       const [progressRes, sessionsRes] = await Promise.all([
-        supabase.from('user_progress').select('correct_count, incorrect_count, questions(topic)').eq('user_id', user!.id),
+        supabase.from('user_progress').select('correct_count, incorrect_count, is_known, questions(topic)').eq('user_id', user!.id),
         supabase.from('study_sessions').select('duration_seconds, started_at').eq('user_id', user!.id),
       ]);
       const progress = progressRes.data || [];
@@ -44,7 +44,7 @@ export default function Index() {
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const mastered = progress.filter(p => (p.correct_count || 0) >= 3).length;
+      const mastered = progress.filter(p => p.is_known).length;
       const totalSeconds = sessions.reduce((s, se) => s + (se.duration_seconds || 0), 0);
       const hours = Math.floor(totalSeconds / 3600);
       const mins = Math.floor((totalSeconds % 3600) / 60);

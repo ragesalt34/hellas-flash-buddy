@@ -122,11 +122,11 @@ export default function Flashcards() {
 
       const scored = localized.map(q => {
         const p = progressMap[q.id];
-        if (!p) return { q, group: 0, ts: 0 };
+        if (!p) return { q, group: 2, ts: 0 };
         const reviewTs = p.next_review_at ? new Date(p.next_review_at).getTime() : 0;
         const isDue = reviewTs <= now;
-        if (isDue) return { q, group: 1, ts: reviewTs };
-        if (p.incorrect_count > p.correct_count) return { q, group: 2, ts: reviewTs };
+        if (isDue) return { q, group: 0, ts: reviewTs };
+        if (p.incorrect_count > p.correct_count) return { q, group: 1, ts: reviewTs };
         return { q, group: 3, ts: reviewTs };
       });
 
