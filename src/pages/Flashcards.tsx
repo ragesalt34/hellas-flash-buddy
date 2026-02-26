@@ -8,12 +8,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Loader2, 
-  ArrowLeft, 
-  ArrowRight,
+  ArrowLeft,
   RotateCcw,
   Home,
-  ThumbsUp,
-  ThumbsDown,
   Shuffle,
   Volume2,
   VolumeX,
@@ -149,12 +146,6 @@ export default function Flashcards() {
     }
   };
 
-  const goToPrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      setIsFlipped(false);
-    }
-  };
 
   const handleKnow = () => {
     if (!ratedIndices.has(currentIndex)) {
@@ -224,12 +215,6 @@ export default function Flashcards() {
           break;
         case 'ArrowLeft':
           if (isFlipped) handleDontKnow();
-          break;
-        case 'ArrowUp':
-          goToPrev();
-          break;
-        case 'ArrowDown':
-          goToNext();
           break;
       }
     };
@@ -561,44 +546,7 @@ export default function Flashcards() {
             </button>
           </div>
 
-          {/* Navigation buttons */}
-          <div className="flex items-center justify-between gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToPrev}
-              disabled={currentIndex === 0}
-              className="flex-1 sm:flex-none"
-            >
-              <ArrowLeft className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('flashcards.prev')}</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToNext}
-              disabled={currentIndex === questions.length - 1}
-              className="flex-1 sm:flex-none"
-            >
-              <span className="hidden sm:inline">{t('flashcards.next')}</span>
-              <ArrowRight className="h-4 w-4 sm:ml-2" />
-            </Button>
-          </div>
         </div>
-
-        {/* Stats */}
-        <div className="relative flex justify-center gap-6 mt-6 text-sm">
-          <div className="flex items-center gap-2 rounded-full px-4 py-2" style={{ background: 'rgba(34,197,94,0.08)' }}>
-            <ThumbsUp className="h-4 w-4 text-success" />
-            <span className="text-success font-medium">{knownCount}</span>
-          </div>
-          <div className="flex items-center gap-2 rounded-full px-4 py-2" style={{ background: 'rgba(239,68,68,0.08)' }}>
-            <ThumbsDown className="h-4 w-4 text-destructive" />
-            <span className="text-destructive font-medium">{unknownCount}</span>
-          </div>
-        </div>
-
       </div>
     </Layout>
   );
