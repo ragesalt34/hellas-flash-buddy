@@ -32,12 +32,19 @@ export default function Index() {
   const { data: studyStats } = useQuery({
     queryKey: ['index-study-stats', user?.id],
     queryFn: async () => {
-      const [progressRes, sessionsRes] = await Promise.all([
-        supabase.from('user_progress').select('correct_count, incorrect_count, questions(topic)').eq('user_id', user!.id),
+      const [progressRes, sessionsRes, topicCountsRes] = await Promise.all([
+        supabase.from('user_progress').select('correct_count, incorrect_count, is_known, questions(topic)').eq('user_id', user!.id),
         supabase.from('study_sessions').select('duration_seconds, started_at').eq('user_id', user!.id),
+        supabase.from('questions').select('topic'),
       ]);
       const progress = progressRes.data || [];
       const sessions = sessionsRes.data || [];
+
+      // Count total questions per topic
+      const topicTotal: Record<string, number> = {};
+      (topicCountsRes.data || []).forEach((q: any) => {
+        topicTotal[q.topic] = (topicTotal[q.topic] || 0) + 1;
+      });
 
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
@@ -47,16 +54,15 @@ export default function Index() {
       const mins = Math.floor((totalSeconds % 3600) / 60);
       const studyTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
-      const topicStats: Record<string, { c: number; total: number }> = {};
+      // Topic progress = cards seen / total cards in topic (%)
+      const topicSeen: Record<string, number> = {};
       progress.forEach((p: any) => {
         const topic = p.questions?.topic;
         if (!topic) return;
-        if (!topicStats[topic]) topicStats[topic] = { c: 0, total: 0 };
-        topicStats[topic].c += p.correct_count || 0;
-        topicStats[topic].total += (p.correct_count || 0) + (p.incorrect_count || 0);
+        topicSeen[topic] = (topicSeen[topic] || 0) + 1;
       });
       const topicAccuracy = Object.fromEntries(
-        Object.entries(topicStats).map(([k, v]) => [k, v.total > 0 ? Math.round(v.c / v.total * 100) : 0])
+        Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicSeen[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
       return { accuracy, studyTime, topicAccuracy };

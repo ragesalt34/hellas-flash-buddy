@@ -1,9 +1,6 @@
 import { Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
@@ -12,10 +9,10 @@ import {
   Loader2, Trophy, Target, TrendingUp, Flame, BarChart3,
   AlertTriangle, BookOpen, ArrowRight, Clock, Languages,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, XAxis, YAxis, Tooltip, Cell,
   ResponsiveContainer, LineChart, Line,
 } from 'recharts';
 import { StudyTimeWidget } from '@/components/StudyTimeWidget';
@@ -24,10 +21,18 @@ import { cn } from '@/lib/utils';
 const TOPICS = ['history', 'culture', 'laws', 'geography'] as const;
 type TopicKey = typeof TOPICS[number];
 
+const TOPIC_COLORS: Record<string, string> = {
+  history:   'hsl(210 36% 55%)',
+  culture:   'hsl(270 37% 64%)',
+  laws:      'hsl(82 13% 44%)',
+  geography: 'hsl(24 60% 58%)',
+};
+
 export default function Stats() {
   const { user, isLoading: authLoading } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'errors'>('overview');
 
   // ── Queries ────────────────────────────────────────────────────────────────
 
@@ -72,7 +77,6 @@ export default function Stats() {
     enabled: !!user,
   });
 
-  // Total questions in DB (for readiness %)
   const { data: allQuestions, isLoading: questionsLoading } = useQuery({
     queryKey: ['all-questions-count'],
     queryFn: async () => {
@@ -84,7 +88,6 @@ export default function Stats() {
 
   const isDataLoading = progressLoading || examsLoading || sessionsLoading || questionsLoading;
 
-  // Streak milestone toasts — MUST be before any early returns (Rules of Hooks)
   useEffect(() => {
     if (!user || !studySessions || studySessions.length === 0) return;
     const uniqueDays = new Set(
@@ -107,24 +110,19 @@ export default function Stats() {
     if (localStorage.getItem(key)) return;
     localStorage.setItem(key, '1');
     const msgs: Record<number, { ru: string; el: string }> = {
-      3:  { ru: '🔥 3 дня подряд! Отличный старт!', el: '🔥 3 μέρες σερί! Εξαιρετική αρχή!' },
-      7:  { ru: '🔥 Неделя подряд! Так держать!', el: '🔥 Μία εβδομάδα σερί! Συνεχίστε!' },
-      14: { ru: '💪 2 недели подряд! Вы на верном пути!', el: '💪 2 εβδομάδες σερί! Είστε στο σωστό δρόμο!' },
-      30: { ru: '🏆 30 дней подряд! Невероятно!', el: '🏆 30 μέρες σερί! Απίστευτο!' },
+      3:  { ru: '🔥 3 дня подряд!', el: '🔥 3 μέρες σερί!' },
+      7:  { ru: '🔥 Неделя подряд!', el: '🔥 Μία εβδομάδα σερί!' },
+      14: { ru: '💪 2 недели подряд!', el: '💪 2 εβδομάδες σερί!' },
+      30: { ru: '🏆 30 дней подряд!', el: '🏆 30 μέρες σερί!' },
     };
-    toast({
-      title: language === 'ru' ? msgs[s].ru : msgs[s].el,
-      description: language === 'ru'
-        ? `Серия ${s} дней — продолжайте учиться каждый день!`
-        : `Σερί ${s} ημερών — συνεχίστε να μαθαίνετε κάθε μέρα!`,
-    });
+    toast({ title: language === 'ru' ? msgs[s].ru : msgs[s].el });
   }, [studySessions, user?.id, language]);
 
   if (authLoading || (user && isDataLoading)) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin" style={{ color: 'hsl(var(--foreground))' }} />
         </div>
       </Layout>
     );
@@ -136,49 +134,35 @@ export default function Stats() {
 
   const now = new Date();
   const totalQuestionsCount = allQuestions?.length || 0;
-
-  // Total questions per topic
   const topicTotals: Record<string, number> = {};
-  allQuestions?.forEach(q => {
-    topicTotals[q.topic] = (topicTotals[q.topic] || 0) + 1;
-  });
+  allQuestions?.forEach(q => { topicTotals[q.topic] = (topicTotals[q.topic] || 0) + 1; });
 
-  // Overall accuracy
   const totalCorrect = progress?.reduce((acc, p) => acc + p.correct_count, 0) || 0;
   const totalIncorrect = progress?.reduce((acc, p) => acc + p.incorrect_count, 0) || 0;
   const totalAnswered = totalCorrect + totalIncorrect;
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
 
-  // Readiness: quiz-based mastery (correct_count > 0 AND correct_count >= incorrect_count)
-  const masteredCount = progress?.filter(
-    p => p.correct_count > 0 && p.correct_count >= p.incorrect_count,
-  ).length || 0;
+  const masteredCount = progress?.filter(p => p.is_known).length || 0;
   const readiness = totalQuestionsCount > 0
-    ? Math.round((masteredCount / totalQuestionsCount) * 100)
-    : 0;
+    ? Math.round((masteredCount / totalQuestionsCount) * 100) : 0;
 
-  // Cards due for SRS review today
   const dueForReviewCount = progress?.filter(p => {
     if (!p.next_review_at) return false;
     return new Date(p.next_review_at) <= now;
   }).length || 0;
 
-  // Total study time in minutes
   const totalStudyMinutes = Math.round(
     (studySessions?.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) || 0) / 60
   );
 
-  // Mastered per topic (for progress rows)
   const topicMastered: Record<string, number> = {};
   progress?.forEach(p => {
     const topic = (p.questions as any)?.topic as string | undefined;
     if (!topic) return;
-    if (p.correct_count > 0 && p.correct_count >= p.incorrect_count) {
+    if (p.is_known)
       topicMastered[topic] = (topicMastered[topic] || 0) + 1;
-    }
   });
 
-  // Topic accuracy data for bar chart
   const topicStats: Record<string, { correct: number; total: number }> = {};
   progress?.forEach(p => {
     const topic = ((p.questions as any)?.topic as string) || 'unknown';
@@ -190,10 +174,10 @@ export default function Stats() {
     .filter(([topic]) => topic !== 'unknown')
     .map(([topic, data]) => ({
       topic: t(`topic.${topic}`),
+      topicKey: topic,
       accuracy: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0,
     }));
 
-  // Study streak
   const calculateStreak = (): number => {
     if (!studySessions || studySessions.length === 0) return 0;
     const uniqueDays = new Set(
@@ -216,25 +200,20 @@ export default function Stats() {
   };
   const streak = calculateStreak();
 
-  // Exam line chart
   const examChartData = examResults
-    ?.slice(0, 10)
-    .reverse()
+    ?.slice(0, 10).reverse()
     .map((exam, index) => ({
       name: `#${index + 1}`,
       score: Math.round((exam.correct_answers / exam.total_questions) * 100),
       date: new Date(exam.completed_at).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'el-GR'),
     })) || [];
 
-  // 30-day activity calendar with intensity (minutes per day)
   const toDateKey = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const thirtyDayCalendar = (() => {
-    const days: Record<string, number> = {}; // minutes per day
+    const days: Record<string, number> = {};
     for (let i = 29; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      days[toDateKey(d)] = 0;
+      const d = new Date(now); d.setDate(d.getDate() - i); days[toDateKey(d)] = 0;
     }
     studySessions?.forEach(s => {
       const key = toDateKey(new Date(s.started_at));
@@ -243,7 +222,6 @@ export default function Stats() {
     return Object.entries(days).map(([date, minutes]) => ({ date, minutes }));
   })();
 
-  // Intensity level: 0 = none, 1 = <10min, 2 = <30min, 3 = <60min, 4 = 60min+
   const getCalendarIntensity = (minutes: number): 0 | 1 | 2 | 3 | 4 => {
     if (minutes === 0) return 0;
     if (minutes < 10) return 1;
@@ -251,21 +229,19 @@ export default function Stats() {
     if (minutes < 60) return 3;
     return 4;
   };
-  const calendarIntensityClass: Record<0 | 1 | 2 | 3 | 4, string> = {
-    0: 'bg-muted/40',
-    1: 'bg-primary/20',
-    2: 'bg-primary/40',
-    3: 'bg-primary/65',
-    4: 'bg-primary/90',
+  const calendarIntensityStyle: Record<0 | 1 | 2 | 3 | 4, string> = {
+    0: 'background: rgba(47,53,50,0.07)',
+    1: 'background: rgba(47,53,50,0.20)',
+    2: 'background: rgba(47,53,50,0.38)',
+    3: 'background: rgba(47,53,50,0.60)',
+    4: 'background: rgba(47,53,50,0.85)',
   };
 
-  // Top 5 hardest questions by incorrect_count
   const top5Hardest = [...(progress || [])]
     .filter(p => p.incorrect_count > 0)
     .sort((a, b) => b.incorrect_count - a.incorrect_count)
     .slice(0, 5);
 
-  // Weakest topic (most errors) — used for "Practice hardest" button
   const hardestTopicCounts: Record<string, number> = {};
   top5Hardest.forEach(p => {
     const topic = ((p.questions as any)?.topic as string) || 'history';
@@ -274,184 +250,138 @@ export default function Stats() {
   const weakestTopic = Object.entries(hardestTopicCounts)
     .sort((a, b) => b[1] - a[1])[0]?.[0] || 'history';
 
-  // Review today: SRS-based (next_review_at <= now), most overdue first, up to 10
   const reviewToday = [...(progress || [])]
     .filter(p => p.next_review_at && new Date(p.next_review_at) <= now)
     .sort((a, b) => {
       const aTime = a.next_review_at ? new Date(a.next_review_at).getTime() : 0;
       const bTime = b.next_review_at ? new Date(b.next_review_at).getTime() : 0;
-      return aTime - bTime; // most overdue first
+      return aTime - bTime;
     })
     .slice(0, 10);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  const TABS = [
+    { id: 'overview', label: language === 'ru' ? 'Обзор' : 'Επισκόπηση' },
+    { id: 'progress', label: language === 'ru' ? 'Прогресс' : 'Πρόοδος' },
+    { id: 'errors',   label: language === 'ru' ? 'Ошибки' : 'Λάθη' },
+  ] as const;
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="glass-panel" style={{ padding: '8px 14px', fontSize: 13 }}>
+        <p style={{ fontWeight: 600 }}>{payload[0].payload.date || payload[0].payload.topic}</p>
+        <p style={{ color: 'hsl(var(--foreground))', fontWeight: 700 }}>{payload[0].value}%</p>
+      </div>
+    );
+  };
 
   return (
     <Layout>
-      <div className="relative container py-8 sm:py-12 overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full aurora-blob" />
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px' }}>
 
-        <div className="relative mb-8">
-          <h1 className="font-display text-3xl font-bold text-foreground">
+        {/* Header */}
+        <div style={{ marginBottom: 40 }}>
+          <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 6 }}>
             {language === 'ru' ? 'Статистика' : 'Στατιστικά'}
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p style={{ fontSize: 14, color: 'hsl(var(--muted-foreground))' }}>
             {language === 'ru' ? 'Ваш прогресс обучения' : 'Η πρόοδος της μάθησής σας'}
           </p>
         </div>
 
-        <Tabs defaultValue="overview" className="relative">
-          <TabsList className="mb-6">
-            <TabsTrigger value="overview">
-              {language === 'ru' ? 'Обзор' : 'Επισκόπηση'}
-            </TabsTrigger>
-            <TabsTrigger value="progress">
-              {language === 'ru' ? 'Прогресс' : 'Πρόοδος'}
-            </TabsTrigger>
-            <TabsTrigger value="errors">
-              {language === 'ru' ? 'Ошибки' : 'Λάθη'}
-            </TabsTrigger>
-          </TabsList>
+        {/* Tab bar */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 32, background: 'rgba(255,255,255,0.35)', borderRadius: 99, padding: '5px', width: 'fit-content', border: '1px solid rgba(47,53,50,0.1)' }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: '7px 20px',
+                borderRadius: 99,
+                border: 'none',
+                fontSize: 13,
+                fontWeight: 500,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                background: activeTab === tab.id ? 'rgba(255,255,255,0.85)' : 'transparent',
+                color: activeTab === tab.id ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))',
+                boxShadow: activeTab === tab.id ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          {/* ── Tab 1: Обзор ─────────────────────────────────────────────── */}
-          <TabsContent value="overview" className="space-y-6 mt-0">
+        {/* ── Tab: Overview ──────────────────────────────────────────────── */}
+        {activeTab === 'overview' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            {/* Summary cards */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-4">
-              <Card className="liquid-glass-card animate-fade-in">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <TrendingUp className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="text-sm">{language === 'ru' ? 'Точность' : 'Ακρίβεια'}</span>
+            {/* 4 stat cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }} className="stats-grid-4">
+              {[
+                { icon: <TrendingUp size={18} />, label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${accuracy}%`, sub: `${totalAnswered} ${language === 'ru' ? 'ответов' : 'απαντήσεις'}` },
+                { icon: <Target size={18} />, label: language === 'ru' ? 'Изучено' : 'Μάθατε', value: String(masteredCount), sub: language === 'ru' ? `из ${totalQuestionsCount}` : `από ${totalQuestionsCount}` },
+                { icon: <Flame size={18} />, label: language === 'ru' ? 'Серия дней' : 'Σερί ημερών', value: String(streak), sub: language === 'ru' ? 'подряд' : 'συνεχόμενες' },
+                { icon: <Clock size={18} />, label: language === 'ru' ? 'Время' : 'Χρόνος', value: totalStudyMinutes >= 60 ? `${Math.floor(totalStudyMinutes / 60)}ч` : `${totalStudyMinutes}м`, sub: language === 'ru' ? 'всего' : 'συνολικά' },
+              ].map((card, i) => (
+                <div key={i} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'hsl(var(--muted-foreground))' }}>
+                    <div style={{ padding: '6px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>{card.icon}</div>
+                    <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{card.label}</span>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-foreground">{accuracy}%</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {totalAnswered} {language === 'ru' ? 'ответов' : 'απαντήσεις'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <Target className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="text-sm">{language === 'ru' ? 'Изучено' : 'Μάθατε'}</span>
+                  <div>
+                    <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))' }}>{card.value}</div>
+                    <div style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>{card.sub}</div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-foreground">{masteredCount}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {language === 'ru'
-                      ? `из ${totalQuestionsCount} вопросов`
-                      : `από ${totalQuestionsCount} ερωτήσεις`}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <Flame className="h-4 w-4 text-accent" />
-                    </div>
-                    <span className="text-sm">{language === 'ru' ? 'Серия дней' : 'Σερί ημερών'}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-foreground">{streak}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {language === 'ru' ? 'подряд' : 'συνεχόμενες'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <Clock className="h-4 w-4 text-accent" />
-                    </div>
-                    <span className="text-sm">{language === 'ru' ? 'Время обучения' : 'Χρόνος μάθησης'}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-foreground">
-                    {totalStudyMinutes >= 60
-                      ? `${Math.floor(totalStudyMinutes / 60)}ч`
-                      : `${totalStudyMinutes}м`}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {language === 'ru' ? 'всего' : 'συνολικά'}
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              ))}
             </div>
 
             {/* Greek switch banner */}
             {accuracy >= 80 && language === 'ru' && (
-              <Card className="liquid-glass-card animate-fade-in border-accent/40 bg-gradient-to-r from-accent/5 to-primary/5" style={{ animationDelay: '0.35s' }}>
-                <CardContent className="py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-accent/15 shrink-0">
-                      <Languages className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm">
-                        🇬🇷 Вы готовы учиться на греческом!
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Точность {accuracy}% — отличный результат. Попробуйте отвечать на вопросы на греческом языке.
-                      </p>
-                    </div>
+              <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ padding: '8px', borderRadius: 12, background: 'rgba(125,138,87,0.12)', display: 'flex' }}>
+                    <Languages size={18} style={{ color: 'hsl(var(--accent))' }} />
                   </div>
-                  <Button
-                    size="sm"
-                    className="shrink-0 bg-accent/20 hover:bg-accent/30 text-accent border border-accent/30 hover:border-accent/50"
-                    variant="outline"
-                    onClick={() => setLanguage('el')}
-                  >
-                    Переключиться на греческий
-                    <ArrowRight className="h-3 w-3 ml-1" />
-                  </Button>
-                </CardContent>
-              </Card>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: 'hsl(var(--foreground))' }}>🇬🇷 Вы готовы учиться на греческом!</p>
+                    <p style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>Точность {accuracy}% — попробуйте греческий язык.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setLanguage('el')}
+                  style={{ padding: '8px 18px', borderRadius: 99, border: '1px solid rgba(125,138,87,0.3)', background: 'rgba(125,138,87,0.1)', color: 'hsl(var(--accent))', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  Переключиться <ArrowRight size={13} />
+                </button>
+              </div>
             )}
 
-            {/* Due for review badge */}
+            {/* Due review banner */}
             {dueForReviewCount > 0 && (
-              <Card className="liquid-glass-card animate-fade-in border-primary/30" style={{ animationDelay: '0.35s' }}>
-                <CardContent className="py-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <BookOpen className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">
-                        {language === 'ru'
-                          ? `${dueForReviewCount} карточек ждут повторения сегодня`
-                          : `${dueForReviewCount} κάρτες περιμένουν σήμερα`}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {language === 'ru'
-                          ? 'По расписанию интервального повторения'
-                          : 'Σύμφωνα με το πρόγραμμα επανάληψης'}
-                      </p>
-                    </div>
+              <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ padding: '8px', borderRadius: 12, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                    <BookOpen size={18} style={{ color: 'hsl(var(--foreground))' }} />
                   </div>
-                  <Link to="/learn">
-                    <Button size="sm" className="liquid-glass-button shrink-0">
-                      {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
-                      <ArrowRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: 'hsl(var(--foreground))' }}>
+                      {language === 'ru' ? `${dueForReviewCount} карточек ждут повторения` : `${dueForReviewCount} κάρτες περιμένουν`}
+                    </p>
+                    <p style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>
+                      {language === 'ru' ? 'Интервальное повторение' : 'Επανάληψη με διαστήματα'}
+                    </p>
+                  </div>
+                </div>
+                <Link to="/learn" style={{ textDecoration: 'none' }}>
+                  <button style={{ padding: '8px 18px', borderRadius: 99, border: '1px solid rgba(47,53,50,0.15)', background: 'rgba(255,255,255,0.7)', color: 'hsl(var(--foreground))', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {language === 'ru' ? 'Повторить' : 'Επανάληψη'} <ArrowRight size={13} />
+                  </button>
+                </Link>
+              </div>
             )}
 
             {/* Study time widget */}
@@ -459,337 +389,260 @@ export default function Stats() {
 
             {/* Exam progress chart */}
             {examChartData.length > 1 && (
-              <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <CardHeader>
-                  <CardTitle className="font-display flex items-center gap-2">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                    </div>
-                    {language === 'ru' ? 'Прогресс экзаменов' : 'Πρόοδος εξετάσεων'}
-                  </CardTitle>
-                  <CardDescription>
-                    {language === 'ru'
-                      ? `Последние ${examChartData.length} экзаменов`
-                      : `Τελευταίες ${examChartData.length} εξετάσεις`}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={examChartData}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis dataKey="name" className="text-xs fill-muted-foreground" />
-                        <YAxis domain={[0, 100]} className="text-xs fill-muted-foreground" />
-                        <Tooltip
-                          content={({ active, payload }) => {
-                            if (active && payload?.length) {
-                              return (
-                                <div className="liquid-glass rounded-lg p-3 shadow-xl border border-primary/20">
-                                  <p className="font-medium">{payload[0].payload.date}</p>
-                                  <p className="text-primary font-bold">{payload[0].value}%</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="score"
-                          stroke="hsl(var(--primary))"
-                          strokeWidth={3}
-                          dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+              <div className="glass-panel">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                  <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                    <TrendingUp size={16} />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Прогресс экзаменов' : 'Πρόοδος εξετάσεων'}</div>
+                    <div style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>{language === 'ru' ? `Последние ${examChartData.length} экзаменов` : `Τελευταίες ${examChartData.length} εξετάσεις`}</div>
+                  </div>
+                </div>
+                <div style={{ height: 200 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={examChartData}>
+                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Line type="monotone" dataKey="score" stroke="hsl(var(--foreground))" strokeWidth={2.5} dot={{ fill: 'hsl(var(--foreground))', strokeWidth: 0, r: 4 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             )}
 
-            {/* Путь к экзамену */}
-            <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.5s' }}>
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <div className="p-2 rounded-lg liquid-glass-button">
-                    <BookOpen className="h-5 w-5 text-primary" />
-                  </div>
-                  {language === 'ru' ? 'Путь к экзамену' : 'Δρόμος προς εξέταση'}
-                </CardTitle>
-                <CardDescription>
-                  {language === 'ru'
-                    ? 'Готовность к сдаче теста на гражданство'
-                    : 'Ετοιμότητα για τεστ ιθαγένειας'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                {readiness >= 80 && (
-                  <div className="flex items-center gap-3 p-4 bg-success/10 border border-success/30 rounded-xl text-success">
-                    <Trophy className="h-5 w-5 shrink-0" />
-                    <p className="font-medium text-sm">
-                      {language === 'ru'
-                        ? '🎉 Вы готовы к экзамену! Уровень знаний достаточен для сдачи теста.'
-                        : '🎉 Είστε έτοιμοι για εξέταση! Το επίπεδο γνώσεων αρκεί για το τεστ.'}
-                    </p>
-                  </div>
-                )}
+            {/* Readiness */}
+            <div className="glass-panel">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                  <BookOpen size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Путь к экзамену' : 'Δρόμος προς εξέταση'}</div>
+                  <div style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>{language === 'ru' ? 'Готовность к тесту на гражданство' : 'Ετοιμότητα για τεστ ιθαγένειας'}</div>
+                </div>
+              </div>
 
-                {/* Unified readiness */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">
-                      {language === 'ru' ? 'Готовность к экзамену' : 'Ετοιμότητα εξέτασης'}
-                    </span>
-                    <span className="font-bold text-primary">{readiness}%</span>
-                  </div>
-                  <Progress value={readiness} className="h-3" />
-                  <p className="text-xs text-muted-foreground">
-                    {language === 'ru'
-                      ? `${masteredCount} из ${totalQuestionsCount} вопросов освоено (≥80% для допуска)`
-                      : `${masteredCount} από ${totalQuestionsCount} ερωτήσεις κατεκτήθηκαν (≥80% για εξέταση)`}
+              {readiness >= 80 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 14, background: 'rgba(125,138,87,0.12)', border: '1px solid rgba(125,138,87,0.25)', marginBottom: 20 }}>
+                  <Trophy size={16} style={{ color: 'hsl(var(--accent))' }} />
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'hsl(var(--accent))' }}>
+                    {language === 'ru' ? '🎉 Вы готовы к экзамену!' : '🎉 Είστε έτοιμοι για εξέταση!'}
                   </p>
                 </div>
+              )}
 
-                {/* Progress milestones */}
-                <div className="flex gap-2 flex-wrap">
-                  {[25, 50, 75, 80, 100].map(milestone => (
-                    <span
-                      key={milestone}
-                      className={cn(
-                        'text-xs px-2 py-1 rounded-full',
-                        readiness >= milestone
-                          ? 'bg-primary/20 text-primary font-medium'
-                          : 'bg-muted/30 text-muted-foreground',
-                      )}
-                    >
-                      {milestone}%
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 500 }}>{language === 'ru' ? 'Готовность' : 'Ετοιμότητα'}</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>{readiness}%</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 99, background: 'rgba(47,53,50,0.1)', overflow: 'hidden', marginBottom: 8 }}>
+                <div style={{ height: '100%', borderRadius: 99, background: 'hsl(var(--foreground))', width: `${readiness}%`, transition: 'width 0.6s ease' }} />
+              </div>
+              <p style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>
+                {language === 'ru' ? `${masteredCount} из ${totalQuestionsCount} вопросов освоено` : `${masteredCount} από ${totalQuestionsCount} ερωτήσεις κατεκτήθηκαν`}
+              </p>
 
-          {/* ── Tab 2: Прогресс ──────────────────────────────────────────── */}
-          <TabsContent value="progress" className="space-y-6 mt-0">
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+                {[25, 50, 75, 80, 100].map(m => (
+                  <span key={m} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 99, background: readiness >= m ? 'rgba(47,53,50,0.12)' : 'rgba(47,53,50,0.05)', color: readiness >= m ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))', fontWeight: readiness >= m ? 600 : 400 }}>
+                    {m}%
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab: Progress ─────────────────────────────────────────────── */}
+        {activeTab === 'progress' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
             {/* Topic accuracy chart */}
             {topicChartData.length > 0 && (
-              <Card className="liquid-glass-card animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="font-display flex items-center gap-2">
-                    <div className="p-2 rounded-lg liquid-glass-button">
-                      <BarChart3 className="h-5 w-5 text-primary" />
-                    </div>
-                    {language === 'ru' ? 'Точность по темам' : 'Ακρίβεια ανά θέμα'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[220px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={topicChartData}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis dataKey="topic" tick={{ fontSize: 11 }} />
-                        <YAxis domain={[0, 100]} />
-                        <Tooltip
-                          content={({ active, payload }) => {
-                            if (active && payload?.length) {
-                              return (
-                                <div className="liquid-glass rounded-lg p-3 shadow-xl border border-primary/20">
-                                  <p className="font-medium">{payload[0].payload.topic}</p>
-                                  <p className="text-primary font-bold">{payload[0].value}%</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Bar dataKey="accuracy" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+              <div className="glass-panel">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                  <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                    <BarChart3 size={16} />
                   </div>
-                </CardContent>
-              </Card>
+                  <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Точность по темам' : 'Ακρίβεια ανά θέμα'}</div>
+                </div>
+                <div style={{ height: 220 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topicChartData} barSize={36}>
+                      <XAxis dataKey="topic" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
+                      <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(47,53,50,0.04)' }} />
+                      <Bar dataKey="accuracy" radius={[8, 8, 0, 0]}>
+                        {topicChartData.map((entry, index) => (
+                          <Cell key={index} fill={TOPIC_COLORS[entry.topicKey] || 'hsl(var(--foreground))'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             )}
 
             {/* Per-topic progress rows */}
-            <Card className="liquid-glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="font-display">
-                  {language === 'ru' ? 'Прогресс по темам' : 'Πρόοδος ανά θέμα'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
+            <div className="glass-panel">
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 20 }}>
+                {language === 'ru' ? 'Прогресс по темам' : 'Πρόοδος ανά θέμα'}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 {TOPICS.map(topic => {
                   const mastered = topicMastered[topic] || 0;
                   const total = topicTotals[topic] || 0;
                   const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+                  const color = TOPIC_COLORS[topic];
                   return (
                     <div key={topic}>
-                      <div className="flex justify-between text-sm mb-1.5">
-                        <span className="font-medium">{t(`topic.${topic}`)}</span>
-                        <span className="text-muted-foreground">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <span style={{ fontSize: 13, fontWeight: 500 }}>{t(`topic.${topic}`)}</span>
+                        <span style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>
                           {mastered} / {total} {language === 'ru' ? 'выучено' : 'μάθει'}
                         </span>
                       </div>
-                      <Progress value={pct} className="h-2" />
+                      <div style={{ height: 6, borderRadius: 99, background: 'rgba(47,53,50,0.08)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 99, background: color, width: `${pct}%`, transition: 'width 0.6s ease' }} />
+                      </div>
                     </div>
                   );
                 })}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* 30-day activity calendar */}
-            <Card className="liquid-glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <div className="p-2 rounded-lg liquid-glass-button">
-                    <Flame className="h-5 w-5 text-accent" />
-                  </div>
-                  {language === 'ru' ? 'Активность за 30 дней' : 'Δραστηριότητα 30 ημερών'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-10 gap-1.5">
-                  {thirtyDayCalendar.map(({ date, minutes }) => {
-                    const level = getCalendarIntensity(minutes);
+            {/* 30-day calendar */}
+            <div className="glass-panel">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                  <Flame size={16} style={{ color: 'hsl(var(--accent))' }} />
+                </div>
+                <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Активность за 30 дней' : 'Δραστηριότητα 30 ημερών'}</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6 }}>
+                {thirtyDayCalendar.map(({ date, minutes }) => {
+                  const level = getCalendarIntensity(minutes);
+                  const styles: Record<number, React.CSSProperties> = {
+                    0: { background: 'rgba(47,53,50,0.07)' },
+                    1: { background: 'rgba(47,53,50,0.20)' },
+                    2: { background: 'rgba(47,53,50,0.38)' },
+                    3: { background: 'rgba(47,53,50,0.60)' },
+                    4: { background: 'rgba(47,53,50,0.85)' },
+                  };
+                  return (
+                    <div
+                      key={date}
+                      title={`${date}${minutes > 0 ? ` — ${minutes} ${language === 'ru' ? 'мин' : 'λεπτά'}` : ''}`}
+                      style={{ aspectRatio: '1', borderRadius: 4, ...styles[level] }}
+                    />
+                  );
+                })}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 11, color: 'hsl(var(--muted-foreground))' }}>
+                <span>{language === 'ru' ? 'Меньше' : 'Λιγότερο'}</span>
+                {([0,1,2,3,4] as const).map(lvl => {
+                  const bgMap = ['rgba(47,53,50,0.07)', 'rgba(47,53,50,0.20)', 'rgba(47,53,50,0.38)', 'rgba(47,53,50,0.60)', 'rgba(47,53,50,0.85)'];
+                  return <span key={lvl} style={{ width: 12, height: 12, borderRadius: 3, display: 'inline-block', background: bgMap[lvl] }} />;
+                })}
+                <span>{language === 'ru' ? 'Больше' : 'Περισσότερο'}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab: Errors ───────────────────────────────────────────────── */}
+        {activeTab === 'errors' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* Top 5 hardest */}
+            <div className="glass-panel">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(224,108,108,0.12)', display: 'flex' }}>
+                  <AlertTriangle size={16} style={{ color: 'hsl(var(--destructive))' }} />
+                </div>
+                <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Топ-5 сложных вопросов' : 'Top-5 δύσκολες ερωτήσεις'}</div>
+              </div>
+              {top5Hardest.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
+                  {language === 'ru' ? 'Пока нет ошибок. Отличная работа!' : 'Δεν υπάρχουν λάθη ακόμα. Εξαιρετική δουλειά!'}
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {top5Hardest.map((p, i) => {
+                    const q = p.questions as any;
+                    const text = language === 'el' && q?.question_el ? q.question_el : q?.question || '—';
+                    const topic = (q?.topic as string) || 'unknown';
                     return (
-                      <div
-                        key={date}
-                        title={`${date}${minutes > 0 ? ` — ${minutes} ${language === 'ru' ? 'мин' : 'λεπτά'}` : ''}`}
-                        className={cn('aspect-square rounded-sm', calendarIntensityClass[level])}
-                      />
+                      <div key={p.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', borderRadius: 14, background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(47,53,50,0.08)' }}>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: 'hsl(var(--destructive))', minWidth: 22, textAlign: 'center' }}>{i + 1}</span>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 13, fontWeight: 500, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{text}</p>
+                          <p style={{ fontSize: 11, color: 'hsl(var(--muted-foreground))', marginTop: 3 }}>
+                            {t(`topic.${topic}`)} · {language === 'ru' ? `${p.incorrect_count} ошибок` : `${p.incorrect_count} λάθη`}
+                          </p>
+                        </div>
+                      </div>
                     );
                   })}
+                  <Link to={`/learn/${weakestTopic}/quiz`} style={{ textDecoration: 'none', marginTop: 4 }}>
+                    <button style={{ width: '100%', padding: '10px', borderRadius: 14, border: '1px solid rgba(47,53,50,0.12)', background: 'transparent', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                      {language === 'ru' ? 'Потренировать сложные вопросы' : 'Εξάσκηση δύσκολων ερωτήσεων'} <ArrowRight size={14} />
+                    </button>
+                  </Link>
                 </div>
-                <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground flex-wrap">
-                  <span>{language === 'ru' ? 'Меньше' : 'Λιγότερο'}</span>
-                  {([0, 1, 2, 3, 4] as const).map(lvl => (
-                    <span key={lvl} className={cn('w-3 h-3 rounded-sm inline-block', calendarIntensityClass[lvl])} />
-                  ))}
-                  <span>{language === 'ru' ? 'Больше' : 'Περισσότερο'}</span>
-                  <span className="ml-auto opacity-60">
-                    {language === 'ru' ? '< 10м / < 30м / < 60м / 60м+' : '< 10λ / < 30λ / < 60λ / 60λ+'}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* ── Tab 3: Ошибки ─────────────────────────────────────────────── */}
-          <TabsContent value="errors" className="space-y-6 mt-0">
-
-            {/* Top 5 hardest questions */}
-            <Card className="liquid-glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <div className="p-2 rounded-lg liquid-glass-button">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                  </div>
-                  {language === 'ru' ? 'Топ-5 сложных вопросов' : 'Top-5 δύσκολες ερωτήσεις'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {top5Hardest.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">
-                    {language === 'ru'
-                      ? 'Пока нет ошибок. Отличная работа!'
-                      : 'Δεν υπάρχουν λάθη ακόμα. Εξαιρετική δουλειά!'}
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {top5Hardest.map((p, i) => {
-                      const q = p.questions as any;
-                      const text = language === 'el' && q?.question_el ? q.question_el : q?.question || '—';
-                      const topic = (q?.topic as string) || 'unknown';
-                      return (
-                        <div key={p.id} className="flex items-start gap-3 p-3 rounded-xl liquid-glass">
-                          <span className="text-destructive font-bold text-lg shrink-0 w-6 text-center">
-                            {i + 1}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium line-clamp-2">{text}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {t(`topic.${topic}`)} ·{' '}
-                              {language === 'ru'
-                                ? `${p.incorrect_count} ошибок`
-                                : `${p.incorrect_count} λάθη`}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <div className="pt-2">
-                      <Link to={`/learn/${weakestTopic}/quiz`}>
-                        <Button size="sm" variant="outline" className="w-full liquid-glass-button gap-1.5">
-                          {language === 'ru' ? 'Потренировать сложные вопросы' : 'Εξάσκηση δύσκολων ερωτήσεων'}
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              )}
+            </div>
 
             {/* Review today */}
-            <Card className="liquid-glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <div className="p-2 rounded-lg liquid-glass-button">
-                    <BookOpen className="h-5 w-5 text-primary" />
-                  </div>
-                  {language === 'ru' ? 'Повторить сегодня' : 'Επανάληψη σήμερα'}
-                </CardTitle>
-                <CardDescription>
-                  {language === 'ru'
-                    ? 'Вопросы, которые пора повторить по расписанию SRS'
-                    : 'Ερωτήσεις που πρέπει να επαναληφθούν σύμφωνα με το SRS'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+            <div className="glass-panel">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                <div style={{ padding: '7px', borderRadius: 10, background: 'rgba(47,53,50,0.07)', display: 'flex' }}>
+                  <BookOpen size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Повторить сегодня' : 'Επανάληψη σήμερα'}</div>
+                  <div style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>{language === 'ru' ? 'По расписанию SRS' : 'Σύμφωνα με το SRS'}</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {reviewToday.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">
-                    {language === 'ru'
-                      ? 'Нет вопросов для повторения. Так держать!'
-                      : 'Δεν υπάρχουν ερωτήσεις για επανάληψη. Συνεχίστε έτσι!'}
+                  <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
+                    {language === 'ru' ? 'Нет вопросов для повторения. Так держать!' : 'Δεν υπάρχουν ερωτήσεις για επανάληψη.'}
                   </p>
-                ) : (
-                  <div className="space-y-2">
-                    {reviewToday.map(p => {
-                      const q = p.questions as any;
-                      const text = language === 'el' && q?.question_el ? q.question_el : q?.question || '—';
-                      const topic = (q?.topic as TopicKey) || 'history';
-                      return (
-                        <div
-                          key={p.id}
-                          className="flex items-center gap-3 p-3 rounded-xl liquid-glass"
-                        >
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium line-clamp-1">{text}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {t(`topic.${topic}`)} ·{' '}
-                              {p.correct_count}/{p.correct_count + p.incorrect_count}{' '}
-                              {language === 'ru' ? 'верно' : 'σωστά'}
-                            </p>
-                          </div>
-                          <Link
-                            to={`/learn/${topic}/quiz`}
-                            className="shrink-0 flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
-                          >
-                            {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
-                            <ArrowRight className="h-3 w-3" />
-                          </Link>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                ) : reviewToday.map(p => {
+                  const q = p.questions as any;
+                  const text = language === 'el' && q?.question_el ? q.question_el : q?.question || '—';
+                  const topic = (q?.topic as TopicKey) || 'history';
+                  return (
+                    <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 12, background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(47,53,50,0.08)' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{text}</p>
+                        <p style={{ fontSize: 11, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>
+                          {t(`topic.${topic}`)} · {p.correct_count}/{p.correct_count + p.incorrect_count} {language === 'ru' ? 'верно' : 'σωστά'}
+                        </p>
+                      </div>
+                      <Link to={`/learn/${topic}/quiz`} style={{ textDecoration: 'none', fontSize: 12, fontWeight: 500, color: 'hsl(var(--foreground))', display: 'flex', alignItems: 'center', gap: 4, opacity: 0.7, whiteSpace: 'nowrap' }}>
+                        {language === 'ru' ? 'Повторить' : 'Επανάληψη'} <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      <style>{`
+        @media (max-width: 700px) {
+          .stats-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 400px) {
+          .stats-grid-4 { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </Layout>
   );
 }

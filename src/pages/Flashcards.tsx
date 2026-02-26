@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react';
 import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import {
-  Loader2, ArrowLeft, ArrowRight, RotateCcw,
-  Home, Shuffle, Volume2, VolumeX, Check, X,
+import { 
+  Loader2, 
+  ArrowLeft,
+  RotateCcw,
+  Home,
+  Shuffle,
+  Volume2,
+  VolumeX,
+  X,
+  Check
 } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
@@ -23,6 +31,20 @@ type Question = {
 
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
 
+const topicAccent: Record<TopicType, string> = {
+  history:   '#5B8DB8',
+  culture:   '#9B7EC8',
+  laws:      '#7D8A57',
+  geography: '#D4874A',
+};
+
+const topicEmoji: Record<TopicType, string> = {
+  history:   '📜',
+  culture:   '🎭',
+  laws:      '⚖️',
+  geography: '🗺️',
+};
+
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -32,88 +54,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// ── Reusable icon button ────────────────────────────────────────────────────
-const IconBtn = ({ onClick, title, children }: { onClick: () => void; title?: string; children: React.ReactNode }) => (
-  <button
-    onClick={onClick}
-    title={title}
-    style={{
-      width: 44, height: 44, borderRadius: 12,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'transparent', color: '#2F3532',
-      border: '1px solid transparent', cursor: 'pointer',
-      transition: 'all 0.2s', fontFamily: 'inherit',
-    }}
-    onMouseEnter={e => {
-      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.6)';
-      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.05)';
-    }}
-    onMouseLeave={e => {
-      (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-      (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent';
-    }}
-  >
-    {children}
-  </button>
-);
-
-// ── Ghost pill nav button ───────────────────────────────────────────────────
-const GhostBtn = ({ onClick, disabled, children }: { onClick: () => void; disabled?: boolean; children: React.ReactNode }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    style={{
-      display: 'flex', alignItems: 'center', gap: 8,
-      padding: '12px 28px', borderRadius: '9999px',
-      background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.6)',
-      color: '#2F3532', fontWeight: 500, fontSize: 15,
-      cursor: disabled ? 'default' : 'pointer', minWidth: 140, justifyContent: 'center',
-      transition: 'all 0.2s', fontFamily: 'inherit',
-      opacity: disabled ? 0.45 : 1, pointerEvents: disabled ? 'none' : 'auto',
-    }}
-    onMouseEnter={e => {
-      if (!disabled) {
-        (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.85)';
-        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
-        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
-      }
-    }}
-    onMouseLeave={e => {
-      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.5)';
-      (e.currentTarget as HTMLButtonElement).style.transform = '';
-      (e.currentTarget as HTMLButtonElement).style.boxShadow = '';
-    }}
-  >
-    {children}
-  </button>
-);
-
-// ── Colored answer button ───────────────────────────────────────────────────
-const AnswerBtn = ({ onClick, color, children }: { onClick: () => void; color: string; children: React.ReactNode }) => (
-  <button
-    onClick={onClick}
-    style={{
-      display: 'flex', alignItems: 'center', gap: 8,
-      padding: '16px 48px', borderRadius: '9999px',
-      background: color, color: 'white', border: 'none',
-      fontWeight: 600, fontSize: 16, cursor: 'pointer',
-      minWidth: 160, justifyContent: 'center',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-      transition: 'all 0.2s', fontFamily: 'inherit',
-    }}
-    onMouseEnter={e => {
-      (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
-      (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.05)';
-    }}
-    onMouseLeave={e => {
-      (e.currentTarget as HTMLButtonElement).style.transform = '';
-      (e.currentTarget as HTMLButtonElement).style.filter = '';
-    }}
-    onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; }}
-  >
-    {children}
-  </button>
-);
+// Hex to RGBA helper
+function hexToRgba(hex: string, alpha: number) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 export default function Flashcards() {
   const { topic } = useParams<{ topic: string }>();
@@ -138,8 +85,10 @@ export default function Flashcards() {
 
   useEffect(() => {
     if (!isValidTopic || !user) return;
+
     const fetchQuestions = async () => {
       setIsLoading(true);
+
       const [questionsResult, progressResult] = await Promise.all([
         supabase.from('questions').select('*').eq('topic', validTopic),
         supabase
@@ -147,42 +96,56 @@ export default function Flashcards() {
           .select('question_id, correct_count, incorrect_count, next_review_at')
           .eq('user_id', user.id),
       ]);
-      if (questionsResult.error) { setIsLoading(false); return; }
+
+      if (questionsResult.error) {
+        console.error('Error fetching questions:', questionsResult.error);
+        setIsLoading(false);
+        return;
+      }
+
       const data = questionsResult.data || [];
-      if (data.length === 0) { setQuestions([]); setIsLoading(false); return; }
+      if (data.length === 0) {
+        setQuestions([]);
+        setIsLoading(false);
+        return;
+      }
+
       const localized = localizeQuestions(data, language);
-      const progressMap = Object.fromEntries((progressResult.data || []).map(p => [p.question_id, p]));
+      const progressMap = Object.fromEntries(
+        (progressResult.data || []).map(p => [p.question_id, p])
+      );
+
       const now = Date.now();
+
       const scored = localized.map(q => {
         const p = progressMap[q.id];
-        if (!p) return { q, group: 0, ts: 0 };
+        if (!p) return { q, group: 2, ts: 0 };
         const reviewTs = p.next_review_at ? new Date(p.next_review_at).getTime() : 0;
         const isDue = reviewTs <= now;
-        if (isDue) return { q, group: 1, ts: reviewTs };
-        if (p.incorrect_count > p.correct_count) return { q, group: 2, ts: reviewTs };
+        if (isDue) return { q, group: 0, ts: reviewTs };
+        if (p.incorrect_count > p.correct_count) return { q, group: 1, ts: reviewTs };
         return { q, group: 3, ts: reviewTs };
       });
+
       scored.sort((a, b) => a.group !== b.group ? a.group - b.group : a.ts - b.ts);
       setQuestions(scored.map(s => s.q));
       setIsLoading(false);
     };
+
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  if (authLoading || isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
+  const handleFlip = () => setIsFlipped(!isFlipped);
 
-  if (!user) return <Navigate to="/login" replace />;
-  if (!isValidTopic) return <Navigate to="/learn" replace />;
+  const goToNext = () => {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setIsFlipped(false);
+    } else {
+      setIsFinished(true);
+    }
+  };
 
-  const handleFlip = () => setIsFlipped(f => !f);
 
   const handleKnow = () => {
     if (!ratedIndices.has(currentIndex)) {
@@ -203,34 +166,24 @@ export default function Flashcards() {
     goToNext();
   };
 
-  const goToNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setIsFlipped(false);
-    } else {
-      setIsFinished(true);
-    }
-  };
-
-  const goToPrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      setIsFlipped(false);
-    }
-  };
-
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
-    setCurrentIndex(0); setIsFlipped(false);
-    setKnownCount(0); setUnknownCount(0);
-    setUnknownQuestions([]); setIsFinished(false);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setKnownCount(0);
+    setUnknownCount(0);
+    setUnknownQuestions([]);
+    setIsFinished(false);
     setRatedIndices(new Set());
   };
 
   const handleRestart = () => {
-    setCurrentIndex(0); setIsFlipped(false);
-    setKnownCount(0); setUnknownCount(0);
-    setUnknownQuestions([]); setIsFinished(false);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setKnownCount(0);
+    setUnknownCount(0);
+    setUnknownQuestions([]);
+    setIsFinished(false);
     setRatedIndices(new Set());
     setRestartCount(c => c + 1);
   };
@@ -238,44 +191,77 @@ export default function Flashcards() {
   const handleRestartUnknown = () => {
     if (unknownQuestions.length === 0) return;
     setQuestions(unknownQuestions);
-    setCurrentIndex(0); setIsFlipped(false);
-    setKnownCount(0); setUnknownCount(0);
-    setUnknownQuestions([]); setIsFinished(false);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setKnownCount(0);
+    setUnknownCount(0);
+    setUnknownQuestions([]);
+    setIsFinished(false);
     setRatedIndices(new Set());
   };
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts — must be before conditional returns
   useEffect(() => {
-    if (isFinished || questions.length === 0) return;
+    if (isFinished || isLoading || questions.length === 0) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       switch (e.code) {
-        case 'Space': e.preventDefault(); handleFlip(); break;
-        case 'ArrowRight': if (isFlipped) handleKnow(); break;
-        case 'ArrowLeft': if (isFlipped) handleDontKnow(); break;
-        case 'ArrowUp': goToPrev(); break;
-        case 'ArrowDown': goToNext(); break;
+        case 'Space':
+          e.preventDefault();
+          handleFlip();
+          break;
+        case 'ArrowRight':
+          if (isFlipped) handleKnow();
+          break;
+        case 'ArrowLeft':
+          if (isFlipped) handleDontKnow();
+          break;
       }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isFinished, questions.length, isFlipped, currentIndex]);
+  }, [isFinished, isLoading, questions.length, isFlipped, currentIndex]);
 
+  if (authLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isValidTopic) return <Navigate to="/learn" replace />;
+
+  const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
+  const accent = topicAccent[validTopic] || '#5B8DB8';
+  const emoji = topicEmoji[validTopic] || '📚';
 
-  // ── No questions ──────────────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
   if (questions.length === 0) {
     return (
       <Layout>
-        <div className="relative z-10" style={{ maxWidth: 640, margin: '60px auto', padding: '0 24px' }}>
-          <div className="glass-panel text-center">
-            <h2 style={{ fontSize: 22, fontWeight: 500, marginBottom: 12 }}>{t('quiz.noQuestions')}</h2>
-            <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: 24 }}>{t('quiz.noQuestions.desc')}</p>
+        <div className="container py-12">
+          <div className="glass-panel max-w-2xl mx-auto text-center p-12 rounded-2xl">
+            <h2 className="text-2xl font-display font-bold mb-4">{t('quiz.noQuestions')}</h2>
+            <p className="text-muted-foreground mb-6">{t('quiz.noQuestions.desc')}</p>
             <Link to="/learn">
-              <button className="btn-pebble">
-                <ArrowLeft style={{ width: 16, height: 16 }} />
+              <Button>
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('quiz.backToTopics')}
-              </button>
+              </Button>
             </Link>
           </div>
         </div>
@@ -283,60 +269,61 @@ export default function Flashcards() {
     );
   }
 
-  // ── Finished screen ───────────────────────────────────────────────────────
   if (isFinished) {
     const percentage = questions.length > 0 ? Math.round((knownCount / questions.length) * 100) : 0;
-    const isHigh = percentage >= 70;
-    const isMed = percentage >= 50;
     return (
       <Layout>
-        <div className="relative z-10" style={{ maxWidth: 600, margin: '40px auto', padding: '0 24px' }}>
-          <div className="glass-panel" style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: 28, fontWeight: 500, marginBottom: 24, color: '#2F3532' }}>
-              {t('flashcards.finished')}
-            </h2>
-            {/* Score circle */}
-            <div style={{
-              width: 120, height: 120, borderRadius: '50%', margin: '0 auto 28px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 32, fontWeight: 600,
-              background: isHigh ? 'rgba(125,138,87,0.15)' : isMed ? 'rgba(236,200,92,0.2)' : 'rgba(224,108,108,0.15)',
-              color: isHigh ? '#58633C' : isMed ? '#8F721D' : '#A83838',
-            }}>
+        <div className="container py-12">
+          <div className="glass-panel max-w-2xl mx-auto rounded-2xl p-10 text-center space-y-6">
+            {/* Accent top bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: accent }} />
+
+            <h2 className="font-display text-3xl font-bold">{t('flashcards.finished')}</h2>
+
+            <div
+              className="w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold"
+              style={{
+                background: hexToRgba(accent, 0.12),
+                color: accent,
+                boxShadow: `0 8px 32px ${hexToRgba(accent, 0.2)}`
+              }}
+            >
               {percentage}%
             </div>
-            {/* Known/Unknown counts */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 32 }}>
-              <div style={{ textAlign: 'center', background: 'rgba(125,138,87,0.1)', borderRadius: 16, padding: '16px 24px' }}>
-                <div style={{ fontSize: 32, fontWeight: 600, color: '#7D8A57' }}>{knownCount}</div>
-                <div style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>{t('flashcards.known')}</div>
+
+            <div className="flex justify-center gap-8">
+              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(34,197,94,0.08)' }}>
+                <div className="text-3xl font-bold text-success">{knownCount}</div>
+                <div className="text-sm text-muted-foreground">{t('flashcards.known')}</div>
               </div>
-              <div style={{ textAlign: 'center', background: 'rgba(224,108,108,0.1)', borderRadius: 16, padding: '16px 24px' }}>
-                <div style={{ fontSize: 32, fontWeight: 600, color: '#E06C6C' }}>{unknownCount}</div>
-                <div style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>{t('flashcards.unknown')}</div>
+              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(239,68,68,0.08)' }}>
+                <div className="text-3xl font-bold text-destructive">{unknownCount}</div>
+                <div className="text-sm text-muted-foreground">{t('flashcards.unknown')}</div>
               </div>
             </div>
-            {/* Action buttons */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
+
+            <div className="flex flex-wrap gap-3 justify-center pt-4">
               {unknownQuestions.length > 0 && (
-                <GhostBtn onClick={handleRestartUnknown}>
-                  <RotateCcw style={{ width: 15, height: 15 }} />
-                  {language === 'ru' ? `Незнакомые (${unknownQuestions.length})` : `Άγνωστα (${unknownQuestions.length})`}
-                </GhostBtn>
+                <Button variant="outline" onClick={handleRestartUnknown} className="border-destructive/30 text-destructive hover:bg-destructive/10">
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  {language === 'ru'
+                    ? `Повторить незнакомые (${unknownQuestions.length})`
+                    : `Επανάληψη άγνωστων (${unknownQuestions.length})`}
+                </Button>
               )}
-              <GhostBtn onClick={handleShuffle}>
-                <Shuffle style={{ width: 15, height: 15 }} />
+              <Button variant="outline" onClick={handleShuffle}>
+                <Shuffle className="h-4 w-4 mr-2" />
                 {t('flashcards.shuffle')}
-              </GhostBtn>
-              <GhostBtn onClick={handleRestart}>
-                <RotateCcw style={{ width: 15, height: 15 }} />
+              </Button>
+              <Button variant="outline" onClick={handleRestart}>
+                <RotateCcw className="h-4 w-4 mr-2" />
                 {t('quiz.tryAgain')}
-              </GhostBtn>
-              <Link to="/learn" style={{ textDecoration: 'none' }}>
-                <button className="btn-pebble">
-                  <Home style={{ width: 15, height: 15 }} />
+              </Button>
+              <Link to="/learn">
+                <Button>
+                  <Home className="h-4 w-4 mr-2" />
                   {t('quiz.toTopics')}
-                </button>
+                </Button>
               </Link>
             </div>
           </div>
@@ -345,169 +332,221 @@ export default function Flashcards() {
     );
   }
 
-  // ── Main flashcard view ───────────────────────────────────────────────────
   const currentQuestion = questions[currentIndex];
-  const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
 
   return (
     <Layout>
-      <div className="relative z-10" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 80px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 140px)' }}>
+      <div className="relative container py-4 sm:py-8 px-4">
 
-        {/* Back link */}
-        <Link
-          to="/learn"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'hsl(var(--muted-foreground))', textDecoration: 'none', fontSize: 14, fontWeight: 500, marginBottom: 24, transition: 'color 0.2s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#2F3532'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'hsl(var(--muted-foreground))'; }}
-        >
-          <ArrowLeft style={{ width: 16, height: 16 }} />
-          {language === 'ru' ? 'Назад к темам' : 'Πίσω στα θέματα'}
-        </Link>
-
-        {/* Title row + shuffle */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h1 style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em', color: '#2F3532', margin: 0 }}>
-            {topicTitle} — {t('mode.flashcards')}
-          </h1>
-          <IconBtn onClick={handleShuffle} title={language === 'ru' ? 'Перемешать' : 'Shuffle'}>
-            <Shuffle style={{ width: 18, height: 18 }} />
-          </IconBtn>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 0 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#2F3532', flexShrink: 0 }} />
-          <div style={{ flex: 1, height: 6, background: 'rgba(47,53,50,0.1)', borderRadius: 10, overflow: 'hidden' }}>
-            <div style={{ height: '100%', background: '#2F3532', width: `${progress}%`, borderRadius: 10, transition: 'width 0.3s ease' }} />
+        {/* Header */}
+        <div className="relative mb-6 sm:mb-8">
+          <Link to="/learn" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4 text-sm transition-colors">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('quiz.backToTopics')}
+          </Link>
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">
+              {emoji} {topicTitle} — {t('mode.flashcards')}
+            </h1>
+            <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0">
+              <Shuffle className="h-4 w-4" />
+            </Button>
           </div>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#2F3532', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
-            {currentIndex + 1} / {questions.length}
-          </span>
+
+          {/* Custom progress bar */}
+          <div className="flex items-center gap-3 mt-4">
+            <div className="flex-1 h-[3px] rounded-full bg-black/10 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progress}%`, background: hexToRgba(accent, 0.75) }}
+              />
+            </div>
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
+              {currentIndex + 1} / {questions.length}
+            </span>
+          </div>
         </div>
 
-        {/* Card scene */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {/* Flashcard */}
+        <div className="relative max-w-2xl mx-auto h-72 sm:h-96 px-2 flashcard-container">
           <div
-            className="flashcard-container"
+            className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
             onClick={handleFlip}
-            style={{ width: '100%', maxWidth: 640, height: 'clamp(320px, 42vh, 420px)', margin: '32px auto', cursor: 'pointer' }}
           >
-            <div className={cn('flashcard-inner', isFlipped && 'flipped')}>
+            {/* Front */}
+            <div className="flashcard-face flashcard-glass flex flex-col overflow-hidden rounded-2xl">
+              {/* Accent stripe */}
+              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
 
-              {/* Front face */}
-              <div
-                className="flashcard-face"
-                style={{ background: '#FFFFFF', borderRadius: 24, boxShadow: '0 8px 40px rgba(0,0,0,0.10)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48, textAlign: 'center', position: 'relative' }}
-                onMouseEnter={e => {
-                  if (!isFlipped) (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 48px rgba(0,0,0,0.12)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 40px rgba(0,0,0,0.10)';
-                }}
-              >
-                {/* Badge */}
-                <div style={{ position: 'absolute', top: 24, left: 24, padding: '6px 16px', background: 'rgba(0,0,0,0.06)', borderRadius: 9999, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(47,53,50,0.6)' }}>
-                  {language === 'ru' ? 'Вопрос' : 'Ερώτηση'}
-                </div>
-                {/* Speaker */}
+              <div className="flex items-start justify-between px-5 pt-4 pb-0">
+                {/* Topic pill */}
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                  style={{
+                    background: hexToRgba(accent, 0.13),
+                    color: accent,
+                  }}
+                >
+                  {emoji} {topicTitle}
+                </span>
+
                 {isSupported && (
-                  <button
-                    onClick={e => { e.stopPropagation(); isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_q_${language}`); }}
-                    style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSpeaking ? '#7D8A57' : 'rgba(47,53,50,0.4)', transition: 'all 0.2s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.05)'; (e.currentTarget as HTMLButtonElement).style.color = '#2F3532'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = isSpeaking ? '#7D8A57' : 'rgba(47,53,50,0.4)'; }}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
+                    }}
                   >
-                    {isSpeaking ? <VolumeX style={{ width: 20, height: 20 }} /> : <Volume2 style={{ width: 20, height: 20 }} />}
-                  </button>
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
                 )}
-                {/* Question text */}
-                <p style={{ fontSize: 'clamp(20px, 3vw, 32px)', fontWeight: 600, lineHeight: 1.3, color: '#2F3532', margin: 0 }}>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center px-8 sm:px-12">
+                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center">
                   {currentQuestion.question}
                 </p>
-                {/* Flip hint */}
-                <div style={{ position: 'absolute', bottom: 24, fontSize: 13, color: 'rgba(47,53,50,0.28)', fontWeight: 500 }}>
-                  {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Κάντε κλικ για αναστροφή'}
-                </div>
               </div>
 
-              {/* Back face */}
-              <div
-                className="flashcard-face flashcard-back"
-                style={{ background: '#F9F8F6', border: '1px solid rgba(0,0,0,0.03)', borderRadius: 24, boxShadow: '0 8px 40px rgba(0,0,0,0.10)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48, textAlign: 'center', position: 'relative' }}
-              >
-                {/* Badge */}
-                <div style={{ position: 'absolute', top: 24, left: 24, padding: '6px 16px', background: 'rgba(125,138,87,0.15)', borderRadius: 9999, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7D8A57' }}>
-                  {language === 'ru' ? 'Ответ' : 'Απάντηση'}
-                </div>
-                {/* Speaker */}
+              <div className="pb-4 text-center">
+                <span className="text-xs text-muted-foreground/50">
+                  {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Πατήστε για αναστροφή'} · Space
+                </span>
+              </div>
+            </div>
+
+            {/* Back */}
+            <div
+              className="flashcard-face flashcard-back flashcard-glass flex flex-col overflow-hidden rounded-2xl"
+              style={{
+                background: `radial-gradient(circle at 30% 20%, ${hexToRgba(accent, 0.10)}, transparent 70%), rgba(255,255,255,0.72)`,
+              }}
+            >
+              {/* Accent stripe */}
+              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
+
+              <div className="flex items-start justify-between px-5 pt-4 pb-0">
+                {/* Answer badge */}
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                  style={{
+                    background: hexToRgba(accent, 0.13),
+                    color: accent,
+                  }}
+                >
+                  {language === 'ru' ? '✓ Ответ' : '✓ Απάντηση'}
+                </span>
+
                 {isSupported && (
-                  <button
-                    onClick={e => { e.stopPropagation(); isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_a_${language}`); }}
-                    style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSpeaking ? '#7D8A57' : 'rgba(47,53,50,0.4)', transition: 'all 0.2s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.05)'; (e.currentTarget as HTMLButtonElement).style.color = '#2F3532'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = isSpeaking ? '#7D8A57' : 'rgba(47,53,50,0.4)'; }}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                    }}
                   >
-                    {isSpeaking ? <VolumeX style={{ width: 20, height: 20 }} /> : <Volume2 style={{ width: 20, height: 20 }} />}
-                  </button>
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
                 )}
-                {/* Answer text */}
-                <p style={{ fontSize: 'clamp(18px, 2.8vw, 28px)', fontWeight: 500, lineHeight: 1.4, color: '#2F3532', margin: 0 }}>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-4">
+                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center text-foreground">
                   {currentQuestion.correct_answer}
                 </p>
-                {/* Explanation */}
-                {currentQuestion.explanation && (
-                  <p style={{ marginTop: 20, fontSize: 13, color: 'rgba(47,53,50,0.45)', maxWidth: 420, lineHeight: 1.5 }}>
-                    {currentQuestion.explanation}
-                  </p>
-                )}
               </div>
 
+              {currentQuestion.explanation && (
+                <div className="px-6 pb-5 border-t pt-3" style={{ borderColor: hexToRgba(accent, 0.15) }}>
+                  <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
+                    {currentQuestion.explanation}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 80 }}>
-          {/* Nav buttons — visible when not flipped */}
-          {!isFlipped && (
-            <div style={{ display: 'flex', gap: 24 }}>
-              <GhostBtn onClick={goToPrev} disabled={currentIndex === 0}>
-                <ArrowLeft style={{ width: 16, height: 16 }} />
-                {language === 'ru' ? 'Назад' : 'Πίσω'}
-              </GhostBtn>
-              <GhostBtn onClick={goToNext} disabled={currentIndex === questions.length - 1}>
-                {language === 'ru' ? 'Далее' : 'Επόμενο'}
-                <ArrowRight style={{ width: 16, height: 16 }} />
-              </GhostBtn>
-            </div>
-          )}
-          {/* Answer buttons — visible when flipped */}
-          {isFlipped && (
-            <div style={{ display: 'flex', gap: 24 }}>
-              <AnswerBtn onClick={handleDontKnow} color="#E06C6C">
-                <X style={{ width: 18, height: 18 }} />
-                {t('flashcards.dontKnow')}
-              </AnswerBtn>
-              <AnswerBtn onClick={handleKnow} color="#7D8A57">
-                <Check style={{ width: 18, height: 18 }} />
-                {t('flashcards.know')}
-              </AnswerBtn>
-            </div>
-          )}
-        </div>
+        <div className="relative max-w-2xl mx-auto mt-8 px-4">
+          {/* Know/Don't Know — circular glass buttons */}
+          <div className={cn("flex gap-6 justify-center mb-6", !isFlipped && "invisible")}>
+            {/* Don't Know */}
+            <button
+              onClick={handleDontKnow}
+              className="group flex flex-col items-center gap-1.5"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <X className="h-5 w-5 text-destructive" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">
+                {t('flashcards.dontKnow')} <span className="opacity-40">←</span>
+              </span>
+            </button>
 
-        {/* Stats pills */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(125,138,87,0.12)', borderRadius: 9999, padding: '6px 14px' }}>
-            <Check style={{ width: 14, height: 14, color: '#7D8A57' }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#7D8A57' }}>{knownCount}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(224,108,108,0.12)', borderRadius: 9999, padding: '6px 14px' }}>
-            <X style={{ width: 14, height: 14, color: '#E06C6C' }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#E06C6C' }}>{unknownCount}</span>
-          </div>
-        </div>
+            {/* Skip/Flip back */}
+            <button
+              onClick={handleFlip}
+              className="group flex flex-col items-center gap-1.5"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <RotateCcw className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block opacity-60">
+                {language === 'ru' ? 'Назад' : 'Πίσω'} · Space
+              </span>
+            </button>
 
+            {/* Know */}
+            <button
+              onClick={handleKnow}
+              className="group flex flex-col items-center gap-1.5"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.1)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <Check className="h-5 w-5 text-success" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">
+                {t('flashcards.know')} <span className="opacity-40">→</span>
+              </span>
+            </button>
+          </div>
+
+        </div>
       </div>
     </Layout>
   );

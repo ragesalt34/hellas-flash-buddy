@@ -223,6 +223,7 @@ export type Database = {
           incorrect_count: number
           is_known: boolean
           last_reviewed_at: string | null
+          next_review_at: string | null
           question_id: string
           updated_at: string
           user_id: string
@@ -234,6 +235,7 @@ export type Database = {
           incorrect_count?: number
           is_known?: boolean
           last_reviewed_at?: string | null
+          next_review_at?: string | null
           question_id: string
           updated_at?: string
           user_id: string
@@ -245,6 +247,7 @@ export type Database = {
           incorrect_count?: number
           is_known?: boolean
           last_reviewed_at?: string | null
+          next_review_at?: string | null
           question_id?: string
           updated_at?: string
           user_id?: string
@@ -289,6 +292,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      reset_user_progress: { Args: { p_user_id: string }; Returns: undefined }
       upsert_progress: {
         Args: {
           p_correct: boolean
