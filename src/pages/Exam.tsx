@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { localizeQuestions } from '@/lib/questionLocale';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -93,6 +93,7 @@ function formatTime(seconds: number): string {
 
 export default function Exam() {
   const { user, isLoading: authLoading } = useAuth();
+  const { topic: urlTopic } = useParams<{ topic?: string }>();
   const { t, language } = useLanguage();
   const { toast } = useToast();
   useStudyTimer('exam');
@@ -118,7 +119,9 @@ export default function Exam() {
   const [settings, setSettings] = useState<ExamSettings>({
     questionCount: 20,
     timeLimit: 30,
-    topics: [...TOPICS],
+    topics: (urlTopic && (TOPICS as string[]).includes(urlTopic))
+      ? [urlTopic as QuestionTopic]
+      : [...TOPICS],
   });
   
   // Exam states
