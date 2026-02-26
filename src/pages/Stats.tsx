@@ -142,9 +142,7 @@ export default function Stats() {
   const totalAnswered = totalCorrect + totalIncorrect;
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
 
-  const masteredCount = progress?.filter(
-    p => p.correct_count > 0 && p.correct_count >= p.incorrect_count,
-  ).length || 0;
+  const masteredCount = progress?.filter(p => p.is_known).length || 0;
   const readiness = totalQuestionsCount > 0
     ? Math.round((masteredCount / totalQuestionsCount) * 100) : 0;
 
@@ -161,7 +159,7 @@ export default function Stats() {
   progress?.forEach(p => {
     const topic = (p.questions as any)?.topic as string | undefined;
     if (!topic) return;
-    if (p.correct_count > 0 && p.correct_count >= p.incorrect_count)
+    if (p.is_known)
       topicMastered[topic] = (topicMastered[topic] || 0) + 1;
   });
 
