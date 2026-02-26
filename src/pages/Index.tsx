@@ -307,7 +307,7 @@ export default function Index() {
               return (
                  <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
                    <div
-                     className="glass-panel liquid-hover"
+                     className="glass-panel apple-liquid"
                      onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
                        const el = e.currentTarget;
                        const cx = e.clientX, cy = e.clientY;
