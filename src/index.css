@@ -1078,3 +1078,64 @@
   opacity: 0.75;
   transition: height 0.5s ease;
 }
+
+/* ── Liquid Glass Bubble hover effect ── */
+.liquid-hover {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* Cursor-following specular highlight */
+.liquid-hover::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    160px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,0.42) 0%,
+    rgba(255,255,255,0.12) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.liquid-hover:hover::before { opacity: 1; }
+
+/* Bubble layer */
+.liquid-hover::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.60) 0%, transparent 55%) -20px 100% / 14px 14px no-repeat,
+    radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 55%)  30px 100% / 10px 10px no-repeat,
+    radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 55%)  65px 100% / 12px 12px no-repeat,
+    radial-gradient(circle, rgba(255,255,255,0.38) 0%, transparent 55%)  90px 100% /  8px  8px no-repeat,
+    radial-gradient(circle, rgba(255,255,255,0.50) 0%, transparent 55%) 120px 100% / 11px 11px no-repeat;
+  opacity: 0;
+  animation: none;
+}
+.liquid-hover:hover::after {
+  opacity: 1;
+  animation: bubbles-rise 1.6s ease-in infinite;
+}
+
+@keyframes bubbles-rise {
+  0%   { background-position: -20px 110%, 30px 110%, 65px 110%, 90px 110%, 120px 110%; opacity: 0; }
+  10%  { opacity: 1; }
+  80%  { opacity: 0.7; }
+  100% { background-position: -20px -20%, 30px -15%, 65px -25%, 90px -10%, 120px -20%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-hover::after { animation: none !important; opacity: 0 !important; }
+  .liquid-hover:hover::before { opacity: 0.5; }
+}
