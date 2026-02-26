@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,7 +16,9 @@ import {
   ThumbsDown,
   Shuffle,
   Volume2,
-  VolumeX
+  VolumeX,
+  X,
+  Check
 } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
@@ -34,6 +34,20 @@ type Question = {
 
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
 
+const topicAccent: Record<TopicType, string> = {
+  history:   '#5B8DB8',
+  culture:   '#9B7EC8',
+  laws:      '#7D8A57',
+  geography: '#D4874A',
+};
+
+const topicEmoji: Record<TopicType, string> = {
+  history:   '📜',
+  culture:   '🎭',
+  laws:      '⚖️',
+  geography: '🗺️',
+};
+
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -41,6 +55,14 @@ function shuffleArray<T>(array: T[]): T[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+// Hex to RGBA helper
+function hexToRgba(hex: string, alpha: number) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 export default function Flashcards() {
@@ -70,7 +92,6 @@ export default function Flashcards() {
     const fetchQuestions = async () => {
       setIsLoading(true);
 
-      // Fetch questions and user progress in parallel
       const [questionsResult, progressResult] = await Promise.all([
         supabase.from('questions').select('*').eq('topic', validTopic),
         supabase
@@ -99,7 +120,6 @@ export default function Flashcards() {
 
       const now = Date.now();
 
-      // Same priority groups as Quiz — show all cards but due/hard ones first
       const scored = localized.map(q => {
         const p = progressMap[q.id];
         if (!p) return { q, group: 0, ts: 0 };
@@ -118,50 +138,7 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  if (authLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!isValidTopic) {
-    return <Navigate to="/learn" replace />;
-  }
-
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  const handleKnow = () => {
-    if (!ratedIndices.has(currentIndex)) {
-      setRatedIndices(prev => new Set([...prev, currentIndex]));
-      setKnownCount(prev => prev + 1);
-      if (user) {
-        upsertProgress(user.id, questions[currentIndex].id, true);
-      }
-    }
-    goToNext();
-  };
-
-  const handleDontKnow = () => {
-    if (!ratedIndices.has(currentIndex)) {
-      setRatedIndices(prev => new Set([...prev, currentIndex]));
-      setUnknownCount(prev => prev + 1);
-      setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
-      if (user) {
-        upsertProgress(user.id, questions[currentIndex].id, false);
-      }
-    }
-    goToNext();
-  };
+  const handleFlip = () => setIsFlipped(!isFlipped);
 
   const goToNext = () => {
     if (currentIndex < questions.length - 1) {
@@ -177,6 +154,25 @@ export default function Flashcards() {
       setCurrentIndex(prev => prev - 1);
       setIsFlipped(false);
     }
+  };
+
+  const handleKnow = () => {
+    if (!ratedIndices.has(currentIndex)) {
+      setRatedIndices(prev => new Set([...prev, currentIndex]));
+      setKnownCount(prev => prev + 1);
+      if (user) upsertProgress(user.id, questions[currentIndex].id, true);
+    }
+    goToNext();
+  };
+
+  const handleDontKnow = () => {
+    if (!ratedIndices.has(currentIndex)) {
+      setRatedIndices(prev => new Set([...prev, currentIndex]));
+      setUnknownCount(prev => prev + 1);
+      setUnknownQuestions(prev => [...prev, questions[currentIndex]]);
+      if (user) upsertProgress(user.id, questions[currentIndex].id, false);
+    }
+    goToNext();
   };
 
   const handleShuffle = () => {
@@ -198,7 +194,7 @@ export default function Flashcards() {
     setUnknownQuestions([]);
     setIsFinished(false);
     setRatedIndices(new Set());
-    setRestartCount(c => c + 1); // re-fetch with fresh priority order
+    setRestartCount(c => c + 1);
   };
 
   const handleRestartUnknown = () => {
@@ -213,7 +209,7 @@ export default function Flashcards() {
     setRatedIndices(new Set());
   };
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts — must be before conditional returns
   useEffect(() => {
     if (isFinished || isLoading || questions.length === 0) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -241,8 +237,23 @@ export default function Flashcards() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [isFinished, isLoading, questions.length, isFlipped, currentIndex]);
 
+  if (authLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isValidTopic) return <Navigate to="/learn" replace />;
+
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
+  const accent = topicAccent[validTopic] || '#5B8DB8';
+  const emoji = topicEmoji[validTopic] || '📚';
 
   if (isLoading) {
     return (
@@ -258,22 +269,16 @@ export default function Flashcards() {
     return (
       <Layout>
         <div className="container py-12">
-          <Card className="max-w-2xl mx-auto text-center liquid-glass-card">
-            <CardContent className="py-12">
-              <h2 className="text-2xl font-display font-bold mb-4">
-                {t('quiz.noQuestions')}
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                {t('quiz.noQuestions.desc')}
-              </p>
-              <Link to="/learn">
-                <Button className="liquid-glass-button">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  {t('quiz.backToTopics')}
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <div className="glass-panel max-w-2xl mx-auto text-center p-12 rounded-2xl">
+            <h2 className="text-2xl font-display font-bold mb-4">{t('quiz.noQuestions')}</h2>
+            <p className="text-muted-foreground mb-6">{t('quiz.noQuestions.desc')}</p>
+            <Link to="/learn">
+              <Button>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t('quiz.backToTopics')}
+              </Button>
+            </Link>
+          </div>
         </div>
       </Layout>
     );
@@ -281,67 +286,62 @@ export default function Flashcards() {
 
   if (isFinished) {
     const percentage = questions.length > 0 ? Math.round((knownCount / questions.length) * 100) : 0;
-    
     return (
       <Layout>
-        <div className="relative container py-12">
+        <div className="container py-12">
+          <div className="glass-panel max-w-2xl mx-auto rounded-2xl p-10 text-center space-y-6">
+            {/* Accent top bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: accent }} />
 
-          <Card className="relative max-w-2xl mx-auto flashcard-glass rounded-2xl">
-            <CardContent className="py-12 text-center space-y-6">
-              <h2 className="font-display text-3xl font-bold">
-                {t('flashcards.finished')}
-              </h2>
-              
-              <div className={cn(
-                "w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold shadow-2xl",
-                percentage >= 70 ? "bg-success/20 text-success shadow-success/20" : 
-                percentage >= 50 ? "bg-accent/20 text-accent shadow-accent/20" : 
-                "bg-destructive/20 text-destructive shadow-destructive/20"
-              )}>
-                {percentage}%
-              </div>
-              
-              <div className="flex justify-center gap-8">
-                <div className="text-center bg-muted/50 rounded-xl p-4">
-                  <div className="text-3xl font-bold text-success">{knownCount}</div>
-                  <div className="text-sm text-muted-foreground">{t('flashcards.known')}</div>
-                </div>
-                <div className="text-center bg-muted/50 rounded-xl p-4">
-                  <div className="text-3xl font-bold text-destructive">{unknownCount}</div>
-                  <div className="text-sm text-muted-foreground">{t('flashcards.unknown')}</div>
-                </div>
-              </div>
+            <h2 className="font-display text-3xl font-bold">{t('flashcards.finished')}</h2>
 
-              <div className="flex flex-wrap gap-3 justify-center pt-4">
-                {unknownQuestions.length > 0 && (
-                  <Button
-                    variant="outline"
-                    onClick={handleRestartUnknown}
-                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
-                  >
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    {language === 'ru'
-                      ? `Повторить незнакомые (${unknownQuestions.length})`
-                      : `Επανάληψη άγνωστων (${unknownQuestions.length})`}
-                  </Button>
-                )}
-                <Button variant="outline" onClick={handleShuffle}>
-                  <Shuffle className="h-4 w-4 mr-2" />
-                  {t('flashcards.shuffle')}
-                </Button>
-                <Button variant="outline" onClick={handleRestart}>
+            <div
+              className="w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold"
+              style={{
+                background: hexToRgba(accent, 0.12),
+                color: accent,
+                boxShadow: `0 8px 32px ${hexToRgba(accent, 0.2)}`
+              }}
+            >
+              {percentage}%
+            </div>
+
+            <div className="flex justify-center gap-8">
+              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(34,197,94,0.08)' }}>
+                <div className="text-3xl font-bold text-success">{knownCount}</div>
+                <div className="text-sm text-muted-foreground">{t('flashcards.known')}</div>
+              </div>
+              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(239,68,68,0.08)' }}>
+                <div className="text-3xl font-bold text-destructive">{unknownCount}</div>
+                <div className="text-sm text-muted-foreground">{t('flashcards.unknown')}</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3 justify-center pt-4">
+              {unknownQuestions.length > 0 && (
+                <Button variant="outline" onClick={handleRestartUnknown} className="border-destructive/30 text-destructive hover:bg-destructive/10">
                   <RotateCcw className="h-4 w-4 mr-2" />
-                  {t('quiz.tryAgain')}
+                  {language === 'ru'
+                    ? `Повторить незнакомые (${unknownQuestions.length})`
+                    : `Επανάληψη άγνωστων (${unknownQuestions.length})`}
                 </Button>
-                <Link to="/learn">
-                  <Button className="gradient-greek text-primary-foreground shadow-lg shadow-primary/30">
-                    <Home className="h-4 w-4 mr-2" />
-                    {t('quiz.toTopics')}
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+              )}
+              <Button variant="outline" onClick={handleShuffle}>
+                <Shuffle className="h-4 w-4 mr-2" />
+                {t('flashcards.shuffle')}
+              </Button>
+              <Button variant="outline" onClick={handleRestart}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                {t('quiz.tryAgain')}
+              </Button>
+              <Link to="/learn">
+                <Button>
+                  <Home className="h-4 w-4 mr-2" />
+                  {t('quiz.toTopics')}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </Layout>
     );
@@ -360,13 +360,22 @@ export default function Flashcards() {
             {t('quiz.backToTopics')}
           </Link>
           <div className="flex items-center justify-between gap-2">
-            <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">{topicTitle} — {t('mode.flashcards')}</h1>
+            <h1 className="font-display text-lg sm:text-2xl font-bold line-clamp-2">
+              {emoji} {topicTitle} — {t('mode.flashcards')}
+            </h1>
             <Button variant="ghost" size="sm" onClick={handleShuffle} className="shrink-0">
               <Shuffle className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Custom progress bar */}
           <div className="flex items-center gap-3 mt-4">
-            <Progress value={progress} className="flex-1" />
+            <div className="flex-1 h-[3px] rounded-full bg-black/10 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progress}%`, background: hexToRgba(accent, 0.75) }}
+              />
+            </div>
             <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
               {currentIndex + 1} / {questions.length}
             </span>
@@ -375,99 +384,187 @@ export default function Flashcards() {
 
         {/* Flashcard */}
         <div className="relative max-w-2xl mx-auto h-72 sm:h-96 px-2 flashcard-container">
-          <div 
+          <div
             className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
             onClick={handleFlip}
           >
             {/* Front */}
-            <Card className="flashcard-face flashcard-glass flex flex-col overflow-hidden rounded-2xl">
-              <CardContent className="flex flex-col h-full p-0 w-full">
+            <div className="flashcard-face flashcard-glass flex flex-col overflow-hidden rounded-2xl">
+              {/* Accent stripe */}
+              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
+
+              <div className="flex items-start justify-between px-5 pt-4 pb-0">
+                {/* Topic pill */}
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                  style={{
+                    background: hexToRgba(accent, 0.13),
+                    color: accent,
+                  }}
+                >
+                  {emoji} {topicTitle}
+                </span>
+
                 {isSupported && (
-                  <div className="flex justify-end px-5 pt-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
-                      }}
-                    >
-                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
+                    }}
+                  >
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
                 )}
-                <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-8">
-                  <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center">
-                    {currentQuestion.question}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center px-8 sm:px-12">
+                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center">
+                  {currentQuestion.question}
+                </p>
+              </div>
+
+              <div className="pb-4 text-center">
+                <span className="text-xs text-muted-foreground/50">
+                  {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Πατήστε για αναστροφή'} · Space
+                </span>
+              </div>
+            </div>
 
             {/* Back */}
-            <Card className="flashcard-face flashcard-back flashcard-glass flex flex-col overflow-hidden rounded-2xl">
-              <CardContent className="flex flex-col h-full p-0 w-full">
+            <div
+              className="flashcard-face flashcard-back flashcard-glass flex flex-col overflow-hidden rounded-2xl"
+              style={{
+                background: `radial-gradient(circle at 30% 20%, ${hexToRgba(accent, 0.10)}, transparent 70%), rgba(255,255,255,0.72)`,
+              }}
+            >
+              {/* Accent stripe */}
+              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
+
+              <div className="flex items-start justify-between px-5 pt-4 pb-0">
+                {/* Answer badge */}
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                  style={{
+                    background: hexToRgba(accent, 0.13),
+                    color: accent,
+                  }}
+                >
+                  {language === 'ru' ? '✓ Ответ' : '✓ Απάντηση'}
+                </span>
+
                 {isSupported && (
-                  <div className="flex justify-end px-5 pt-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
-                      }}
-                    >
-                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                    }}
+                  >
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
                 )}
-                <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-4">
-                  <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center text-foreground">
-                    {currentQuestion.correct_answer}
+              </div>
+
+              <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-4">
+                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center text-foreground">
+                  {currentQuestion.correct_answer}
+                </p>
+              </div>
+
+              {currentQuestion.explanation && (
+                <div className="px-6 pb-5 border-t pt-3" style={{ borderColor: hexToRgba(accent, 0.15) }}>
+                  <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
+                    {currentQuestion.explanation}
                   </p>
                 </div>
-                {currentQuestion.explanation && (
-                  <div className="px-6 pb-5 border-t border-white/10 pt-3">
-                    <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
-                      {currentQuestion.explanation}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Controls */}
         <div className="relative max-w-2xl mx-auto mt-8 px-4">
-          {/* Know/Don't Know buttons — always rendered, invisible until flipped */}
-          <div className={cn("flex gap-3 justify-center mb-4", !isFlipped && "invisible")}>
-            <Button
-              variant="outline"
-              className="flex-1 sm:flex-none border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+          {/* Know/Don't Know — circular glass buttons */}
+          <div className={cn("flex gap-6 justify-center mb-6", !isFlipped && "invisible")}>
+            {/* Don't Know */}
+            <button
               onClick={handleDontKnow}
+              className="group flex flex-col items-center gap-1.5"
             >
-              <ThumbsDown className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('flashcards.dontKnow')}</span>
-              <span className="hidden sm:inline text-xs opacity-50 ml-1">←</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 sm:flex-none border-success/30 text-success hover:bg-success/10 hover:border-success/50"
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <X className="h-5 w-5 text-destructive" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">
+                {t('flashcards.dontKnow')} <span className="opacity-40">←</span>
+              </span>
+            </button>
+
+            {/* Skip/Flip back */}
+            <button
+              onClick={handleFlip}
+              className="group flex flex-col items-center gap-1.5"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <RotateCcw className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block opacity-60">
+                {language === 'ru' ? 'Назад' : 'Πίσω'} · Space
+              </span>
+            </button>
+
+            {/* Know */}
+            <button
               onClick={handleKnow}
+              className="group flex flex-col items-center gap-1.5"
             >
-              <ThumbsUp className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('flashcards.know')}</span>
-              <span className="hidden sm:inline text-xs opacity-50 ml-1">→</span>
-            </Button>
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.5)',
+                  border: '1.5px solid rgba(255,255,255,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.1)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.5)')}
+              >
+                <Check className="h-5 w-5 text-success" />
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">
+                {t('flashcards.know')} <span className="opacity-40">→</span>
+              </span>
+            </button>
           </div>
 
           {/* Navigation buttons */}
           <div className="flex items-center justify-between gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={goToPrev}
               disabled={currentIndex === 0}
@@ -477,8 +574,8 @@ export default function Flashcards() {
               <span className="hidden sm:inline">{t('flashcards.prev')}</span>
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={goToNext}
               disabled={currentIndex === questions.length - 1}
@@ -492,15 +589,16 @@ export default function Flashcards() {
 
         {/* Stats */}
         <div className="relative flex justify-center gap-6 mt-6 text-sm">
-          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-4 py-2">
+          <div className="flex items-center gap-2 rounded-full px-4 py-2" style={{ background: 'rgba(34,197,94,0.08)' }}>
             <ThumbsUp className="h-4 w-4 text-success" />
             <span className="text-success font-medium">{knownCount}</span>
           </div>
-          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-4 py-2">
+          <div className="flex items-center gap-2 rounded-full px-4 py-2" style={{ background: 'rgba(239,68,68,0.08)' }}>
             <ThumbsDown className="h-4 w-4 text-destructive" />
             <span className="text-destructive font-medium">{unknownCount}</span>
           </div>
         </div>
+
       </div>
     </Layout>
   );
