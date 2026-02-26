@@ -1,21 +1,68 @@
 import { Link, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
-  Layers, BookOpen, GraduationCap,
-  History, Palette, Scale, MapPin, ArrowRight, Loader2, Bell, TrendingDown
+  Layers, PenLine, GraduationCap,
+  History, Palette, Scale, MapPin,
+  ArrowRight, Loader2, TrendingUp, AlertCircle, CheckCircle,
 } from 'lucide-react';
+
+const TOPIC_META = [
+  {
+    id: 'history',
+    icon: History,
+    iconBg: 'rgba(91,141,184,0.18)',
+    iconColor: '#5B8DB8',
+  },
+  {
+    id: 'culture',
+    icon: Palette,
+    iconBg: 'rgba(155,126,200,0.18)',
+    iconColor: '#9B7EC8',
+  },
+  {
+    id: 'laws',
+    icon: Scale,
+    iconBg: 'rgba(125,138,87,0.18)',
+    iconColor: '#7D8A57',
+  },
+  {
+    id: 'geography',
+    icon: MapPin,
+    iconBg: 'rgba(212,135,74,0.18)',
+    iconColor: '#D4874A',
+  },
+];
+
+function AccuracyBadge({ pct }: { pct: number | null }) {
+  if (pct === null) return null;
+  const high = pct >= 70;
+  const med = pct >= 50;
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: '5px',
+      padding: '4px 12px', borderRadius: '9999px',
+      fontSize: '12px', fontWeight: 600,
+      background: high ? 'rgba(125,138,87,0.15)' : med ? 'rgba(236,200,92,0.20)' : 'rgba(224,108,108,0.15)',
+      color: high ? '#58633C' : med ? '#8F721D' : '#A83838',
+    }}>
+      {high
+        ? <CheckCircle style={{ width: 13, height: 13 }} />
+        : med
+        ? <TrendingUp style={{ width: 13, height: 13 }} />
+        : <AlertCircle style={{ width: 13, height: 13 }} />}
+      {pct}%
+    </div>
+  );
+}
 
 export default function Learn() {
   const { user, isLoading } = useAuth();
   const { t, language } = useLanguage();
 
-  // Count cards due for SRS review today
   const { data: dueCount } = useQuery({
     queryKey: ['due-review-count', user?.id],
     queryFn: async () => {
@@ -31,7 +78,6 @@ export default function Learn() {
     enabled: !!user,
   });
 
-  // Per-topic accuracy for weak topic hints
   const { data: topicAccuracy } = useQuery({
     queryKey: ['topic-accuracy', user?.id],
     queryFn: async () => {
@@ -58,19 +104,6 @@ export default function Learn() {
     enabled: !!user,
   });
 
-  const topics = [
-    { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History, color: 'history', iconClass: 'bg-history/12 text-history group-hover:bg-history group-hover:text-primary-foreground' },
-    { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette, color: 'culture', iconClass: 'bg-culture/12 text-culture group-hover:bg-culture group-hover:text-primary-foreground' },
-    { id: 'laws', title: t('topic.laws'), description: t('topic.laws.desc'), icon: Scale, color: 'laws', iconClass: 'bg-laws/12 text-laws group-hover:bg-laws group-hover:text-primary-foreground' },
-    { id: 'geography', title: t('topic.geography'), description: t('topic.geography.desc'), icon: MapPin, color: 'geography', iconClass: 'bg-geography/12 text-geography group-hover:bg-geography group-hover:text-primary-foreground' },
-  ];
-
-  const modes = [
-    { id: 'flashcards', title: t('mode.flashcards'), description: t('mode.flashcards.desc'), icon: Layers },
-    { id: 'quiz', title: t('mode.quiz'), description: t('mode.quiz.desc'), icon: BookOpen },
-    { id: 'exam', title: t('mode.exam'), description: t('mode.exam.desc'), icon: GraduationCap },
-  ];
-
   if (isLoading) {
     return (
       <Layout>
@@ -83,107 +116,182 @@ export default function Learn() {
 
   if (!user) return <Navigate to="/login" replace />;
 
+  const modes = [
+    { id: 'flashcards', label: language === 'ru' ? 'Карточки' : 'Κάρτες', icon: Layers },
+    { id: 'quiz',       label: language === 'ru' ? 'Тест'     : 'Κουίζ',  icon: PenLine },
+    { id: 'exam',       label: language === 'ru' ? 'Экзамен'  : 'Εξέταση',icon: GraduationCap },
+  ];
+
   return (
     <Layout>
-      <div className="relative container py-6 sm:py-12 px-4">
-        <div className="relative mb-8 sm:mb-12">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">{t('learn.selectTopic')}</h1>
-          <p className="mt-2 text-sm sm:text-base text-muted-foreground">{t('learn.selectTopic.desc')}</p>
+      <div className="relative z-10" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px 80px' }}>
+
+        {/* Page header */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', marginBottom: '40px' }}>
+          <div>
+            <h1 style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '8px', color: '#2F3532' }}>
+              {language === 'ru' ? 'Выберите тему' : 'Επιλέξτε θέμα'}
+            </h1>
+            <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))' }}>
+              {language === 'ru'
+                ? 'Начните изучение с интересующей вас темы или продолжите прогресс'
+                : 'Ξεκινήστε με ένα θέμα ή συνεχίστε την πρόοδό σας'}
+            </p>
+          </div>
+          {dueCount != null && dueCount > 0 && (
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              padding: '6px 16px', borderRadius: '9999px',
+              background: '#ECC85C', color: '#584610',
+              fontSize: '13px', fontWeight: 600,
+            }}>
+              <Layers style={{ width: 15, height: 15 }} />
+              {language === 'ru' ? `К повторению: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
+            </div>
+          )}
         </div>
 
-        {/* Due for review banner */}
-        {dueCount != null && dueCount > 0 && (
-          <div className="relative mb-6 flex items-center gap-3 p-3 rounded-xl liquid-glass-card border-primary/30 animate-fade-in">
-            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-              <Bell className="h-4 w-4 text-primary" />
-            </div>
-            <p className="text-sm font-medium flex-1">
-              {language === 'ru'
-                ? `${dueCount} карточек ждут повторения сегодня`
-                : `${dueCount} κάρτες περιμένουν σήμερα`}
-            </p>
-            <span className="text-xs text-muted-foreground opacity-60">
-              {language === 'ru' ? 'Выберите тему и начните' : 'Επιλέξτε ένα θέμα'}
-            </span>
-          </div>
-        )}
-
-        {/* Topics */}
-        <div className="relative grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
-          {topics.map((topic, index) => (
-            <Card 
-              key={topic.id}
-              className="group liquid-glass-card-v2 rounded-2xl shadow-sm animate-fade-in h-full flex flex-col"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <CardHeader className="pb-2 pt-6 flex-1">
-                <div className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl flex items-center justify-center ${topic.iconClass} transition-all duration-500 spring-transition`}>
-                  <topic.icon className="h-6 sm:h-7 w-6 sm:w-7 transition-colors duration-300" />
-                </div>
-                <CardTitle className="font-display text-lg sm:text-xl mt-4">{topic.title}</CardTitle>
-                <CardDescription className="text-sm mt-1 min-h-[2.5rem]">{topic.description}</CardDescription>
-                {topicAccuracy?.[topic.id] != null && (
-                  <div className={`inline-flex items-center gap-1 mt-2 text-xs px-2 py-0.5 rounded-full w-fit ${
-                    (topicAccuracy[topic.id] as number) < 50
-                      ? 'bg-destructive/10 text-destructive'
-                      : (topicAccuracy[topic.id] as number) < 75
-                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      : 'bg-success/10 text-success'
-                  }`}>
-                    {(topicAccuracy[topic.id] as number) < 75 && <TrendingDown className="h-3 w-3" />}
-                    {language === 'ru'
-                      ? `Точность: ${topicAccuracy[topic.id]}%`
-                      : `Ακρίβεια: ${topicAccuracy[topic.id]}%`}
+        {/* Topics 2×2 grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '24px',
+          marginBottom: '64px',
+        }} className="sm-1col">
+          {TOPIC_META.map(meta => {
+            const acc = topicAccuracy?.[meta.id] ?? null;
+            const Icon = meta.icon;
+            return (
+              <div key={meta.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '220px' }}>
+                <div>
+                  {/* Icon + accuracy row */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                    <div style={{
+                      width: '48px', height: '48px', borderRadius: '50%',
+                      background: meta.iconBg, color: meta.iconColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '22px',
+                    }}>
+                      <Icon style={{ width: 22, height: 22 }} />
+                    </div>
+                    <AccuracyBadge pct={acc} />
                   </div>
-                )}
-              </CardHeader>
-              <CardContent className="pt-0 mt-auto">
-                <div className="grid grid-cols-3 gap-2">
-                  {modes.map((mode) => (
-                    <Link key={mode.id} to={`/learn/${topic.id}/${mode.id}`}>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full h-9 px-2 gap-1.5 text-[11px] liquid-glass-button rounded-xl border-0"
+                  <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '4px', color: '#2F3532' }}>
+                    {t(`topic.${meta.id}`)}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginBottom: '24px', lineHeight: 1.5 }}>
+                    {t(`topic.${meta.id}.desc`)}
+                  </p>
+                </div>
+                {/* Action buttons */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {modes.map(mode => (
+                    <Link key={mode.id} to={`/learn/${meta.id}/${mode.id}`} style={{ textDecoration: 'none' }}>
+                      <button
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                          padding: '8px 16px',
+                          border: '1px solid rgba(47,53,50,0.1)',
+                          borderRadius: '9999px',
+                          background: 'transparent',
+                          color: '#2F3532',
+                          fontSize: '13px', fontWeight: 500,
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => {
+                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.8)';
+                          (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(47,53,50,0.2)';
+                          (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseLeave={e => {
+                          (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                          (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(47,53,50,0.1)';
+                          (e.currentTarget as HTMLButtonElement).style.transform = '';
+                        }}
+                        onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.96)'; }}
+                        onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                       >
-                        <mode.icon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                        <span className="whitespace-nowrap">{mode.title}</span>
-                      </Button>
+                        <mode.icon style={{ width: 15, height: 15 }} />
+                        {mode.label}
+                      </button>
                     </Link>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Exam Section */}
-        <div className="relative mb-8 sm:mb-12">
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">{t('learn.takeExam')}</h2>
-          <Card className="gradient-greek text-primary-foreground shadow-xl shadow-primary/15 overflow-hidden rounded-2xl">
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-primary-foreground/5 blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-28 h-28 rounded-full bg-primary-foreground/5 blur-2xl" />
-            
-            <CardHeader className="pb-4 relative">
-              <div className="flex items-start sm:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <CardTitle className="font-display text-xl sm:text-2xl text-primary-foreground">{t('learn.examSimulation')}</CardTitle>
-                  <CardDescription className="text-primary-foreground/80 mt-2 text-sm sm:text-base">{t('learn.examSimulation.desc')}</CardDescription>
-                </div>
-                <GraduationCap className="h-12 w-12 sm:h-16 sm:w-16 opacity-40 shrink-0" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <Link to="/learn/exam">
-                <Button variant="secondary" size="lg" className="gap-2 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-500 spring-transition hover:-translate-y-1 rounded-xl">
-                  {t('learn.startExam')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        {/* Exam section */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 500, letterSpacing: '-0.01em', color: '#2F3532' }}>
+            {language === 'ru' ? 'Или пройдите экзамен' : 'Ή δώστε εξέταση'}
+          </h2>
         </div>
+        <div style={{
+          background: '#2F3532', color: 'white',
+          padding: '48px', borderRadius: '32px',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          gap: '32px', flexWrap: 'wrap',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* Decorative ghost icon */}
+          <GraduationCap style={{
+            position: 'absolute', right: '-20px', bottom: '-40px',
+            width: '220px', height: '220px',
+            color: 'rgba(255,255,255,0.03)',
+            transform: 'rotate(-15deg)',
+          }} />
+          <div style={{ maxWidth: '560px', position: 'relative', zIndex: 1 }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.6 }}>
+              Simulation Mode
+            </span>
+            <h2 style={{ fontSize: '28px', fontWeight: 500, marginTop: '8px', marginBottom: '0' }}>
+              {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
+            </h2>
+            <p style={{ fontSize: '14px', opacity: 0.7, marginTop: '8px', lineHeight: 1.5 }}>
+              {language === 'ru'
+                ? 'Проверьте свои знания в условиях, приближённых к реальному тесту. 20 вопросов, 45 минут.'
+                : 'Ελέγξτε τις γνώσεις σας σε συνθήκες κοντά στην πραγματική εξέταση. 20 ερωτήσεις, 45 λεπτά.'}
+            </p>
+          </div>
+          <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
+            <button
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '12px 24px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: '9999px',
+                background: 'transparent', color: 'white',
+                fontSize: '14px', fontWeight: 500,
+                cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'white';
+                (e.currentTarget as HTMLButtonElement).style.color = '#2F3532';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                (e.currentTarget as HTMLButtonElement).style.color = 'white';
+              }}
+            >
+              {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
+              <ArrowRight style={{ width: 16, height: 16 }} />
+            </button>
+          </Link>
+        </div>
+
       </div>
+
+      {/* Responsive: stack topics to 1 col on small screens */}
+      <style>{`
+        @media (max-width: 640px) {
+          .sm-1col { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </Layout>
   );
 }
