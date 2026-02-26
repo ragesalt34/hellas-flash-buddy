@@ -125,10 +125,6 @@ export default function Quiz() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [isFinished, isLoading, questions.length, isAnswered, shuffledAnswers, currentIndex]);
 
-  if (authLoading) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
-  if (!user) return <Navigate to="/login" replace />;
-  if (!isValidTopic) return <Navigate to="/learn" replace />;
-
   const handleAnswer = (answer: string) => {
     if (isAnswered) return;
     setSelectedAnswer(answer);
@@ -136,7 +132,7 @@ export default function Quiz() {
     const isCorrect = answer === questions[currentIndex].correct_answer;
     if (isCorrect) setScore(prev => prev + 1);
     if (user) {
-      upsertProgress(user.id, questions[currentIndex].id, isCorrect);
+      void upsertProgress(user.id, questions[currentIndex].id, isCorrect);
     }
   };
 
@@ -146,6 +142,10 @@ export default function Quiz() {
   };
 
   const handleRestart = () => { setCurrentIndex(0); setSelectedAnswer(null); setIsAnswered(false); setScore(0); setIsFinished(false); setRestartCount(c => c + 1); };
+
+  if (authLoading) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isValidTopic) return <Navigate to="/learn" replace />;
 
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const topicTitle = t(`topic.${validTopic}`);
