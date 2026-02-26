@@ -15,15 +15,15 @@ export default {
   	extend: {
   		fontFamily: {
   			display: [
-  				'Playfair Display',
-  				'serif'
+  				'DM Sans',
+  				'sans-serif'
   			],
   			body: [
-  				'Inter',
+  				'DM Sans',
   				'sans-serif'
   			],
   			sans: [
-  				'Lato',
+  				'DM Sans',
   				'ui-sans-serif',
   				'system-ui',
   				'-apple-system',
