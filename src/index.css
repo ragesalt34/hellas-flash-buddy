@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap");
@@ -11,82 +12,81 @@
 
 @layer base {
   :root {
-    --background: 225 40% 8%;
-    --foreground: 220 20% 93%;
+    /* ── Pebble Light Theme ── */
+    --background: 43 18% 89%;          /* #E8E6E1 bone beige */
+    --foreground: 150 6% 20%;          /* #2F3532 pebble-dark */
 
-    --card: 222 35% 14%;
-    --card-foreground: 220 20% 93%;
+    --card: 0 0% 100%;                 /* white */
+    --card-foreground: 150 6% 20%;
 
-    --popover: 222 38% 15%;
-    --popover-foreground: 220 20% 93%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 6% 20%;
 
-    /* Brighter primary for dark bg contrast */
-    --primary: 234 89% 74%;
-    --primary-foreground: 240 40% 13%;
+    --primary: 150 8% 25%;             /* #2F3532 — dark pebble as primary */
+    --primary-foreground: 43 18% 95%;  /* cream */
 
-    --secondary: 220 14% 32%;
-    --secondary-foreground: 220 20% 93%;
+    --secondary: 43 12% 84%;
+    --secondary-foreground: 150 6% 20%;
 
-    --muted: 220 14% 19%;
-    --muted-foreground: 220 14% 68%;
+    --muted: 43 10% 86%;
+    --muted-foreground: 150 6% 44%;
 
-    /* Aurora Accent */
-    --accent: 261 60% 16%;
-    --accent-foreground: 255 95% 80%;
+    --accent: 82 13% 44%;              /* #7D8A57 pebble-green */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 145 55% 45%;
+    --success: 145 45% 40%;
     --success-foreground: 0 0% 100%;
 
-    --border: 222 22% 17%;
-    --input: 222 22% 17%;
-    --ring: 234 89% 74%;
+    --border: 43 12% 82%;
+    --input: 43 12% 82%;
+    --ring: 150 8% 25%;
 
-    --radius: 1.25rem;
+    --radius: 1rem;
 
-    /* Topic colors */
-    --history: 210 100% 62%;
-    --culture: 280 70% 68%;
-    --laws: 145 60% 55%;
-    --geography: 35 95% 60%;
+    /* Topic colors — adapted for light theme */
+    --history: 210 36% 55%;            /* #5B8DB8 steel blue */
+    --culture: 270 37% 64%;            /* #9B7EC8 soft purple */
+    --laws: 82 13% 44%;                /* #7D8A57 sage green */
+    --geography: 24 60% 58%;           /* #D4874A warm amber */
 
-    --sidebar-background: 222 40% 8%;
-    --sidebar-foreground: 220 20% 93%;
-    --sidebar-primary: 234 89% 74%;
-    --sidebar-primary-foreground: 240 40% 13%;
-    --sidebar-accent: 255 91% 76%;
-    --sidebar-accent-foreground: 261 60% 16%;
-    --sidebar-border: 222 25% 16%;
-    --sidebar-ring: 234 89% 74%;
+    --sidebar-background: 43 18% 89%;
+    --sidebar-foreground: 150 6% 20%;
+    --sidebar-primary: 150 8% 25%;
+    --sidebar-primary-foreground: 43 18% 95%;
+    --sidebar-accent: 82 13% 44%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 43 12% 82%;
+    --sidebar-ring: 150 8% 25%;
 
     /* Fonts */
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'Inter', sans-serif;
-    --chart-1: 229 93% 81%;
-    --chart-2: 252 94% 85%;
-    --chart-3: 269 97% 85%;
-    --chart-4: 234 89% 73%;
-    --chart-5: 220 14% 50%;
-    --sidebar: 222 40% 11%;
-    --font-sans: 'Lato', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-serif: 'EB Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.1);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.1);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.15), 0 1px 2px -1px hsl(0 0% 0% / 0.15);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.15), 0 1px 2px -1px hsl(0 0% 0% / 0.15);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.15), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.15), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.15), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.35);
+    --font-display: 'DM Sans', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --chart-1: 210 36% 55%;
+    --chart-2: 270 37% 64%;
+    --chart-3: 82 13% 44%;
+    --chart-4: 24 60% 58%;
+    --chart-5: 150 6% 44%;
+    --sidebar: 43 12% 84%;
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'EB Garamond', ui-serif, Georgia, serif;
+    --font-mono: 'Fira Code', ui-monospace, monospace;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.04);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.04);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.06), 0 1px 2px -1px hsl(0 0% 0% / 0.06);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.06), 0 1px 2px -1px hsl(0 0% 0% / 0.06);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.06), 0 2px 4px -2px hsl(0 0% 0% / 0.04);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.06), 0 4px 6px -4px hsl(0 0% 0% / 0.04);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.06), 0 8px 10px -6px hsl(0 0% 0% / 0.04);
+    --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.12);
     --tracking-normal: 0em;
     --spacing: 0.25rem;
 
     /* Glass blur */
-    --glass-blur: 40px;
-    --glass-blur-strong: 48px;
+    --glass-blur: 24px;
+    --glass-blur-strong: 32px;
   }
 
   .dark {
@@ -166,7 +166,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+    font-family: 'DM Sans', sans-serif;
   }
 }
 
@@ -882,4 +882,199 @@
 .scroll-reveal.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ─── Pebble Light Theme — Utility Classes ─── */
+
+/* Ambient background layer */
+.ambient-layer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: blob-float 20s infinite ease-in-out;
+}
+.ambient-blob-1 {
+  top: -10%; right: -5%;
+  width: 500px; height: 500px;
+  background: #EFAFA0;
+}
+.ambient-blob-2 {
+  bottom: -10%; left: -5%;
+  width: 420px; height: 420px;
+  background: #7D8A57;
+  animation-duration: 26s;
+  animation-direction: reverse;
+}
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, -25px) scale(1.04); }
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.35;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(47, 53, 50, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+}
+
+/* Floating pill header */
+.pill-header {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  border-radius: 9999px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Light glass panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+}
+.glass-panel:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  border-color: rgba(255, 255, 255, 0.90);
+  transform: translateY(-2px);
+}
+
+/* Pebble shapes — 7 unique organic forms */
+.pebble {
+  width: 32px; height: 32px;
+  background: rgba(47, 53, 50, 0.10);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.pebble:nth-child(1) { border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
+.pebble:nth-child(2) { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+.pebble:nth-child(3) { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+.pebble:nth-child(4) { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+.pebble:nth-child(5) { border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%; }
+.pebble:nth-child(6) { border-radius: 68% 32% 61% 39% / 54% 39% 61% 46%; }
+.pebble:nth-child(7) { border-radius: 32% 68% 36% 64% / 38% 66% 34% 62%; }
+.pebble.pebble-active { background: #7D8A57; }
+.pebble.pebble-current {
+  background: #2F3532;
+  box-shadow: 0 4px 12px rgba(47, 53, 50, 0.25);
+}
+
+/* Dark pebble button */
+.btn-pebble {
+  background: #2F3532;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.btn-pebble:hover { opacity: 0.88; }
+.btn-pebble:active { transform: scale(0.97); }
+
+/* Progress bar fills by topic */
+.progress-fill-history { background: #5B8DB8; }
+.progress-fill-culture { background: #9B7EC8; }
+.progress-fill-laws    { background: #7D8A57; }
+.progress-fill-geography { background: #D4874A; }
+
+/* Override liquid-glass classes for light theme */
+.liquid-glass-card-v2 {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.70) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02) !important;
+}
+.glass-button-v2 {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(47, 53, 50, 0.08) !important;
+  color: #2F3532 !important;
+}
+.glass-button-v2:hover {
+  background: rgba(255, 255, 255, 0.70) !important;
+}
+.liquid-glass-refract {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.50) !important;
+}
+.liquid-glass-footer {
+  background: rgba(255, 255, 255, 0.50) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.70) !important;
+  backdrop-filter: blur(16px) !important;
+}
+/* Grain overlay — much lighter for light theme */
+.grain-overlay::before {
+  opacity: 0.012 !important;
+}
+/* gradient-greek — adapted to pebble-dark */
+.gradient-greek {
+  background: linear-gradient(135deg, #2F3532 0%, #4a5548 100%) !important;
+}
+/* Flashcard — solid white */
+.flashcard-glass {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 12px 24px rgba(0, 0, 0, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* text-micro utility */
+.text-micro {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(var(--muted-foreground));
+  font-weight: 700;
+}
+
+/* Chart bars for weekly activity */
+.activity-bar {
+  flex: 1;
+  background: rgba(47, 53, 50, 0.06);
+  border-radius: 4px;
+  position: relative;
+  min-height: 4px;
+}
+.activity-bar-fill {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  background: #5B8DB8;
+  border-radius: 4px;
+  opacity: 0.75;
+  transition: height 0.5s ease;
 }

@@ -1,158 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { StudyTimeWidget } from '@/components/StudyTimeWidget';
 import { Layout } from '@/components/layout/Layout';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  BookOpen, GraduationCap, Layers, History, Palette, 
-  Scale, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy, Clock, TrendingUp
-} from 'lucide-react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 
-// Aurora blob component
-const AuroraBlob = ({ className, delay = "0" }: { className?: string; delay?: string }) => (
-  <div 
-    className={`absolute rounded-full aurora-blob ${className}`}
-    style={{ animationDelay: delay }}
-  />
-);
+const TOPICS = [
+  { id: 'history',   emoji: '🏛️', subtitle: 'Modern & Ancient' },
+  { id: 'culture',   emoji: '🎭', subtitle: 'Arts & Customs' },
+  { id: 'laws',      emoji: '⚖️', subtitle: 'Government & Law' },
+  { id: 'geography', emoji: '🗺️', subtitle: 'Regions & Cities' },
+];
 
-// Scroll reveal hook
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('revealed');
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
-
-const ScrollReveal = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
-  const ref = useScrollReveal();
-  return <div ref={ref} className={`scroll-reveal ${className}`}>{children}</div>;
-};
-
-// Stat card
-const StatCard = ({ icon: Icon, number, label, delay }: { 
-  icon: React.ElementType; 
-  number: string; 
-  label: string;
-  delay: string;
-}) => (
-  <div 
-    className="liquid-glass-card-v2 rounded-2xl p-6 flex flex-col items-center text-center opacity-0 animate-fade-in-up"
-    style={{ animationDelay: delay }}
-  >
-    <div className="w-12 h-12 rounded-xl gradient-greek opacity-80 flex items-center justify-center mb-4">
-      <Icon className="h-6 w-6 text-primary-foreground" />
-    </div>
-    <div className="font-display text-2xl sm:text-4xl font-bold text-gradient-aurora mb-1 pb-1" style={{ textShadow: '0 0 30px hsl(234 89% 74% / 0.2)' }}>{number}</div>
-    <div className="text-sm text-muted-foreground">{label}</div>
-  </div>
-);
-
-// Topic card
-const TopicCard = ({ topic, index, isExpanded, onToggle }: { topic: any; index: number; isExpanded: boolean; onToggle: () => void }) => {
-  const Icon = topic.icon;
-  const colorClasses: Record<string, string> = {
-    history: 'hover:border-history/40',
-    culture: 'hover:border-culture/40',
-    laws: 'hover:border-laws/40',
-    geography: 'hover:border-geography/40',
-  };
-  const iconColorClasses: Record<string, string> = {
-    history: 'bg-history/15 text-history group-hover:bg-history group-hover:text-primary-foreground',
-    culture: 'bg-culture/15 text-culture group-hover:bg-culture group-hover:text-primary-foreground',
-    laws: 'bg-laws/15 text-laws group-hover:bg-laws group-hover:text-primary-foreground',
-    geography: 'bg-geography/15 text-geography group-hover:bg-geography group-hover:text-primary-foreground',
-  };
-  const accentColors: Record<string, string> = {
-    history: 'bg-history',
-    culture: 'bg-culture',
-    laws: 'bg-laws',
-    geography: 'bg-geography',
-  };
-  const bgGradients: Record<string, string> = {
-    history: 'radial-gradient(ellipse at 80% 0%, hsl(210 100% 62% / 0.06) 0%, transparent 60%)',
-    culture: 'radial-gradient(ellipse at 80% 0%, hsl(280 70% 68% / 0.06) 0%, transparent 60%)',
-    laws: 'radial-gradient(ellipse at 80% 0%, hsl(145 60% 55% / 0.06) 0%, transparent 60%)',
-    geography: 'radial-gradient(ellipse at 80% 0%, hsl(35 95% 60% / 0.06) 0%, transparent 60%)',
-  };
-  
-  return (
-    <div 
-      className={`group relative liquid-glass-card-v2 rounded-2xl ${colorClasses[topic.id]} 
-        p-5 sm:p-6 text-left opacity-0 animate-fade-in-up cursor-pointer`}
-      style={{ animationDelay: `${200 + index * 100}ms`, backgroundImage: bgGradients[topic.id] }}
-      onClick={onToggle}
-    >
-      <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-full ${accentColors[topic.id]} opacity-50`} />
-      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${iconColorClasses[topic.id]} flex items-center justify-center mb-3 sm:mb-4
-        transition-all duration-500 spring-transition group-hover:scale-110 group-hover:rotate-3`}>
-        <Icon className="h-6 w-6 sm:h-7 sm:w-7 transition-colors duration-300" />
-      </div>
-      <h3 className="font-display text-lg sm:text-xl font-semibold text-foreground mb-2">{topic.title}</h3>
-      <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">{topic.description}</p>
-      {/* Details: hover on desktop, click on mobile */}
-      <div className={`overflow-hidden transition-all duration-500 ease-out
-        ${isExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0 sm:group-hover:max-h-40 sm:group-hover:opacity-100'}`}>
-        <ul className="mt-3 space-y-1 border-t border-border/30 pt-3">
-          {topic.details?.map((item: string, i: number) => (
-            <li key={i} className="text-xs text-muted-foreground/80 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className={`absolute bottom-5 sm:bottom-6 right-5 sm:right-6 transform transition-all duration-500 spring-transition
-        ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 sm:group-hover:opacity-100 sm:group-hover:translate-x-0'}`}>
-        <ArrowRight className="h-5 w-5 text-primary" />
-      </div>
-    </div>
-  );
-};
-
-// Learning mode card
-const ModeCard = ({ mode, index }: { mode: any; index: number }) => {
-  const Icon = mode.icon;
-  
-  return (
-    <div 
-      className="group relative liquid-glass-card-v2 rounded-2xl p-6 text-left opacity-0 animate-fade-in-up cursor-pointer"
-      style={{ animationDelay: `${300 + index * 100}ms` }}
-    >
-      <span className="absolute top-3 right-4 text-5xl font-bold text-foreground/[0.04] font-display select-none">
-        {String(index + 1).padStart(2, '0')}
-      </span>
-      <div className="w-11 h-11 rounded-xl glass-button-v2 flex items-center justify-center mb-4
-        transition-all duration-500 spring-transition group-hover:gradient-greek group-hover:shadow-lg group-hover:shadow-primary/20">
-        <Icon className="h-5 w-5 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-      </div>
-      <h3 className="font-display text-lg font-semibold text-foreground mb-2">{mode.title}</h3>
-      <p className="text-muted-foreground text-sm">{mode.description}</p>
-    </div>
-  );
-};
+const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export default function Index() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
-  const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
 
   const { data: questionsCount } = useQuery({
     queryKey: ['questions-count'],
@@ -165,245 +30,344 @@ export default function Index() {
     },
   });
 
-  const topicDetails: Record<string, string[]> = language === 'ru' 
-    ? {
-        history: ['Древняя Эллада и Античность', 'Византийская империя', 'Османский период', 'Война за независимость', 'Современная Греция и ЕС'],
-        culture: ['Национальные праздники', 'Православные традиции', 'Греческая кухня', 'Музыка и танцы', 'Символы и обычаи'],
-        laws: ['Конституция Греции', 'Права и обязанности граждан', 'Структура правительства', 'Избирательная система', 'Процесс натурализации'],
-        geography: ['Регионы и префектуры', 'Крупные города', 'Острова и архипелаги', 'Горы и реки', 'Климат и природа'],
-      }
-    : {
-        history: ['Αρχαία Ελλάδα', 'Βυζαντινή Αυτοκρατορία', 'Οθωμανική περίοδος', 'Πόλεμος Ανεξαρτησίας', 'Σύγχρονη Ελλάδα και ΕΕ'],
-        culture: ['Εθνικές εορτές', 'Ορθόδοξες παραδόσεις', 'Ελληνική κουζίνα', 'Μουσική και χοροί', 'Σύμβολα και έθιμα'],
-        laws: ['Σύνταγμα της Ελλάδας', 'Δικαιώματα και υποχρεώσεις', 'Δομή κυβέρνησης', 'Εκλογικό σύστημα', 'Διαδικασία πολιτογράφησης'],
-        geography: ['Περιφέρειες', 'Μεγάλες πόλεις', 'Νησιά και αρχιπελάγη', 'Βουνά και ποτάμια', 'Κλίμα και φύση'],
-      };
+  const { data: studyStats } = useQuery({
+    queryKey: ['index-study-stats', user?.id],
+    queryFn: async () => {
+      const [progressRes, sessionsRes] = await Promise.all([
+        supabase.from('user_progress').select('correct_count, incorrect_count, questions(topic)').eq('user_id', user!.id),
+        supabase.from('study_sessions').select('duration_seconds, started_at').eq('user_id', user!.id),
+      ]);
+      const progress = progressRes.data || [];
+      const sessions = sessionsRes.data || [];
 
-  const topics = [
-    { id: 'history', title: t('topic.history'), description: t('topic.history.desc'), icon: History, details: topicDetails.history },
-    { id: 'culture', title: t('topic.culture'), description: t('topic.culture.desc'), icon: Palette, details: topicDetails.culture },
-    { id: 'laws', title: t('topic.laws'), description: t('topic.laws.desc'), icon: Scale, details: topicDetails.laws },
-    { id: 'geography', title: t('topic.geography'), description: t('topic.geography.desc'), icon: MapPin, details: topicDetails.geography },
-  ];
+      const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
+      const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
+      const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
+      const mastered = progress.filter(p => (p.correct_count || 0) >= 3).length;
+      const totalSeconds = sessions.reduce((s, se) => s + (se.duration_seconds || 0), 0);
+      const hours = Math.floor(totalSeconds / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const studyTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
-  const learningModes = [
-    { id: 'flashcards', title: t('mode.flashcards'), description: t('mode.flashcards.desc'), icon: Layers },
-    { id: 'quiz', title: t('mode.quiz'), description: t('mode.quiz.desc'), icon: BookOpen },
-    { id: 'exam', title: t('mode.exam'), description: t('mode.exam.desc'), icon: GraduationCap },
-  ];
+      const topicStats: Record<string, { c: number; total: number }> = {};
+      progress.forEach((p: any) => {
+        const topic = p.questions?.topic;
+        if (!topic) return;
+        if (!topicStats[topic]) topicStats[topic] = { c: 0, total: 0 };
+        topicStats[topic].c += p.correct_count || 0;
+        topicStats[topic].total += (p.correct_count || 0) + (p.incorrect_count || 0);
+      });
+      const topicAccuracy = Object.fromEntries(
+        Object.entries(topicStats).map(([k, v]) => [k, v.total > 0 ? Math.round(v.c / v.total * 100) : 0])
+      );
 
-  const features = language === 'ru' 
+      const now = new Date();
+      const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(d.getDate() - 6 + i);
+        return d.toISOString().split('T')[0];
+      });
+      const sessionDays = new Set(sessions.map((s: any) => s.started_at.split('T')[0]));
+      const streak = weekDays.map(day => sessionDays.has(day));
+      const streakCount = streak.filter(Boolean).length;
+
+      return { accuracy, mastered, studyTime, topicAccuracy, streak, streakCount };
+    },
+    enabled: !!user,
+  });
+
+  const features = language === 'ru'
     ? ['Более 300 вопросов', 'Отслеживание прогресса', '3 режима изучения', 'Симуляция экзамена']
     : ['Πάνω από 300 ερωτήσεις', 'Παρακολούθηση προόδου', '3 τρόποι μάθησης', 'Προσομοίωση εξέτασης'];
 
-  const stats = language === 'ru'
-    ? [
-        { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Вопросов' },
-        { icon: Sparkles, number: 'Бесплатно', label: 'Полный доступ навсегда' },
-        { icon: Clock, number: '24/7', label: 'Доступ' },
-      ]
-    : [
-        { icon: BookOpen, number: `${questionsCount || 0}`, label: 'Ερωτήσεις' },
-        { icon: Sparkles, number: 'Δωρεάν', label: 'Πλήρης πρόσβαση για πάντα' },
-        { icon: Clock, number: '24/7', label: 'Πρόσβαση' },
-      ];
+  // Authenticated Dashboard
+  if (user) {
+    return (
+      <Layout>
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 relative z-10">
 
-  return (
-    <Layout>
-      {/* Hero + Stats wrapper with shared aurora background */}
-      <div className="relative overflow-hidden">
-      {/* Aurora mesh background spanning hero + stats */}
-      <div className="absolute inset-0 aurora-bg" />
-      <div className="absolute inset-0 hero-grid-pattern opacity-40" />
-
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center">
-        {/* Aurora blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <AuroraBlob className="w-[400px] h-[400px] sm:w-[700px] sm:h-[700px] -top-32 -left-32" delay="0s" />
-          <AuroraBlob className="w-[300px] h-[300px] sm:w-[550px] sm:h-[550px] top-1/4 -right-32" delay="3s" />
-          <AuroraBlob className="hidden sm:block w-[450px] h-[450px] bottom-0 left-1/3" delay="6s" />
-        </div>
-
-        <div className="container relative z-10">
-          <div className="mx-auto max-w-4xl text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-button-v2 animated-border mb-8 opacity-0 animate-fade-in-up">
-              <Sparkles className="h-4 w-4 text-accent-foreground" />
-              <span className="text-sm font-medium text-foreground">
-                {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για την ελληνική ιθαγένεια'}
+          {/* === SECTION 1: 3-column top grid === */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {/* Greeting */}
+            <div className="glass-panel flex flex-col justify-center">
+              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>
+                {language === 'ru' ? 'Добро пожаловать' : 'Welcome back'}
               </span>
-            </div>
-
-            {/* Heading with aurora gradient text + glow */}
-            <h1 className="font-display font-bold tracking-tight text-foreground opacity-0 animate-fade-in-up animate-delay-100">
-              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl hero-glow-text">
-                {language === 'ru' ? 'Ваш путь к' : 'Ο δρόμος σας προς την'}
-              </span>
-              <span className="block mt-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gradient-aurora pb-2 hero-glow-text">
-                {language === 'ru' ? 'греческому гражданству' : 'ελληνική ιθαγένεια'}
-              </span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto opacity-0 animate-fade-in-up animate-delay-200">
-              {t('index.hero.subtitle')}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-up animate-delay-300">
-              {user ? (
-                <Link to="/learn">
-                  <Button size="lg" className="w-full sm:w-auto gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
-                    {t('index.startLearning')}
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link to="/register">
-                    <Button size="lg" className="w-full sm:w-auto gradient-greek text-primary-foreground gap-2 px-8 py-6 text-lg shadow-xl shadow-primary/20 hover:shadow-primary/35 transition-all duration-500 spring-transition rounded-xl animate-pulse-glow">
-                      {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'}
-                      <ArrowRight className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                  <Link to="/login">
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-lg glass-button-v2 rounded-xl">
-                      {language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Feature pills */}
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 items-stretch opacity-0 animate-fade-in-up animate-delay-400">
-              {features.map((feature, i) => (
-                <div
-                  key={i}
-                  className="glass-button-v2 rounded-full py-2.5 px-4 text-sm text-muted-foreground grid grid-cols-[1rem_1fr_1rem] items-center gap-2 min-h-10"
-                >
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-center leading-snug">{feature}</span>
-                  <span className="h-4 w-4" aria-hidden="true" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll indicator - hidden on mobile */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up animate-delay-700 hidden sm:block">
-          <div className="w-7 h-11 rounded-full glass-button-v2 flex justify-center pt-2.5">
-            <div className="w-1.5 h-3 rounded-full bg-primary/50 animate-float" />
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="pt-8 pb-20 relative">
-        <div className="container relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {stats.map((stat, i) => (
-              <StatCard key={i} {...stat} delay={`${i * 150}ms`} />
-            ))}
-          </div>
-        </div>
-      </section>
-      </div>
-
-      {/* Topics Section */}
-      <section className="py-16 relative overflow-hidden">
-        <AuroraBlob className="w-[400px] h-[400px] -top-24 -right-24" delay="0s" />
-        <div className="container relative">
-          <ScrollReveal>
-            <div className="text-center mb-16 px-4">
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-                {language === 'ru' ? 'Темы для изучения' : 'Θέματα για μελέτη'}
-              </h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                {language === 'ru' 
-                  ? 'Выберите тему и начните подготовку к экзамену' 
-                  : 'Επιλέξτε ένα θέμα και ξεκινήστε την προετοιμασία για την εξέταση'}
+              <h1 style={{ fontSize: '28px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
+                {language === 'ru' ? 'Γεια σου, ' : 'Γεια σου, '}
+                {user.email?.split('@')[0] || (language === 'ru' ? 'друг' : 'φίλε')}!
+              </h1>
+              <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '8px' }}>
+                {language === 'ru' ? 'Продолжай готовиться к гражданству' : 'Συνέχισε να προετοιμάζεσαι για την ιθαγένεια'}
               </p>
-            </div>
-          </ScrollReveal>
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {topics.map((topic, i) => (
-              <TopicCard 
-                key={topic.id} 
-                topic={topic} 
-                index={i} 
-                isExpanded={expandedTopic === topic.id}
-                onToggle={() => setExpandedTopic(expandedTopic === topic.id ? null : topic.id)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Learning Modes Section */}
-      <section className="py-16 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
-        <AuroraBlob className="w-[300px] h-[300px] top-1/4 -left-24" delay="2s" />
-        <div className="container relative">
-          <ScrollReveal>
-            <div className="text-center mb-16 px-4">
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-                {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
-              </h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                {language === 'ru' 
-                  ? 'Различные способы изучения материала для максимальной эффективности' 
-                  : 'Διάφοροι τρόποι μελέτης για μέγιστη αποτελεσματικότητα'}
-              </p>
-            </div>
-          </ScrollReveal>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-            {learningModes.map((mode, i) => (
-              <ModeCard key={mode.id} mode={mode} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Study Time Widget for logged-in users */}
-      {user && (
-        <section className="py-16 relative">
-          <div className="container relative max-w-2xl mx-auto">
-            <StudyTimeWidget />
-          </div>
-        </section>
-      )}
-
-      {/* CTA Section */}
-      {!user && (
-        <section className="py-12 sm:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 gradient-greek opacity-90" />
-          <AuroraBlob className="w-[450px] h-[450px] -top-32 right-0 opacity-30" delay="0s" />
-          <AuroraBlob className="w-[350px] h-[350px] bottom-0 -left-24 opacity-20" delay="4s" />
-          
-          <div className="container relative z-10 text-center px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-                {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
-              </h2>
-              <p className="text-primary-foreground/80 text-lg md:text-xl mb-10">
-                {language === 'ru' 
-                  ? 'Зарегистрируйтесь бесплатно и получите доступ ко всем материалам для подготовки к экзамену на гражданство Греции' 
-                  : 'Εγγραφείτε δωρεάν και αποκτήστε πρόσβαση σε όλο το υλικό για την προετοιμασία για την εξέταση ελληνικής ιθαγένειας'}
-              </p>
-              <Link to="/register">
-                <Button size="lg" variant="secondary" className="px-10 py-6 text-lg gap-2 shadow-2xl hover:shadow-primary/20 transition-all duration-500 spring-transition hover:-translate-y-1 rounded-xl">
-                  {language === 'ru' ? 'Создать аккаунт' : 'Δημιουργία λογαριασμού'} 
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
+              <Link to="/learn" style={{ marginTop: '20px', display: 'inline-flex' }}>
+                <button className="btn-pebble">
+                  {language === 'ru' ? 'Учиться' : 'Μελέτη'}
+                  <ArrowRight style={{ width: '14px', height: '14px' }} />
+                </button>
               </Link>
             </div>
-          </div>
-        </section>
-      )}
 
+            {/* Weekly Streak */}
+            <div className="glass-panel flex flex-col gap-3">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                  {language === 'ru' ? 'Серия недели' : 'Weekly Streak'}
+                </span>
+                <span style={{ fontWeight: 700, fontSize: '18px', color: '#2F3532' }}>
+                  {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'days'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
+                {WEEK_DAYS.map((day, i) => {
+                  const isActive = studyStats?.streak[i];
+                  const isToday = i === new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+                  return (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                      <div className={`pebble${isActive ? (i === (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) ? ' pebble-current' : ' pebble-active') : ''}`}
+                        style={{ width: '30px', height: '30px' }}
+                      />
+                      <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Focus of Day */}
+            <div className="glass-panel flex flex-col justify-between">
+              <div>
+                <span style={{
+                  display: 'inline-block',
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  background: 'rgba(255,255,255,0.6)',
+                  color: '#5B8DB8',
+                  marginBottom: '10px',
+                }}>
+                  {language === 'ru' ? 'Тема дня' : 'Focus of the Day'}
+                </span>
+                <h3 style={{ fontWeight: 500, fontSize: '18px', color: '#2F3532', lineHeight: 1.3 }}>
+                  {language === 'ru' ? 'История Греции' : 'War of Independence'}
+                </h3>
+                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
+                  {language === 'ru' ? 'Изучайте ключевые события' : 'Review key historical events'}
+                </p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '20px' }}>
+                <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+                  {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'cards'}` : '—'}
+                </span>
+                <Link to="/learn/history/flashcards">
+                  <button className="btn-pebble" style={{ padding: '8px 14px', fontSize: '13px' }}>
+                    {language === 'ru' ? 'Повторить' : 'Review'}
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* === SECTION 2: Stats row === */}
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            {[
+              { label: language === 'ru' ? 'Освоено карточек' : 'Mastered Cards', value: studyStats?.mastered ?? 0 },
+              { label: language === 'ru' ? 'Время учёбы' : 'Study Time', value: studyStats?.studyTime ?? '0m' },
+              { label: language === 'ru' ? 'Точность' : 'Accuracy', value: `${studyStats?.accuracy ?? 0}%` },
+            ].map(s => (
+              <div key={s.label} className="glass-panel">
+                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                  {s.label}
+                </span>
+                <div style={{ fontSize: '36px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
+                  {s.value}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* === SECTION 3: Study Topics === */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '20px' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532' }}>
+              {language === 'ru' ? 'Темы для изучения' : 'Study Topics'}
+            </h2>
+            <Link to="/learn" style={{ fontSize: '13px', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
+              {language === 'ru' ? 'Все темы' : 'View all'}
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {TOPICS.map(topic => {
+              const acc = studyStats?.topicAccuracy[topic.id] ?? 0;
+              return (
+                <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
+                  <div className="glass-panel" style={{ height: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '20px' }}>
+                    <div>
+                      <div style={{
+                        width: '44px', height: '44px', borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.5)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '20px', marginBottom: '10px',
+                      }}>
+                        {topic.emoji}
+                      </div>
+                      <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{topic.subtitle}</div>
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '5px', color: 'hsl(var(--muted-foreground))' }}>
+                        <span>{language === 'ru' ? 'Прогресс' : 'Progress'}</span>
+                        <span>{acc}%</span>
+                      </div>
+                      <div style={{ height: '4px', background: 'rgba(0,0,0,0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
+                        <div className={`progress-fill-${topic.id}`} style={{ height: '100%', width: `${acc}%`, borderRadius: '9999px', transition: 'width 0.5s ease' }} />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* === SECTION 4: Learning Modes === */}
+          <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
+            {language === 'ru' ? 'Режимы обучения' : 'Learning Modes'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {[
+              { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Flip cards to learn' },
+              { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : '4-choice multiple choice' },
+              { emoji: '🎓', id: 'exam',       href: '/learn', desc: language === 'ru' ? 'Симуляция экзамена' : 'Simulate the real exam' },
+            ].map(mode => (
+              <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
+                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
+                  <div style={{
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    border: '1.5px solid rgba(47,53,50,0.12)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '22px', flexShrink: 0,
+                  }}>
+                    {mode.emoji}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 500, fontSize: '15px', color: '#2F3532' }}>{t(`mode.${mode.id}`)}</div>
+                    <div style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{mode.desc}</div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+        </div>
+      </Layout>
+    );
+  }
+
+  // Guest Landing Page
+  return (
+    <Layout>
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 relative z-10">
+
+        {/* Hero */}
+        <div className="glass-panel text-center max-w-2xl mx-auto mb-12" style={{ padding: '48px 40px' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            padding: '6px 16px', borderRadius: '9999px',
+            background: 'rgba(255,255,255,0.6)',
+            border: '1px solid rgba(255,255,255,0.7)',
+            fontSize: '13px', fontWeight: 500, color: '#2F3532',
+            marginBottom: '24px',
+          }}>
+            <span>🇬🇷</span>
+            {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για ελληνική ιθαγένεια'}
+          </div>
+
+          <h1 style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2, marginBottom: '16px' }}>
+            {language === 'ru' ? 'Ваш путь к греческому гражданству' : 'Ο δρόμος σας προς την ελληνική ιθαγένεια'}
+          </h1>
+
+          <p style={{ fontSize: '16px', color: 'hsl(var(--muted-foreground))', lineHeight: 1.6, marginBottom: '32px' }}>
+            {t('index.hero.subtitle')}
+          </p>
+
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/register">
+              <button className="btn-pebble" style={{ padding: '12px 28px', fontSize: '15px' }}>
+                {language === 'ru' ? 'Начать бесплатно' : 'Ξεκινήστε δωρεάν'}
+                <ArrowRight style={{ width: '16px', height: '16px' }} />
+              </button>
+            </Link>
+            <Link to="/login">
+              <button style={{
+                padding: '12px 28px', fontSize: '15px', fontWeight: 500,
+                background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(47,53,50,0.12)',
+                borderRadius: '14px', cursor: 'pointer', color: '#2F3532',
+                fontFamily: 'inherit',
+              }}>
+                {language === 'ru' ? 'У меня есть аккаунт' : 'Έχω λογαριασμό'}
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Feature pills */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
+          {features.map((feature, i) => (
+            <div key={i} className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 16px' }}>
+              <CheckCircle style={{ width: '16px', height: '16px', color: '#7D8A57', flexShrink: 0 }} />
+              <span style={{ fontSize: '13px', fontWeight: 500, color: '#2F3532' }}>{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {[
+            { emoji: '📖', value: `${questionsCount || 0}`, label: language === 'ru' ? 'Вопросов' : 'Questions' },
+            { emoji: '✨', value: language === 'ru' ? 'Бесплатно' : 'Δωρεάν', label: language === 'ru' ? 'Полный доступ навсегда' : 'Πλήρης πρόσβαση για πάντα' },
+            { emoji: '⏰', value: '24/7', label: language === 'ru' ? 'Доступ в любое время' : 'Πρόσβαση ανά πάσα στιγμή' },
+          ].map(s => (
+            <div key={s.label} className="glass-panel" style={{ textAlign: 'center', padding: '32px 24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>{s.emoji}</div>
+              <div style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532' }}>{s.value}</div>
+              <div style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '4px' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Topics preview */}
+        <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
+          {language === 'ru' ? 'Темы для изучения' : 'Study Topics'}
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {TOPICS.map(topic => (
+            <div key={topic.id} className="glass-panel" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '28px', marginBottom: '10px' }}>{topic.emoji}</div>
+              <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
+              <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '3px' }}>{topic.subtitle}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA bottom */}
+        <div className="glass-panel text-center" style={{ padding: '48px 32px' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 500, color: '#2F3532', marginBottom: '12px' }}>
+            {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
+          </h2>
+          <p style={{ fontSize: '15px', color: 'hsl(var(--muted-foreground))', marginBottom: '28px', maxWidth: '520px', margin: '0 auto 28px' }}>
+            {language === 'ru'
+              ? 'Зарегистрируйтесь бесплатно и получите доступ ко всем материалам'
+              : 'Εγγραφείτε δωρεάν και αποκτήστε πρόσβαση σε όλο το υλικό'}
+          </p>
+          <Link to="/register">
+            <button className="btn-pebble" style={{ padding: '14px 32px', fontSize: '15px' }}>
+              {language === 'ru' ? 'Создать аккаунт' : 'Δημιουργία λογαριασμού'}
+              <ArrowRight style={{ width: '16px', height: '16px' }} />
+            </button>
+          </Link>
+        </div>
+
+      </div>
     </Layout>
   );
 }
