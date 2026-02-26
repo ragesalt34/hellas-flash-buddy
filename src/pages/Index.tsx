@@ -5,7 +5,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
 
 const TOPICS = [
   { id: 'history',   emoji: '🏛️', subtitle: 'Modern & Ancient' },
@@ -14,7 +13,6 @@ const TOPICS = [
   { id: 'geography', emoji: '🗺️', subtitle: 'Regions & Cities' },
 ];
 
-const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export default function Index() {
   const { user } = useAuth();
@@ -51,7 +49,6 @@ export default function Index() {
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const mastered = progress.filter(p => p.is_known).length;
       const totalSeconds = sessions.reduce((s, se) => s + (se.duration_seconds || 0), 0);
       const hours = Math.floor(totalSeconds / 3600);
       const mins = Math.floor((totalSeconds % 3600) / 60);
@@ -68,59 +65,10 @@ export default function Index() {
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicSeen[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
-      const now = new Date();
-      const weekDays = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date(now);
-        d.setDate(d.getDate() - 6 + i);
-        return d.toISOString().split('T')[0];
-      });
-      const sessionDays = new Set(sessions.map((s: any) => s.started_at.split('T')[0]));
-      const streak = weekDays.map(day => sessionDays.has(day));
-      const streakCount = streak.filter(Boolean).length;
-
-      return { accuracy, mastered, studyTime, topicAccuracy, streak, streakCount };
+      return { accuracy, studyTime, topicAccuracy };
     },
     enabled: !!user,
   });
-
-  // Weekly Performance data
-  const { data: weeklyData } = useQuery({
-    queryKey: ['weekly-performance', user?.id],
-    queryFn: async () => {
-      const now = new Date();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - 6);
-      weekStart.setHours(0, 0, 0, 0);
-
-      const { data } = await supabase
-        .from('user_progress')
-        .select('last_reviewed_at, is_known')
-        .eq('user_id', user!.id)
-        .gte('last_reviewed_at', weekStart.toISOString());
-
-      const mastered = (data || []).filter((p: any) => p.is_known).length;
-
-      // Group by day of week (Mon=0..Sun=6)
-      const dayCounts = Array(7).fill(0);
-      (data || []).forEach((p: any) => {
-        if (!p.last_reviewed_at) return;
-        const d = new Date(p.last_reviewed_at);
-        const dayIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
-        dayCounts[dayIdx]++;
-      });
-
-      // Get all mastered for ranking
-      const { count: totalMastered } = await supabase
-        .from('user_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user!.id)
-        .eq('is_known', true);
-
-      return { dayCounts, mastered: totalMastered ?? mastered };
-    },
-    enabled: !!user,
-  });
-
 
   const features = language === 'ru'
     ? ['Более 300 вопросов', 'Отслеживание прогресса', '3 режима изучения', 'Симуляция экзамена']
@@ -132,8 +80,8 @@ export default function Index() {
       <Layout>
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 relative z-10">
 
-          {/* === SECTION 1: 3-column top grid === */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {/* === SECTION 1: 2-column top grid === */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center">
               <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>
@@ -152,33 +100,6 @@ export default function Index() {
                   <ArrowRight style={{ width: '14px', height: '14px' }} />
                 </button>
               </Link>
-            </div>
-
-            {/* Weekly Streak */}
-            <div className="glass-panel flex flex-col gap-3">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
-                  {language === 'ru' ? 'Серия недели' : 'Weekly Streak'}
-                </span>
-                <span style={{ fontWeight: 700, fontSize: '18px', color: '#2F3532' }}>
-                  {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'days'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
-                {WEEK_DAYS.map((day, i) => {
-                  const isActive = studyStats?.streak[i];
-                  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
-                  const isToday = i === todayIdx;
-                  return (
-                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                      <div className={`pebble${isActive ? (i === (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) ? ' pebble-current' : ' pebble-active') : ''}`}
-                        style={{ width: '30px', height: '30px' }}
-                      />
-                      <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
 
             {/* Focus of Day */}
@@ -217,9 +138,8 @@ export default function Index() {
           </div>
 
           {/* === SECTION 2: Stats row === */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-2 gap-6 mb-8">
             {[
-              { label: language === 'ru' ? 'Освоено карточек' : 'Mastered Cards', value: studyStats?.mastered ?? 0 },
               { label: language === 'ru' ? 'Время учёбы' : 'Study Time', value: studyStats?.studyTime ?? '0m' },
               { label: language === 'ru' ? 'Точность' : 'Accuracy', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
@@ -303,73 +223,6 @@ export default function Index() {
                 </div>
               </Link>
             ))}
-          </div>
-
-          {/* === SECTION 6: Weekly Performance === */}
-          <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
-            {language === 'ru' ? 'Недельная активность' : 'Weekly Performance'}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {/* Bar chart panel */}
-            <div className="glass-panel md:col-span-2">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '20px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>
-                  {language === 'ru' ? 'Активность' : 'Study Activity'}
-                </span>
-                <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
-                  {language === 'ru' ? 'Эта неделя' : 'This Week'}
-                </span>
-              </div>
-              <div style={{ height: '160px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={(weeklyData?.dayCounts ?? Array(7).fill(0)).map((v: number, i: number) => ({
-                      day: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],
-                      count: v,
-                    }))}
-                    margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
-                    barCategoryGap="30%"
-                  >
-                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                      {(weeklyData?.dayCounts ?? Array(7).fill(0)).map((_: number, index: number) => (
-                        <Cell key={index} fill={`hsl(var(--history) / ${(weeklyData?.dayCounts?.[index] ?? 0) > 0 ? '0.7' : '0.12'})`} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', paddingLeft: '2px', paddingRight: '2px' }}>
-                {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-                  <span key={d} style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 600, flex: 1, textAlign: 'center' }}>{d}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Badge panels */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '28px' }}>🏆</span>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '17px', color: 'hsl(var(--foreground))' }}>
-                    {language === 'ru' ? 'Топ 5%' : 'Top 5%'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
-                    {language === 'ru' ? 'Среди начинающих' : 'Among beginners'}
-                  </div>
-                </div>
-              </div>
-              <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '28px' }}>🔥</span>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '17px', color: 'hsl(var(--foreground))' }}>
-                    {weeklyData?.mastered ?? 0}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
-                    {language === 'ru' ? 'Освоено карточек' : 'Cards mastered'}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
         </div>
