@@ -434,17 +434,24 @@
     transform: translateY(-3px);
   }
 
-  /* Flashcard — clean elevated card (Quizlet-style) */
+  /* Flashcard-specific glass: NO hover transform */
   .flashcard-glass {
-    background: hsl(var(--card));
-    border: 1px solid hsl(0 0% 100% / 0.08);
-    border-radius: 1.25rem;
-    box-shadow: 0 4px 24px hsl(0 0% 0% / 0.25), 0 1px 3px hsl(0 0% 0% / 0.15);
-    transition: box-shadow 0.3s ease;
+    background: linear-gradient(
+      145deg,
+      hsl(var(--card) / 0.75) 0%,
+      hsl(var(--card) / 0.5) 100%
+    );
+    backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    border: none !important;
+    box-shadow: 0 4px 24px hsl(var(--primary) / 0.05);
+    transition: box-shadow 0.4s;
   }
 
   .flashcard-glass:hover {
-    box-shadow: 0 8px 40px hsl(0 0% 0% / 0.3), 0 2px 6px hsl(0 0% 0% / 0.2);
+    box-shadow:
+      0 12px 48px hsl(var(--primary) / 0.1),
+      0 0 30px hsl(var(--primary) / 0.04);
   }
 
   .liquid-glass-button {
