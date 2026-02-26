@@ -1,40 +1,30 @@
 
-## Add Weekly Performance & Active Flashcard Sections to Dashboard
+## Упрощение зоны управления на странице Flashcards
 
-### What the design adds to the existing dashboard
+### Проблема
+После переворота карточки под ней выстраиваются четыре отдельных ряда:
+1. Кнопки «Назад» / «Далее»
+2. Кнопки «Не знаю» / «Знаю» (появляются только после переворота)
+3. Счётчики 👍 N / 👎 N
 
-The provided mockup matches the current app's visual style exactly (bone background, glass panels, DM Sans, topic colors). The dashboard (`/`) already has the greeting, streak, focus card, stats row, and topic grid. The design introduces two new sections currently missing from the home page:
+Это слишком много кнопок подряд — визуально шумно и неудобно.
 
-1. **Active Session** — an embedded flip-card showing a random due flashcard, with ✕ / ↺ / ✓ controls
-2. **Weekly Performance** — a bar chart (Mon–Sun activity) + two achievement badges (ranking & mastered count)
+### Решение
+Объединить всё в **два чёткие слоя**, как в референсном дизайне:
 
----
+**Слой 1 — навигация** (всегда виден): «← Назад» и «Далее →» — два ghost-pill рядом по центру.
 
-### Plan
+**Слой 2 — оценка** (появляется только после переворота): «👎 Не знаю» (красный) и «👍 Знаю» (зелёный) — два pill-button рядом по центру. Счётчики убираются из отдельной строки и **встраиваются прямо в кнопки** в виде маленького числа рядом с иконкой, или полностью убираются (итоговый счёт и так виден на экране завершения сессии).
 
-#### 1. Add "Active Session" mini-flashcard to Index.tsx
+Конкретный вариант — убрать отдельный ряд счётчиков, разместив текущие значения knownCount / unknownCount внутри кнопок «Знаю (N)» / «Не знаю (N)» — так экономится один ряд и данные не теряются.
 
-- Pull one random flashcard from the user's progress (prioritising cards that are due for review today, falling back to any unseen card)
-- Render a 3D flip-card inside a glass panel using the existing CSS 3D technique already present in `Flashcards.tsx`
-- Three controls below: ✕ (wrong → mark incorrect), ↺ (skip), ✓ (correct → mark correct) — reusing the existing `upsert_progress` RPC
-- Card shows the question face ("History • topic tag" + Greek question text) and answer face (Greek answer + transliteration)
+### Что меняется в коде
 
-#### 2. Add "Weekly Performance" section to Index.tsx
+**Файл:** `src/pages/Flashcards.tsx`, строки 556–654.
 
-- A glass panel showing a 7-bar chart (Mon–Sun of current week) using Recharts `BarChart` — same library already used in Stats.tsx
-- Bar height = number of questions answered that day (from `user_progress.last_reviewed_at` grouped by day of week)
-- Two right-side badge panels:
-  - 🏆 Ranking pill (computes percentile from total `user_progress` mastered count across all users, or shows a static encouraging label if insufficient data)
-  - 🔥 Cards mastered count
+1. **Убрать** отдельный `div` со счётчиками (строки 644–653).
+2. **Переместить** счётчики внутрь текста кнопок «Знаю» / «Не знаю»: `👍 Знаю · 3` и `👎 Не знаю · 1`.
+3. **Уменьшить** отступ между рядом навигации и рядом оценки с 12px до 8px.
+4. **Оставить** `visibility: hidden` для ряда оценки пока карточка не перевёрнута — поведение не меняется.
 
-#### 3. Technical details
-
-- All new queries use existing `supabase` client and existing tables: `user_progress`, `questions`
-- No DB migrations needed
-- Flip-card CSS is already defined in `index.css` (`.flashcard-face`, `.flipped` classes) — reuse directly
-- The new sections are appended below the existing Learning Modes section in the authenticated branch of `Index.tsx`
-- Bar chart uses `recharts` `BarChart` already imported in the project
-
-#### Files changed
-
-- `src/pages/Index.tsx` — add two new sections (Active Session + Weekly Performance) to the authenticated dashboard view only
+Итого: 3 ряда → 2 ряда, один экономится за счёт встраивания счётчиков в кнопки.
