@@ -135,6 +135,14 @@ export default function Flashcards() {
     const fetchQuestions = async () => {
       setIsLoading(true);
       againAppendedRef.current = new Set();
+      // Reset session state so a language change mid-session starts fresh
+      setCurrentIndex(0);
+      setIsFlipped(false);
+      setAgainCount(0);
+      setGoodCount(0);
+      setEasyCount(0);
+      setIsFinished(false);
+      setRatedIndices(new Set());
 
       const [questionsResult, progressResult] = await Promise.all([
         supabase.from('questions').select('*').eq('topic', validTopic),
@@ -215,6 +223,7 @@ export default function Flashcards() {
 
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
+    setOriginalCount(questions.length);
     setCurrentIndex(0);
     setIsFlipped(false);
     setAgainCount(0);
