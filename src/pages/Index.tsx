@@ -68,12 +68,14 @@ export default function Index() {
       );
 
       const now = new Date();
+      const toLocalDateKey = (d: Date) =>
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(now);
         d.setDate(d.getDate() - 6 + i);
-        return d.toISOString().split('T')[0];
+        return toLocalDateKey(d);
       });
-      const sessionDays = new Set(sessions.map((s: any) => s.started_at.split('T')[0]));
+      const sessionDays = new Set(sessions.map((s: any) => toLocalDateKey(new Date(s.started_at))));
       const streak = weekDays.map(day => sessionDays.has(day));
       const streakCount = streak.filter(Boolean).length;
 
@@ -100,7 +102,7 @@ export default function Index() {
                 {language === 'ru' ? 'Добро пожаловать' : 'Welcome back'}
               </span>
               <h1 style={{ fontSize: '28px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
-                {language === 'ru' ? 'Γεια σου, ' : 'Γεια σου, '}
+                {language === 'ru' ? 'Привет, ' : 'Γεια σου, '}
                 {user.email?.split('@')[0] || (language === 'ru' ? 'друг' : 'φίλε')}!
               </h1>
               <p style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))', marginTop: '8px' }}>

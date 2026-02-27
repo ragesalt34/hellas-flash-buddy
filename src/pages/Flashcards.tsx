@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
@@ -135,28 +135,28 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  const handleFlip = () => setIsFlipped(!isFlipped);
+  const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setIsFlipped(false);
     } else {
       setIsFinished(true);
     }
-  };
+  }, [currentIndex, questions.length]);
 
 
-  const handleKnow = () => {
+  const handleKnow = useCallback(() => {
     if (!ratedIndices.has(currentIndex)) {
       setRatedIndices(prev => new Set([...prev, currentIndex]));
       setKnownCount(prev => prev + 1);
       if (user) void upsertProgress(user.id, questions[currentIndex].id, true);
     }
     goToNext();
-  };
+  }, [currentIndex, questions, ratedIndices, user, upsertProgress, goToNext]);
 
-  const handleDontKnow = () => {
+  const handleDontKnow = useCallback(() => {
     if (!ratedIndices.has(currentIndex)) {
       setRatedIndices(prev => new Set([...prev, currentIndex]));
       setUnknownCount(prev => prev + 1);
@@ -164,7 +164,7 @@ export default function Flashcards() {
       if (user) void upsertProgress(user.id, questions[currentIndex].id, false);
     }
     goToNext();
-  };
+  }, [currentIndex, questions, ratedIndices, user, upsertProgress, goToNext]);
 
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
@@ -220,7 +220,7 @@ export default function Flashcards() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isFinished, isLoading, questions.length, isFlipped, currentIndex, ratedIndices]);
+  }, [isFinished, isLoading, isFlipped, handleFlip, handleKnow, handleDontKnow]);
 
   if (authLoading) {
     return (
