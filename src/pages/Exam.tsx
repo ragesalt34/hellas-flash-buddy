@@ -158,14 +158,14 @@ export default function Exam() {
         }
         
         // Sound warnings
-        if (prev === 300 && !warned5min.current) {
+        if (prev <= 300 && prev > 299 && !warned5min.current) {
           warned5min.current = true;
           toast({
             title: language === 'ru' ? '⏰ Осталось 5 минут!' : '⏰ 5 λεπτά απομένουν!',
             variant: 'default',
           });
         }
-        if (prev === 60 && !warned1min.current) {
+        if (prev <= 60 && prev > 59 && !warned1min.current) {
           warned1min.current = true;
           toast({
             title: language === 'ru' ? '⚠️ Осталась 1 минута!' : '⚠️ 1 λεπτό απομένει!',
@@ -178,7 +178,7 @@ export default function Exam() {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [examStarted, isFinished, settings.timeLimit, language, toast]);
+  }, [examStarted, isFinished, settings.timeLimit]);
 
   // Track time per question
   useEffect(() => {
