@@ -1,41 +1,38 @@
 
-## Fix Topic Card Buttons — "Тест" Should Not Look Pre-Pressed
+## Проблема
 
-### Problem
-The "Тест" button uses `.learn-action-primary` which gives it a dark filled background (`#2F3532`) — same as a "pressed/active" state. Both buttons should look equally neutral and unselected by default, with the "Тест" button distinguished only by a subtle visual cue (not a fully filled dark style).
+Кнопка озвучки расположена абсолютно (`position: absolute; top: 14px; right: 14px`) поверх карточки, но бейдж темы при этом центрируется без учёта кнопки — в результате кнопка визуально «торчит» отдельно и нарушает симметрию верхней части карточки.
 
-### Solution: Two equally light pill buttons with subtle differentiation
+## Решение
 
-Replace the current approach:
-- **"Карточки"** — glass/white pill (current, keep as-is)
-- **"Тест"** — dark filled pill (REMOVE this, looks "active/selected")
+Переработать верхнюю часть карточки (front и back) — заменить абсолютное позиционирование на **flex-строку** с тремя зонами:
 
-New approach — both buttons are light glass pills, but "Тест" gets a slightly darker border and bold text, or a thin accent outline to differentiate it without looking "pressed":
-
-**Option A (recommended):** Both buttons are the same ghost/glass pill style. "Тест" gets a slightly stronger border and slightly darker text color so it's visually distinct but not "active-looking".
-
-**Option B:** "Карточки" is a ghost pill, "Тест" is a soft-colored pill with one of the topic accent colors (thin fill, not dark).
-
-Going with **Option A** — clean, minimal, consistent with the design language:
-
-```css
-/* Both buttons — glass pill, same base */
-.learn-action-btn {
-  background: rgba(255,255,255,0.55);
-  border: 1.5px solid rgba(47,53,50,0.12);
-  color: var(--text-dark);
-}
-
-/* Тест — slightly stronger border, no dark fill */
-.learn-action-primary {
-  background: rgba(255,255,255,0.55);
-  border: 1.5px solid rgba(47,53,50,0.30);
-  color: #2F3532;
-  font-weight: 700;
-}
+```text
+┌──────────────────────────────────────────┐
+│  [пустая зона 32px]  [БЕЙДЖ ТЕМЫ]  [🔊]  │
+└──────────────────────────────────────────┘
 ```
 
-### File to edit
-**`src/pages/Learn.tsx`** — only the `.learn-action-primary` CSS block (lines 350–359).
+Конкретно: обернуть заголовочную область в `<div>` с `display: flex; align-items: center; padding: 20px 20px 0`:
+- Слева — `div` с `width: 32px` (пустой спейсер для симметрии)
+- По центру — `flex: 1; text-align: center` — бейдж темы
+- Справа — кнопка спикера `32px × 32px` (убрать `position: absolute`)
 
-Change `background: #2F3532; color: #fff` → `background: rgba(255,255,255,0.55); color: #2F3532` with a slightly stronger border so the button looks like a clickable action, not a selected state.
+Это даст идеальную симметрию: бейдж точно по центру, кнопка органично справа — как единый компонент верхней строки карточки.
+
+## Технические изменения
+
+**Файл:** `src/pages/Flashcards.tsx`
+
+1. Убрать `.fc-speaker-btn { position: absolute; top: 14px; right: 14px; }` — удалить абсолютное позиционирование.
+2. На обеих сторонах карточки (FRONT и BACK) заменить отдельный блок бейджа + кнопки на единую flex-строку:
+   ```jsx
+   <div style={{ display:'flex', alignItems:'center', padding:'20px 20px 0' }}>
+     <div style={{ width: 32 }} /> {/* симметричный спейсер */}
+     <div style={{ flex: 1, display:'flex', justifyContent:'center' }}>
+       <span className="badge...">…</span>
+     </div>
+     <button className="fc-speaker-btn">…</button>
+   </div>
+   ```
+3. Убрать `position: absolute` из `.fc-speaker-btn` CSS, оставить только размер, цвет, hover-эффекты.
