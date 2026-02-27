@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { localizeQuestions } from '@/lib/questionLocale';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Layout } from '@/components/layout/Layout';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,6 +12,10 @@ import {
   Shuffle,
   Volume2,
   VolumeX,
+  X,
+  RefreshCw,
+  ThumbsUp,
+  Zap,
 } from 'lucide-react';
 import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
@@ -43,6 +45,20 @@ const topicEmoji: Record<TopicType, string> = {
   culture:   '🎭',
   laws:      '⚖️',
   geography: '🗺️',
+};
+
+const topicLabelRu: Record<TopicType, string> = {
+  history:   'История Греции',
+  culture:   'Культура',
+  laws:      'Законы',
+  geography: 'География',
+};
+
+const topicSubLabel: Record<TopicType, string> = {
+  history:   'Древняя Эллада',
+  culture:   'Культура',
+  laws:      'Законы',
+  geography: 'География',
 };
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -91,17 +107,17 @@ export default function Flashcards() {
   const { user, isLoading: authLoading } = useAuth();
   const { t, language } = useLanguage();
 
-  const [questions, setQuestions]       = useState<Question[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped]       = useState(false);
-  const [againCount, setAgainCount]     = useState(0);
-  const [goodCount, setGoodCount]       = useState(0);
-  const [easyCount, setEasyCount]       = useState(0);
+  const [questions, setQuestions]         = useState<Question[]>([]);
+  const [currentIndex, setCurrentIndex]   = useState(0);
+  const [isFlipped, setIsFlipped]         = useState(false);
+  const [againCount, setAgainCount]       = useState(0);
+  const [goodCount, setGoodCount]         = useState(0);
+  const [easyCount, setEasyCount]         = useState(0);
   const [originalCount, setOriginalCount] = useState(0);
-  const [isLoading, setIsLoading]       = useState(true);
-  const [isFinished, setIsFinished]     = useState(false);
-  const [restartCount, setRestartCount] = useState(0);
-  const [ratedIndices, setRatedIndices] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading]         = useState(true);
+  const [isFinished, setIsFinished]       = useState(false);
+  const [restartCount, setRestartCount]   = useState(0);
+  const [ratedIndices, setRatedIndices]   = useState<Set<number>>(new Set());
 
   // Track which question IDs have already been re-queued as "Again" this session
   // (prevents infinite appending if user keeps pressing Again on the same card)
@@ -116,25 +132,15 @@ export default function Flashcards() {
 
   useEffect(() => {
     if (!isValidTopic || !user) return;
-
     const fetchQuestions = async () => {
       setIsLoading(true);
       againAppendedRef.current = new Set();
 
       const [questionsResult, progressResult] = await Promise.all([
         supabase.from('questions').select('*').eq('topic', validTopic),
-        supabase
-          .from('user_progress')
-          .select('question_id, correct_count, incorrect_count, next_review_at')
-          .eq('user_id', user.id),
+        supabase.from('user_progress').select('question_id, correct_count, incorrect_count, next_review_at').eq('user_id', user.id),
       ]);
-
-      if (questionsResult.error) {
-        console.error('Error fetching questions:', questionsResult.error);
-        setIsLoading(false);
-        return;
-      }
-
+      if (questionsResult.error) { setIsLoading(false); return; }
       const data = questionsResult.data || [];
       if (data.length === 0) {
         setQuestions([]);
@@ -142,14 +148,9 @@ export default function Flashcards() {
         setIsLoading(false);
         return;
       }
-
       const localized = localizeQuestions(data, language);
-      const progressMap = Object.fromEntries(
-        (progressResult.data || []).map(p => [p.question_id, p])
-      );
-
+      const progressMap = Object.fromEntries((progressResult.data || []).map(p => [p.question_id, p]));
       const now = Date.now();
-
       const scored = localized.map(q => {
         const p = progressMap[q.id];
         const srsCorrect   = p?.correct_count   ?? 0;
@@ -162,14 +163,12 @@ export default function Flashcards() {
         if (p.incorrect_count > p.correct_count) return { q: enriched, group: 2, ts: reviewTs };
         return { q: enriched, group: 3, ts: reviewTs };
       });
-
       scored.sort((a, b) => a.group !== b.group ? a.group - b.group : a.ts - b.ts);
       const sorted = scored.map(s => s.q);
       setQuestions(sorted);
       setOriginalCount(sorted.length);
       setIsLoading(false);
     };
-
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
@@ -191,7 +190,6 @@ export default function Flashcards() {
         setQuestions(prev => [...prev, currentQ]);
       }
       // After appending: new deck length = questions.length + 1, safe to go next.
-      // If already appended (second Again on same card), check if truly last card.
       const newLength = isAlreadyAppended ? questions.length : questions.length + 1;
       if (currentIndex >= newLength - 1) {
         setIsFinished(true);
@@ -264,51 +262,37 @@ export default function Flashcards() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [isFinished, isLoading, isFlipped, handleFlip, handleGrade]);
 
-  if (authLoading) {
+  if (authLoading || isLoading) {
     return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#E8E6E1' }}>
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#2F3532' }} />
+      </div>
     );
   }
 
   if (!user) return <Navigate to="/login" replace />;
   if (!isValidTopic) return <Navigate to="/learn" replace />;
 
-  // Progress bar: % of original deck completed (capped at 100)
-  const progress = originalCount > 0 ? Math.min((currentIndex / originalCount) * 100, 100) : 0;
-  const topicTitle = t(`topic.${validTopic}`);
-  const accent     = topicAccent[validTopic] || '#5B8DB8';
-  const emoji      = topicEmoji[validTopic]  || '📚';
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
+  const accent      = topicAccent[validTopic] || '#5B8DB8';
+  const emoji       = topicEmoji[validTopic]  || '📚';
+  const headerLabel = topicLabelRu[validTopic] ?? topicLabelRu.history;
+  const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
+  // Progress bar uses originalCount so it doesn't regress when Again cards are appended
+  const progress    = originalCount > 0 ? Math.min((currentIndex / originalCount) * 100, 100) : 0;
 
   if (questions.length === 0) {
     return (
-      <Layout>
-        <div className="container py-12">
-          <div className="glass-panel max-w-2xl mx-auto text-center p-12 rounded-2xl">
-            <h2 className="text-2xl font-display font-bold mb-4">{t('quiz.noQuestions')}</h2>
-            <p className="text-muted-foreground mb-6">{t('quiz.noQuestions.desc')}</p>
-            <Link to="/learn">
-              <Button>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('quiz.backToTopics')}
-              </Button>
-            </Link>
-          </div>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#E8E6E1' }}>
+        <div className="bg-white rounded-2xl p-10 text-center shadow-sm max-w-md w-full">
+          <p className="text-lg font-semibold mb-4" style={{ color: '#2F3532' }}>{t('quiz.noQuestions')}</p>
+          <Link to="/learn">
+            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: accent }}>
+              <ArrowLeft className="h-4 w-4" />
+              {t('quiz.backToTopics')}
+            </button>
+          </Link>
         </div>
-      </Layout>
+      </div>
     );
   }
 
@@ -317,288 +301,362 @@ export default function Flashcards() {
       ? Math.min(Math.round((goodCount + easyCount) / originalCount * 100), 100)
       : 0;
     return (
-      <Layout>
-        <div className="container py-12">
-          <div className="glass-panel max-w-2xl mx-auto rounded-2xl p-10 text-center space-y-6">
-            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: accent }} />
-
-            <h2 className="font-display text-3xl font-bold">{t('flashcards.finished')}</h2>
-
-            <div
-              className="w-32 h-32 rounded-full flex items-center justify-center mx-auto text-4xl font-bold"
-              style={{
-                background: hexToRgba(accent, 0.12),
-                color: accent,
-                boxShadow: `0 8px 32px ${hexToRgba(accent, 0.2)}`
-              }}
-            >
-              {finishPct}%
-            </div>
-
-            <div className="flex justify-center gap-4">
-              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(239,68,68,0.08)' }}>
-                <div className="text-2xl font-bold text-destructive">{againCount}</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  ↺ {language === 'ru' ? 'Снова' : 'Πάλι'}
-                </div>
-              </div>
-              <div className="text-center rounded-xl p-4" style={{ background: 'rgba(34,197,94,0.08)' }}>
-                <div className="text-2xl font-bold text-success">{goodCount}</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  👍 {language === 'ru' ? 'Хорошо' : 'Καλό'}
-                </div>
-              </div>
-              <div className="text-center rounded-xl p-4" style={{ background: hexToRgba(accent, 0.08) }}>
-                <div className="text-2xl font-bold" style={{ color: accent }}>{easyCount}</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  ⚡ {language === 'ru' ? 'Легко' : 'Εύκολο'}
-                </div>
+      <div
+        className="min-h-screen flex flex-col items-center justify-center p-6"
+        style={{
+          background: '#E8E6E1',
+          backgroundImage: 'radial-gradient(rgba(47,53,50,0.15) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      >
+        <div className="bg-white rounded-2xl p-10 text-center shadow-sm max-w-md w-full space-y-6">
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto text-3xl font-bold"
+            style={{ background: hexToRgba(accent, 0.12), color: accent }}
+          >
+            {finishPct}%
+          </div>
+          <h2 className="text-2xl font-bold" style={{ color: '#2F3532' }}>{t('flashcards.finished')}</h2>
+          <div className="flex justify-center gap-4">
+            <div className="text-center rounded-xl p-4" style={{ background: 'rgba(194,91,91,0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#C25B5B' }}>{againCount}</div>
+              <div className="text-xs uppercase tracking-wide mt-1" style={{ color: 'rgba(47,53,50,0.5)' }}>
+                ↺ {language === 'ru' ? 'Снова' : 'Πάλι'}
               </div>
             </div>
-
-            <div className="flex flex-wrap gap-3 justify-center pt-4">
-              <Button variant="outline" onClick={handleShuffle}>
-                <Shuffle className="h-4 w-4 mr-2" />
-                {t('flashcards.shuffle')}
-              </Button>
-              <Button variant="outline" onClick={handleRestart}>
-                <RotateCcw className="h-4 w-4 mr-2" />
-                {t('quiz.tryAgain')}
-              </Button>
-              <Link to="/learn">
-                <Button>
-                  <Home className="h-4 w-4 mr-2" />
-                  {t('quiz.toTopics')}
-                </Button>
-              </Link>
+            <div className="text-center rounded-xl p-4" style={{ background: 'rgba(85,107,71,0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#556B47' }}>{goodCount}</div>
+              <div className="text-xs uppercase tracking-wide mt-1" style={{ color: 'rgba(47,53,50,0.5)' }}>
+                👍 {language === 'ru' ? 'Хорошо' : 'Καλά'}
+              </div>
+            </div>
+            <div className="text-center rounded-xl p-4" style={{ background: 'rgba(47,53,50,0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#2F3532' }}>{easyCount}</div>
+              <div className="text-xs uppercase tracking-wide mt-1" style={{ color: 'rgba(47,53,50,0.5)' }}>
+                ⚡ {language === 'ru' ? 'Легко' : 'Εύκολο'}
+              </div>
             </div>
           </div>
+          <div className="flex flex-col gap-2 pt-2">
+            <button
+              onClick={handleShuffle}
+              className="w-full py-3 rounded-2xl text-sm font-semibold border"
+              style={{ borderColor: 'rgba(47,53,50,0.15)', color: '#2F3532', background: 'white' }}
+            >
+              <Shuffle className="h-4 w-4 inline mr-2" />
+              {t('flashcards.shuffle')}
+            </button>
+            <button
+              onClick={handleRestart}
+              className="w-full py-3 rounded-2xl text-sm font-semibold border"
+              style={{ borderColor: 'rgba(47,53,50,0.15)', color: '#2F3532', background: 'white' }}
+            >
+              <RotateCcw className="h-4 w-4 inline mr-2" />
+              {t('quiz.tryAgain')}
+            </button>
+            <Link to="/learn" className="block">
+              <button
+                className="w-full py-3 rounded-2xl text-sm font-semibold text-white"
+                style={{ background: '#2F3532' }}
+              >
+                <Home className="h-4 w-4 inline mr-2" />
+                {t('quiz.toTopics')}
+              </button>
+            </Link>
+          </div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   const currentQuestion = questions[currentIndex];
 
   return (
-    <Layout>
-      <div className="relative container py-4 sm:py-8 px-4">
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        background: '#E8E6E1',
+        backgroundImage: 'radial-gradient(rgba(47,53,50,0.15) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+        fontFamily: "'DM Sans', sans-serif",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
-        {/* Header: topic name + close session button */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-            {emoji} {topicTitle}
-          </span>
-          <Link to="/learn">
-            <button
-              className="text-xs font-medium px-3 py-1.5 rounded-full transition-colors hover:bg-black/5"
-              style={{
-                background: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(0,0,0,0.08)',
-                color: 'hsl(var(--muted-foreground))',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              × {language === 'ru' ? 'Закрыть сессию' : 'Κλείσιμο'}
-            </button>
-          </Link>
-        </div>
+        .fc-scene { perspective: 1200px; }
+        .fc-inner {
+          position: relative; width: 100%; height: 100%;
+          transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+          transform-style: preserve-3d;
+        }
+        .fc-inner.flipped { transform: rotateY(180deg); }
+        .fc-face {
+          position: absolute; inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        .fc-back { transform: rotateY(180deg); }
 
-        {/* Progress row + bar */}
-        <div className="mb-6">
-          <div className="flex justify-between mb-1.5">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              {language === 'ru'
-                ? `Карточка ${currentIndex + 1} из ${questions.length}`
-                : `Κάρτα ${currentIndex + 1} από ${questions.length}`}
-            </span>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              {Math.round(progress)}%&nbsp;
-              {language === 'ru' ? 'выполнено' : 'ολοκληρωμένο'}
-            </span>
-          </div>
-          <div className="h-[3px] rounded-full bg-black/10 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, background: hexToRgba(accent, 0.75) }}
-            />
-          </div>
-        </div>
+        .fc-btn-again { background: #C25B5B; color: white; }
+        .fc-btn-again:hover { background: #b04f4f; }
 
-        {/* Flashcard */}
-        <div className="relative max-w-2xl mx-auto h-72 sm:h-96 px-2 flashcard-container">
+        .fc-btn-good { background: #556B47; color: white; }
+        .fc-btn-good:hover { background: #485c3c; }
+
+        .fc-btn-easy { background: #2F3532; color: white; }
+        .fc-btn-easy:hover { background: #222825; }
+
+        .fc-rating {
+          flex: 1;
+          display: flex; align-items: center; justify-content: center; gap: 7px;
+          padding: 14px 10px;
+          border-radius: 100px;
+          border: none;
+          font-family: inherit;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          letter-spacing: -0.01em;
+        }
+        .fc-rating:active { transform: scale(0.97); }
+
+        .fc-speaker-btn {
+          width: 32px; height: 32px;
+          border-radius: 50%;
+          border: 1.5px solid rgba(47,53,50,0.10);
+          background: rgba(47,53,50,0.04);
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer;
+          color: rgba(47,53,50,0.40);
+          transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+        }
+        .fc-speaker-btn:hover {
+          background: rgba(47,53,50,0.10);
+          border-color: rgba(47,53,50,0.20);
+          color: rgba(47,53,50,0.75);
+          transform: scale(1.08);
+        }
+        .fc-speaker-btn:active { transform: scale(0.95); }
+
+        .fc-rating .interval {
+          font-size: 12px; font-weight: 500; opacity: 0.70;
+        }
+
+        .fc-progress-bar-track {
+          height: 4px; border-radius: 4px;
+          background: rgba(47,53,50,0.12);
+          overflow: hidden; position: relative;
+        }
+        .fc-progress-bar-fill {
+          height: 100%; border-radius: 4px; transition: width 0.4s ease;
+        }
+      `}</style>
+
+      {/* ── TOP HEADER BAR ── */}
+      <div className="px-4 pt-5 pb-4 flex items-center justify-between max-w-3xl mx-auto w-full">
+        {/* Left: avatar + topic label */}
+        <div className="flex items-center gap-3">
           <div
-            className={cn("flashcard-inner cursor-pointer", isFlipped && "flipped")}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+            style={{ background: '#2F3532' }}
+          >
+            {emoji}
+          </div>
+          <span className="font-semibold text-base" style={{ color: '#2F3532' }}>
+            {headerLabel}
+          </span>
+        </div>
+
+        {/* Right: close button */}
+        <Link
+          to="/learn"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium no-underline transition-all"
+          style={{
+            background: 'rgba(255,255,255,0.7)',
+            border: '1.5px solid rgba(47,53,50,0.12)',
+            color: '#2F3532',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          <X className="h-3.5 w-3.5" />
+          {language === 'ru' ? 'Закрыть сессию' : 'Κλείσιμο'}
+        </Link>
+      </div>
+
+      {/* ── PROGRESS ── */}
+      <div className="px-4 pb-5 max-w-3xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.50)' }}>
+            {language === 'ru'
+              ? `Карточка ${currentIndex + 1} из ${questions.length}`
+              : `Κάρτα ${currentIndex + 1} από ${questions.length}`}
+          </span>
+          <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.50)' }}>
+            {Math.round(progress)}% {language === 'ru' ? 'выполнено' : 'ολοκληρώθηκε'}
+          </span>
+        </div>
+        <div className="fc-progress-bar-track">
+          <div
+            className="fc-progress-bar-fill"
+            style={{ width: `${progress}%`, background: accent }}
+          />
+        </div>
+      </div>
+
+      {/* ── CARD ── */}
+      <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
+        <div className="fc-scene" style={{ height: 380 }}>
+          <div
+            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped')}
             onClick={handleFlip}
           >
-            {/* Front */}
-            <div className="flashcard-face flashcard-glass flex flex-col overflow-hidden rounded-2xl">
-              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
-
-              <div className="flex items-start justify-between px-5 pt-4 pb-0">
-                <span
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
-                  style={{ background: hexToRgba(accent, 0.13), color: accent }}
-                >
-                  {emoji} {topicTitle}
-                </span>
-
-                {isSupported && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+            {/* FRONT */}
+            <div
+              className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
+            >
+              {/* Header row: spacer | badge | speaker */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
+                <div style={{ width: 32, flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                  <span
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
+                    style={{ background: hexToRgba(accent, 0.12), color: accent }}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
+                    {badgeLabel}
+                  </span>
+                </div>
+                {isSupported ? (
+                  <button
+                    className="fc-speaker-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
                     }}
                   >
                     {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
+                  </button>
+                ) : (
+                  <div style={{ width: 32, flexShrink: 0 }} />
                 )}
               </div>
 
-              <div className="flex-1 flex items-center justify-center px-8 sm:px-12">
-                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center">
+              {/* Question */}
+              <div className="flex-1 flex items-center justify-center px-10 sm:px-16 py-6">
+                <p className="text-xl sm:text-2xl font-semibold text-center leading-relaxed" style={{ color: '#2F3532' }}>
                   {currentQuestion.question}
                 </p>
               </div>
 
-              <div className="pb-4 text-center">
-                <span className="text-xs text-muted-foreground/50">
-                  {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Πατήστε για αναστροφή'} · Space
+              {/* Hint */}
+              <div className="pb-6 text-center">
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.30)' }}>
+                  {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Πατήστε για αναστροφή'}
                 </span>
               </div>
             </div>
 
-            {/* Back */}
+            {/* BACK */}
             <div
-              className="flashcard-face flashcard-back flashcard-glass flex flex-col overflow-hidden rounded-2xl"
-              style={{
-                background: `radial-gradient(circle at 30% 20%, ${hexToRgba(accent, 0.10)}, transparent 70%), rgba(255,255,255,0.72)`,
-              }}
+              className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
-              <div className="h-1 w-full shrink-0" style={{ background: accent }} />
-
-              <div className="flex items-start justify-between px-5 pt-4 pb-0">
-                <span
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
-                  style={{ background: hexToRgba(accent, 0.13), color: accent }}
-                >
-                  {language === 'ru' ? '✓ Ответ' : '✓ Απάντηση'}
-                </span>
-
-                {isSupported && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground/50 hover:text-foreground transition-colors"
+              {/* Header row: spacer | badge | speaker */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
+                <div style={{ width: 32, flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                  <span
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
+                    style={{ background: hexToRgba(accent, 0.12), color: accent }}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
+                    {language === 'ru' ? 'Ответ' : 'Απάντηση'}
+                  </span>
+                </div>
+                {isSupported ? (
+                  <button
+                    className="fc-speaker-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
                     }}
                   >
                     {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
+                  </button>
+                ) : (
+                  <div style={{ width: 32, flexShrink: 0 }} />
                 )}
               </div>
 
-              <div className="flex-1 flex items-center justify-center px-8 sm:px-12 pb-4">
-                <p className="text-2xl sm:text-4xl font-semibold leading-relaxed text-center text-foreground">
+              {/* Answer text */}
+              <div className="flex-1 flex flex-col items-center justify-center px-10 sm:px-16 py-4 gap-3">
+                <p className="text-2xl sm:text-3xl font-bold text-center leading-relaxed" style={{ color: accent }}>
                   {currentQuestion.correct_answer}
                 </p>
-              </div>
-
-              {currentQuestion.explanation && (
-                <div className="px-6 pb-5 border-t pt-3" style={{ borderColor: hexToRgba(accent, 0.15) }}>
-                  <p className="text-sm text-foreground/50 italic leading-relaxed text-center">
+                {currentQuestion.explanation && (
+                  <p className="text-sm text-center leading-relaxed" style={{ color: 'rgba(47,53,50,0.55)' }}>
                     {currentQuestion.explanation}
                   </p>
-                </div>
-              )}
+                )}
+              </div>
+
+              {/* Hint */}
+              <div className="pb-6 text-center">
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.30)' }}>
+                  {language === 'ru' ? 'Нажмите, чтобы вернуться к вопросу' : 'Πατήστε για επιστροφή'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* SRS Rating Buttons — always visible, muted before flip, active after */}
-        <div className="max-w-2xl mx-auto mt-6 px-2">
-          <div className={cn(
-            "flex gap-3 justify-center transition-opacity duration-200",
-            !isFlipped && "opacity-40 pointer-events-none"
-          )}>
-            {/* Again */}
-            <button
-              onClick={() => handleGrade(1)}
-              className="flex flex-col items-center gap-1 flex-1 max-w-[110px] px-3 py-3 rounded-2xl transition-all duration-200"
-              style={{
-                background: 'rgba(239,68,68,0.07)',
-                border: '1.5px solid rgba(239,68,68,0.2)',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              <span
-                className="text-sm font-semibold"
-                style={{ color: isFlipped ? 'rgb(239,68,68)' : 'hsl(var(--muted-foreground))' }}
-              >
-                ↺ {language === 'ru' ? 'Снова' : 'Πάλι'}
-              </span>
-              <span className="text-xs text-muted-foreground/70">
-                {getIntervalLabel(1, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
-              </span>
-            </button>
-
-            {/* Good */}
-            <button
-              onClick={() => handleGrade(2)}
-              className="flex flex-col items-center gap-1 flex-1 max-w-[110px] px-3 py-3 rounded-2xl transition-all duration-200"
-              style={{
-                background: 'rgba(34,197,94,0.07)',
-                border: '1.5px solid rgba(34,197,94,0.2)',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              <span
-                className="text-sm font-semibold"
-                style={{ color: isFlipped ? 'rgb(34,197,94)' : 'hsl(var(--muted-foreground))' }}
-              >
-                👍 {language === 'ru' ? 'Хорошо' : 'Καλό'}
-              </span>
-              <span className="text-xs text-muted-foreground/70">
-                {getIntervalLabel(2, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
-              </span>
-            </button>
-
-            {/* Easy */}
-            <button
-              onClick={() => handleGrade(3)}
-              className="flex flex-col items-center gap-1 flex-1 max-w-[110px] px-3 py-3 rounded-2xl transition-all duration-200"
-              style={{
-                background: hexToRgba(accent, 0.07),
-                border: `1.5px solid ${hexToRgba(accent, 0.25)}`,
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              <span
-                className="text-sm font-semibold"
-                style={{ color: isFlipped ? accent : 'hsl(var(--muted-foreground))' }}
-              >
-                ⚡ {language === 'ru' ? 'Легко' : 'Εύκολο'}
-              </span>
-              <span className="text-xs text-muted-foreground/70">
-                {getIntervalLabel(3, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
-              </span>
-            </button>
-          </div>
-
-          {/* Keyboard hint */}
-          <p className="text-[10px] tracking-widest uppercase text-muted-foreground/40 text-center mt-3">
-            {language === 'ru'
-              ? '[Space] переворот • [1, 2, 3] оценка'
-              : '[Space] αναστροφή • [1, 2, 3] βαθμολογία'}
-          </p>
+        {/* ── RATING BUTTONS ── */}
+        <div className="flex gap-3 mt-5">
+          <button
+            className={cn('fc-rating fc-btn-again', !isFlipped && 'opacity-40 pointer-events-none')}
+            onClick={() => handleGrade(1)}
+          >
+            <RefreshCw className="h-4 w-4 shrink-0" />
+            {language === 'ru' ? 'Снова' : 'Πάλι'}
+            <span className="interval">
+              {getIntervalLabel(1, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
+            </span>
+          </button>
+          <button
+            className={cn('fc-rating fc-btn-good', !isFlipped && 'opacity-40 pointer-events-none')}
+            onClick={() => handleGrade(2)}
+          >
+            <ThumbsUp className="h-4 w-4 shrink-0" />
+            {language === 'ru' ? 'Хорошо' : 'Καλά'}
+            <span className="interval">
+              {getIntervalLabel(2, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
+            </span>
+          </button>
+          <button
+            className={cn('fc-rating fc-btn-easy', !isFlipped && 'opacity-40 pointer-events-none')}
+            onClick={() => handleGrade(3)}
+          >
+            <Zap className="h-4 w-4 shrink-0" />
+            {language === 'ru' ? 'Легко' : 'Εύκολο'}
+            <span className="interval">
+              {getIntervalLabel(3, currentQuestion.srsCorrect, currentQuestion.srsIncorrect, language)}
+            </span>
+          </button>
         </div>
 
+        {/* ── KEYBOARD HINT ── */}
+        <p
+          className="text-center text-xs font-semibold tracking-widest uppercase mt-5 mb-6"
+          style={{ color: 'rgba(47,53,50,0.30)' }}
+        >
+          {language === 'ru'
+            ? 'Используйте [Space] для переворота • [1, 2, 3] для оценки'
+            : 'Χρησιμοποιήστε [Space] για αναστροφή • [1, 2, 3] για αξιολόγηση'}
+        </p>
       </div>
-    </Layout>
+    </div>
   );
 }

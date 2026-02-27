@@ -7,14 +7,12 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden" style={{ background: '#E8E6E1' }}>
-      {/* Ambient blobs */}
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
+      {/* Ambient blobs — z-index: 0, above body dots but below content */}
       <div className="ambient-layer">
         <div className="ambient-blob ambient-blob-1" />
         <div className="ambient-blob ambient-blob-2" />
       </div>
-      {/* Noise texture */}
-      <div className="noise-overlay" />
       <Header />
       <main className="flex-1 relative z-10">
         {children}

@@ -1,19 +1,38 @@
 
-## Remove Nav Buttons and Thumbs Counters from Flashcards
+## Проблема
 
-### What to remove
-The screenshot shows two UI elements circled in red:
-1. **"← Назад" / "Далее →" navigation buttons** — let the user jump to prev/next card manually. These are redundant since the card auto-advances after rating.
-2. **👍 0 / 👎 0 known/unknown counters** shown below the control buttons.
+Кнопка озвучки расположена абсолютно (`position: absolute; top: 14px; right: 14px`) поверх карточки, но бейдж темы при этом центрируется без учёта кнопки — в результате кнопка визуально «торчит» отдельно и нарушает симметрию верхней части карточки.
 
-### File changed
-**`src/pages/Flashcards.tsx`** only:
-- Delete the `<div className="flex justify-between ...">` block containing the two nav Buttons (goToPrev / goToNext), lines ~564–585
-- Delete the `<div className="relative flex justify-center gap-6 ...">` block with ThumbsUp / ThumbsDown counters, lines ~591–600
-- Remove `ThumbsUp`, `ThumbsDown` from lucide-react imports (cleanup)
-- The `goToPrev` function and ArrowUp/ArrowDown keyboard shortcuts can also be removed since manual nav is gone
+## Решение
 
-### What stays
-- ✕ / ↺ / ✓ glass buttons (Not known / Replay / Known)
-- All SRS logic, progress bar, card flip animation
-- knownCount / unknownCount state variables (still used on the results screen)
+Переработать верхнюю часть карточки (front и back) — заменить абсолютное позиционирование на **flex-строку** с тремя зонами:
+
+```text
+┌──────────────────────────────────────────┐
+│  [пустая зона 32px]  [БЕЙДЖ ТЕМЫ]  [🔊]  │
+└──────────────────────────────────────────┘
+```
+
+Конкретно: обернуть заголовочную область в `<div>` с `display: flex; align-items: center; padding: 20px 20px 0`:
+- Слева — `div` с `width: 32px` (пустой спейсер для симметрии)
+- По центру — `flex: 1; text-align: center` — бейдж темы
+- Справа — кнопка спикера `32px × 32px` (убрать `position: absolute`)
+
+Это даст идеальную симметрию: бейдж точно по центру, кнопка органично справа — как единый компонент верхней строки карточки.
+
+## Технические изменения
+
+**Файл:** `src/pages/Flashcards.tsx`
+
+1. Убрать `.fc-speaker-btn { position: absolute; top: 14px; right: 14px; }` — удалить абсолютное позиционирование.
+2. На обеих сторонах карточки (FRONT и BACK) заменить отдельный блок бейджа + кнопки на единую flex-строку:
+   ```jsx
+   <div style={{ display:'flex', alignItems:'center', padding:'20px 20px 0' }}>
+     <div style={{ width: 32 }} /> {/* симметричный спейсер */}
+     <div style={{ flex: 1, display:'flex', justifyContent:'center' }}>
+       <span className="badge...">…</span>
+     </div>
+     <button className="fc-speaker-btn">…</button>
+   </div>
+   ```
+3. Убрать `position: absolute` из `.fc-speaker-btn` CSS, оставить только размер, цвет, hover-эффекты.
