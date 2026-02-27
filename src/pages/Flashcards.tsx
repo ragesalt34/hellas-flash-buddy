@@ -191,6 +191,7 @@ export default function Flashcards() {
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
     if (!isFlipped || isTransitioning) return;
+    setIsAnimating(false); // cancel any pending flip-guard before advancing
 
     const currentQ = questions[currentIndex];
     if (user) void upsertProgress(user.id, currentQ.id, grade);
@@ -415,8 +416,6 @@ export default function Flashcards() {
           transition: transform 0.45s ease-in-out;
           transform-style: preserve-3d;
           will-change: transform;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
         .fc-inner.animating { pointer-events: none; }
