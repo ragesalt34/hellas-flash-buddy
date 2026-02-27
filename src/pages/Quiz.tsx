@@ -182,155 +182,152 @@ export default function Quiz() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
-      {/* Ambient blobs — same as Layout */}
+      {/* Ambient blobs */}
       <div className="ambient-layer">
         <div className="ambient-blob ambient-blob-1" />
         <div className="ambient-blob ambient-blob-2" />
       </div>
-      {/* ── Top bar ── */}
-      <div
-        className="sticky top-0 z-10 flex items-center justify-between px-4 sm:px-8 py-3 border-b border-border/60 bg-background/90 backdrop-blur-sm"
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-            style={{ background: topicColor }}
-          >
-            {topicTitle.slice(0, 2).toUpperCase()}
+
+      {/* ── Top bar — pill-header style ── */}
+      <div className="sticky top-4 z-50 px-4">
+        <div className="max-w-3xl mx-auto pill-header flex items-center justify-between h-[56px] px-5">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+              style={{ background: topicColor }}
+            >
+              {topicTitle.slice(0, 2).toUpperCase()}
+            </div>
+            <span className="font-medium text-sm sm:text-base text-foreground">
+              {topicTitle} • {t('quiz.title')}
+            </span>
           </div>
-          <span className="font-medium text-sm sm:text-base text-foreground">
-            {topicTitle} • {t('quiz.title') || 'Тест'}
-          </span>
-        </div>
-        <Link to="/learn">
-          <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border/60 rounded-full px-3 py-1.5">
-            <X className="h-3.5 w-3.5" />
-            {t('quiz.finish') || 'Завершить тест'}
-          </button>
-        </Link>
-      </div>
-
-      {/* ── Progress ── */}
-      <div className="px-4 sm:px-8 pt-6 pb-2 max-w-3xl mx-auto w-full">
-        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 font-medium">
-          <span>{t('quiz.question') || 'Вопрос'} {currentIndex + 1} {t('quiz.of') || 'из'} {questions.length}</span>
-          <span>{Math.round(progress)}% {t('quiz.passed') || 'пройдено'}</span>
-        </div>
-        {/* Custom progress bar */}
-        <div className="w-full h-2 bg-border rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${progress}%`, background: topicColor }}
-          />
+          <Link to="/learn">
+            <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border/60 rounded-full px-3 py-1.5 bg-background/60 backdrop-blur-sm">
+              <X className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t('quiz.finish')}</span>
+            </button>
+          </Link>
         </div>
       </div>
 
-      {/* ── Main card ── */}
-      <div className="px-4 sm:px-8 py-4 max-w-3xl mx-auto w-full">
-        <div className="bg-card rounded-3xl shadow-sm overflow-hidden">
-          {/* Question header */}
-          <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4">
-            <div className="flex items-center gap-2 mb-4">
+      {/* ── Content ── */}
+      <div className="flex-1 flex flex-col relative z-10 pt-6 pb-8 px-4 sm:px-8">
+        <div className="max-w-3xl mx-auto w-full flex flex-col gap-4">
+
+          {/* Progress */}
+          <div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 font-medium">
+              <span>{t('quiz.question')} {currentIndex + 1} {t('quiz.of')} {questions.length}</span>
+              <span>{Math.round(progress)}% {t('quiz.passed')}</span>
+            </div>
+            <div className="w-full h-2 bg-border rounded-full overflow-hidden">
               <div
-                className="w-2 h-2 rounded-full"
-                style={{ background: topicColor }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progress}%`, background: topicColor }}
               />
-              <span
-                className="text-xs font-semibold uppercase tracking-widest"
-                style={{ color: topicColor }}
-              >
-                {t('quiz.chooseAnswer') || 'Выберите правильный ответ'}
-              </span>
-              {isSupported && (
-                <button
-                  onClick={() => isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`)}
-                  className="ml-auto p-1.5 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                >
-                  {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </button>
+            </div>
+          </div>
+
+          {/* Main card */}
+          <div className="bg-card rounded-3xl shadow-sm overflow-hidden">
+            {/* Question header */}
+            <div className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: topicColor }} />
+                <span className="text-xs font-semibold" style={{ color: topicColor }}>
+                  {t('quiz.chooseAnswer')}
+                </span>
+                {isSupported && (
+                  <button
+                    onClick={() => isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`)}
+                    className="ml-auto p-1.5 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                  >
+                    {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </button>
+                )}
+              </div>
+              <h2 className="text-xl sm:text-2xl font-semibold leading-snug text-foreground">
+                {currentQuestion.question}
+              </h2>
+            </div>
+
+            {/* Answers */}
+            <div className="px-6 sm:px-8 pb-6 sm:pb-8 space-y-2.5">
+              {shuffledAnswers.map((answer, index) => {
+                const isCorrect = answer === currentQuestion.correct_answer;
+                const isSelected = answer === selectedAnswer;
+
+                let bgStyle = {};
+                let borderClass = 'border-border/50 bg-background hover:border-border hover:bg-muted/30';
+                let textClass = 'text-foreground';
+                let labelBg = 'bg-muted text-muted-foreground';
+
+                if (isAnswered) {
+                  if (isCorrect) {
+                    bgStyle = { background: topicColor };
+                    borderClass = 'border-transparent';
+                    textClass = 'text-white';
+                    labelBg = 'bg-white/20 text-white';
+                  } else if (isSelected && !isCorrect) {
+                    borderClass = 'border-destructive/40 bg-destructive/5';
+                    textClass = 'text-destructive';
+                    labelBg = 'bg-destructive/10 text-destructive';
+                  }
+                }
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(answer)}
+                    disabled={isAnswered}
+                    className={cn(
+                      'w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border text-left transition-all duration-200',
+                      borderClass, textClass,
+                      !isAnswered && 'cursor-pointer active:scale-[0.99]'
+                    )}
+                    style={isAnswered && isCorrect ? bgStyle : {}}
+                  >
+                    <span className={cn('w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-all', labelBg)}>
+                      {ANSWER_LABELS[index]}
+                    </span>
+                    <span className="flex-1 font-medium text-sm sm:text-base">{answer}</span>
+                    {isAnswered && isCorrect && <CheckCircle2 className="h-5 w-5 text-white/90 shrink-0" />}
+                    {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 shrink-0" />}
+                  </button>
+                );
+              })}
+
+              {/* Explanation */}
+              {isAnswered && currentQuestion.explanation && (
+                <div className="mt-2 p-4 bg-muted/50 rounded-2xl border border-border/40">
+                  <p className="text-sm text-foreground/80">
+                    <span className="font-semibold">{t('quiz.explanation')}</span> {currentQuestion.explanation}
+                  </p>
+                </div>
               )}
             </div>
-            <h2 className="text-xl sm:text-2xl font-semibold leading-snug text-foreground">
-              {currentQuestion.question}
-            </h2>
           </div>
 
-          {/* Answers */}
-          <div className="px-6 sm:px-8 pb-6 sm:pb-8 space-y-2.5">
-            {shuffledAnswers.map((answer, index) => {
-              const isCorrect = answer === currentQuestion.correct_answer;
-              const isSelected = answer === selectedAnswer;
-
-              let bgStyle = {};
-              let borderClass = 'border-border/50 bg-background hover:border-border';
-              let textClass = 'text-foreground';
-              let labelBg = 'bg-muted text-muted-foreground';
-
-              if (isAnswered) {
-                if (isCorrect) {
-                  bgStyle = { background: topicColor };
-                  borderClass = 'border-transparent';
-                  textClass = 'text-white';
-                  labelBg = 'bg-white/20 text-white';
-                } else if (isSelected && !isCorrect) {
-                  borderClass = 'border-destructive/40 bg-destructive/5';
-                  textClass = 'text-destructive';
-                  labelBg = 'bg-destructive/10 text-destructive';
+          {/* Bottom bar */}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground hidden sm:block">
+              {t('quiz.keyboardHint')}
+            </p>
+            <div className={cn('ml-auto transition-all duration-300', !isAnswered && 'opacity-0 pointer-events-none')}>
+              <button
+                onClick={handleNext}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm text-white shadow-md transition-all hover:opacity-90 active:scale-95"
+                style={{ background: topicColor }}
+              >
+                {currentIndex < questions.length - 1
+                  ? <>{t('quiz.nextQuestion')} <ArrowRight className="h-4 w-4" /></>
+                  : <>{t('quiz.finishTest')} <CheckCircle2 className="h-4 w-4" /></>
                 }
-              }
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(answer)}
-                  disabled={isAnswered}
-                  className={cn(
-                    'w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border text-left transition-all duration-300',
-                    borderClass,
-                    textClass,
-                    !isAnswered && 'cursor-pointer'
-                  )}
-                  style={isAnswered && isCorrect ? bgStyle : {}}
-                >
-                  <span className={cn('w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-all', labelBg)}>
-                    {ANSWER_LABELS[index]}
-                  </span>
-                  <span className="flex-1 font-medium text-sm sm:text-base">{answer}</span>
-                  {isAnswered && isCorrect && <CheckCircle2 className="h-5 w-5 text-white/90 shrink-0" />}
-                  {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 shrink-0" />}
-                </button>
-              );
-            })}
-
-            {/* Explanation */}
-            {isAnswered && currentQuestion.explanation && (
-              <div className="mt-2 p-4 bg-muted/50 rounded-2xl border border-border/40">
-                <p className="text-sm text-foreground/80"><span className="font-semibold">{t('quiz.explanation')}</span> {currentQuestion.explanation}</p>
-              </div>
-            )}
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── Bottom bar ── */}
-      <div className="px-4 sm:px-8 pb-8 max-w-3xl mx-auto w-full flex items-center justify-between">
-        {/* Keyboard hint */}
-        <p className="text-xs text-muted-foreground hidden sm:block">
-          {t('quiz.keyboardHint') || 'Используйте [1, 2, 3, 4] для выбора • [Enter] для продолжения'}
-        </p>
-
-        {/* Next button — only visible after answering */}
-        <div className={cn('ml-auto transition-all duration-300', !isAnswered && 'opacity-0 pointer-events-none')}>
-          <button
-            onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm text-white shadow-md transition-all hover:opacity-90 active:scale-95"
-            style={{ background: 'hsl(var(--foreground))' }}
-          >
-            {currentIndex < questions.length - 1
-              ? <>{t('quiz.nextQuestion') || 'Далее'} <ArrowRight className="h-4 w-4" /></>
-              : <>{t('quiz.finishTest') || 'Завершить'} <CheckCircle2 className="h-4 w-4" /></>
-            }
-          </button>
         </div>
       </div>
     </div>
