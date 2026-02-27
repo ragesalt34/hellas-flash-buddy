@@ -144,11 +144,14 @@ export default function Exam() {
   // Sound warning refs
   const warned5min = useRef(false);
   const warned1min = useRef(false);
+  // Language ref so timer closure always reads current language without restarting the interval
+  const languageRef = useRef(language);
+  useEffect(() => { languageRef.current = language; }, [language]);
 
   // Timer
   useEffect(() => {
     if (!examStarted || isFinished || settings.timeLimit === 0) return;
-    
+
     const interval = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -156,27 +159,27 @@ export default function Exam() {
           finishExamRef.current();
           return 0;
         }
-        
-        // Sound warnings
-        if (prev <= 300 && prev > 299 && !warned5min.current) {
+
+        // Sound warnings — use refs so a lagged tick that skips the exact value still fires
+        if (prev <= 300 && !warned5min.current) {
           warned5min.current = true;
           toast({
-            title: language === 'ru' ? '⏰ Осталось 5 минут!' : '⏰ 5 λεπτά απομένουν!',
+            title: languageRef.current === 'ru' ? '⏰ Осталось 5 минут!' : '⏰ 5 λεπτά απομένουν!',
             variant: 'default',
           });
         }
-        if (prev <= 60 && prev > 59 && !warned1min.current) {
+        if (prev <= 60 && !warned1min.current) {
           warned1min.current = true;
           toast({
-            title: language === 'ru' ? '⚠️ Осталась 1 минута!' : '⚠️ 1 λεπτό απομένει!',
+            title: languageRef.current === 'ru' ? '⚠️ Осталась 1 минута!' : '⚠️ 1 λεπτό απομένει!',
             variant: 'destructive',
           });
         }
-        
+
         return prev - 1;
       });
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, [examStarted, isFinished, settings.timeLimit]);
 

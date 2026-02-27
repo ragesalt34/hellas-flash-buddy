@@ -135,6 +135,14 @@ export default function Flashcards() {
     const fetchQuestions = async () => {
       setIsLoading(true);
       againAppendedRef.current = new Set();
+      // Reset session state so a language change mid-session starts fresh
+      setCurrentIndex(0);
+      setIsFlipped(false);
+      setAgainCount(0);
+      setGoodCount(0);
+      setEasyCount(0);
+      setIsFinished(false);
+      setRatedIndices(new Set());
 
       const [questionsResult, progressResult] = await Promise.all([
         supabase.from('questions').select('*').eq('topic', validTopic),
@@ -215,6 +223,7 @@ export default function Flashcards() {
 
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
+    setOriginalCount(questions.length);
     setCurrentIndex(0);
     setIsFlipped(false);
     setAgainCount(0);
@@ -278,7 +287,7 @@ export default function Flashcards() {
   const headerLabel = topicLabelRu[validTopic] ?? topicLabelRu.history;
   const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
   // Progress bar uses originalCount so it doesn't regress when Again cards are appended
-  const progress    = originalCount > 0 ? Math.min((currentIndex / originalCount) * 100, 100) : 0;
+  const progress    = originalCount > 0 ? Math.min(((currentIndex + 1) / originalCount) * 100, 100) : 0;
 
   if (questions.length === 0) {
     return (
