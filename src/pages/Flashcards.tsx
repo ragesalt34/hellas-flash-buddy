@@ -417,6 +417,10 @@ export default function Flashcards() {
           -webkit-backface-visibility: hidden;
         }
         .fc-back { transform: rotateY(180deg); }
+        /* Disable pointer events on whichever face is rotated away from the viewer,
+           so clicks always reach the visible face and bubble up to fc-inner */
+        .fc-inner.flipped .fc-front     { pointer-events: none; }
+        .fc-inner:not(.flipped) .fc-back { pointer-events: none; }
 
         .fc-btn-again { background: #C25B5B; color: white; }
         .fc-btn-again:hover { background: #b04f4f; }
