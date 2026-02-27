@@ -212,10 +212,10 @@ export default function Flashcards() {
         setIsTransitioning(false);
         setIsFinished(true);
       } else {
-        setTimeout(() => {
-          setCurrentIndex(prev => prev + 1);
-          setIsTransitioning(false);
-        }, 550);
+        // Swap content at the midpoint of the flip-back (card is edge-on, invisible)
+        // then release the lock once the animation fully completes.
+        setTimeout(() => setCurrentIndex(prev => prev + 1), 225);
+        setTimeout(() => setIsTransitioning(false), 450);
       }
       return;
     }
@@ -231,10 +231,10 @@ export default function Flashcards() {
       setIsTransitioning(false);
       setIsFinished(true);
     } else {
-      setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
-        setIsTransitioning(false);
-      }, 550);
+      // Swap content at the midpoint of the flip-back (card is edge-on, invisible)
+      // then release the lock once the animation fully completes.
+      setTimeout(() => setCurrentIndex(prev => prev + 1), 225);
+      setTimeout(() => setIsTransitioning(false), 450);
     }
   }, [isFlipped, isTransitioning, currentIndex, questions, ratedIndices, user]);
 
