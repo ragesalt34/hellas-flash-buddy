@@ -411,39 +411,39 @@ export default function Flashcards() {
               className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden"
               style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
-              {/* Topic badge — centered */}
-              <div className="flex items-center justify-center pt-6 pb-0">
+              {/* Top row: badge centered + speaker top-right */}
+              <div className="relative flex items-center justify-center pt-6 pb-0 px-4">
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
-                  style={{
-                    background: hexToRgba(accent, 0.12),
-                    color: accent,
-                  }}
+                  style={{ background: hexToRgba(accent, 0.12), color: accent }}
                 >
-                  <span
-                    className="w-2 h-2 rounded-full shrink-0"
-                    style={{ background: accent }}
-                  />
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
                   {badgeLabel}
                 </span>
+                {isSupported && (
+                  <button
+                    className="absolute right-4 top-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                    style={{ background: 'rgba(47,53,50,0.06)', border: 'none', cursor: 'pointer', color: 'rgba(47,53,50,0.45)' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
+                    }}
+                  >
+                    {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                  </button>
+                )}
               </div>
 
               {/* Question */}
               <div className="flex-1 flex items-center justify-center px-10 sm:px-16 py-6">
-                <p
-                  className="text-xl sm:text-2xl font-semibold text-center leading-relaxed"
-                  style={{ color: '#2F3532' }}
-                >
+                <p className="text-xl sm:text-2xl font-semibold text-center leading-relaxed" style={{ color: '#2F3532' }}>
                   {currentQuestion.question}
                 </p>
               </div>
 
               {/* Hint */}
               <div className="pb-6 text-center">
-                <span
-                  className="text-xs font-semibold tracking-widest uppercase"
-                  style={{ color: 'rgba(47,53,50,0.30)' }}
-                >
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.30)' }}>
                   {language === 'ru' ? 'Нажмите, чтобы перевернуть' : 'Πατήστε για αναστροφή'}
                 </span>
               </div>
@@ -454,33 +454,36 @@ export default function Flashcards() {
               className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden"
               style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
-              {/* Answer badge */}
-              <div className="flex items-center justify-center pt-6 pb-0">
+              {/* Answer badge + speaker */}
+              <div className="relative flex items-center justify-center pt-6 pb-0 px-4">
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
-                  style={{
-                    background: hexToRgba(accent, 0.12),
-                    color: accent,
-                  }}
+                  style={{ background: hexToRgba(accent, 0.12), color: accent }}
                 >
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
                   {language === 'ru' ? 'Ответ' : 'Απάντηση'}
                 </span>
+                {isSupported && (
+                  <button
+                    className="absolute right-4 top-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                    style={{ background: 'rgba(47,53,50,0.06)', border: 'none', cursor: 'pointer', color: 'rgba(47,53,50,0.45)' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                    }}
+                  >
+                    {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                  </button>
+                )}
               </div>
 
               {/* Answer text */}
               <div className="flex-1 flex flex-col items-center justify-center px-10 sm:px-16 py-4 gap-3">
-                <p
-                  className="text-2xl sm:text-3xl font-bold text-center leading-relaxed"
-                  style={{ color: accent }}
-                >
+                <p className="text-2xl sm:text-3xl font-bold text-center leading-relaxed" style={{ color: accent }}>
                   {currentQuestion.correct_answer}
                 </p>
                 {currentQuestion.explanation && (
-                  <p
-                    className="text-sm text-center leading-relaxed"
-                    style={{ color: 'rgba(47,53,50,0.55)' }}
-                  >
+                  <p className="text-sm text-center leading-relaxed" style={{ color: 'rgba(47,53,50,0.55)' }}>
                     {currentQuestion.explanation}
                   </p>
                 )}
@@ -488,10 +491,7 @@ export default function Flashcards() {
 
               {/* Hint */}
               <div className="pb-6 text-center">
-                <span
-                  className="text-xs font-semibold tracking-widest uppercase"
-                  style={{ color: 'rgba(47,53,50,0.30)' }}
-                >
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'rgba(47,53,50,0.30)' }}>
                   {language === 'ru' ? 'Нажмите, чтобы вернуться к вопросу' : 'Πατήστε για επιστροφή'}
                 </span>
               </div>
