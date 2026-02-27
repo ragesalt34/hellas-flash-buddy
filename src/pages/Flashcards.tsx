@@ -118,6 +118,7 @@ export default function Flashcards() {
   const [isFinished, setIsFinished]       = useState(false);
   const [restartCount, setRestartCount]   = useState(0);
   const [ratedIndices, setRatedIndices]   = useState<Set<number>>(new Set());
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Track which question IDs have already been re-queued as "Again" this session
   // (prevents infinite appending if user keeps pressing Again on the same card)
@@ -183,12 +184,13 @@ export default function Flashcards() {
   const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
-    if (!isFlipped) return;
+    if (!isFlipped || isTransitioning) return;
 
     const currentQ = questions[currentIndex];
     if (user) void upsertProgress(user.id, currentQ.id, grade);
 
     setIsFlipped(false);
+    setIsTransitioning(true);
 
     if (grade === 1) {
       setAgainCount(c => c + 1);
@@ -200,9 +202,13 @@ export default function Flashcards() {
       // After appending: new deck length = questions.length + 1, safe to go next.
       const newLength = isAlreadyAppended ? questions.length : questions.length + 1;
       if (currentIndex >= newLength - 1) {
+        setIsTransitioning(false);
         setIsFinished(true);
       } else {
-        setCurrentIndex(prev => prev + 1);
+        setTimeout(() => {
+          setCurrentIndex(prev => prev + 1);
+          setIsTransitioning(false);
+        }, 550);
       }
       return;
     }
@@ -215,11 +221,15 @@ export default function Flashcards() {
     else             setEasyCount(c => c + 1);
 
     if (currentIndex >= questions.length - 1) {
+      setIsTransitioning(false);
       setIsFinished(true);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+        setIsTransitioning(false);
+      }, 550);
     }
-  }, [isFlipped, currentIndex, questions, ratedIndices, user]);
+  }, [isFlipped, isTransitioning, currentIndex, questions, ratedIndices, user]);
 
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
