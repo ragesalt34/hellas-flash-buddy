@@ -207,12 +207,12 @@ export default function Quiz() {
 
       {/* ── Progress ── */}
       <div className="px-4 sm:px-8 pt-6 pb-2 max-w-3xl mx-auto w-full">
-        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 font-medium">
           <span>{t('quiz.question') || 'Вопрос'} {currentIndex + 1} {t('quiz.of') || 'из'} {questions.length}</span>
           <span>{Math.round(progress)}% {t('quiz.passed') || 'пройдено'}</span>
         </div>
         {/* Custom progress bar */}
-        <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-border rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${progress}%`, background: topicColor }}
