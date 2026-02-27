@@ -333,11 +333,11 @@ export default function Learn() {
         .learn-action-btn {
           display: flex; align-items: center; gap: 6px;
           padding: 9px 18px;
-          border: 1.5px solid rgba(47,53,50,0.10);
+          border: 1.5px solid rgba(47,53,50,0.30);
           border-radius: 100px;
-          background: rgba(255,255,255,0.5);
-          color: hsl(var(--foreground));
-          font-size: 13px; font-weight: 600;
+          background: rgba(255,255,255,0.55);
+          color: #2F3532;
+          font-size: 13px; font-weight: 700;
           cursor: pointer; font-family: inherit;
           transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
         }
