@@ -406,8 +406,9 @@ export default function Flashcards() {
         .fc-scene { perspective: 1200px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+          transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
           transform-style: preserve-3d;
+          will-change: transform;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
         .fc-face {
@@ -534,7 +535,7 @@ export default function Flashcards() {
             {/* FRONT */}
             <div
               className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden relative"
-              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
+              style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
               <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
@@ -581,7 +582,7 @@ export default function Flashcards() {
             {/* BACK */}
             <div
               className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden relative"
-              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
+              style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
               <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
