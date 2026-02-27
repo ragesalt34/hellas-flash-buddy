@@ -426,6 +426,9 @@ export default function Flashcards() {
           -webkit-backface-visibility: hidden;
         }
         .fc-back { transform: rotateY(180deg); }
+        /* Hide pointer events on the face that is rotated away */
+        .fc-inner:not(.flipped) .fc-back { pointer-events: none; }
+        .fc-inner.flipped .fc-front { pointer-events: none; }
 
         .fc-btn-again { background: #C25B5B; color: white; }
         .fc-btn-again:hover { background: #b04f4f; }
@@ -543,7 +546,7 @@ export default function Flashcards() {
           >
             {/* FRONT */}
             <div
-              className="fc-face bg-white rounded-2xl flex flex-col relative"
+              className="fc-face fc-front bg-white rounded-2xl flex flex-col relative"
               style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
