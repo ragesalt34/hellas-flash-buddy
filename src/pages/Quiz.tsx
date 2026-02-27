@@ -181,7 +181,12 @@ export default function Quiz() {
   const currentQuestion = questions[currentIndex];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
+      {/* Ambient blobs — same as Layout */}
+      <div className="ambient-layer">
+        <div className="ambient-blob ambient-blob-1" />
+        <div className="ambient-blob ambient-blob-2" />
+      </div>
       {/* ── Top bar ── */}
       <div
         className="sticky top-0 z-10 flex items-center justify-between px-4 sm:px-8 py-3 border-b border-border/60 bg-background/90 backdrop-blur-sm"
