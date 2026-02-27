@@ -186,7 +186,7 @@ export default function Flashcards() {
     if (isAnimating) return;
     setIsAnimating(true);
     setIsFlipped(prev => !prev);
-    setTimeout(() => setIsAnimating(false), 700);
+    setTimeout(() => setIsAnimating(false), 450);
   }, [isAnimating]);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
@@ -412,9 +412,11 @@ export default function Flashcards() {
         .fc-scene { perspective: 1400px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.7s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+          transition: transform 0.45s ease-in-out;
           transform-style: preserve-3d;
           will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
         .fc-inner.animating { pointer-events: none; }
