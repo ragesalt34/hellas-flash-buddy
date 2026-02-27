@@ -119,6 +119,7 @@ export default function Flashcards() {
   const [restartCount, setRestartCount]   = useState(0);
   const [ratedIndices, setRatedIndices]   = useState<Set<number>>(new Set());
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Track which question IDs have already been re-queued as "Again" this session
   // (prevents infinite appending if user keeps pressing Again on the same card)
@@ -181,7 +182,12 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
+  const handleFlip = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIsFlipped(prev => !prev);
+    setTimeout(() => setIsAnimating(false), 700);
+  }, [isAnimating]);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
     if (!isFlipped || isTransitioning) return;
@@ -403,14 +409,15 @@ export default function Flashcards() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
-        .fc-scene { perspective: 1200px; }
+        .fc-scene { perspective: 1400px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+          transition: transform 0.7s cubic-bezier(0.45, 0.05, 0.55, 0.95);
           transform-style: preserve-3d;
           will-change: transform;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
+        .fc-inner.animating { pointer-events: none; }
         .fc-face {
           position: absolute; inset: 0;
           backface-visibility: hidden;
@@ -529,12 +536,12 @@ export default function Flashcards() {
       <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
         <div className="fc-scene" style={{ height: 380 }}>
           <div
-            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped')}
+            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped', isAnimating && 'animating')}
             onClick={handleFlip}
           >
             {/* FRONT */}
             <div
-              className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              className="fc-face bg-white rounded-2xl flex flex-col relative"
               style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
@@ -581,7 +588,7 @@ export default function Flashcards() {
 
             {/* BACK */}
             <div
-              className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              className="fc-face fc-back bg-white rounded-2xl flex flex-col relative"
               style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
