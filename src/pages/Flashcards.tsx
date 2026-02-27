@@ -421,6 +421,7 @@ export default function Flashcards() {
         .fc-inner.animating { pointer-events: none; }
         .fc-face {
           position: absolute; inset: 0;
+          overflow: hidden;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
         }
