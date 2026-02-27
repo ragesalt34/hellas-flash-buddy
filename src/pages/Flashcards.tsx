@@ -118,8 +118,6 @@ export default function Flashcards() {
   const [isFinished, setIsFinished]       = useState(false);
   const [restartCount, setRestartCount]   = useState(0);
   const [ratedIndices, setRatedIndices]   = useState<Set<number>>(new Set());
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   // Track which question IDs have already been re-queued as "Again" this session
   // (prevents infinite appending if user keeps pressing Again on the same card)
@@ -182,22 +180,15 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  const handleFlip = useCallback(() => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setIsFlipped(prev => !prev);
-    setTimeout(() => setIsAnimating(false), 450);
-  }, [isAnimating]);
+  const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
-    if (!isFlipped || isTransitioning) return;
-    setIsAnimating(false); // cancel any pending flip-guard before advancing
+    if (!isFlipped) return;
 
     const currentQ = questions[currentIndex];
     if (user) void upsertProgress(user.id, currentQ.id, grade);
 
     setIsFlipped(false);
-    setIsTransitioning(true);
 
     if (grade === 1) {
       setAgainCount(c => c + 1);
@@ -209,13 +200,9 @@ export default function Flashcards() {
       // After appending: new deck length = questions.length + 1, safe to go next.
       const newLength = isAlreadyAppended ? questions.length : questions.length + 1;
       if (currentIndex >= newLength - 1) {
-        setIsTransitioning(false);
         setIsFinished(true);
       } else {
-        // Swap content at the midpoint of the flip-back (card is edge-on, invisible)
-        // then release the lock once the animation fully completes.
-        setTimeout(() => setCurrentIndex(prev => prev + 1), 225);
-        setTimeout(() => setIsTransitioning(false), 450);
+        setCurrentIndex(prev => prev + 1);
       }
       return;
     }
@@ -228,15 +215,11 @@ export default function Flashcards() {
     else             setEasyCount(c => c + 1);
 
     if (currentIndex >= questions.length - 1) {
-      setIsTransitioning(false);
       setIsFinished(true);
     } else {
-      // Swap content at the midpoint of the flip-back (card is edge-on, invisible)
-      // then release the lock once the animation fully completes.
-      setTimeout(() => setCurrentIndex(prev => prev + 1), 225);
-      setTimeout(() => setIsTransitioning(false), 450);
+      setCurrentIndex(prev => prev + 1);
     }
-  }, [isFlipped, isTransitioning, currentIndex, questions, ratedIndices, user]);
+  }, [isFlipped, currentIndex, questions, ratedIndices, user]);
 
   const handleShuffle = () => {
     setQuestions(shuffleArray(questions));
@@ -410,26 +393,19 @@ export default function Flashcards() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
-        .fc-scene { perspective: 1400px; }
+        .fc-scene { perspective: 1200px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.45s ease-in-out;
+          transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
           transform-style: preserve-3d;
-          will-change: transform;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
-        .fc-inner.animating { pointer-events: none; }
         .fc-face {
           position: absolute; inset: 0;
-          overflow: hidden;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
         }
         .fc-back { transform: rotateY(180deg); }
-        /* Disable pointer events on whichever face is rotated away from the viewer,
-           so clicks always reach the visible face and bubble up to fc-inner */
-        .fc-inner.flipped .fc-front      { pointer-events: none; }
-        .fc-inner:not(.flipped) .fc-back { pointer-events: none; }
 
         .fc-btn-again { background: #C25B5B; color: white; }
         .fc-btn-again:hover { background: #b04f4f; }
@@ -542,13 +518,13 @@ export default function Flashcards() {
       <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
         <div className="fc-scene" style={{ height: 380 }}>
           <div
-            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped', isAnimating && 'animating')}
+            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped')}
             onClick={handleFlip}
           >
             {/* FRONT */}
             <div
-              className="fc-face fc-front bg-white rounded-2xl flex flex-col relative"
-              style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
+              className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
               <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
@@ -594,8 +570,8 @@ export default function Flashcards() {
 
             {/* BACK */}
             <div
-              className="fc-face fc-back bg-white rounded-2xl flex flex-col relative"
-              style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}
+              className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden relative"
+              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
               {/* Header row: spacer | badge | speaker */}
               <div style={{ display: 'flex', alignItems: 'center', padding: '20px 20px 0' }}>
