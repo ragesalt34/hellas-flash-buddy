@@ -330,6 +330,31 @@ export default function Flashcards() {
           letter-spacing: -0.01em;
         }
         .fc-rating:active { transform: scale(0.97); }
+
+        .fc-speaker-btn {
+          position: absolute;
+          top: 14px;
+          right: 14px;
+          z-index: 10;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1.5px solid rgba(47,53,50,0.10);
+          background: rgba(47,53,50,0.04);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: rgba(47,53,50,0.40);
+          transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+        }
+        .fc-speaker-btn:hover {
+          background: rgba(47,53,50,0.10);
+          border-color: rgba(47,53,50,0.20);
+          color: rgba(47,53,50,0.75);
+          transform: scale(1.08);
+        }
+        .fc-speaker-btn:active { transform: scale(0.95); }
         .fc-rating .interval {
           font-size: 12px;
           font-weight: 500;
@@ -408,11 +433,24 @@ export default function Flashcards() {
           >
             {/* FRONT */}
             <div
-              className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden"
+              className="fc-face bg-white rounded-2xl flex flex-col overflow-hidden relative"
               style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
-              {/* Top row: badge centered + speaker top-right */}
-              <div className="relative flex items-center justify-center pt-6 pb-0 px-4">
+              {/* Speaker — top-right corner of card */}
+              {isSupported && (
+                <button
+                  className="fc-speaker-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
+                  }}
+                >
+                  {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </button>
+              )}
+
+              {/* Badge */}
+              <div className="flex items-center justify-center pt-7 pb-0">
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
                   style={{ background: hexToRgba(accent, 0.12), color: accent }}
@@ -420,18 +458,6 @@ export default function Flashcards() {
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
                   {badgeLabel}
                 </span>
-                {isSupported && (
-                  <button
-                    className="absolute right-4 top-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                    style={{ background: 'rgba(47,53,50,0.06)', border: 'none', cursor: 'pointer', color: 'rgba(47,53,50,0.45)' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.question, `${currentQuestion.id}_question_${language}`);
-                    }}
-                  >
-                    {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-                  </button>
-                )}
               </div>
 
               {/* Question */}
@@ -451,11 +477,24 @@ export default function Flashcards() {
 
             {/* BACK */}
             <div
-              className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden"
+              className="fc-face fc-back bg-white rounded-2xl flex flex-col overflow-hidden relative"
               style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
             >
-              {/* Answer badge + speaker */}
-              <div className="relative flex items-center justify-center pt-6 pb-0 px-4">
+              {/* Speaker */}
+              {isSupported && (
+                <button
+                  className="fc-speaker-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
+                  }}
+                >
+                  {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </button>
+              )}
+
+              {/* Badge */}
+              <div className="flex items-center justify-center pt-7 pb-0">
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
                   style={{ background: hexToRgba(accent, 0.12), color: accent }}
@@ -463,18 +502,6 @@ export default function Flashcards() {
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: accent }} />
                   {language === 'ru' ? 'Ответ' : 'Απάντηση'}
                 </span>
-                {isSupported && (
-                  <button
-                    className="absolute right-4 top-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                    style={{ background: 'rgba(47,53,50,0.06)', border: 'none', cursor: 'pointer', color: 'rgba(47,53,50,0.45)' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      isSpeaking ? stop() : speak(currentQuestion.correct_answer, `${currentQuestion.id}_answer_${language}`);
-                    }}
-                  >
-                    {isSpeaking ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-                  </button>
-                )}
               </div>
 
               {/* Answer text */}
