@@ -348,14 +348,15 @@ export default function Learn() {
           box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08);
         }
         .learn-action-primary {
-          background: #2F3532;
-          color: #fff;
-          border-color: #2F3532;
+          background: rgba(255,255,255,0.55);
+          color: #2F3532;
+          border-color: rgba(47,53,50,0.30);
+          font-weight: 700;
         }
         .learn-action-primary:hover {
-          background: #404a45 !important;
-          border-color: #404a45 !important;
-          box-shadow: 0 4px 16px -2px rgba(47,53,50,0.25) !important;
+          background: #fff !important;
+          border-color: rgba(47,53,50,0.45) !important;
+          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
         }
       `}</style>
     </Layout>
