@@ -278,7 +278,7 @@ export default function Flashcards() {
   const headerLabel = topicLabelRu[validTopic] ?? topicLabelRu.history;
   const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
   // Progress bar uses originalCount so it doesn't regress when Again cards are appended
-  const progress    = originalCount > 0 ? Math.min((currentIndex / originalCount) * 100, 100) : 0;
+  const progress    = originalCount > 0 ? Math.min(((currentIndex + 1) / originalCount) * 100, 100) : 0;
 
   if (questions.length === 0) {
     return (
