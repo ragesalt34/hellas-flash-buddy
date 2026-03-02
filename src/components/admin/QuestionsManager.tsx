@@ -9,6 +9,7 @@ import { QuestionsList } from './QuestionsList';
 import { DocumentUpload } from './DocumentUpload';
 import { Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Database } from '@/integrations/supabase/types';
 
 type QuestionTopic = Database['public']['Enums']['question_topic'];
@@ -21,6 +22,7 @@ export type VerificationResult = {
 };
 
 export function QuestionsManager() {
+  const { language } = useLanguage();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<QuestionTopic>('history');
@@ -53,10 +55,10 @@ export function QuestionsManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
-      toast.success('Вопрос удалён');
+      toast.success(language === 'ru' ? 'Вопрос удалён' : 'Η ερώτηση διαγράφηκε');
     },
     onError: () => {
-      toast.error('Ошибка при удалении вопроса');
+      toast.error(language === 'ru' ? 'Ошибка при удалении вопроса' : 'Σφάλμα διαγραφής ερώτησης');
     }
   });
 
@@ -80,14 +82,14 @@ export function QuestionsManager() {
       setVerificationResults(data.results);
       const incorrectCount = data.results.filter(r => !r.isCorrect).length;
       if (incorrectCount > 0) {
-        toast.warning(`Найдено ${incorrectCount} потенциальных ошибок`);
+        toast.warning(language === 'ru' ? `Найдено ${incorrectCount} потенциальных ошибок` : `Βρέθηκαν ${incorrectCount} πιθανά σφάλματα`);
       } else {
-        toast.success('Все ответы проверены — ошибок не найдено!');
+        toast.success(language === 'ru' ? 'Все ответы проверены — ошибок не найдено!' : 'Όλες οι απαντήσεις ελέγχθηκαν — δεν βρέθηκαν σφάλματα!');
       }
     },
     onError: (error) => {
       console.error('Verification error:', error);
-      toast.error('Ошибка при проверке ответов');
+      toast.error(language === 'ru' ? 'Ошибка при проверке ответов' : 'Σφάλμα ελέγχου απαντήσεων');
     }
   });
 
@@ -124,7 +126,7 @@ export function QuestionsManager() {
     const questionsToFix = questions.filter(q => incorrectQuestionIds.includes(q.id));
     
     if (questionsToFix.length === 0) {
-      toast.info('Нет вопросов для исправления');
+      toast.info(language === 'ru' ? 'Нет вопросов для исправления' : 'Δεν υπάρχουν ερωτήσεις για διόρθωση');
       return;
     }
 
@@ -170,20 +172,20 @@ export function QuestionsManager() {
       queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
       setVerificationResults([]);
       
-      toast.success(`Исправлено ${fixedCount} вопросов`);
+      toast.success(language === 'ru' ? `Исправлено ${fixedCount} вопросов` : `Διορθώθηκαν ${fixedCount} ερωτήσεις`);
     } catch (error) {
       console.error('Fix error:', error);
-      toast.error('Ошибка при исправлении вопросов');
+      toast.error(language === 'ru' ? 'Ошибка при исправлении вопросов' : 'Σφάλμα διόρθωσης ερωτήσεων');
     } finally {
       setIsFixing(false);
     }
   };
 
   const topicLabels: Record<QuestionTopic, string> = {
-    history: 'История',
-    culture: 'Культура',
-    laws: 'Законы',
-    geography: 'География'
+    history: language === 'ru' ? 'История' : 'Ιστορία',
+    culture: language === 'ru' ? 'Культура' : 'Πολιτισμός',
+    laws: language === 'ru' ? 'Законы' : 'Νόμοι',
+    geography: language === 'ru' ? 'География' : 'Γεωγραφία',
   };
 
   // Clear verification results when topic changes
@@ -202,23 +204,23 @@ export function QuestionsManager() {
         <Tabs value={selectedTopic} onValueChange={(v) => handleTopicChange(v as QuestionTopic)}>
           <TabsList>
             <TabsTrigger value="history" className="gap-2">
-              🏛️ История
+              🏛️ {language === 'ru' ? 'История' : 'Ιστορία'}
             </TabsTrigger>
             <TabsTrigger value="culture" className="gap-2">
-              🎭 Культура
+              🎭 {language === 'ru' ? 'Культура' : 'Πολιτισμός'}
             </TabsTrigger>
             <TabsTrigger value="laws" className="gap-2">
-              ⚖️ Законы
+              ⚖️ {language === 'ru' ? 'Законы' : 'Νόμοι'}
             </TabsTrigger>
             <TabsTrigger value="geography" className="gap-2">
-              🗺️ География
+              🗺️ {language === 'ru' ? 'География' : 'Γεωγραφία'}
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
         <Button onClick={() => setIsFormOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Добавить вопрос
+          {language === 'ru' ? 'Добавить вопрос' : 'Προσθήκη ερώτησης'}
         </Button>
       </div>
 
@@ -226,7 +228,9 @@ export function QuestionsManager() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingQuestion ? 'Редактировать вопрос' : 'Новый вопрос'}
+              {editingQuestion
+                ? (language === 'ru' ? 'Редактировать вопрос' : 'Επεξεργασία ερώτησης')
+                : (language === 'ru' ? 'Новый вопрос' : 'Νέα ερώτηση')}
             </DialogTitle>
           </DialogHeader>
           <QuestionForm

@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type KnowledgeArticle = {
   id: string;
@@ -41,6 +42,7 @@ const AI_ACTIONS = [
 ];
 
 export function KnowledgeBaseManager() {
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export function KnowledgeBaseManager() {
   // AI text processing
   const processWithAI = async (action: typeof AI_ACTIONS[0]) => {
     if (!formData.content.trim()) {
-      toast.error('Введите текст для обработки');
+      toast.error(language === 'ru' ? 'Введите текст для обработки' : 'Εισάγετε κείμενο για επεξεργασία');
       return;
     }
 
@@ -130,11 +132,11 @@ export function KnowledgeBaseManager() {
 
       if (result.trim()) {
         setFormData(prev => ({ ...prev, content: result.trim() }));
-        toast.success(`Текст обработан: ${action.label}`);
+        toast.success(language === 'ru' ? `Текст обработан: ${action.label}` : `Κείμενο επεξεργάστηκε: ${action.label}`);
       }
     } catch (error) {
       console.error('AI error:', error);
-      toast.error('Ошибка обработки AI');
+      toast.error(language === 'ru' ? 'Ошибка обработки AI' : 'Σφάλμα επεξεργασίας AI');
     } finally {
       setAiProcessing(false);
     }
@@ -143,7 +145,7 @@ export function KnowledgeBaseManager() {
   // Generate title from content
   const generateTitle = async () => {
     if (!formData.content.trim()) {
-      toast.error('Введите текст для генерации заголовка');
+      toast.error(language === 'ru' ? 'Введите текст для генерации заголовка' : 'Εισάγετε κείμενο για δημιουργία τίτλου');
       return;
     }
 
@@ -199,11 +201,11 @@ export function KnowledgeBaseManager() {
 
       if (result.trim()) {
         setFormData(prev => ({ ...prev, title: result.trim() }));
-        toast.success('Заголовок сгенерирован');
+        toast.success(language === 'ru' ? 'Заголовок сгенерирован' : 'Ο τίτλος δημιουργήθηκε');
       }
     } catch (error) {
       console.error('AI error:', error);
-      toast.error('Ошибка генерации заголовка');
+      toast.error(language === 'ru' ? 'Ошибка генерации заголовка' : 'Σφάλμα δημιουργίας τίτλου');
     } finally {
       setAiProcessing(false);
     }
@@ -220,12 +222,12 @@ export function KnowledgeBaseManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['knowledge-base'] });
-      toast.success('Статья добавлена');
+      toast.success(language === 'ru' ? 'Статья добавлена' : 'Το άρθρο προστέθηκε');
       setIsAdding(false);
       setFormData({ title: '', content: '', category: 'general' });
     },
     onError: (error) => {
-      toast.error(`Ошибка: ${error.message}`);
+      toast.error(`${language === 'ru' ? 'Ошибка' : 'Σφάλμα'}: ${error.message}`);
     },
   });
 
@@ -236,16 +238,16 @@ export function KnowledgeBaseManager() {
         .from('knowledge_base')
         .update(data)
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['knowledge-base'] });
-      toast.success('Статья обновлена');
+      toast.success(language === 'ru' ? 'Статья обновлена' : 'Το άρθρο ενημερώθηκε');
       setEditingId(null);
     },
     onError: (error) => {
-      toast.error(`Ошибка: ${error.message}`);
+      toast.error(`${language === 'ru' ? 'Ошибка' : 'Σφάλμα'}: ${error.message}`);
     },
   });
 
@@ -256,15 +258,15 @@ export function KnowledgeBaseManager() {
         .from('knowledge_base')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['knowledge-base'] });
-      toast.success('Статья удалена');
+      toast.success(language === 'ru' ? 'Статья удалена' : 'Το άρθρο διαγράφηκε');
     },
     onError: (error) => {
-      toast.error(`Ошибка: ${error.message}`);
+      toast.error(`${language === 'ru' ? 'Ошибка' : 'Σφάλμα'}: ${error.message}`);
     },
   });
 
@@ -297,7 +299,7 @@ export function KnowledgeBaseManager() {
             ) : (
               <Wand2 className="h-4 w-4 mr-2" />
             )}
-            AI редактор
+            {language === 'ru' ? 'AI редактор' : 'Επεξεργαστής AI'}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -309,9 +311,9 @@ export function KnowledgeBaseManager() {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button 
-        variant="outline" 
-        size="sm" 
+      <Button
+        variant="outline"
+        size="sm"
         onClick={generateTitle}
         disabled={aiProcessing || !formData.content.trim()}
       >
@@ -320,7 +322,7 @@ export function KnowledgeBaseManager() {
         ) : (
           <Sparkles className="h-4 w-4 mr-2" />
         )}
-        Сгенерировать заголовок
+        {language === 'ru' ? 'Сгенерировать заголовок' : 'Δημιουργία τίτλου'}
       </Button>
     </div>
   );
@@ -331,15 +333,15 @@ export function KnowledgeBaseManager() {
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <BookOpen className="h-6 w-6" />
-            База знаний
+            {language === 'ru' ? 'База знаний' : 'Βάση γνώσεων'}
           </h2>
           <p className="text-muted-foreground">
-            Статьи для AI-ассистента
+            {language === 'ru' ? 'Статьи для AI-ассистента' : 'Άρθρα για τον AI βοηθό'}
           </p>
         </div>
         <Button onClick={() => setIsAdding(true)} disabled={isAdding}>
           <Plus className="h-4 w-4 mr-2" />
-          Добавить статью
+          {language === 'ru' ? 'Добавить статью' : 'Προσθήκη άρθρου'}
         </Button>
       </div>
 
@@ -347,7 +349,7 @@ export function KnowledgeBaseManager() {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Поиск статей..."
+          placeholder={language === 'ru' ? 'Поиск статей...' : 'Αναζήτηση άρθρων...'}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -358,12 +360,12 @@ export function KnowledgeBaseManager() {
       {isAdding && (
         <Card>
           <CardHeader>
-            <CardTitle>Новая статья</CardTitle>
+            <CardTitle>{language === 'ru' ? 'Новая статья' : 'Νέο άρθρο'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
               <Input
-                placeholder="Заголовок"
+                placeholder={language === 'ru' ? 'Заголовок' : 'Τίτλος'}
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 className="flex-1"
@@ -374,7 +376,7 @@ export function KnowledgeBaseManager() {
               onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Категория" />
+                <SelectValue placeholder={language === 'ru' ? 'Категория' : 'Κατηγορία'} />
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map(cat => (
@@ -383,7 +385,7 @@ export function KnowledgeBaseManager() {
               </SelectContent>
             </Select>
             <Textarea
-              placeholder="Содержание статьи..."
+              placeholder={language === 'ru' ? 'Содержание статьи...' : 'Περιεχόμενο άρθρου...'}
               value={formData.content}
               onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
               rows={6}
@@ -395,11 +397,11 @@ export function KnowledgeBaseManager() {
                 disabled={!formData.title || !formData.content || addMutation.isPending}
               >
                 {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Сохранить
+                {language === 'ru' ? 'Сохранить' : 'Αποθήκευση'}
               </Button>
               <Button variant="outline" onClick={() => { setIsAdding(false); setFormData({ title: '', content: '', category: 'general' }); }}>
                 <X className="h-4 w-4 mr-2" />
-                Отмена
+                {language === 'ru' ? 'Отмена' : 'Ακύρωση'}
               </Button>
             </div>
           </CardContent>
@@ -414,7 +416,9 @@ export function KnowledgeBaseManager() {
       ) : filteredArticles?.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            {searchQuery ? 'Статьи не найдены' : 'База знаний пуста. Добавьте первую статью.'}
+            {searchQuery
+              ? (language === 'ru' ? 'Статьи не найдены' : 'Δεν βρέθηκαν άρθρα')
+              : (language === 'ru' ? 'База знаний пуста. Добавьте первую статью.' : 'Η βάση γνώσεων είναι κενή. Προσθέστε το πρώτο άρθρο.')}
           </CardContent>
         </Card>
       ) : (
@@ -453,11 +457,11 @@ export function KnowledgeBaseManager() {
                         disabled={updateMutation.isPending}
                       >
                         {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                        Сохранить
+                        {language === 'ru' ? 'Сохранить' : 'Αποθήκευση'}
                       </Button>
                       <Button variant="outline" onClick={cancelEditing}>
                         <X className="h-4 w-4 mr-2" />
-                        Отмена
+                        {language === 'ru' ? 'Отмена' : 'Ακύρωση'}
                       </Button>
                     </div>
                   </div>

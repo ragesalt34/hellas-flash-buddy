@@ -109,7 +109,7 @@ export default function Quiz() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isFinished, isLoading, questions.length, isAnswered, shuffledAnswers, currentIndex]);
+  }, [isFinished, isLoading, questions, isAnswered, shuffledAnswers, currentIndex]);
 
   const handleAnswer = (answer: string) => {
     if (isAnswered) return;

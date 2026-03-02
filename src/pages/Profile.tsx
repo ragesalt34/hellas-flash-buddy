@@ -19,6 +19,15 @@ import {
 import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+type ProfileData = {
+  id: string;
+  display_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
   const { language } = useLanguage();
@@ -55,8 +64,9 @@ export default function Profile() {
         .eq('id', user!.id)
         .maybeSingle();
       if (error) throw error;
-      if (data) setDisplayName((data as any).display_name || '');
-      return data as any;
+      const typed = data as unknown as ProfileData;
+      if (typed) setDisplayName(typed.display_name || '');
+      return typed;
     },
     enabled: !!user,
   });
@@ -151,7 +161,7 @@ export default function Profile() {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
+        .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() } as never)
         .eq('id', user.id);
 
       if (updateError) throw updateError;

@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Pencil, Trash2, CheckCircle2, XCircle, AlertTriangle, CheckCheck } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Database } from '@/integrations/supabase/types';
 import type { VerificationResult } from './QuestionsManager';
 import { VerificationPanel } from './VerificationPanel';
@@ -37,10 +38,10 @@ interface QuestionsListProps {
   isFixing?: boolean;
 }
 
-export function QuestionsList({ 
-  questions, 
-  onEdit, 
-  onDelete, 
+export function QuestionsList({
+  questions,
+  onEdit,
+  onDelete,
   topicLabel,
   verificationResults = [],
   isVerifying = false,
@@ -48,6 +49,7 @@ export function QuestionsList({
   onFixAll,
   isFixing = false
 }: QuestionsListProps) {
+  const { language } = useLanguage();
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   
   const getVerificationStatus = (questionId: string) => {
@@ -71,10 +73,10 @@ export function QuestionsList({
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-muted-foreground">
-            Пока нет вопросов по теме "{topicLabel}".
+            {language === 'ru' ? `Пока нет вопросов по теме "${topicLabel}".` : `Δεν υπάρχουν ερωτήσεις για το θέμα "${topicLabel}".`}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            Нажмите "Добавить вопрос", чтобы создать первый.
+            {language === 'ru' ? 'Нажмите "Добавить вопрос", чтобы создать первый.' : 'Πατήστε "Προσθήκη ερώτησης" για να δημιουργήσετε την πρώτη.'}
           </p>
         </CardContent>
       </Card>
@@ -99,11 +101,11 @@ export function QuestionsList({
       ) : onVerify ? (
         <div className="liquid-glass-card rounded-xl p-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Всего вопросов: {questions.length}
+            {language === 'ru' ? `Всего вопросов: ${questions.length}` : `Σύνολο ερωτήσεων: ${questions.length}`}
           </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={onVerify}
             disabled={isVerifying}
             className="gap-2"
@@ -111,26 +113,28 @@ export function QuestionsList({
             {isVerifying ? (
               <>
                 <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Проверка...
+                {language === 'ru' ? 'Проверка...' : 'Έλεγχος...'}
               </>
             ) : (
               <>
                 <CheckCheck className="h-4 w-4" />
-                Проверить ответы
+                {language === 'ru' ? 'Проверить ответы' : 'Έλεγχος απαντήσεων'}
               </>
             )}
           </Button>
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">
-          Всего вопросов: {questions.length}
+          {language === 'ru' ? `Всего вопросов: ${questions.length}` : `Σύνολο ερωτήσεων: ${questions.length}`}
         </p>
       )}
 
       {/* Filter indicator */}
       {showOnlyErrors && (
         <p className="text-sm text-yellow-600 dark:text-yellow-400">
-          Показаны только вопросы с ошибками ({displayedQuestions.length} из {questions.length})
+          {language === 'ru'
+            ? `Показаны только вопросы с ошибками (${displayedQuestions.length} из ${questions.length})`
+            : `Εμφανίζονται μόνο ερωτήσεις με σφάλματα (${displayedQuestions.length} από ${questions.length})`}
         </p>
       )}
       
@@ -218,18 +222,18 @@ export function QuestionsList({
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Удалить вопрос?</AlertDialogTitle>
+                          <AlertDialogTitle>{language === 'ru' ? 'Удалить вопрос?' : 'Διαγραφή ερώτησης;'}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Это действие нельзя отменить. Вопрос будет удалён навсегда.
+                            {language === 'ru' ? 'Это действие нельзя отменить. Вопрос будет удалён навсегда.' : 'Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Η ερώτηση θα διαγραφεί οριστικά.'}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Отмена</AlertDialogCancel>
+                          <AlertDialogCancel>{language === 'ru' ? 'Отмена' : 'Ακύρωση'}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => onDelete(question.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            Удалить
+                            {language === 'ru' ? 'Удалить' : 'Διαγραφή'}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

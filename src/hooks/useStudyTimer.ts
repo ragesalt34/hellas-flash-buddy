@@ -98,7 +98,7 @@ export function useStudyTimer(activityType: string = 'quiz') {
     savedRef.current = false;
 
     const onInactive = () => {
-      // User hasn't interacted for 5 min — save and pause
+      // User hasn't interacted for 2 min — save and pause
       saveAsync();
     };
 

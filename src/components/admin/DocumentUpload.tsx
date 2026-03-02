@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Upload, FileText, Loader2, Sparkles, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Database } from '@/integrations/supabase/types';
 
 type QuestionTopic = Database['public']['Enums']['question_topic'];
@@ -28,6 +29,7 @@ interface ParsedQuestion {
 
 export function DocumentUpload() {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -50,7 +52,7 @@ export function DocumentUpload() {
     onSuccess: (questions) => {
       setParsedQuestions(questions);
       setSelectedQuestions(new Set(questions.map((_, i) => i)));
-      toast.success(`Найдено ${questions.length} вопросов`);
+      toast.success(language === 'ru' ? `Найдено ${questions.length} вопросов` : `Βρέθηκαν ${questions.length} ερωτήσεις`);
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -76,7 +78,7 @@ export function DocumentUpload() {
       return questionsToSave.length;
     },
     onSuccess: (count) => {
-      toast.success(`Добавлено ${count} вопросов`);
+      toast.success(language === 'ru' ? `Добавлено ${count} вопросов` : `Προστέθηκαν ${count} ερωτήσεις`);
       setParsedQuestions([]);
       setSelectedQuestions(new Set());
       setDocumentText('');
@@ -94,9 +96,9 @@ export function DocumentUpload() {
     try {
       const text = await file.text();
       setDocumentText(text);
-      toast.success(`Файл "${file.name}" загружен`);
+      toast.success(language === 'ru' ? `Файл "${file.name}" загружен` : `Το αρχείο "${file.name}" φορτώθηκε`);
     } catch {
-      toast.error('Не удалось прочитать файл');
+      toast.error(language === 'ru' ? 'Не удалось прочитать файл' : 'Αδυναμία ανάγνωσης αρχείου');
     }
   };
 
@@ -123,32 +125,34 @@ export function DocumentUpload() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-accent" />
-          AI-генерация вопросов
+          {language === 'ru' ? 'AI-генерация вопросов' : 'AI-δημιουργία ερωτήσεων'}
         </CardTitle>
         <CardDescription>
-          Загрузите документ или вставьте текст — AI извлечёт вопросы и сгенерирует варианты ответов
+          {language === 'ru'
+            ? 'Загрузите документ или вставьте текст — AI извлечёт вопросы и сгенерирует варианты ответов'
+            : 'Ανεβάστε ένα έγγραφο ή επικολλήστε κείμενο — το AI θα εξαγάγει ερωτήσεις και θα δημιουργήσει απαντήσεις'}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Topic Selection */}
         <div className="space-y-2">
-          <Label>Тема вопросов</Label>
+          <Label>{language === 'ru' ? 'Тема вопросов' : 'Θέμα ερωτήσεων'}</Label>
           <Select value={topic} onValueChange={(v) => setTopic(v as QuestionTopic)}>
             <SelectTrigger className="w-full sm:w-64">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="history">🏛️ История</SelectItem>
-              <SelectItem value="culture">🎭 Культура</SelectItem>
-              <SelectItem value="laws">⚖️ Законы</SelectItem>
-              <SelectItem value="geography">🗺️ География</SelectItem>
+              <SelectItem value="history">🏛️ {language === 'ru' ? 'История' : 'Ιστορία'}</SelectItem>
+              <SelectItem value="culture">🎭 {language === 'ru' ? 'Культура' : 'Πολιτισμός'}</SelectItem>
+              <SelectItem value="laws">⚖️ {language === 'ru' ? 'Законы' : 'Νόμοι'}</SelectItem>
+              <SelectItem value="geography">🗺️ {language === 'ru' ? 'География' : 'Γεωγραφία'}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* File Upload */}
         <div className="space-y-2">
-          <Label>Загрузить файл</Label>
+          <Label>{language === 'ru' ? 'Загрузить файл' : 'Ανέβασμα αρχείου'}</Label>
           <div className="flex gap-2">
             <input
               ref={fileInputRef}
@@ -164,18 +168,18 @@ export function DocumentUpload() {
               className="gap-2"
             >
               <Upload className="h-4 w-4" />
-              Выбрать файл (.txt, .md)
+              {language === 'ru' ? 'Выбрать файл (.txt, .md)' : 'Επιλογή αρχείου (.txt, .md)'}
             </Button>
           </div>
         </div>
 
         {/* Text Input */}
         <div className="space-y-2">
-          <Label>Или вставьте текст документа</Label>
+          <Label>{language === 'ru' ? 'Или вставьте текст документа' : 'Ή επικολλήστε κείμενο εγγράφου'}</Label>
           <Textarea
             value={documentText}
             onChange={(e) => setDocumentText(e.target.value)}
-            placeholder="Вставьте текст с вопросами и ответами..."
+            placeholder={language === 'ru' ? 'Вставьте текст с вопросами и ответами...' : 'Επικολλήστε κείμενο με ερωτήσεις και απαντήσεις...'}
             rows={6}
           />
         </div>
@@ -191,7 +195,7 @@ export function DocumentUpload() {
           ) : (
             <Sparkles className="h-4 w-4" />
           )}
-          Извлечь вопросы с помощью AI
+          {language === 'ru' ? 'Извлечь вопросы с помощью AI' : 'Εξαγωγή ερωτήσεων με AI'}
         </Button>
 
         {/* Parsed Questions */}
@@ -199,14 +203,14 @@ export function DocumentUpload() {
           <div className="space-y-4 mt-6 pt-6 border-t">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">
-                Найденные вопросы ({selectedQuestions.size}/{parsedQuestions.length})
+                {language === 'ru' ? 'Найденные вопросы' : 'Βρεθείσες ερωτήσεις'} ({selectedQuestions.size}/{parsedQuestions.length})
               </h3>
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" onClick={selectAll}>
-                  Выбрать все
+                  {language === 'ru' ? 'Выбрать все' : 'Επιλογή όλων'}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={deselectAll}>
-                  Снять все
+                  {language === 'ru' ? 'Снять все' : 'Αποεπιλογή όλων'}
                 </Button>
               </div>
             </div>
@@ -270,7 +274,7 @@ export function DocumentUpload() {
               ) : (
                 <FileText className="h-4 w-4" />
               )}
-              Сохранить {selectedQuestions.size} вопросов
+              {language === 'ru' ? `Сохранить ${selectedQuestions.size} вопросов` : `Αποθήκευση ${selectedQuestions.size} ερωτήσεων`}
             </Button>
           </div>
         )}

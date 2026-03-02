@@ -354,7 +354,7 @@ export default function Exam() {
         toast({ title: language === 'ru' ? 'Ошибка сохранения' : 'Σφάλμα αποθήκευσης', description: language === 'ru' ? 'Результат не был сохранён в базу данных' : 'Το αποτέλεσμα δεν αποθηκεύτηκε', variant: 'destructive' });
       }
     }
-  }, [questions, calculateResults, user, flagged, settings.topics, currentIndex, language]);
+  }, [questions, calculateResults, user, flagged, settings.topics, currentIndex, language, questionTimes]);
 
   // Keep a ref so the timer interval always calls the latest finishExam
   const finishExamRef = useRef(finishExam);
@@ -432,6 +432,7 @@ export default function Exam() {
     setTimeLeft(settings.timeLimit * 60);
     setStartTime(new Date());
     lastQuestionTime.current = new Date();
+    prevQuestionIndex.current = -1;
     warned5min.current = false;
     warned1min.current = false;
   };
@@ -489,7 +490,7 @@ export default function Exam() {
     a.href = url;
     a.download = `exam-results-${new Date().toISOString().split('T')[0]}.txt`;
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   if (authLoading) {
@@ -746,7 +747,7 @@ export default function Exam() {
                   </div>
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
-                  <div className="text-2xl font-bold">{avgTimePerQuestion}с</div>
+                  <div className="text-2xl font-bold">{avgTimePerQuestion}{language === 'ru' ? 'с' : 'δ.'}</div>
                   <div className="text-sm text-muted-foreground">
                     {language === 'ru' ? 'Сек/вопрос' : 'Δευτ/ερώτηση'}
                   </div>

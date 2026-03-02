@@ -274,7 +274,7 @@ export default function Learn() {
                 null,
                 { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
                 null,
-                { value: '75%', label: language === 'ru' ? 'проходной' : 'βάση επιτυχίας' },
+                { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση επιτυχίας' },
               ].map((stat, i) =>
                 stat === null
                   ? <div key={i} style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.10)', alignSelf: 'center' }} />

@@ -7,16 +7,17 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { 
-  CheckCircle2, 
-  AlertTriangle, 
-  Search, 
-  Loader2, 
+import {
+  CheckCircle2,
+  AlertTriangle,
+  Search,
+  Loader2,
   Wrench,
   Sparkles,
   Filter,
   FilterX
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface VerificationPanelProps {
   totalQuestions: number;
@@ -108,6 +109,7 @@ export function VerificationPanel({
   onFixAll,
   isFixing = false,
 }: VerificationPanelProps) {
+  const { language } = useLanguage();
   const percent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
   const isAllCorrect = incorrectCount === 0;
 
@@ -123,21 +125,23 @@ export function VerificationPanel({
         <div className="flex-1 space-y-3 text-center sm:text-left">
           {/* Badges */}
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20 gap-1.5 px-3 py-1"
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
-              {correctCount} верно
+              {correctCount} {language === 'ru' ? 'верно' : 'σωστά'}
             </Badge>
-            
+
             {incorrectCount > 0 && (
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20 gap-1.5 px-3 py-1"
               >
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {incorrectCount} {incorrectCount === 1 ? 'ошибка' : incorrectCount < 5 ? 'ошибки' : 'ошибок'}
+                {language === 'ru'
+                  ? `${incorrectCount} ${incorrectCount === 1 ? 'ошибка' : incorrectCount < 5 ? 'ошибки' : 'ошибок'}`
+                  : `${incorrectCount} ${incorrectCount === 1 ? 'σφάλμα' : 'σφάλματα'}`}
               </Badge>
             )}
           </div>
@@ -155,10 +159,12 @@ export function VerificationPanel({
             {isAllCorrect ? (
               <span className="flex items-center justify-center sm:justify-start gap-1.5">
                 <Sparkles className="h-4 w-4 text-green-500" />
-                Отлично! Все ответы проверены и верны
+                {language === 'ru' ? 'Отлично! Все ответы проверены и верны' : 'Εξαιρετικά! Όλες οι απαντήσεις ελέγχθηκαν και είναι σωστές'}
               </span>
             ) : (
-              `Рекомендуем исправить ${incorrectCount} ${incorrectCount === 1 ? 'вопрос' : incorrectCount < 5 ? 'вопроса' : 'вопросов'}`
+              language === 'ru'
+                ? `Рекомендуем исправить ${incorrectCount} ${incorrectCount === 1 ? 'вопрос' : incorrectCount < 5 ? 'вопроса' : 'вопросов'}`
+                : `Συνιστούμε να διορθώσετε ${incorrectCount} ${incorrectCount === 1 ? 'ερώτηση' : 'ερωτήσεις'}`
             )}
           </p>
         </div>
@@ -180,10 +186,12 @@ export function VerificationPanel({
                   ) : (
                     <Sparkles className="h-4 w-4" />
                   )}
-                  {isFixing ? 'Исправление...' : 'Исправить'}
+                  {isFixing
+                    ? (language === 'ru' ? 'Исправление...' : 'Διόρθωση...')
+                    : (language === 'ru' ? 'Исправить' : 'Διόρθωση')}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Автоматически исправить все ошибки с помощью AI</TooltipContent>
+              <TooltipContent>{language === 'ru' ? 'Автоматически исправить все ошибки с помощью AI' : 'Αυτόματη διόρθωση όλων των σφαλμάτων με AI'}</TooltipContent>
             </Tooltip>
           )}
 
@@ -200,18 +208,20 @@ export function VerificationPanel({
                   {showOnlyErrors ? (
                     <>
                       <FilterX className="h-4 w-4" />
-                      Все
+                      {language === 'ru' ? 'Все' : 'Όλες'}
                     </>
                   ) : (
                     <>
                       <Wrench className="h-4 w-4" />
-                      Ошибки
+                      {language === 'ru' ? 'Ошибки' : 'Σφάλματα'}
                     </>
                   )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {showOnlyErrors ? 'Показать все вопросы' : 'Показать только ошибки'}
+                {showOnlyErrors
+                  ? (language === 'ru' ? 'Показать все вопросы' : 'Εμφάνιση όλων των ερωτήσεων')
+                  : (language === 'ru' ? 'Показать только ошибки' : 'Εμφάνιση μόνο σφαλμάτων')}
               </TooltipContent>
             </Tooltip>
           )}
@@ -231,10 +241,10 @@ export function VerificationPanel({
                 ) : (
                   <Search className="h-4 w-4" />
                 )}
-                {!isVerifying && <span className="hidden sm:inline">Проверить</span>}
+                {!isVerifying && <span className="hidden sm:inline">{language === 'ru' ? 'Проверить' : 'Έλεγχος'}</span>}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Проверить все ответы с помощью AI</TooltipContent>
+            <TooltipContent>{language === 'ru' ? 'Проверить все ответы с помощью AI' : 'Έλεγχος όλων των απαντήσεων με AI'}</TooltipContent>
           </Tooltip>
         </div>
       </div>

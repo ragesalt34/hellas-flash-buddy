@@ -13,7 +13,8 @@ const TOPICS = [
   { id: 'geography', emoji: '🗺️', subtitle_ru: 'Регионы и города', subtitle_el: 'Περιοχές και πόλεις' },
 ];
 
-const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEK_DAYS_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const WEEK_DAYS_EL = ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'];
 
 
 export default function Index() {
@@ -127,7 +128,7 @@ export default function Index() {
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
-                {WEEK_DAYS.map((day, i) => {
+                {(language === 'ru' ? WEEK_DAYS_RU : WEEK_DAYS_EL).map((day, i) => {
                   const isActive = studyStats?.streak[i];
                   const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
                   return (
@@ -331,7 +332,7 @@ export default function Index() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[
-            { emoji: '📖', value: `${questionsCount || 0}`, label: language === 'ru' ? 'Вопросов' : 'Questions' },
+            { emoji: '📖', value: `${questionsCount || 0}`, label: language === 'ru' ? 'Вопросов' : 'Ερωτήσεις' },
             { emoji: '✨', value: language === 'ru' ? 'Бесплатно' : 'Δωρεάν', label: language === 'ru' ? 'Полный доступ навсегда' : 'Πλήρης πρόσβαση για πάντα' },
             { emoji: '⏰', value: '24/7', label: language === 'ru' ? 'Доступ в любое время' : 'Πρόσβαση ανά πάσα στιγμή' },
           ].map(s => (

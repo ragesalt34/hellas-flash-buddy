@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { X, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Database } from '@/integrations/supabase/types';
 
 type QuestionTopic = Database['public']['Enums']['question_topic'];
@@ -29,6 +30,7 @@ interface QuestionFormProps {
 
 export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: QuestionFormProps) {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [topic, setTopic] = useState<QuestionTopic>(question?.topic || defaultTopic);
   const [questionText, setQuestionText] = useState(question?.question || '');
   const [correctAnswer, setCorrectAnswer] = useState(question?.correct_answer || '');
@@ -58,9 +60,9 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
     mutationFn: async () => {
       const filteredWrongAnswers = wrongAnswers.filter(a => a.trim() !== '');
       
-      if (!questionText.trim()) throw new Error('Введите вопрос');
-      if (!correctAnswer.trim()) throw new Error('Введите правильный ответ');
-      if (filteredWrongAnswers.length < 1) throw new Error('Добавьте хотя бы один неправильный ответ');
+      if (!questionText.trim()) throw new Error(language === 'ru' ? 'Введите вопрос' : 'Εισάγετε την ερώτηση');
+      if (!correctAnswer.trim()) throw new Error(language === 'ru' ? 'Введите правильный ответ' : 'Εισάγετε τη σωστή απάντηση');
+      if (filteredWrongAnswers.length < 1) throw new Error(language === 'ru' ? 'Добавьте хотя бы один неправильный ответ' : 'Προσθέστε τουλάχιστον μία λανθασμένη απάντηση');
 
       const data = {
         topic,
@@ -85,7 +87,7 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
       }
     },
     onSuccess: () => {
-      toast.success(question ? 'Вопрос обновлён' : 'Вопрос добавлен');
+      toast.success(language === 'ru' ? (question ? 'Вопрос обновлён' : 'Вопрос добавлен') : (question ? 'Η ερώτηση ενημερώθηκε' : 'Η ερώτηση προστέθηκε'));
       onSuccess();
     },
     onError: (error: Error) => {
@@ -111,55 +113,55 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
     <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label>Тема</Label>
+          <Label>{language === 'ru' ? 'Тема' : 'Θέμα'}</Label>
           <Select value={topic} onValueChange={(v) => setTopic(v as QuestionTopic)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="history">🏛️ История</SelectItem>
-              <SelectItem value="culture">🎭 Культура</SelectItem>
-              <SelectItem value="laws">⚖️ Законы</SelectItem>
-              <SelectItem value="geography">🗺️ География</SelectItem>
+              <SelectItem value="history">🏛️ {language === 'ru' ? 'История' : 'Ιστορία'}</SelectItem>
+              <SelectItem value="culture">🎭 {language === 'ru' ? 'Культура' : 'Πολιτισμός'}</SelectItem>
+              <SelectItem value="laws">⚖️ {language === 'ru' ? 'Законы' : 'Νόμοι'}</SelectItem>
+              <SelectItem value="geography">🗺️ {language === 'ru' ? 'География' : 'Γεωγραφία'}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>Вопрос *</Label>
+        <Label>{language === 'ru' ? 'Вопрос *' : 'Ερώτηση *'}</Label>
         <Textarea
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
-          placeholder="Введите текст вопроса..."
+          placeholder={language === 'ru' ? 'Введите текст вопроса...' : 'Εισάγετε το κείμενο της ερώτησης...'}
           rows={3}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Правильный ответ *</Label>
+        <Label>{language === 'ru' ? 'Правильный ответ *' : 'Σωστή απάντηση *'}</Label>
         <Input
           value={correctAnswer}
           onChange={(e) => setCorrectAnswer(e.target.value)}
-          placeholder="Введите правильный ответ..."
+          placeholder={language === 'ru' ? 'Введите правильный ответ...' : 'Εισάγετε τη σωστή απάντηση...'}
         />
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label>Неправильные ответы *</Label>
+          <Label>{language === 'ru' ? 'Неправильные ответы *' : 'Λανθασμένες απαντήσεις *'}</Label>
           <Button type="button" variant="outline" size="sm" onClick={addWrongAnswer}>
             <Plus className="h-4 w-4 mr-1" />
-            Добавить
+            {language === 'ru' ? 'Добавить' : 'Προσθήκη'}
           </Button>
         </div>
-        
+
         {wrongAnswers.map((answer, index) => (
           <div key={index} className="flex gap-2">
             <Input
               value={answer}
               onChange={(e) => updateWrongAnswer(index, e.target.value)}
-              placeholder={`Неправильный ответ ${index + 1}`}
+              placeholder={language === 'ru' ? `Неправильный ответ ${index + 1}` : `Λανθασμένη απάντηση ${index + 1}`}
             />
             {wrongAnswers.length > 1 && (
               <Button
@@ -176,22 +178,22 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
       </div>
 
       <div className="space-y-2">
-        <Label>Объяснение (опционально)</Label>
+        <Label>{language === 'ru' ? 'Объяснение (опционально)' : 'Επεξήγηση (προαιρετικό)'}</Label>
         <Textarea
           value={explanation}
           onChange={(e) => setExplanation(e.target.value)}
-          placeholder="Добавьте объяснение правильного ответа..."
+          placeholder={language === 'ru' ? 'Добавьте объяснение правильного ответа...' : 'Προσθέστε επεξήγηση της σωστής απάντησης...'}
           rows={2}
         />
       </div>
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="outline" onClick={onCancel}>
-          Отмена
+          {language === 'ru' ? 'Отмена' : 'Ακύρωση'}
         </Button>
         <Button type="submit" disabled={mutation.isPending}>
           {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-          {question ? 'Сохранить' : 'Добавить'}
+          {language === 'ru' ? (question ? 'Сохранить' : 'Добавить') : (question ? 'Αποθήκευση' : 'Προσθήκη')}
         </Button>
       </div>
     </form>
