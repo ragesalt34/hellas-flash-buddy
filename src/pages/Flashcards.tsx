@@ -47,19 +47,6 @@ const topicEmoji: Record<TopicType, string> = {
   geography: '🗺️',
 };
 
-const topicLabelRu: Record<TopicType, string> = {
-  history:   'История Греции',
-  culture:   'Культура',
-  laws:      'Законы',
-  geography: 'География',
-};
-
-const topicSubLabel: Record<TopicType, string> = {
-  history:   'Древняя Эллада',
-  culture:   'Культура',
-  laws:      'Законы',
-  geography: 'География',
-};
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -295,7 +282,7 @@ export default function Flashcards() {
   const accent      = topicAccent[validTopic] || '#5B8DB8';
   const emoji       = topicEmoji[validTopic]  || '📚';
   const headerLabel = t(`topic.${validTopic}`);
-  const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
+  const badgeLabel  = t(`topic.${validTopic}`);
   // Progress bar uses originalCount so it doesn't regress when Again cards are appended
   const progress    = originalCount > 0 ? Math.min(((currentIndex + 1) / originalCount) * 100, 100) : 0;
 
