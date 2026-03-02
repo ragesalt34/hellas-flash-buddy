@@ -16,7 +16,6 @@ import {
   ResponsiveContainer, LineChart, Line,
 } from 'recharts';
 import { StudyTimeWidget } from '@/components/StudyTimeWidget';
-import { cn } from '@/lib/utils';
 
 const TOPICS = ['history', 'culture', 'laws', 'geography'] as const;
 type TopicKey = typeof TOPICS[number];
@@ -228,13 +227,6 @@ export default function Stats() {
     if (minutes < 30) return 2;
     if (minutes < 60) return 3;
     return 4;
-  };
-  const calendarIntensityStyle: Record<0 | 1 | 2 | 3 | 4, string> = {
-    0: 'background: rgba(47,53,50,0.07)',
-    1: 'background: rgba(47,53,50,0.20)',
-    2: 'background: rgba(47,53,50,0.38)',
-    3: 'background: rgba(47,53,50,0.60)',
-    4: 'background: rgba(47,53,50,0.85)',
   };
 
   const top5Hardest = [...(progress || [])]

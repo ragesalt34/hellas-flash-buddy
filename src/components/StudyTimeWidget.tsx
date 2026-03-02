@@ -93,9 +93,15 @@ export function StudyTimeWidget() {
   const todayPercent = Math.min(100, (todayMinutes / RECOMMENDED_DAILY_MINUTES) * 100);
   const maxMinutes = Math.max(...weekData.map(d => d.minutes), RECOMMENDED_DAILY_MINUTES);
   
-  // Streak: consecutive days with >= 5 min
+  // Streak: consecutive days with >= 5 min.
+  // If today (last element) has no study time yet, start counting from yesterday —
+  // mirrors the Stats.tsx calculateStreak logic so the flame doesn't vanish at midnight.
   let streak = 0;
-  for (let i = weekData.length - 1; i >= 0; i--) {
+  const streakStartIdx =
+    weekData.length > 0 && weekData[weekData.length - 1].minutes < 5
+      ? weekData.length - 2
+      : weekData.length - 1;
+  for (let i = streakStartIdx; i >= 0; i--) {
     if (weekData[i].minutes >= 5) streak++;
     else break;
   }
