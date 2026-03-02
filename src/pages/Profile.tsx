@@ -30,7 +30,6 @@ export default function Profile() {
   const [nameSuccess, setNameSuccess] = useState(false);
   const [nameError, setNameError] = useState('');
 
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
@@ -106,7 +105,6 @@ export default function Profile() {
       setPasswordError(language === 'ru' ? 'Ошибка при смене пароля' : 'Σφάλμα αλλαγής κωδικού');
     } else {
       setPasswordSuccess(true);
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       clearTimeout(passwordTimerRef.current);
@@ -160,7 +158,7 @@ export default function Profile() {
 
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
     } catch {
-      // silently fail
+      toast.error(language === 'ru' ? 'Ошибка загрузки фото' : 'Σφάλμα μεταφόρτωσης φωτογραφίας');
     } finally {
       setAvatarUploading(false);
     }

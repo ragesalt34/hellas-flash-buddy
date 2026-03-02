@@ -34,7 +34,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default function Quiz() {
-  const { topic, mode } = useParams<{ topic: string; mode: string }>();
+  const { topic } = useParams<{ topic: string }>();
   const { user, isLoading: authLoading } = useAuth();
   const { t, language } = useLanguage();
   const [questions, setQuestions] = useState<Question[]>([]);
