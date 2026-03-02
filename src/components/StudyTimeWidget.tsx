@@ -68,8 +68,9 @@ export function StudyTimeWidget() {
         dayMap[toLocalDateStr(d)] = 0;
       }
 
+      const MAX_VALID_SESSION_SECONDS = 1800; // 30 min cap
       (data || []).forEach((s: any) => {
-        // Convert UTC timestamp to local date
+        if ((s.duration_seconds || 0) > MAX_VALID_SESSION_SECONDS) return;
         const localDay = toLocalDateStr(new Date(s.started_at));
         if (dayMap[localDay] !== undefined) {
           dayMap[localDay] += (s.duration_seconds || 0) / 60;
