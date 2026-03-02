@@ -21,6 +21,7 @@ import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 import { upsertProgress } from '@/lib/progressHelper';
+import { playPing } from '@/utils/sound';
 
 type Question = {
   id: string;
@@ -168,10 +169,11 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
+  const handleFlip = useCallback(() => { playPing(); setIsFlipped(prev => !prev); }, []);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
     if (!isFlipped || isTransitioning) return;
+    playPing();
 
     const currentQ = questions[currentIndex];
     if (user) void upsertProgress(user.id, currentQ.id, grade);
