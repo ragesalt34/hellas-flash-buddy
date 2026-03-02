@@ -11,6 +11,7 @@ import { useSpeech } from '@/hooks/useSpeech';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 import { upsertProgress } from '@/lib/progressHelper';
+import { playPing } from '@/utils/sound';
 
 type Question = { id: string; question: string; correct_answer: string; wrong_answers: string[]; explanation: string | null; };
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
@@ -113,6 +114,7 @@ export default function Quiz() {
 
   const handleAnswer = (answer: string) => {
     if (isAnswered) return;
+    playPing();
     setSelectedAnswer(answer);
     setIsAnswered(true);
     const isCorrect = answer === questions[currentIndex].correct_answer;

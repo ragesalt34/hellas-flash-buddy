@@ -30,6 +30,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
+import { playPing } from '@/utils/sound';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -370,6 +371,7 @@ export default function Exam() {
   };
 
   const handleAnswer = (answer: string) => {
+    playPing();
     setAnswers(prev => ({ ...prev, [currentIndex]: answer }));
   };
 
