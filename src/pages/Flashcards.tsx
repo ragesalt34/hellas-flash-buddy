@@ -208,7 +208,7 @@ export default function Flashcards() {
         setTimeout(() => {
           setCurrentIndex(prev => prev + 1);
           setIsTransitioning(false);
-        }, 550);
+        }, 350);
       }
       return;
     }
@@ -227,7 +227,7 @@ export default function Flashcards() {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
-      }, 550);
+      }, 350);
     }
   }, [isFlipped, isTransitioning, currentIndex, questions, ratedIndices, user]);
 
@@ -406,7 +406,7 @@ export default function Flashcards() {
         .fc-scene { perspective: 1200px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+          transition: transform 0.35s cubic-bezier(0.4,0.2,0.2,1);
           transform-style: preserve-3d;
           will-change: transform;
         }
