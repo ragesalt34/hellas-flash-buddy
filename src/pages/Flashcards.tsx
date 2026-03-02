@@ -169,7 +169,7 @@ export default function Flashcards() {
     fetchQuestions();
   }, [validTopic, user, isValidTopic, language, restartCount]);
 
-  const handleFlip = useCallback(() => { playPing(); setIsFlipped(prev => !prev); }, []);
+  const handleFlip = useCallback(() => setIsFlipped(prev => !prev), []);
 
   const handleGrade = useCallback((grade: 1 | 2 | 3) => {
     if (!isFlipped || isTransitioning) return;
