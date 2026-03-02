@@ -414,6 +414,8 @@ export default function Flashcards() {
           position: absolute; inset: 0;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .fc-back { transform: rotateY(180deg); }
 
