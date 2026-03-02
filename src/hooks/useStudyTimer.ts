@@ -5,12 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 /**
  * Tracks study time for the current session.
  * Only counts time while the user is actively interacting (click / keydown / touch).
- * After 5 minutes of no interaction the current segment is saved and the timer
+ * After 2 minutes of no interaction the current segment is saved and the timer
  * pauses — the next interaction starts a fresh segment.
  * Uses fetch with keepalive for reliable saves during navigation/unload.
  */
 
-const INACTIVITY_MS = 5 * 60 * 1000; // 5 minutes
+const INACTIVITY_MS = 2 * 60 * 1000; // 2 minutes
 
 export function useStudyTimer(activityType: string = 'quiz') {
   const { user } = useAuth();
