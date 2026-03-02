@@ -408,6 +408,7 @@ export default function Flashcards() {
           position: relative; width: 100%; height: 100%;
           transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
           transform-style: preserve-3d;
+          will-change: transform;
         }
         .fc-inner.flipped { transform: rotateY(180deg); }
         .fc-face {
