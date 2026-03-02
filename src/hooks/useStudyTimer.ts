@@ -66,7 +66,9 @@ export function useStudyTimer(activityType: string = 'quiz') {
     if (!payload) return;
     savedRef.current = true;
 
-    const storageKey = `sb-${import.meta.env.VITE_SUPABASE_PROJECT_ID}-auth-token`;
+    // Extract project ID from the Supabase URL (e.g. https://<project-id>.supabase.co)
+    const projectId = (import.meta.env.VITE_SUPABASE_URL || '').match(/\/\/([^.]+)\./)?.[1] || '';
+    const storageKey = `sb-${projectId}-auth-token`;
     const stored = localStorage.getItem(storageKey);
     if (!stored) return;
 

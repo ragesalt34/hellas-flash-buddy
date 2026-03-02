@@ -20,7 +20,7 @@ import {
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,9 +32,9 @@ export function Header() {
   };
 
   const navLinks = [
-    { to: '/', label: 'Dashboard' },
-    { to: '/learn', label: 'Topics' },
-    { to: '/stats', label: 'Stats' },
+    { to: '/', label: language === 'ru' ? 'Главная' : 'Αρχική' },
+    { to: '/learn', label: language === 'ru' ? 'Темы' : 'Θέματα' },
+    { to: '/stats', label: language === 'ru' ? 'Статистика' : 'Στατιστικά' },
   ];
 
   const isActive = (path: string) => {

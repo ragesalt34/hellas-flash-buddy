@@ -7,10 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 
 const TOPICS = [
-  { id: 'history',   emoji: '🏛️', subtitle: 'Modern & Ancient' },
-  { id: 'culture',   emoji: '🎭', subtitle: 'Arts & Customs' },
-  { id: 'laws',      emoji: '⚖️', subtitle: 'Government & Law' },
-  { id: 'geography', emoji: '🗺️', subtitle: 'Regions & Cities' },
+  { id: 'history',   emoji: '🏛️', subtitle_ru: 'Древняя и современная', subtitle_el: 'Αρχαία και σύγχρονη' },
+  { id: 'culture',   emoji: '🎭', subtitle_ru: 'Искусство и обычаи', subtitle_el: 'Τέχνες και έθιμα' },
+  { id: 'laws',      emoji: '⚖️', subtitle_ru: 'Государство и право', subtitle_el: 'Κράτος και δίκαιο' },
+  { id: 'geography', emoji: '🗺️', subtitle_ru: 'Регионы и города', subtitle_el: 'Περιοχές και πόλεις' },
 ];
 
 const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -99,7 +99,7 @@ export default function Index() {
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center">
               <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>
-                {language === 'ru' ? 'Добро пожаловать' : 'Welcome back'}
+                {language === 'ru' ? 'Добро пожаловать' : 'Καλώς ήρθατε'}
               </span>
               <h1 style={{ fontSize: '28px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
                 {language === 'ru' ? 'Привет, ' : 'Γεια σου, '}
@@ -120,10 +120,10 @@ export default function Index() {
             <div className="glass-panel flex flex-col gap-3">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
-                  {language === 'ru' ? 'Серия недели' : 'Weekly Streak'}
+                  {language === 'ru' ? 'Серия недели' : 'Εβδομαδιαίο σερί'}
                 </span>
                 <span style={{ fontWeight: 700, fontSize: '18px', color: '#2F3532' }}>
-                  {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'days'}
+                  {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'ημ.'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
@@ -156,22 +156,22 @@ export default function Index() {
                   color: '#5B8DB8',
                   marginBottom: '10px',
                 }}>
-                  {language === 'ru' ? 'Тема дня' : 'Focus of the Day'}
+                  {language === 'ru' ? 'Тема дня' : 'Θέμα της ημέρας'}
                 </span>
                 <h3 style={{ fontWeight: 500, fontSize: '18px', color: '#2F3532', lineHeight: 1.3 }}>
-                  {language === 'ru' ? 'История Греции' : 'War of Independence'}
+                  {language === 'ru' ? 'История Греции' : 'Πόλεμος της Ανεξαρτησίας'}
                 </h3>
                 <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
-                  {language === 'ru' ? 'Изучайте ключевые события' : 'Review key historical events'}
+                  {language === 'ru' ? 'Изучайте ключевые события' : 'Μελετήστε σημαντικά ιστορικά γεγονότα'}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '20px' }}>
                 <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
-                  {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'cards'}` : '—'}
+                  {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'κάρτες'}` : '—'}
                 </span>
                 <Link to="/learn/history/flashcards">
                   <button className="btn-pebble" style={{ padding: '8px 14px', fontSize: '13px' }}>
-                    {language === 'ru' ? 'Повторить' : 'Review'}
+                    {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
                   </button>
                 </Link>
               </div>
@@ -181,8 +181,8 @@ export default function Index() {
           {/* === SECTION 2: Stats row === */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             {[
-              { label: language === 'ru' ? 'Время учёбы' : 'Study Time', value: studyStats?.studyTime ?? '0m' },
-              { label: language === 'ru' ? 'Точность' : 'Accuracy', value: `${studyStats?.accuracy ?? 0}%` },
+              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: studyStats?.studyTime ?? '0m' },
+              { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
               <div key={s.label} className="glass-panel">
                 <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
@@ -198,10 +198,10 @@ export default function Index() {
           {/* === SECTION 3: Study Topics === */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '20px' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532' }}>
-              {language === 'ru' ? 'Темы для изучения' : 'Study Topics'}
+              {language === 'ru' ? 'Темы для изучения' : 'Θέματα μελέτης'}
             </h2>
             <Link to="/learn" style={{ fontSize: '13px', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
-              {language === 'ru' ? 'Все темы' : 'View all'}
+              {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -220,11 +220,11 @@ export default function Index() {
                         {topic.emoji}
                       </div>
                       <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
-                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{topic.subtitle}</div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
                     </div>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '5px', color: 'hsl(var(--muted-foreground))' }}>
-                        <span>{language === 'ru' ? 'Прогресс' : 'Progress'}</span>
+                        <span>{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
                         <span>{acc}%</span>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(0,0,0,0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
@@ -239,13 +239,13 @@ export default function Index() {
 
           {/* === SECTION 4: Learning Modes === */}
           <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
-            {language === 'ru' ? 'Режимы обучения' : 'Learning Modes'}
+            {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {[
-              { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Flip cards to learn' },
-              { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : '4-choice multiple choice' },
-              { emoji: '🎓', id: 'exam',       href: '/learn', desc: language === 'ru' ? 'Симуляция экзамена' : 'Simulate the real exam' },
+              { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
+              { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
+              { emoji: '🎓', id: 'exam',       href: '/learn', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
             ].map(mode => (
               <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
                 <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
@@ -345,14 +345,14 @@ export default function Index() {
 
         {/* Topics preview */}
         <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#2F3532', marginBottom: '20px' }}>
-          {language === 'ru' ? 'Темы для изучения' : 'Study Topics'}
+          {language === 'ru' ? 'Темы для изучения' : 'Θέματα μελέτης'}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {TOPICS.map(topic => (
             <div key={topic.id} className="glass-panel" style={{ padding: '20px' }}>
               <div style={{ fontSize: '28px', marginBottom: '10px' }}>{topic.emoji}</div>
               <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
-              <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '3px' }}>{topic.subtitle}</div>
+              <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '3px' }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
             </div>
           ))}
         </div>

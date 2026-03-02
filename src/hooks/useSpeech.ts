@@ -98,7 +98,11 @@ export function useSpeech() {
     } catch (error) {
       console.error("Speech error:", error);
       setIsSpeaking(false);
-      toast.error('Ошибка воспроизведения', { description: 'Не удалось загрузить аудио' });
+      const lang = localStorage.getItem('language') || 'ru';
+      toast.error(
+        lang === 'ru' ? 'Ошибка воспроизведения' : 'Σφάλμα αναπαραγωγής',
+        { description: lang === 'ru' ? 'Не удалось загрузить аудио' : 'Αδυναμία φόρτωσης ήχου' },
+      );
     }
   }, [stop]);
 

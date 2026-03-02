@@ -28,6 +28,10 @@ export async function upsertProgress(
   });
   if (error) {
     console.error('Error saving progress:', error);
-    toast.error('Ошибка записи прогресса', { description: error.message });
+    const lang = localStorage.getItem('language') || 'ru';
+    toast.error(
+      lang === 'ru' ? 'Ошибка записи прогресса' : 'Σφάλμα αποθήκευσης προόδου',
+      { description: error.message },
+    );
   }
 }
