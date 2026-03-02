@@ -47,19 +47,6 @@ const topicEmoji: Record<TopicType, string> = {
   geography: '🗺️',
 };
 
-const topicLabelRu: Record<TopicType, string> = {
-  history:   'История Греции',
-  culture:   'Культура',
-  laws:      'Законы',
-  geography: 'География',
-};
-
-const topicSubLabel: Record<TopicType, string> = {
-  history:   'Древняя Эллада',
-  culture:   'Культура',
-  laws:      'Законы',
-  geography: 'География',
-};
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -208,7 +195,7 @@ export default function Flashcards() {
         setTimeout(() => {
           setCurrentIndex(prev => prev + 1);
           setIsTransitioning(false);
-        }, 550);
+        }, 350);
       }
       return;
     }
@@ -227,7 +214,7 @@ export default function Flashcards() {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
-      }, 550);
+      }, 350);
     }
   }, [isFlipped, isTransitioning, currentIndex, questions, ratedIndices, user]);
 
@@ -294,8 +281,8 @@ export default function Flashcards() {
 
   const accent      = topicAccent[validTopic] || '#5B8DB8';
   const emoji       = topicEmoji[validTopic]  || '📚';
-  const headerLabel = topicLabelRu[validTopic] ?? topicLabelRu.history;
-  const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
+  const headerLabel = t(`topic.${validTopic}`);
+  const badgeLabel  = t(`topic.${validTopic}`);
   // Progress bar uses originalCount so it doesn't regress when Again cards are appended
   const progress    = originalCount > 0 ? Math.min(((currentIndex + 1) / originalCount) * 100, 100) : 0;
 
@@ -406,7 +393,7 @@ export default function Flashcards() {
         .fc-scene { perspective: 1200px; }
         .fc-inner {
           position: relative; width: 100%; height: 100%;
-          transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+          transition: transform 0.35s cubic-bezier(0.4,0.2,0.2,1);
           transform-style: preserve-3d;
           will-change: transform;
         }
@@ -531,8 +518,8 @@ export default function Flashcards() {
       <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
         <div className="fc-scene" style={{ height: 380 }}>
           <div
-            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped')}
-            onClick={handleFlip}
+            className={cn('fc-inner', !isTransitioning && 'cursor-pointer', isFlipped && 'flipped')}
+            onClick={isTransitioning ? undefined : handleFlip}
           >
             {/* FRONT */}
             <div

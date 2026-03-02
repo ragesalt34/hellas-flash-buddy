@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
@@ -97,6 +98,7 @@ export function useSpeech() {
     } catch (error) {
       console.error("Speech error:", error);
       setIsSpeaking(false);
+      toast.error('Ошибка воспроизведения', { description: 'Не удалось загрузить аудио' });
     }
   }, [stop]);
 

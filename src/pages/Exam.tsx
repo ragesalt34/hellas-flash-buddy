@@ -137,6 +137,9 @@ export default function Exam() {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const lastQuestionTime = useRef<Date>(new Date());
+  // Tracks the index of the question the user was on BEFORE the current navigation,
+  // so time is always saved to the correct slot regardless of forward/backward movement.
+  const prevQuestionIndex = useRef<number>(-1); // -1 = exam not yet started
   
   // Shuffle answers for current question
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
@@ -188,15 +191,22 @@ export default function Exam() {
     if (examStarted && !isFinished) {
       const now = new Date();
       const timeSpentOnPrev = Math.floor((now.getTime() - lastQuestionTime.current.getTime()) / 1000);
-      
-      if (currentIndex > 0 || Object.keys(questionTimes).length > 0) {
+
+      // prevQuestionIndex === -1 means the exam just started: nothing to record yet.
+      // Otherwise save time for whichever question the user was just on (works for
+      // both forward and backward navigation, unlike the old `currentIndex - 1` logic).
+      if (prevQuestionIndex.current !== -1) {
         setQuestionTimes(prev => ({
           ...prev,
-          [currentIndex - 1]: (prev[currentIndex - 1] || 0) + timeSpentOnPrev
+          [prevQuestionIndex.current]: (prev[prevQuestionIndex.current] || 0) + timeSpentOnPrev,
         }));
       }
-      
+
+      prevQuestionIndex.current = currentIndex;
       lastQuestionTime.current = now;
+    } else if (!examStarted) {
+      // Reset between exam sessions so a restart doesn't bleed into the wrong slot
+      prevQuestionIndex.current = -1;
     }
   }, [currentIndex, examStarted, isFinished]);
 
@@ -341,9 +351,10 @@ export default function Exam() {
       
       if (error) {
         console.error('Error saving exam result:', error);
+        toast({ title: language === 'ru' ? 'Ошибка сохранения' : 'Σφάλμα αποθήκευσης', description: language === 'ru' ? 'Результат не был сохранён в базу данных' : 'Το αποτέλεσμα δεν αποθηκεύτηκε', variant: 'destructive' });
       }
     }
-  }, [questions, calculateResults, user, flagged, settings.topics, currentIndex]);
+  }, [questions, calculateResults, user, flagged, settings.topics, currentIndex, language]);
 
   // Keep a ref so the timer interval always calls the latest finishExam
   const finishExamRef = useRef(finishExam);
