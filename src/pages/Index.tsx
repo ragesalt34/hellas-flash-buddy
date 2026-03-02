@@ -129,8 +129,9 @@ export default function Index() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px' }}>
                 {(language === 'ru' ? WEEK_DAYS_RU : WEEK_DAYS_EL).map((day, i) => {
-                  const isActive = studyStats?.streak[i];
                   const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+                  const streakIdx = 6 - ((todayIdx - i + 7) % 7);
+                  const isActive = studyStats?.streak[streakIdx];
                   return (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                       <div
