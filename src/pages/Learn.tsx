@@ -107,7 +107,7 @@ export default function Learn() {
               border: '1px solid rgba(236,200,92,0.4)',
             }}>
               <Layers style={{ width: 14, height: 14 }} />
-              {language === 'ru' ? `Due today: ${dueCount} cards` : `Σήμερα: ${dueCount} κάρτες`}
+              {language === 'ru' ? `Сегодня: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
             </div>
           )}
         </div>
@@ -274,7 +274,7 @@ export default function Learn() {
                 null,
                 { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
                 null,
-                { value: '75%', label: language === 'ru' ? 'проходной' : 'αποτυχία' },
+                { value: '75%', label: language === 'ru' ? 'проходной' : 'βάση επιτυχίας' },
               ].map((stat, i) =>
                 stat === null
                   ? <div key={i} style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.10)', alignSelf: 'center' }} />
