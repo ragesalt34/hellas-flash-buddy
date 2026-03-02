@@ -150,8 +150,11 @@ export default function Stats() {
     return new Date(p.next_review_at) <= now;
   }).length || 0;
 
+  const MAX_VALID_SESSION_SECONDS = 1800; // 30 min cap — filters anomalous sessions
   const totalStudyMinutes = Math.round(
-    (studySessions?.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) || 0) / 60
+    (studySessions
+      ?.filter(s => (s.duration_seconds || 0) <= MAX_VALID_SESSION_SECONDS)
+      .reduce((acc, s) => acc + (s.duration_seconds || 0), 0) || 0) / 60
   );
 
   const topicMastered: Record<string, number> = {};
