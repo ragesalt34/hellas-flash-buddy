@@ -341,6 +341,7 @@ export default function Exam() {
       
       if (error) {
         console.error('Error saving exam result:', error);
+        toast({ title: language === 'ru' ? 'Ошибка сохранения' : 'Σφάλμα αποθήκευσης', description: language === 'ru' ? 'Результат не был сохранён в базу данных' : 'Το αποτέλεσμα δεν αποθηκεύτηκε', variant: 'destructive' });
       }
     }
   }, [questions, calculateResults, user, flagged, settings.topics, currentIndex]);

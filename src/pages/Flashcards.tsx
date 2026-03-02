@@ -294,7 +294,7 @@ export default function Flashcards() {
 
   const accent      = topicAccent[validTopic] || '#5B8DB8';
   const emoji       = topicEmoji[validTopic]  || '📚';
-  const headerLabel = topicLabelRu[validTopic] ?? topicLabelRu.history;
+  const headerLabel = t(`topic.${validTopic}`);
   const badgeLabel  = topicSubLabel[validTopic] ?? topicSubLabel.history;
   // Progress bar uses originalCount so it doesn't regress when Again cards are appended
   const progress    = originalCount > 0 ? Math.min(((currentIndex + 1) / originalCount) * 100, 100) : 0;
@@ -531,8 +531,8 @@ export default function Flashcards() {
       <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
         <div className="fc-scene" style={{ height: 380 }}>
           <div
-            className={cn('fc-inner cursor-pointer', isFlipped && 'flipped')}
-            onClick={handleFlip}
+            className={cn('fc-inner', !isTransitioning && 'cursor-pointer', isFlipped && 'flipped')}
+            onClick={isTransitioning ? undefined : handleFlip}
           >
             {/* FRONT */}
             <div
