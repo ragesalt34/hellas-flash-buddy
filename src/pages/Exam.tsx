@@ -262,18 +262,26 @@ export default function Exam() {
       return;
     }
 
-    const minQuestions = settings.questionCount === 0 ? 1 : Math.min(settings.questionCount, data?.length || 0);
-    
-    if (!data || data.length < minQuestions) {
+    if (!data || data.length === 0) {
       toast({
         title: language === 'ru' ? 'Недостаточно вопросов' : 'Ανεπαρκείς ερωτήσεις',
-        description: language === 'ru' 
-          ? `Найдено только ${data?.length || 0} вопросов по выбранным темам` 
-          : `Βρέθηκαν μόνο ${data?.length || 0} ερωτήσεις για τα επιλεγμένα θέματα`,
+        description: language === 'ru'
+          ? 'Не найдено вопросов по выбранным темам'
+          : 'Δεν βρέθηκαν ερωτήσεις για τα επιλεγμένα θέματα',
         variant: 'destructive',
       });
       setIsLoading(false);
       return;
+    }
+
+    // If fewer questions available than requested, inform user (but still start)
+    if (settings.questionCount !== 0 && data.length < settings.questionCount) {
+      toast({
+        title: language === 'ru'
+          ? `Доступно только ${data.length} вопросов`
+          : `Διαθέσιμες μόνο ${data.length} ερωτήσεις`,
+        variant: 'default',
+      });
     }
 
     // Shuffle and take required number of questions
@@ -429,6 +437,7 @@ export default function Exam() {
     setFlagged(new Set());
     setQuestionTimes({});
     setIsFinished(false);
+    prevQuestionIndex.current = -1; // reset so first navigation doesn't bleed into wrong slot
     setTimeLeft(settings.timeLimit * 60);
     setStartTime(new Date());
     lastQuestionTime.current = new Date();
