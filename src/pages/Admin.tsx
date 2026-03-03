@@ -16,6 +16,7 @@ export default function Admin() {
   const [exporting, setExporting] = useState(false);
 
   const handleExport = async () => {
+    if (!isAdmin) return;
     setExporting(true);
     try {
       const { data, error } = await supabase

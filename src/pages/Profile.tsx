@@ -145,15 +145,16 @@ export default function Profile() {
     if (!file || !user) return;
 
     setAvatarUploading(true);
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}/avatar.${ext}`;
+    let uploaded = false;
     try {
-      const ext = file.name.split('.').pop();
-      const path = `${user.id}/avatar.${ext}`;
-
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(path, file, { upsert: true });
 
       if (uploadError) throw uploadError;
+      uploaded = true;
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
@@ -164,10 +165,17 @@ export default function Profile() {
         .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() } as never)
         .eq('id', user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        // DB update failed — remove the orphaned file from storage
+        await supabase.storage.from('avatars').remove([path]);
+        throw updateError;
+      }
 
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
     } catch {
+      if (!uploaded) {
+        // Upload itself failed — nothing to clean up
+      }
       toast.error(language === 'ru' ? 'Ошибка загрузки фото' : 'Σφάλμα μεταφόρτωσης φωτογραφίας');
     } finally {
       setAvatarUploading(false);

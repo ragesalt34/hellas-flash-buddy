@@ -55,16 +55,20 @@ export function useSpeech() {
         throw new Error("Not authenticated");
       }
 
-      const response = await fetch(TTS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text, cacheKey }),
-      });
-
-      if (cacheKey) pendingKeys.delete(cacheKey);
+      let response: Response;
+      try {
+        response = await fetch(TTS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text, cacheKey }),
+        });
+      } finally {
+        // Always release the key, even on network error — so retries work
+        if (cacheKey) pendingKeys.delete(cacheKey);
+      }
 
       if (!response.ok) {
         throw new Error(`TTS failed: ${response.status}`);
