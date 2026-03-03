@@ -223,7 +223,7 @@ export default function Learn() {
           </div>
 
           {/* Dark exam card */}
-          <div style={{
+          <div className="learn-exam-card" style={{
             background: '#2F3532',
             color: '#fff',
             borderRadius: 32,
@@ -237,7 +237,7 @@ export default function Learn() {
             <GraduationCap style={{ position: 'absolute', right: -30, bottom: -50, width: 260, height: 260, color: 'rgba(255,255,255,0.04)' }} />
 
             {/* Left: icon + text */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 28, flex: 1, minWidth: 260, position: 'relative', zIndex: 1 }}>
+            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 28, flex: 1, minWidth: 260, position: 'relative', zIndex: 1 }}>
               <div style={{
                 width: 64, height: 64, borderRadius: 20,
                 background: 'rgba(236,200,92,0.20)',
@@ -322,6 +322,8 @@ export default function Learn() {
       <style>{`
         @media (max-width: 640px) {
           .learn-grid { grid-template-columns: 1fr !important; }
+          .learn-exam-card { padding: 28px 24px !important; gap: 24px !important; }
+          .learn-exam-left { min-width: 0 !important; }
         }
         .learn-topic-card {
           transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);

@@ -455,6 +455,11 @@ export default function Flashcards() {
           font-size: 12px; font-weight: 500; opacity: 0.70;
         }
 
+        @media (max-width: 480px) {
+          .fc-scene { height: 300px !important; }
+          .fc-rating { font-size: 13px; padding: 12px 8px; }
+        }
+
         .fc-progress-bar-track {
           height: 4px; border-radius: 4px;
           background: rgba(47,53,50,0.12);
@@ -518,7 +523,7 @@ export default function Flashcards() {
 
       {/* ── CARD ── */}
       <div className="px-4 max-w-3xl mx-auto w-full flex-1 flex flex-col">
-        <div className="fc-scene" style={{ height: 380 }}>
+        <div className="fc-scene" style={{ height: 340 }}>
           <div
             className={cn('fc-inner', !isTransitioning && 'cursor-pointer', isFlipped && 'flipped')}
             onClick={isTransitioning ? undefined : handleFlip}

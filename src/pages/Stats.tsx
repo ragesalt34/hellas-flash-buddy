@@ -516,7 +516,7 @@ export default function Stats() {
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600 }}>{language === 'ru' ? 'Активность за 30 дней' : 'Δραστηριότητα 30 ημερών'}</div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6 }}>
+              <div className="stats-calendar" style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6 }}>
                 {thirtyDayCalendar.map(({ date, minutes }) => {
                   const level = getCalendarIntensity(minutes);
                   const styles: Record<number, React.CSSProperties> = {
@@ -636,6 +636,9 @@ export default function Stats() {
         }
         @media (max-width: 400px) {
           .stats-grid-4 { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .stats-calendar { grid-template-columns: repeat(5, 1fr) !important; }
         }
       `}</style>
     </Layout>
