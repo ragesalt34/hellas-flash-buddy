@@ -193,7 +193,7 @@ export default function Learn() {
                   )}
 
                   {/* Action buttons */}
-                  <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
                     <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none' }}>
                       <button className="learn-action-btn">
                         <Layers style={{ width: 14, height: 14 }} />
