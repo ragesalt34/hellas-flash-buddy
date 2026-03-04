@@ -268,7 +268,7 @@ export default function Learn() {
             </div>
 
             {/* Middle: stats */}
-            <div style={{ display: 'flex', gap: 32, flexShrink: 0, position: 'relative', zIndex: 1 }}>
+            <div className="learn-exam-stats" style={{ display: 'flex', gap: 32, flexShrink: 0, position: 'relative', zIndex: 1 }}>
               {[
                 { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
                 null,
@@ -277,7 +277,7 @@ export default function Learn() {
                 { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση επιτυχίας' },
               ].map((stat, i) =>
                 stat === null
-                  ? <div key={i} style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.10)', alignSelf: 'center' }} />
+                  ? <div key={i} className="learn-exam-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.10)', alignSelf: 'center' }} />
                   : (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                       <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
@@ -324,6 +324,12 @@ export default function Learn() {
           .learn-grid { grid-template-columns: 1fr !important; }
           .learn-exam-card { padding: 28px 24px !important; gap: 24px !important; }
           .learn-exam-left { min-width: 0 !important; }
+        }
+        @media (max-width: 430px) {
+          .learn-exam-card { padding: 20px 16px !important; gap: 16px !important; border-radius: 24px !important; }
+          .learn-exam-stats { gap: 20px !important; }
+          .learn-exam-divider { display: none !important; }
+          .learn-action-btn { padding: 8px 14px !important; font-size: 12px !important; }
         }
         .learn-topic-card {
           transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);

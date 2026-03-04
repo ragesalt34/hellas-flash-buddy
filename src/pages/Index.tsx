@@ -190,7 +190,7 @@ export default function Index() {
                 <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
                   {s.label}
                 </span>
-                <div style={{ fontSize: '36px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
+                <div className="idx-dash-stat-value" style={{ fontSize: '36px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
                   {s.value}
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function Index() {
               const acc = studyStats?.topicAccuracy[topic.id] ?? 0;
               return (
                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
-                  <div className="glass-panel" style={{ height: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '20px' }}>
+                  <div className="glass-panel idx-topic-card" style={{ height: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '20px' }}>
                     <div>
                       <div style={{
                         width: '44px', height: '44px', borderRadius: '50%',
@@ -269,6 +269,12 @@ export default function Index() {
           </div>
 
         </div>
+        <style>{`
+          @media (max-width: 430px) {
+            .idx-dash-stat-value { font-size: 26px !important; }
+            .idx-topic-card { height: auto !important; min-height: 150px !important; }
+          }
+        `}</style>
       </Layout>
     );
   }
@@ -279,7 +285,7 @@ export default function Index() {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 relative z-10">
 
         {/* Hero */}
-        <div className="glass-panel text-center max-w-2xl mx-auto mb-12" style={{ padding: '48px 40px' }}>
+        <div className="glass-panel text-center max-w-2xl mx-auto mb-12 idx-hero" style={{ padding: '48px 40px' }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             padding: '6px 16px', borderRadius: '9999px',
@@ -292,7 +298,7 @@ export default function Index() {
             {language === 'ru' ? 'Подготовка к гражданству Греции' : 'Προετοιμασία για ελληνική ιθαγένεια'}
           </div>
 
-          <h1 style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2, marginBottom: '16px' }}>
+          <h1 className="idx-hero-title" style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2, marginBottom: '16px' }}>
             {language === 'ru' ? 'Ваш путь к греческому гражданству' : 'Ο δρόμος σας προς την ελληνική ιθαγένεια'}
           </h1>
 
@@ -337,9 +343,9 @@ export default function Index() {
             { emoji: '✨', value: language === 'ru' ? 'Бесплатно' : 'Δωρεάν', label: language === 'ru' ? 'Полный доступ навсегда' : 'Πλήρης πρόσβαση για πάντα' },
             { emoji: '⏰', value: '24/7', label: language === 'ru' ? 'Доступ в любое время' : 'Πρόσβαση ανά πάσα στιγμή' },
           ].map(s => (
-            <div key={s.label} className="glass-panel" style={{ textAlign: 'center', padding: '32px 24px' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>{s.emoji}</div>
-              <div style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532' }}>{s.value}</div>
+            <div key={s.label} className="glass-panel idx-stats-card" style={{ textAlign: 'center', padding: '32px 24px' }}>
+              <div className="idx-stats-emoji" style={{ fontSize: '32px', marginBottom: '8px' }}>{s.emoji}</div>
+              <div className="idx-stats-value" style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532' }}>{s.value}</div>
               <div style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '4px' }}>{s.label}</div>
             </div>
           ))}
@@ -360,8 +366,8 @@ export default function Index() {
         </div>
 
         {/* CTA bottom */}
-        <div className="glass-panel text-center" style={{ padding: '48px 32px' }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 500, color: '#2F3532', marginBottom: '12px' }}>
+        <div className="glass-panel text-center idx-cta" style={{ padding: '48px 32px' }}>
+          <h2 className="idx-cta-title" style={{ fontSize: '28px', fontWeight: 500, color: '#2F3532', marginBottom: '12px' }}>
             {language === 'ru' ? 'Готовы начать подготовку?' : 'Είστε έτοιμοι να ξεκινήσετε;'}
           </h2>
           <p style={{ fontSize: '15px', color: 'hsl(var(--muted-foreground))', marginBottom: '28px', maxWidth: '520px', margin: '0 auto 28px' }}>
@@ -378,6 +384,17 @@ export default function Index() {
         </div>
 
       </div>
+      <style>{`
+        @media (max-width: 430px) {
+          .idx-hero { padding: 28px 18px !important; }
+          .idx-hero-title { font-size: 26px !important; }
+          .idx-stats-card { padding: 20px 14px !important; }
+          .idx-stats-emoji { font-size: 24px !important; margin-bottom: 6px !important; }
+          .idx-stats-value { font-size: 24px !important; }
+          .idx-cta { padding: 28px 18px !important; }
+          .idx-cta-title { font-size: 22px !important; }
+        }
+      `}</style>
     </Layout>
   );
 }

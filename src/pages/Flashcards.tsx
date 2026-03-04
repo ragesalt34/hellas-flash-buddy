@@ -459,6 +459,10 @@ export default function Flashcards() {
           .fc-scene { height: 300px !important; }
           .fc-rating { font-size: 13px; padding: 12px 8px; }
         }
+        @media (max-width: 390px) {
+          .fc-scene { height: 275px !important; }
+          .fc-rating { font-size: 12px !important; padding: 10px 6px !important; gap: 5px !important; }
+        }
 
         .fc-progress-bar-track {
           height: 4px; border-radius: 4px;
