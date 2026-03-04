@@ -148,12 +148,17 @@ export function QuestionsManager() {
 
       if (error) throw error;
 
-      // Update each question in the database
-      const fixes = data.fixes as Array<{
+      // Validate response shape before iterating
+      const fixes = Array.isArray(data?.fixes) ? data.fixes as Array<{
         questionId: string;
         correct_answer: string;
         explanation?: string;
-      }>;
+      }> : [];
+
+      if (fixes.length === 0) {
+        toast.info(language === 'ru' ? 'AI не вернул исправлений' : 'Το AI δεν επέστρεψε διορθώσεις');
+        return;
+      }
 
       let fixedCount = 0;
       for (const fix of fixes) {

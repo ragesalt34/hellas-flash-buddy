@@ -64,6 +64,12 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
       if (!correctAnswer.trim()) throw new Error(language === 'ru' ? 'Введите правильный ответ' : 'Εισάγετε τη σωστή απάντηση');
       if (filteredWrongAnswers.length < 1) throw new Error(language === 'ru' ? 'Добавьте хотя бы один неправильный ответ' : 'Προσθέστε τουλάχιστον μία λανθασμένη απάντηση');
 
+      // Prevent correct answer from being identical to a wrong answer
+      const correctNorm = correctAnswer.trim().toLowerCase();
+      if (filteredWrongAnswers.some(a => a.trim().toLowerCase() === correctNorm)) {
+        throw new Error(language === 'ru' ? 'Правильный ответ совпадает с одним из неправильных' : 'Η σωστή απάντηση ταυτίζεται με μία λανθασμένη');
+      }
+
       const data = {
         topic,
         question: questionText.trim(),

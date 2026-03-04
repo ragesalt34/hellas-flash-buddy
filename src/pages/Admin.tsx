@@ -6,6 +6,7 @@ import { Layout } from '@/components/layout/Layout';
 import { QuestionsManager } from '@/components/admin/QuestionsManager';
 import { KnowledgeBaseManager } from '@/components/admin/KnowledgeBaseManager';
 import { Loader2, ShieldAlert, Download } from 'lucide-react';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -42,6 +43,8 @@ export default function Admin() {
       a.download = 'hellas_questions.csv';
       a.click();
       URL.revokeObjectURL(url);
+    } catch {
+      toast.error(language === 'ru' ? 'Ошибка выгрузки данных' : 'Σφάλμα εξαγωγής δεδομένων');
     } finally {
       setExporting(false);
     }

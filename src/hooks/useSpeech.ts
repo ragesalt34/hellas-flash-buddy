@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -109,6 +109,14 @@ export function useSpeech() {
       );
     }
   }, [stop]);
+
+  // Stop audio playback when component unmounts (e.g. user navigates away mid-TTS)
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { speak, stop, isSpeaking, isSupported: true };
 }

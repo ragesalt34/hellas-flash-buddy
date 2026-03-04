@@ -161,7 +161,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       console.warn(`Translation missing for key: ${key}`);
       return key;
     }
-    return translation[language];
+    // Fallback to Russian if language is somehow invalid
+    return translation[language] ?? translation['ru'] ?? key;
   };
 
   return (
