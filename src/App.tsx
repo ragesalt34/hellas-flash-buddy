@@ -12,7 +12,6 @@ import Learn from "./pages/Learn";
 import Quiz from "./pages/Quiz";
 import Exam from "./pages/Exam";
 import Flashcards from "./pages/Flashcards";
-import Pronunciation from "./pages/Pronunciation";
 
 import Profile from "./pages/Profile";
 import Stats from "./pages/Stats";
@@ -37,7 +36,6 @@ const App = () => (
               <Route path="/learn/exam" element={<Exam />} />
               <Route path="/learn/:topic/flashcards" element={<Flashcards />} />
               <Route path="/learn/:topic/quiz" element={<Quiz />} />
-              <Route path="/learn/:topic/pronunciation" element={<Pronunciation />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="/admin" element={<Admin />} />

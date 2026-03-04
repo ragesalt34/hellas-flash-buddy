@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Layers, PenLine, GraduationCap,
   History, Palette, Scale, MapPin,
-  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle, Mic,
+  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle,
 } from 'lucide-react';
 
 const TOPIC_META = [
@@ -204,12 +204,6 @@ export default function Learn() {
                       <button className="learn-action-btn learn-action-primary">
                         <PenLine style={{ width: 14, height: 14 }} />
                         {language === 'ru' ? 'Тест' : 'Κουίζ'}
-                      </button>
-                    </Link>
-                    <Link to={`/learn/${meta.id}/pronunciation`} style={{ textDecoration: 'none' }}>
-                      <button className="learn-action-btn">
-                        <Mic style={{ width: 14, height: 14 }} />
-                        {language === 'ru' ? 'Произношение' : 'Προφορά'}
                       </button>
                     </Link>
                   </div>
