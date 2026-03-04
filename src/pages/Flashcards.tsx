@@ -456,11 +456,12 @@ export default function Flashcards() {
         }
 
         @media (max-width: 480px) {
-          .fc-scene { height: 300px !important; }
+          .fc-scene { height: 400px !important; }
           .fc-rating { font-size: 13px; padding: 12px 8px; }
+          .fc-answer-text { font-size: 20px !important; line-height: 1.4 !important; }
+          .fc-back-content { overflow-y: auto !important; }
         }
         @media (max-width: 390px) {
-          .fc-scene { height: 275px !important; }
           .fc-rating { font-size: 12px !important; padding: 10px 6px !important; gap: 5px !important; }
         }
 
@@ -612,8 +613,8 @@ export default function Flashcards() {
               </div>
 
               {/* Answer text */}
-              <div className="flex-1 flex flex-col items-center justify-center px-10 sm:px-16 py-4 gap-3">
-                <p className="text-2xl sm:text-3xl font-bold text-center leading-relaxed" style={{ color: accent }}>
+              <div className="fc-back-content flex-1 flex flex-col items-center justify-center px-10 sm:px-16 py-4 gap-3">
+                <p className="fc-answer-text text-2xl sm:text-3xl font-bold text-center leading-relaxed" style={{ color: accent }}>
                   {currentQuestion.correct_answer}
                 </p>
                 {currentQuestion.explanation && (
