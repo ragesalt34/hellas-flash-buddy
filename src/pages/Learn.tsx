@@ -338,12 +338,40 @@ export default function Learn() {
           border-color: rgba(47,53,50,0.45) !important;
           box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
         }
+        /* Desktop: always row layout */
         .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
         .learn-exam-left { flex: 1 !important; }
+
+        /* Mobile: iPhone 12 Pro (390px) */
         @media (max-width: 639px) {
-          .learn-grid { gap: 12px !important; }
-          .learn-exam-card { flex-direction: column !important; align-items: flex-start !important; padding: 24px 20px !important; }
-          .learn-exam-left { flex: unset !important; }
+          .learn-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .learn-topic-card:hover { transform: none; }
+
+          /* Topic card inner padding */
+          .learn-topic-card > div:last-child { padding: 14px !important; gap: 10px !important; }
+
+          /* Bigger topic name */
+          .learn-topic-card h3 { font-size: 16px !important; }
+
+          /* Action buttons — full width, taller tap target */
+          .learn-action-btn {
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+            border-radius: 12px !important;
+          }
+
+          /* Exam card stacks vertically */
+          .learn-exam-card {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            padding: 20px 18px !important;
+            gap: 16px !important;
+          }
+          .learn-exam-left { flex: unset !important; width: 100% !important; }
+
+          /* Exam stats + button row: stack on very narrow */
+          .learn-exam-stats { gap: 16px !important; }
+          .exam-start-btn { width: 100% !important; justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
         }
       `}</style>
     </Layout>
