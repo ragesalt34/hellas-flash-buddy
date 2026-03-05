@@ -66,7 +66,7 @@ export default function Index() {
         if (!topic || !p.is_known) return;
         topicMastered[topic] = (topicMastered[topic] || 0) + 1;
       });
-      const topicAccuracy = Object.fromEntries(
+      const topicMastery = Object.fromEntries(
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicMastered[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
@@ -82,7 +82,7 @@ export default function Index() {
       const streak = weekDays.map(day => sessionDays.has(day));
       const streakCount = streak.filter(Boolean).length;
 
-      return { accuracy, studyTime, topicAccuracy, streak, streakCount };
+      return { accuracy, studyTime, topicMastery, streak, streakCount };
     },
     enabled: !!user,
   });
@@ -210,7 +210,7 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {TOPICS.map(topic => {
-              const acc = studyStats?.topicAccuracy[topic.id] ?? 0;
+              const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
                   <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '16px' }}>
