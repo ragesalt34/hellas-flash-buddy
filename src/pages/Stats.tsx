@@ -206,7 +206,7 @@ export default function Stats() {
     ?.slice(0, 10).reverse()
     .map((exam, index) => ({
       name: `#${index + 1}`,
-      score: Math.round((exam.correct_answers / exam.total_questions) * 100),
+      score: Math.round((exam.correct_answers / (exam.total_questions || 1)) * 100),
       date: new Date(exam.completed_at).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'el-GR'),
     })) || [];
 
@@ -234,7 +234,12 @@ export default function Stats() {
 
   const top5Hardest = [...(progress || [])]
     .filter(p => p.incorrect_count > 0)
-    .sort((a, b) => b.incorrect_count - a.incorrect_count)
+    .sort((a, b) => {
+      const ratioA = a.incorrect_count / (a.correct_count + a.incorrect_count);
+      const ratioB = b.incorrect_count / (b.correct_count + b.incorrect_count);
+      if (ratioB !== ratioA) return ratioB - ratioA; // higher error rate first
+      return b.incorrect_count - a.incorrect_count;  // then by raw count for ties
+    })
     .slice(0, 5);
 
   const hardestTopicCounts: Record<string, number> = {};

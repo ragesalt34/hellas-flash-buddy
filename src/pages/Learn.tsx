@@ -41,7 +41,7 @@ export default function Learn() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_progress')
-        .select('correct_count, incorrect_count, questions(topic)')
+        .select('correct_count, incorrect_count, is_known, questions(topic)')
         .eq('user_id', user!.id);
       if (error) throw error;
 
@@ -52,7 +52,7 @@ export default function Learn() {
         if (!stats[topic]) stats[topic] = { correct: 0, total: 0, mastered: 0 };
         stats[topic].correct += p.correct_count;
         stats[topic].total += p.correct_count + p.incorrect_count;
-        if (p.correct_count > 0 && p.correct_count >= p.incorrect_count) stats[topic].mastered++;
+        if (p.is_known) stats[topic].mastered++;
       });
       return stats;
     },

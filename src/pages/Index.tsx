@@ -52,7 +52,9 @@ export default function Index() {
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const totalSeconds = sessions.reduce((s, se) => s + (se.duration_seconds || 0), 0);
+      const totalSeconds = sessions
+        .filter((se: any) => (se.duration_seconds || 0) <= 1800)
+        .reduce((s: number, se: any) => s + (se.duration_seconds || 0), 0);
       const hours = Math.floor(totalSeconds / 3600);
       const mins = Math.floor((totalSeconds % 3600) / 60);
       const studyTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
