@@ -633,9 +633,9 @@ export default function Stats() {
       </div>
 
       <style>{`
-        .stats-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
-        @media (min-width: 700px) {
-          .stats-grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
+        .stats-grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
+        @media (max-width: 700px) {
+          .stats-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 640px) {
           .stats-calendar { grid-template-columns: repeat(6, 1fr) !important; }
