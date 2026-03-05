@@ -272,26 +272,27 @@ export default function Stats() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
 
         {/* Header */}
-        <div style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 6 }}>
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 4 }}>
             {language === 'ru' ? 'Статистика' : 'Στατιστικά'}
           </h1>
-          <p style={{ fontSize: 14, color: 'hsl(var(--muted-foreground))' }}>
+          <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
             {language === 'ru' ? 'Ваш прогресс обучения' : 'Η πρόοδος της μάθησής σας'}
           </p>
         </div>
 
         {/* Tab bar */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 32, background: 'rgba(255,255,255,0.35)', borderRadius: 99, padding: '5px', width: 'fit-content', border: '1px solid rgba(47,53,50,0.1)' }}>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'rgba(255,255,255,0.35)', borderRadius: 99, padding: '4px', width: '100%', maxWidth: 320, border: '1px solid rgba(47,53,50,0.1)' }}>
           {TABS.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{
-                padding: '7px 20px',
+                flex: 1,
+                padding: '7px 12px',
                 borderRadius: 99,
                 border: 'none',
                 fontSize: 13,
@@ -302,6 +303,7 @@ export default function Stats() {
                 background: activeTab === tab.id ? 'rgba(255,255,255,0.85)' : 'transparent',
                 color: activeTab === tab.id ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))',
                 boxShadow: activeTab === tab.id ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                whiteSpace: 'nowrap',
               }}
             >
               {tab.label}
@@ -631,13 +633,14 @@ export default function Stats() {
       </div>
 
       <style>{`
-        @media (max-width: 700px) {
-          .stats-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 400px) {
-          .stats-grid-4 { grid-template-columns: 1fr !important; }
+        .stats-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+        @media (min-width: 700px) {
+          .stats-grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
         }
         @media (max-width: 640px) {
+          .stats-calendar { grid-template-columns: repeat(6, 1fr) !important; }
+        }
+        @media (max-width: 430px) {
           .stats-calendar { grid-template-columns: repeat(5, 1fr) !important; }
         }
       `}</style>
