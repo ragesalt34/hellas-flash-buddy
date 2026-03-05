@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Pencil, Trash2, CheckCircle2, XCircle, AlertTriangle, CheckCheck } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle2, XCircle, AlertTriangle, CheckCheck, Languages } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Database } from '@/integrations/supabase/types';
 import type { VerificationResult } from './QuestionsManager';
@@ -173,7 +173,27 @@ export function QuestionsList({
                           </TooltipContent>
                         </Tooltip>
                       )}
-                      <p className="font-medium">{question.question}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium">{question.question}</p>
+                        {question.question_el && (
+                          <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+                            <Languages className="h-3 w-3 shrink-0" />
+                            {question.question_el}
+                          </p>
+                        )}
+                      </div>
+                      {!question.question_el && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="text-[10px] font-semibold bg-yellow-100 text-yellow-700 border border-yellow-200 rounded px-1.5 py-0.5 shrink-0 mt-0.5">
+                              {language === 'ru' ? 'нет 🇬🇷' : 'χωρίς EL'}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="left">
+                            <p>{language === 'ru' ? 'Нет греческого перевода' : 'Δεν υπάρχει ελληνική μετάφραση'}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                     
                     <div className="grid gap-2 sm:grid-cols-2">
