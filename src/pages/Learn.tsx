@@ -7,30 +7,14 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Layers, PenLine, GraduationCap,
   History, Palette, Scale, MapPin,
-  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle, BookOpen,
+  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle,
 } from 'lucide-react';
 
 const TOPIC_META = [
-  {
-    id: 'history',   icon: History,  color: '#5B8DB8',
-    gradient: 'linear-gradient(135deg, #5B8DB8 0%, #7BA8D0 60%, #A3C4E0 100%)',
-    shadow: 'rgba(91,141,184,0.35)',
-  },
-  {
-    id: 'culture',   icon: Palette,  color: '#9B7EC8',
-    gradient: 'linear-gradient(135deg, #9B7EC8 0%, #B59ADA 60%, #D0BEE8 100%)',
-    shadow: 'rgba(155,126,200,0.35)',
-  },
-  {
-    id: 'laws',      icon: Scale,    color: '#7D8A57',
-    gradient: 'linear-gradient(135deg, #7D8A57 0%, #99A870 60%, #B5C28E 100%)',
-    shadow: 'rgba(125,138,87,0.35)',
-  },
-  {
-    id: 'geography', icon: MapPin,   color: '#D4874A',
-    gradient: 'linear-gradient(135deg, #D4874A 0%, #E0A06A 60%, #ECC090 100%)',
-    shadow: 'rgba(212,135,74,0.35)',
-  },
+  { id: 'history',   icon: History,  color: '#5B8DB8', bg: 'rgba(91,141,184,0.12)',  dataAttr: 'history' },
+  { id: 'culture',   icon: Palette,  color: '#9B7EC8', bg: 'rgba(155,126,200,0.12)', dataAttr: 'culture' },
+  { id: 'laws',      icon: Scale,    color: '#7D8A57', bg: 'rgba(125,138,87,0.12)',  dataAttr: 'laws' },
+  { id: 'geography', icon: MapPin,   color: '#D4874A', bg: 'rgba(212,135,74,0.12)',  dataAttr: 'geo' },
 ];
 
 export default function Learn() {
@@ -100,123 +84,123 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div className="lrn-root">
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
 
-        {/* ── Page header ── */}
-        <div className="lrn-header">
+        {/* Page header */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 24 }}>
           <div>
-            <h1 className="lrn-title">
+            <h1 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 4 }}>
               {language === 'ru' ? 'Выберите тему' : 'Επιλέξτε θέμα'}
             </h1>
-            <p className="lrn-subtitle">
+            <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
               {language === 'ru'
-                ? 'Начните с интересующей темы или продолжите прогресс'
+                ? 'Начните изучение с интересующей вас темы или продолжите прогресс'
                 : 'Ξεκινήστε με ένα θέμα ή συνεχίστε την πρόοδό σας'}
             </p>
           </div>
-
           {dueCount != null && dueCount > 0 && (
-            <div className="lrn-due-badge">
-              <Layers style={{ width: 12, height: 12 }} />
-              {language === 'ru' ? `${dueCount} на повторение` : `${dueCount} για επανάληψη`}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px', borderRadius: 99,
+              background: 'rgba(236,200,92,0.22)', color: '#584610',
+              fontSize: 12, fontWeight: 600,
+              border: '1px solid rgba(236,200,92,0.4)',
+            }}>
+              <Layers style={{ width: 13, height: 13 }} />
+              {language === 'ru' ? `Сегодня: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
             </div>
           )}
         </div>
 
-        {/* ── Topic cards ── */}
-        <div className="lrn-grid">
+        {/* Topics grid — 2 columns on mobile, 2 on desktop */}
+        <div className="learn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, marginBottom: 32 }}>
           {TOPIC_META.map(meta => {
             const tp = topicProgress?.[meta.id];
             const total = topicTotals?.[meta.id] || 0;
-            const mastered = tp ? tp.mastered : 0;
-            const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+            const seen = tp ? (tp.mastered) : 0;
+            const pct = total > 0 ? Math.round((seen / total) * 100) : 0;
             const accuracy = tp && tp.total > 0 ? Math.round((tp.correct / tp.total) * 100) : null;
             const Icon = meta.icon;
-            const R = 26;
-            const circumference = 2 * Math.PI * R;
 
             return (
-              <div key={meta.id} className="lrn-card liquid-glass-card-v2">
-                {/* Top banner */}
-                <div className="lrn-banner" style={{ background: meta.gradient }}>
-                  {/* Floating icon */}
-                  <div className="lrn-icon-float">
-                    <Icon style={{ width: 28, height: 28, color: meta.color }} />
-                  </div>
-                  {/* Progress ring in corner */}
-                  <div className="lrn-ring-corner">
-                    <svg width="60" height="60" viewBox="0 0 60 60" style={{ transform: 'rotate(-90deg)' }}>
-                      <circle cx="30" cy="30" r={R} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="4" />
-                      <circle
-                        cx="30" cy="30" r={R} fill="none"
-                        stroke="#fff" strokeWidth="4"
-                        strokeDasharray={`${circumference}`}
-                        strokeDashoffset={`${circumference * (1 - pct / 100)}`}
-                        strokeLinecap="round"
-                        style={{ transition: 'stroke-dashoffset 0.7s ease', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.2))' }}
-                      />
-                    </svg>
-                    <span className="lrn-ring-pct">{pct}%</span>
-                  </div>
-                </div>
+              <div
+                key={meta.id}
+                className="learn-topic-card glass-panel"
+                data-topic={meta.dataAttr}
+                style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden', cursor: 'default' }}
+              >
+                {/* Colored top accent */}
+                <div style={{ height: 4, background: meta.color, borderRadius: '16px 16px 0 0', flexShrink: 0 }} />
 
-                {/* Card content */}
-                <div className="lrn-body">
-                  <h3 className="lrn-name">{t(`topic.${meta.id}`)}</h3>
-                  <p className="lrn-desc">{t(`topic.${meta.id}.desc`)}</p>
+                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+                  {/* Icon row + progress */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{
+                      width: 38, height: 38, borderRadius: 12,
+                      background: meta.bg,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: meta.color,
+                    }}>
+                      <Icon style={{ width: 18, height: 18 }} />
+                    </div>
 
-                  {/* Progress bar */}
-                  <div className="lrn-bar-track">
-                    <div className="lrn-bar-fill" style={{ width: `${pct}%`, background: meta.color }} />
-                  </div>
-
-                  {/* Stats */}
-                  <div className="lrn-stats">
-                    <span className="lrn-pill">
-                      <BookOpen style={{ width: 11, height: 11 }} />
-                      {mastered}/{total}
-                    </span>
-                    {accuracy !== null && (
-                      <span
-                        className="lrn-pill"
-                        style={{
-                          background: accuracy >= 70
-                            ? 'rgba(125,138,87,0.12)'
-                            : accuracy >= 50
-                            ? 'rgba(236,200,92,0.16)'
-                            : 'rgba(224,108,108,0.10)',
-                          color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
-                          borderColor: accuracy >= 70
-                            ? 'rgba(125,138,87,0.22)'
-                            : accuracy >= 50
-                            ? 'rgba(236,200,92,0.28)'
-                            : 'rgba(224,108,108,0.18)',
-                        }}
-                      >
-                        {accuracy >= 70
-                          ? <CheckCircle style={{ width: 11, height: 11 }} />
-                          : accuracy >= 50
-                          ? <TrendingUp style={{ width: 11, height: 11 }} />
-                          : <AlertCircle style={{ width: 11, height: 11 }} />}
-                        {accuracy}%
-                      </span>
-                    )}
+                    {/* Progress circle mini */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <svg width="28" height="28" viewBox="0 0 32 32" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(47,53,50,0.08)" strokeWidth="3" />
+                        <circle
+                          cx="16" cy="16" r="12" fill="none"
+                          stroke={meta.color} strokeWidth="3"
+                          strokeDasharray={`${2 * Math.PI * 12}`}
+                          strokeDashoffset={`${2 * Math.PI * 12 * (1 - pct / 100)}`}
+                          strokeLinecap="round"
+                          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+                        />
+                      </svg>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--foreground))' }}>{pct}%</span>
+                    </div>
                   </div>
 
-                  {/* Buttons */}
-                  <div className="lrn-actions">
+                  {/* Topic name + description */}
+                  <div>
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 3 }}>
+                      {t(`topic.${meta.id}`)}
+                    </h3>
+                    <p className="learn-topic-desc" style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {t(`topic.${meta.id}.desc`)}
+                    </p>
+                  </div>
+
+                  {/* Accuracy badge */}
+                  {accuracy !== null && (
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '3px 8px', borderRadius: 99, width: 'fit-content',
+                      fontSize: 11, fontWeight: 700,
+                      background: accuracy >= 70 ? 'rgba(125,138,87,0.12)' : accuracy >= 50 ? 'rgba(236,200,92,0.18)' : 'rgba(224,108,108,0.10)',
+                      color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
+                      border: `1px solid ${accuracy >= 70 ? 'rgba(125,138,87,0.2)' : accuracy >= 50 ? 'rgba(236,200,92,0.3)' : 'rgba(224,108,108,0.2)'}`,
+                    }}>
+                      {accuracy >= 70
+                        ? <CheckCircle style={{ width: 10, height: 10 }} />
+                        : accuracy >= 50
+                        ? <TrendingUp style={{ width: 10, height: 10 }} />
+                        : <AlertCircle style={{ width: 10, height: 10 }} />}
+                      {accuracy}%
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 2 }}>
                     <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button className="lrn-btn lrn-btn-ghost">
-                        <Layers style={{ width: 14, height: 14 }} />
+                      <button className="learn-action-btn" style={{ width: '100%', justifyContent: 'center' }}>
+                        <Layers style={{ width: 13, height: 13 }} />
                         {language === 'ru' ? 'Карточки' : 'Κάρτες'}
                       </button>
                     </Link>
                     <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button
-                        className="lrn-btn lrn-btn-solid"
-                        style={{ '--tc': meta.color, '--ts': meta.shadow } as React.CSSProperties}
-                      >
-                        <PenLine style={{ width: 14, height: 14 }} />
+                      <button className="learn-action-btn learn-action-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                        <PenLine style={{ width: 13, height: 13 }} />
                         {language === 'ru' ? 'Тест' : 'Κουίζ'}
                       </button>
                     </Link>
@@ -227,445 +211,139 @@ export default function Learn() {
           })}
         </div>
 
-        {/* ── Exam section ── */}
-        <div className="lrn-divider-row">
-          <span>{language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}</span>
-          <div className="lrn-divider-line" />
-        </div>
+        {/* Exam section */}
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'hsl(var(--foreground))', margin: 0, whiteSpace: 'nowrap' }}>
+              {language === 'ru' ? 'Режимы экзамена' : 'Λειτουργίες εξέτασης'}
+            </h2>
+            <div style={{ flex: 1, height: 1, background: 'rgba(47,53,50,0.08)' }} />
+          </div>
 
-        <div className="lrn-exam">
-          {/* Greek key decorative border (top) */}
-          <div className="lrn-exam-key-border" />
-          {/* Decorative ε */}
-          <div className="lrn-exam-epsilon">ε</div>
+          {/* Dark exam card */}
+          <div className="learn-exam-card" style={{
+            background: '#2F3532',
+            color: '#fff',
+            borderRadius: 28,
+            display: 'flex', flexDirection: 'column',
+            padding: '24px 20px',
+            position: 'relative', overflow: 'hidden',
+            boxShadow: '0 12px 48px -8px rgba(47,53,50,0.35)',
+            gap: 20,
+          }}>
+            {/* Deco icon */}
+            <GraduationCap style={{ position: 'absolute', right: -20, bottom: -40, width: 180, height: 180, color: 'rgba(255,255,255,0.04)' }} />
 
-          <div className="lrn-exam-inner">
-            <div className="lrn-exam-icon">
-              <GraduationCap style={{ width: 30, height: 30 }} />
-            </div>
-
-            <div className="lrn-exam-text">
-              <div className="lrn-exam-eyebrow">
-                {language === 'ru' ? 'Официальный формат' : 'Επίσημη μορφή'}
+            {/* Top: icon + text */}
+            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: 16,
+                background: 'rgba(236,200,92,0.20)',
+                color: '#ECC85C',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <GraduationCap style={{ width: 26, height: 26 }} />
               </div>
-              <h2 className="lrn-exam-title">
-                {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
-              </h2>
-              <p className="lrn-exam-desc">
-                {language === 'ru'
-                  ? 'Все темы вместе, без подсказок — как в реальном тесте'
-                  : 'Όλα τα θέματα μαζί, χωρίς βοήθεια — σαν πραγματική εξέταση'}
-              </p>
-            </div>
-
-            <div className="lrn-exam-chips">
-              {[
-                { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτ.' },
-                { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
-                { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
-              ].map((s, i) => (
-                <div key={i} className="lrn-exam-chip">
-                  <span className="lrn-exam-chip-val">{s.value}</span>
-                  <span className="lrn-exam-chip-lbl">{s.label}</span>
+              <div>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '3px 8px', borderRadius: 99, marginBottom: 6,
+                  fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
+                  background: 'rgba(236,200,92,0.20)', color: '#ECC85C',
+                }}>
+                  {language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}
                 </div>
-              ))}
+                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+                  {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
+                </div>
+                <div style={{ fontSize: 12, opacity: 0.55, lineHeight: 1.5 }}>
+                  {language === 'ru'
+                    ? 'Проверьте себя в условиях реального теста. Все темы, без подсказок.'
+                    : 'Δοκιμάστε τον εαυτό σας σε συνθήκες κοντά στην πραγματική εξέταση.'}
+                </div>
+              </div>
             </div>
 
-            <Link to="/learn/exam" style={{ textDecoration: 'none', flexShrink: 0 }}>
-              <button className="lrn-exam-cta">
-                {language === 'ru' ? 'Начать экзамен' : 'Έναρξη'}
-                <ArrowRight style={{ width: 16, height: 16 }} />
-              </button>
-            </Link>
+            {/* Stats + CTA row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1, flexWrap: 'wrap', gap: 12 }}>
+              <div className="learn-exam-stats" style={{ display: 'flex', gap: 20 }}>
+                {[
+                  { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
+                  { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
+                  { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
+                ].map((stat, i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
+                    <span style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, whiteSpace: 'nowrap' }}>{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
+                <button
+                  className="exam-start-btn"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    padding: '12px 22px', borderRadius: 99,
+                    border: 'none', background: '#ECC85C', color: '#2F3532',
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                    fontFamily: 'inherit', whiteSpace: 'nowrap',
+                    transition: 'all 0.18s',
+                  }}
+                >
+                  {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
+                  <ArrowRight style={{ width: 15, height: 15 }} />
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
       </div>
 
       <style>{`
-        /* ══ Layout ══ */
-        .lrn-root {
-          max-width: 920px;
-          margin: 0 auto;
-          padding: 36px 20px 100px;
+        .learn-topic-card {
+          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
-        /* ══ Header ══ */
-        .lrn-header {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: 12px;
-          margin-bottom: 32px;
-          flex-wrap: wrap;
+        .learn-topic-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 40px -8px rgba(0,0,0,0.10);
         }
-        .lrn-title {
-          font-size: 30px;
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          color: hsl(var(--foreground));
-          margin-bottom: 6px;
-        }
-        .lrn-subtitle {
-          font-size: 14px;
-          color: hsl(var(--muted-foreground));
-          line-height: 1.5;
-        }
-        .lrn-due-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 6px 14px;
-          border-radius: 99px;
-          background: rgba(236,200,92,0.20);
-          color: #584610;
-          font-size: 12px;
-          font-weight: 700;
-          border: 1px solid rgba(236,200,92,0.40);
-          white-space: nowrap;
-          flex-shrink: 0;
-          animation: pulse-soft 2.5s ease-in-out infinite;
-        }
-        @keyframes pulse-soft {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.85; transform: scale(1.03); }
-        }
-
-        /* ══ Grid ══ */
-        .lrn-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-          margin-bottom: 40px;
-        }
-
-        /* ══ Card ══ */
-        .lrn-card {
-          border-radius: 22px !important;
-          padding: 0 !important;
-          cursor: default;
-        }
-
-        /* ── Banner ── */
-        .lrn-banner {
-          position: relative;
-          height: 80px;
-          border-radius: 22px 22px 0 0;
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          padding: 0 18px 0 22px;
-        }
-        .lrn-icon-float {
-          width: 52px;
-          height: 52px;
-          border-radius: 16px;
-          background: rgba(255,255,255,0.92);
-          backdrop-filter: blur(8px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-          transform: translateY(26px);
-          flex-shrink: 0;
-        }
-        .lrn-ring-corner {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          transform: translateY(8px);
-        }
-        .lrn-ring-pct {
-          position: absolute;
-          font-size: 13px;
-          font-weight: 800;
-          color: #fff;
-          letter-spacing: -0.03em;
-          text-shadow: 0 1px 4px rgba(0,0,0,0.25);
-        }
-
-        /* ── Body ── */
-        .lrn-body {
-          padding: 34px 20px 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .lrn-name {
-          font-size: 18px;
-          font-weight: 700;
-          color: hsl(var(--foreground));
-          letter-spacing: -0.015em;
-        }
-        .lrn-desc {
-          font-size: 12.5px;
-          color: hsl(var(--muted-foreground));
-          line-height: 1.5;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        /* ── Progress bar ── */
-        .lrn-bar-track {
-          height: 5px;
-          background: rgba(47,53,50,0.08);
-          border-radius: 99px;
-          overflow: hidden;
-        }
-        .lrn-bar-fill {
-          height: 100%;
-          border-radius: 99px;
-          transition: width 0.7s ease;
-        }
-
-        /* ── Stats ── */
-        .lrn-stats {
-          display: flex;
-          gap: 6px;
-          flex-wrap: wrap;
-        }
-        .lrn-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 3px 10px;
-          border-radius: 99px;
-          font-size: 11px;
-          font-weight: 600;
-          background: rgba(47,53,50,0.06);
-          color: hsl(var(--muted-foreground));
-          border: 1px solid rgba(47,53,50,0.10);
-        }
-
-        /* ── Buttons ── */
-        .lrn-actions {
-          display: flex;
-          gap: 8px;
-          margin-top: 4px;
-        }
-        .lrn-btn {
-          width: 100%;
-          height: 38px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          border-radius: 12px;
-          font-size: 13px;
-          font-weight: 700;
-          cursor: pointer;
-          font-family: inherit;
-          transition: all 0.2s;
-          border: none;
-        }
-        .lrn-btn-ghost {
+        .learn-action-btn {
+          display: flex; align-items: center; gap: 5px;
+          padding: 8px 12px;
+          border: 1.5px solid rgba(47,53,50,0.30);
+          border-radius: 100px;
           background: rgba(255,255,255,0.55);
-          color: hsl(var(--foreground));
-          border: 1.5px solid rgba(47,53,50,0.15);
-        }
-        .lrn-btn-ghost:hover {
-          background: rgba(255,255,255,0.85);
-          border-color: rgba(47,53,50,0.28);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-        }
-        .lrn-btn-solid {
-          background: var(--tc);
-          color: #fff;
-          box-shadow: 0 4px 14px -2px var(--ts);
-        }
-        .lrn-btn-solid:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px -4px var(--ts);
-          filter: brightness(1.08);
-        }
-
-        /* ══ Divider ══ */
-        .lrn-divider-row {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 16px;
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: hsl(var(--muted-foreground));
-        }
-        .lrn-divider-line {
-          flex: 1;
-          height: 2px;
-          background: linear-gradient(90deg, rgba(47,53,50,0.12), transparent);
-          border-radius: 2px;
-        }
-
-        /* ══ Exam Card ══ */
-        .lrn-exam {
-          position: relative;
-          background: linear-gradient(160deg, #2F3532 0%, #1A1F1D 50%, #2F3532 100%);
-          border-radius: 28px;
-          padding: 40px;
-          color: #fff;
-          overflow: hidden;
-          box-shadow:
-            0 24px 64px -12px rgba(47,53,50,0.50),
-            inset 0 1px 0 rgba(255,255,255,0.06);
-        }
-        /* Greek key pattern (top decorative strip) */
-        .lrn-exam-key-border {
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 4px;
-          background: repeating-linear-gradient(
-            90deg,
-            #ECC85C 0px, #ECC85C 10px,
-            transparent 10px, transparent 14px,
-            #ECC85C 14px, #ECC85C 18px,
-            transparent 18px, transparent 22px
-          );
-          opacity: 0.55;
-        }
-        .lrn-exam-epsilon {
-          position: absolute;
-          right: 30px;
-          bottom: -30px;
-          font-size: 200px;
-          font-weight: 700;
-          font-family: 'EB Garamond', serif;
-          color: rgba(236,200,92,0.04);
-          pointer-events: none;
-          line-height: 1;
-        }
-        .lrn-exam-inner {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          gap: 24px;
-          flex-wrap: wrap;
-        }
-        .lrn-exam-icon {
-          width: 64px;
-          height: 64px;
-          border-radius: 20px;
-          background: rgba(236,200,92,0.15);
-          color: #ECC85C;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          box-shadow: 0 0 32px rgba(236,200,92,0.10);
-        }
-        .lrn-exam-text {
-          flex: 1;
-          min-width: 160px;
-        }
-        .lrn-exam-eyebrow {
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: #ECC85C;
-          opacity: 0.85;
-          margin-bottom: 6px;
-        }
-        .lrn-exam-title {
-          font-size: 26px;
-          font-weight: 800;
-          letter-spacing: -0.025em;
-          margin-bottom: 6px;
-          background: linear-gradient(135deg, #fff 0%, #ECC85C 60%, #fff 100%);
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer-gold 4s ease-in-out infinite;
-        }
-        @keyframes shimmer-gold {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-        .lrn-exam-desc {
-          font-size: 13px;
-          opacity: 0.50;
-          line-height: 1.55;
-        }
-        .lrn-exam-chips {
-          display: flex;
-          gap: 12px;
-          flex-shrink: 0;
-        }
-        .lrn-exam-chip {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 3px;
-          padding: 10px 14px;
-          border-radius: 14px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.08);
-        }
-        .lrn-exam-chip-val {
-          font-size: 22px;
-          font-weight: 800;
-          letter-spacing: -0.03em;
-        }
-        .lrn-exam-chip-lbl {
-          font-size: 10px;
-          opacity: 0.45;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          font-weight: 600;
-          white-space: nowrap;
-        }
-        .lrn-exam-cta {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 14px 30px;
-          border-radius: 99px;
-          border: none;
-          background: linear-gradient(135deg, #ECC85C, #F5D97A);
           color: #2F3532;
-          font-size: 15px;
-          font-weight: 800;
-          cursor: pointer;
-          font-family: inherit;
-          white-space: nowrap;
-          transition: all 0.2s;
-          flex-shrink: 0;
-          box-shadow: 0 4px 20px rgba(236,200,92,0.30);
+          font-size: 12px; font-weight: 700;
+          cursor: pointer; font-family: inherit;
+          transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
         }
-        .lrn-exam-cta:hover {
+        .learn-action-btn:hover {
+          background: #fff;
+          border-color: rgba(47,53,50,0.18);
           transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(236,200,92,0.50);
-          filter: brightness(1.06);
+          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08);
         }
-
-        /* ══ Mobile ══ */
-        @media (max-width: 600px) {
-          .lrn-root { padding: 20px 14px 90px; }
-          .lrn-title { font-size: 24px; }
-          .lrn-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-          .lrn-banner { height: 64px; padding: 0 14px 0 16px; }
-          .lrn-icon-float { width: 44px; height: 44px; border-radius: 13px; transform: translateY(22px); }
-          .lrn-icon-float svg { width: 22px !important; height: 22px !important; }
-          .lrn-ring-corner svg { width: 50px; height: 50px; }
-          .lrn-ring-pct { font-size: 11px; }
-          .lrn-body { padding: 28px 16px 16px; }
-          .lrn-name { font-size: 16px; }
-          .lrn-exam { padding: 24px 18px; border-radius: 22px; }
-          .lrn-exam-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
-          .lrn-exam-icon { width: 50px; height: 50px; border-radius: 15px; }
-          .lrn-exam-title { font-size: 20px; }
-          .lrn-exam-cta { width: 100%; justify-content: center; }
-          .lrn-exam-chips { width: 100%; justify-content: space-between; }
+        .learn-action-primary {
+          background: rgba(255,255,255,0.55);
+          color: #2F3532;
+          border-color: rgba(47,53,50,0.30);
+          font-weight: 700;
+        }
+        .learn-action-primary:hover {
+          background: #fff !important;
+          border-color: rgba(47,53,50,0.45) !important;
+          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
+        }
+        .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
+        .learn-exam-left { flex: 1 !important; }
+        @media (max-width: 639px) {
+          .learn-grid { gap: 12px !important; }
+          .learn-exam-card { flex-direction: column !important; align-items: flex-start !important; padding: 24px 20px !important; }
+          .learn-exam-left { flex: unset !important; }
         }
       `}</style>
     </Layout>
