@@ -84,15 +84,15 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
 
         {/* Page header */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, marginBottom: 40 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 24 }}>
           <div>
-            <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 6 }}>
+            <h1 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 4 }}>
               {language === 'ru' ? 'Выберите тему' : 'Επιλέξτε θέμα'}
             </h1>
-            <p style={{ fontSize: 14, color: 'hsl(var(--muted-foreground))' }}>
+            <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
               {language === 'ru'
                 ? 'Начните изучение с интересующей вас темы или продолжите прогресс'
                 : 'Ξεκινήστε με ένα θέμα ή συνεχίστε την πρόοδό σας'}
@@ -101,19 +101,19 @@ export default function Learn() {
           {dueCount != null && dueCount > 0 && (
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '7px 18px', borderRadius: 99,
+              padding: '6px 14px', borderRadius: 99,
               background: 'rgba(236,200,92,0.22)', color: '#584610',
-              fontSize: 13, fontWeight: 600,
+              fontSize: 12, fontWeight: 600,
               border: '1px solid rgba(236,200,92,0.4)',
             }}>
-              <Layers style={{ width: 14, height: 14 }} />
+              <Layers style={{ width: 13, height: 13 }} />
               {language === 'ru' ? `Сегодня: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
             </div>
           )}
         </div>
 
-        {/* Topics grid — 2 columns */}
-        <div className="learn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20, marginBottom: 64 }}>
+        {/* Topics grid — 2 columns on mobile, 2 on desktop */}
+        <div className="learn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, marginBottom: 32 }}>
           {TOPIC_META.map(meta => {
             const tp = topicProgress?.[meta.id];
             const total = topicTotals?.[meta.id] || 0;
@@ -132,23 +132,21 @@ export default function Learn() {
                 {/* Colored top accent */}
                 <div style={{ height: 4, background: meta.color, borderRadius: '16px 16px 0 0', flexShrink: 0 }} />
 
-                <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
-                  {/* Icon row + accuracy badge */}
+                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+                  {/* Icon row + progress */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    {/* Icon */}
                     <div style={{
-                      width: 44, height: 44, borderRadius: 14,
+                      width: 38, height: 38, borderRadius: 12,
                       background: meta.bg,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: meta.color, fontSize: 22,
+                      color: meta.color,
                     }}>
-                      <Icon style={{ width: 20, height: 20 }} />
+                      <Icon style={{ width: 18, height: 18 }} />
                     </div>
 
-                    {/* Progress % badge */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {/* Progress circle mini */}
-                      <svg width="32" height="32" viewBox="0 0 32 32" style={{ transform: 'rotate(-90deg)' }}>
+                    {/* Progress circle mini */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <svg width="28" height="28" viewBox="0 0 32 32" style={{ transform: 'rotate(-90deg)' }}>
                         <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(47,53,50,0.08)" strokeWidth="3" />
                         <circle
                           cx="16" cy="16" r="12" fill="none"
@@ -159,50 +157,50 @@ export default function Learn() {
                           style={{ transition: 'stroke-dashoffset 0.6s ease' }}
                         />
                       </svg>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: 'hsl(var(--foreground))', minWidth: 36 }}>{pct}%</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--foreground))' }}>{pct}%</span>
                     </div>
                   </div>
 
                   {/* Topic name + description */}
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 4 }}>
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 3 }}>
                       {t(`topic.${meta.id}`)}
                     </h3>
-                    <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))', lineHeight: 1.5 }}>
+                    <p className="learn-topic-desc" style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {t(`topic.${meta.id}.desc`)}
                     </p>
                   </div>
 
-                  {/* Accuracy badge (optional) */}
+                  {/* Accuracy badge */}
                   {accuracy !== null && (
                     <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 5,
-                      padding: '4px 10px', borderRadius: 99, width: 'fit-content',
-                      fontSize: 12, fontWeight: 700,
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '3px 8px', borderRadius: 99, width: 'fit-content',
+                      fontSize: 11, fontWeight: 700,
                       background: accuracy >= 70 ? 'rgba(125,138,87,0.12)' : accuracy >= 50 ? 'rgba(236,200,92,0.18)' : 'rgba(224,108,108,0.10)',
                       color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
                       border: `1px solid ${accuracy >= 70 ? 'rgba(125,138,87,0.2)' : accuracy >= 50 ? 'rgba(236,200,92,0.3)' : 'rgba(224,108,108,0.2)'}`,
                     }}>
                       {accuracy >= 70
-                        ? <CheckCircle style={{ width: 11, height: 11 }} />
+                        ? <CheckCircle style={{ width: 10, height: 10 }} />
                         : accuracy >= 50
-                        ? <TrendingUp style={{ width: 11, height: 11 }} />
-                        : <AlertCircle style={{ width: 11, height: 11 }} />}
+                        ? <TrendingUp style={{ width: 10, height: 10 }} />
+                        : <AlertCircle style={{ width: 10, height: 10 }} />}
                       {accuracy}%
                     </div>
                   )}
 
                   {/* Action buttons */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
-                    <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none' }}>
-                      <button className="learn-action-btn">
-                        <Layers style={{ width: 14, height: 14 }} />
+                  <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 2 }}>
+                    <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
+                      <button className="learn-action-btn" style={{ width: '100%', justifyContent: 'center' }}>
+                        <Layers style={{ width: 13, height: 13 }} />
                         {language === 'ru' ? 'Карточки' : 'Κάρτες'}
                       </button>
                     </Link>
-                    <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none' }}>
-                      <button className="learn-action-btn learn-action-primary">
-                        <PenLine style={{ width: 14, height: 14 }} />
+                    <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
+                      <button className="learn-action-btn learn-action-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                        <PenLine style={{ width: 13, height: 13 }} />
                         {language === 'ru' ? 'Тест' : 'Κουίζ'}
                       </button>
                     </Link>
@@ -215,8 +213,8 @@ export default function Learn() {
 
         {/* Exam section */}
         <div style={{ marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <h2 style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', color: 'hsl(var(--foreground))', margin: 0, whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'hsl(var(--foreground))', margin: 0, whiteSpace: 'nowrap' }}>
               {language === 'ru' ? 'Режимы экзамена' : 'Λειτουργίες εξέτασης'}
             </h2>
             <div style={{ flex: 1, height: 1, background: 'rgba(47,53,50,0.08)' }} />
@@ -226,126 +224,100 @@ export default function Learn() {
           <div className="learn-exam-card" style={{
             background: '#2F3532',
             color: '#fff',
-            borderRadius: 32,
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '40px 52px',
+            borderRadius: 28,
+            display: 'flex', flexDirection: 'column',
+            padding: '24px 20px',
             position: 'relative', overflow: 'hidden',
             boxShadow: '0 12px 48px -8px rgba(47,53,50,0.35)',
-            gap: 40, flexWrap: 'wrap',
+            gap: 20,
           }}>
             {/* Deco icon */}
-            <GraduationCap style={{ position: 'absolute', right: -30, bottom: -50, width: 260, height: 260, color: 'rgba(255,255,255,0.04)' }} />
+            <GraduationCap style={{ position: 'absolute', right: -20, bottom: -40, width: 180, height: 180, color: 'rgba(255,255,255,0.04)' }} />
 
-            {/* Left: icon + text */}
-            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 28, flex: 1, minWidth: 260, position: 'relative', zIndex: 1 }}>
+            {/* Top: icon + text */}
+            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
               <div style={{
-                width: 64, height: 64, borderRadius: 20,
+                width: 52, height: 52, borderRadius: 16,
                 background: 'rgba(236,200,92,0.20)',
                 color: '#ECC85C',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                <GraduationCap style={{ width: 32, height: 32 }} />
+                <GraduationCap style={{ width: 26, height: 26 }} />
               </div>
               <div>
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '4px 10px', borderRadius: 99, marginBottom: 10,
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
+                  padding: '3px 8px', borderRadius: 99, marginBottom: 6,
+                  fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
                   background: 'rgba(236,200,92,0.20)', color: '#ECC85C',
                 }}>
                   {language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}
                 </div>
-                <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
                   {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
                 </div>
-                <div style={{ fontSize: 14, opacity: 0.50, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 12, opacity: 0.55, lineHeight: 1.5 }}>
                   {language === 'ru'
-                    ? 'Проверьте себя в условиях, приближённых к реальному тесту на гражданство. Все темы, без подсказок.'
-                    : 'Δοκιμάστε τον εαυτό σας σε συνθήκες κοντά στην πραγματική εξέταση ιθαγένειας.'}
+                    ? 'Проверьте себя в условиях реального теста. Все темы, без подсказок.'
+                    : 'Δοκιμάστε τον εαυτό σας σε συνθήκες κοντά στην πραγματική εξέταση.'}
                 </div>
               </div>
             </div>
 
-            {/* Middle: stats */}
-            <div className="learn-exam-stats" style={{ display: 'flex', gap: 32, flexShrink: 0, position: 'relative', zIndex: 1 }}>
-              {[
-                { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
-                null,
-                { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
-                null,
-                { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση επιτυχίας' },
-              ].map((stat, i) =>
-                stat === null
-                  ? <div key={i} className="learn-exam-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.10)', alignSelf: 'center' }} />
-                  : (
-                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                      <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
-                      <span style={{ fontSize: 11, opacity: 0.45, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, whiteSpace: 'nowrap' }}>{stat.label}</span>
-                    </div>
-                  )
-              )}
-            </div>
+            {/* Stats + CTA row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1, flexWrap: 'wrap', gap: 12 }}>
+              <div className="learn-exam-stats" style={{ display: 'flex', gap: 20 }}>
+                {[
+                  { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
+                  { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
+                  { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
+                ].map((stat, i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
+                    <span style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, whiteSpace: 'nowrap' }}>{stat.label}</span>
+                  </div>
+                ))}
+              </div>
 
-            {/* Right: CTA */}
-            <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
-              <button
-                className="exam-start-btn"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '14px 28px', borderRadius: 99,
-                  border: 'none', background: '#ECC85C', color: '#2F3532',
-                  fontSize: 15, fontWeight: 700, cursor: 'pointer',
-                  fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0,
-                  transition: 'all 0.18s',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = '#f0d06e';
-                  (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 24px -4px rgba(236,200,92,0.5)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = '#ECC85C';
-                  (e.currentTarget as HTMLButtonElement).style.transform = '';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '';
-                }}
-              >
-                {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
-                <ArrowRight style={{ width: 16, height: 16 }} />
-              </button>
-            </Link>
+              <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
+                <button
+                  className="exam-start-btn"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    padding: '12px 22px', borderRadius: 99,
+                    border: 'none', background: '#ECC85C', color: '#2F3532',
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                    fontFamily: 'inherit', whiteSpace: 'nowrap',
+                    transition: 'all 0.18s',
+                  }}
+                >
+                  {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
+                  <ArrowRight style={{ width: 15, height: 15 }} />
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
-          .learn-grid { grid-template-columns: 1fr !important; }
-          .learn-exam-card { padding: 28px 24px !important; gap: 24px !important; }
-          .learn-exam-left { min-width: 0 !important; }
-        }
-        @media (max-width: 430px) {
-          .learn-exam-card { padding: 20px 16px !important; gap: 16px !important; border-radius: 24px !important; }
-          .learn-exam-stats { gap: 20px !important; }
-          .learn-exam-divider { display: none !important; }
-          .learn-action-btn { padding: 8px 14px !important; font-size: 12px !important; }
-        }
         .learn-topic-card {
           transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .learn-topic-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-4px);
           box-shadow: 0 16px 40px -8px rgba(0,0,0,0.10);
         }
         .learn-action-btn {
-          display: flex; align-items: center; gap: 6px;
-          padding: 9px 18px;
+          display: flex; align-items: center; gap: 5px;
+          padding: 8px 12px;
           border: 1.5px solid rgba(47,53,50,0.30);
           border-radius: 100px;
           background: rgba(255,255,255,0.55);
           color: #2F3532;
-          font-size: 13px; font-weight: 700;
+          font-size: 12px; font-weight: 700;
           cursor: pointer; font-family: inherit;
           transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
         }
@@ -365,6 +337,11 @@ export default function Learn() {
           background: #fff !important;
           border-color: rgba(47,53,50,0.45) !important;
           box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
+        }
+        @media (min-width: 640px) {
+          .learn-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
+          .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
+          .learn-exam-left { flex: 1 !important; }
         }
       `}</style>
     </Layout>
