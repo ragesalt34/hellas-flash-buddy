@@ -137,7 +137,7 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
   const hasElTranslation = !!(questionElText.trim() && correctAnswerEl.trim());
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-5">
+    <form onSubmit={(e) => { e.preventDefault(); if (!mutation.isPending) mutation.mutate(); }} className="space-y-5">
       {/* Topic selector */}
       <div className="space-y-2">
         <Label>{language === 'ru' ? 'Тема' : 'Θέμα'}</Label>

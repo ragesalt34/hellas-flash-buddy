@@ -42,12 +42,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     // Then fetch current session to set initial state
-    // (onAuthStateChange above already handles checkAdminRole — no need to call it again here)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
-      if (!session?.user) setIsAdmin(false);
+      if (session?.user) {
+        void checkAdminRole(session.user.id);
+      } else {
+        setIsAdmin(false);
+      }
     }).catch(() => {
       setIsLoading(false);
     });

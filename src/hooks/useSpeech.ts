@@ -101,6 +101,12 @@ export function useSpeech() {
       await audio.play();
     } catch (error) {
       console.error("Speech error:", error);
+      // Clear stale cache entry so retry attempts re-fetch fresh audio
+      if (cacheKey) {
+        const cached = urlCache.get(cacheKey);
+        if (cached?.startsWith('blob:')) URL.revokeObjectURL(cached);
+        urlCache.delete(cacheKey);
+      }
       setIsSpeaking(false);
       const lang = localStorage.getItem('language') || 'ru';
       toast.error(

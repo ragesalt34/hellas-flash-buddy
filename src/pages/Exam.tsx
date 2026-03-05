@@ -441,7 +441,7 @@ export default function Exam() {
 
   const handleExportResults = () => {
     const { questionsData, topicsBreakdown, score, timeSpent } = calculateResults();
-    const percentage = Math.round((score / questions.length) * 100);
+    const percentage = Math.round((score / (questions.length || 1)) * 100);
     
     let text = language === 'ru' 
       ? `РЕЗУЛЬТАТЫ ЭКЗАМЕНА\n${'='.repeat(40)}\n\n`
@@ -673,9 +673,9 @@ export default function Exam() {
   // Exam results
   if (isFinished) {
     const { topicsBreakdown, score, timeSpent } = calculateResults();
-    const percentage = Math.round((score / questions.length) * 100);
+    const percentage = Math.round((score / (questions.length || 1)) * 100);
     const passed = percentage >= PASSING_SCORE;
-    const avgTimePerQuestion = Math.round(timeSpent / questions.length);
+    const avgTimePerQuestion = Math.round(timeSpent / (questions.length || 1));
     
     // Find weak topics
     const weakTopics = Object.entries(topicsBreakdown)
