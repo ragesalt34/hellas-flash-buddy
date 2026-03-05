@@ -338,10 +338,12 @@ export default function Learn() {
           border-color: rgba(47,53,50,0.45) !important;
           box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
         }
-        @media (min-width: 640px) {
-          .learn-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
-          .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
-          .learn-exam-left { flex: 1 !important; }
+        .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
+        .learn-exam-left { flex: 1 !important; }
+        @media (max-width: 639px) {
+          .learn-grid { gap: 12px !important; }
+          .learn-exam-card { flex-direction: column !important; align-items: flex-start !important; padding: 24px 20px !important; }
+          .learn-exam-left { flex: unset !important; }
         }
       `}</style>
     </Layout>
