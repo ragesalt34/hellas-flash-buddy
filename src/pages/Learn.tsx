@@ -7,14 +7,38 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Layers, PenLine, GraduationCap,
   History, Palette, Scale, MapPin,
-  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle,
+  ArrowRight, Loader2, CheckCircle, TrendingUp, AlertCircle, BookOpen,
 } from 'lucide-react';
 
 const TOPIC_META = [
-  { id: 'history',   icon: History,  color: '#5B8DB8', bg: 'rgba(91,141,184,0.12)',  dataAttr: 'history' },
-  { id: 'culture',   icon: Palette,  color: '#9B7EC8', bg: 'rgba(155,126,200,0.12)', dataAttr: 'culture' },
-  { id: 'laws',      icon: Scale,    color: '#7D8A57', bg: 'rgba(125,138,87,0.12)',  dataAttr: 'laws' },
-  { id: 'geography', icon: MapPin,   color: '#D4874A', bg: 'rgba(212,135,74,0.12)',  dataAttr: 'geo' },
+  {
+    id: 'history',   icon: History,  color: '#5B8DB8',
+    bg: 'rgba(91,141,184,0.10)',
+    gradient: 'linear-gradient(135deg, rgba(91,141,184,0.18) 0%, rgba(91,141,184,0.04) 100%)',
+    shadow: 'rgba(91,141,184,0.20)',
+    dataAttr: 'history',
+  },
+  {
+    id: 'culture',   icon: Palette,  color: '#9B7EC8',
+    bg: 'rgba(155,126,200,0.10)',
+    gradient: 'linear-gradient(135deg, rgba(155,126,200,0.18) 0%, rgba(155,126,200,0.04) 100%)',
+    shadow: 'rgba(155,126,200,0.20)',
+    dataAttr: 'culture',
+  },
+  {
+    id: 'laws',      icon: Scale,    color: '#7D8A57',
+    bg: 'rgba(125,138,87,0.10)',
+    gradient: 'linear-gradient(135deg, rgba(125,138,87,0.18) 0%, rgba(125,138,87,0.04) 100%)',
+    shadow: 'rgba(125,138,87,0.20)',
+    dataAttr: 'laws',
+  },
+  {
+    id: 'geography', icon: MapPin,   color: '#D4874A',
+    bg: 'rgba(212,135,74,0.10)',
+    gradient: 'linear-gradient(135deg, rgba(212,135,74,0.18) 0%, rgba(212,135,74,0.04) 100%)',
+    shadow: 'rgba(212,135,74,0.20)',
+    dataAttr: 'geo',
+  },
 ];
 
 export default function Learn() {
@@ -84,123 +108,133 @@ export default function Learn() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
+      <div className="learn-page-root">
 
-        {/* Page header */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 24 }}>
+        {/* ── Page header ── */}
+        <div className="learn-header">
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 4 }}>
+            <h1 className="learn-title">
               {language === 'ru' ? 'Выберите тему' : 'Επιλέξτε θέμα'}
             </h1>
-            <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
+            <p className="learn-subtitle">
               {language === 'ru'
-                ? 'Начните изучение с интересующей вас темы или продолжите прогресс'
+                ? 'Начните с интересующей темы или продолжите прогресс'
                 : 'Ξεκινήστε με ένα θέμα ή συνεχίστε την πρόοδό σας'}
             </p>
           </div>
+
           {dueCount != null && dueCount > 0 && (
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', borderRadius: 99,
-              background: 'rgba(236,200,92,0.22)', color: '#584610',
-              fontSize: 12, fontWeight: 600,
-              border: '1px solid rgba(236,200,92,0.4)',
-            }}>
-              <Layers style={{ width: 13, height: 13 }} />
-              {language === 'ru' ? `Сегодня: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
+            <div className="learn-due-badge">
+              <Layers style={{ width: 12, height: 12 }} />
+              {language === 'ru' ? `${dueCount} на повторение` : `${dueCount} για επανάληψη`}
             </div>
           )}
         </div>
 
-        {/* Topics grid — 2 columns on mobile, 2 on desktop */}
-        <div className="learn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, marginBottom: 32 }}>
+        {/* ── Topic cards ── */}
+        <div className="learn-topics-grid">
           {TOPIC_META.map(meta => {
             const tp = topicProgress?.[meta.id];
             const total = topicTotals?.[meta.id] || 0;
-            const seen = tp ? (tp.mastered) : 0;
-            const pct = total > 0 ? Math.round((seen / total) * 100) : 0;
+            const mastered = tp ? tp.mastered : 0;
+            const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
             const accuracy = tp && tp.total > 0 ? Math.round((tp.correct / tp.total) * 100) : null;
             const Icon = meta.icon;
+            const circumference = 2 * Math.PI * 14;
 
             return (
               <div
                 key={meta.id}
-                className="learn-topic-card glass-panel"
+                className="learn-card glass-panel"
                 data-topic={meta.dataAttr}
-                style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden', cursor: 'default' }}
               >
-                {/* Colored top accent */}
-                <div style={{ height: 4, background: meta.color, borderRadius: '16px 16px 0 0', flexShrink: 0 }} />
+                {/* Left accent bar */}
+                <div className="learn-card-accent" style={{ background: meta.color }} />
 
-                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
-                  {/* Icon row + progress */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: 38, height: 38, borderRadius: 12,
-                      background: meta.bg,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: meta.color,
-                    }}>
-                      <Icon style={{ width: 18, height: 18 }} />
+                {/* Card body */}
+                <div className="learn-card-body">
+
+                  {/* Top row: icon + progress ring */}
+                  <div className="learn-card-top">
+                    <div className="learn-card-icon" style={{ background: meta.bg, color: meta.color }}>
+                      <Icon style={{ width: 22, height: 22 }} />
                     </div>
 
-                    {/* Progress circle mini */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <svg width="28" height="28" viewBox="0 0 32 32" style={{ transform: 'rotate(-90deg)' }}>
-                        <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(47,53,50,0.08)" strokeWidth="3" />
+                    <div className="learn-progress-ring-wrap">
+                      <svg width="44" height="44" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(47,53,50,0.07)" strokeWidth="3" />
                         <circle
-                          cx="16" cy="16" r="12" fill="none"
+                          cx="18" cy="18" r="14" fill="none"
                           stroke={meta.color} strokeWidth="3"
-                          strokeDasharray={`${2 * Math.PI * 12}`}
-                          strokeDashoffset={`${2 * Math.PI * 12 * (1 - pct / 100)}`}
+                          strokeDasharray={`${circumference}`}
+                          strokeDashoffset={`${circumference * (1 - pct / 100)}`}
                           strokeLinecap="round"
-                          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+                          style={{ transition: 'stroke-dashoffset 0.7s ease' }}
                         />
                       </svg>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--foreground))' }}>{pct}%</span>
+                      <span className="learn-progress-pct" style={{ color: meta.color }}>{pct}%</span>
                     </div>
                   </div>
 
-                  {/* Topic name + description */}
-                  <div>
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 3 }}>
-                      {t(`topic.${meta.id}`)}
-                    </h3>
-                    <p className="learn-topic-desc" style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {t(`topic.${meta.id}.desc`)}
-                    </p>
+                  {/* Title + description */}
+                  <div className="learn-card-text">
+                    <h3 className="learn-card-name">{t(`topic.${meta.id}`)}</h3>
+                    <p className="learn-card-desc">{t(`topic.${meta.id}.desc`)}</p>
                   </div>
 
-                  {/* Accuracy badge */}
-                  {accuracy !== null && (
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      padding: '3px 8px', borderRadius: 99, width: 'fit-content',
-                      fontSize: 11, fontWeight: 700,
-                      background: accuracy >= 70 ? 'rgba(125,138,87,0.12)' : accuracy >= 50 ? 'rgba(236,200,92,0.18)' : 'rgba(224,108,108,0.10)',
-                      color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
-                      border: `1px solid ${accuracy >= 70 ? 'rgba(125,138,87,0.2)' : accuracy >= 50 ? 'rgba(236,200,92,0.3)' : 'rgba(224,108,108,0.2)'}`,
-                    }}>
-                      {accuracy >= 70
-                        ? <CheckCircle style={{ width: 10, height: 10 }} />
-                        : accuracy >= 50
-                        ? <TrendingUp style={{ width: 10, height: 10 }} />
-                        : <AlertCircle style={{ width: 10, height: 10 }} />}
-                      {accuracy}%
-                    </div>
-                  )}
+                  {/* Progress bar */}
+                  <div className="learn-progress-bar-track">
+                    <div
+                      className="learn-progress-bar-fill"
+                      style={{ width: `${pct}%`, background: meta.color }}
+                    />
+                  </div>
+
+                  {/* Stats row */}
+                  <div className="learn-card-stats">
+                    <span className="learn-stat-pill">
+                      <BookOpen style={{ width: 11, height: 11 }} />
+                      {mastered}/{total}
+                    </span>
+
+                    {accuracy !== null && (
+                      <span
+                        className="learn-stat-pill"
+                        style={{
+                          background: accuracy >= 70
+                            ? 'rgba(125,138,87,0.12)'
+                            : accuracy >= 50
+                            ? 'rgba(236,200,92,0.16)'
+                            : 'rgba(224,108,108,0.10)',
+                          color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
+                          borderColor: accuracy >= 70
+                            ? 'rgba(125,138,87,0.22)'
+                            : accuracy >= 50
+                            ? 'rgba(236,200,92,0.28)'
+                            : 'rgba(224,108,108,0.18)',
+                        }}
+                      >
+                        {accuracy >= 70
+                          ? <CheckCircle style={{ width: 11, height: 11 }} />
+                          : accuracy >= 50
+                          ? <TrendingUp style={{ width: 11, height: 11 }} />
+                          : <AlertCircle style={{ width: 11, height: 11 }} />}
+                        {accuracy}%
+                      </span>
+                    )}
+                  </div>
 
                   {/* Action buttons */}
-                  <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 2 }}>
+                  <div className="learn-card-actions">
                     <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button className="learn-action-btn" style={{ width: '100%', justifyContent: 'center' }}>
-                        <Layers style={{ width: 13, height: 13 }} />
+                      <button className="learn-btn learn-btn-ghost" style={{ '--btn-color': meta.color } as React.CSSProperties}>
+                        <Layers style={{ width: 14, height: 14 }} />
                         {language === 'ru' ? 'Карточки' : 'Κάρτες'}
                       </button>
                     </Link>
                     <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button className="learn-action-btn learn-action-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                        <PenLine style={{ width: 13, height: 13 }} />
+                      <button className="learn-btn learn-btn-filled" style={{ '--btn-color': meta.color, background: meta.color } as React.CSSProperties}>
+                        <PenLine style={{ width: 14, height: 14 }} />
                         {language === 'ru' ? 'Тест' : 'Κουίζ'}
                       </button>
                     </Link>
@@ -211,139 +245,407 @@ export default function Learn() {
           })}
         </div>
 
-        {/* Exam section */}
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'hsl(var(--foreground))', margin: 0, whiteSpace: 'nowrap' }}>
-              {language === 'ru' ? 'Режимы экзамена' : 'Λειτουργίες εξέτασης'}
-            </h2>
-            <div style={{ flex: 1, height: 1, background: 'rgba(47,53,50,0.08)' }} />
-          </div>
+        {/* ── Exam section ── */}
+        <div className="learn-section-label">
+          <span>{language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}</span>
+          <div className="learn-divider" />
+        </div>
 
-          {/* Dark exam card */}
-          <div className="learn-exam-card" style={{
-            background: '#2F3532',
-            color: '#fff',
-            borderRadius: 28,
-            display: 'flex', flexDirection: 'column',
-            padding: '24px 20px',
-            position: 'relative', overflow: 'hidden',
-            boxShadow: '0 12px 48px -8px rgba(47,53,50,0.35)',
-            gap: 20,
-          }}>
-            {/* Deco icon */}
-            <GraduationCap style={{ position: 'absolute', right: -20, bottom: -40, width: 180, height: 180, color: 'rgba(255,255,255,0.04)' }} />
+        <div className="learn-exam-card">
+          {/* Deco */}
+          <GraduationCap className="learn-exam-deco" />
 
-            {/* Top: icon + text */}
-            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
-              <div style={{
-                width: 52, height: 52, borderRadius: 16,
-                background: 'rgba(236,200,92,0.20)',
-                color: '#ECC85C',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <GraduationCap style={{ width: 26, height: 26 }} />
-              </div>
-              <div>
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '3px 8px', borderRadius: 99, marginBottom: 6,
-                  fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
-                  background: 'rgba(236,200,92,0.20)', color: '#ECC85C',
-                }}>
-                  {language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}
-                </div>
-                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
-                  {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
-                </div>
-                <div style={{ fontSize: 12, opacity: 0.55, lineHeight: 1.5 }}>
-                  {language === 'ru'
-                    ? 'Проверьте себя в условиях реального теста. Все темы, без подсказок.'
-                    : 'Δοκιμάστε τον εαυτό σας σε συνθήκες κοντά στην πραγματική εξέταση.'}
-                </div>
-              </div>
+          <div className="learn-exam-body">
+            {/* Icon */}
+            <div className="learn-exam-icon">
+              <GraduationCap style={{ width: 28, height: 28 }} />
             </div>
 
-            {/* Stats + CTA row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1, flexWrap: 'wrap', gap: 12 }}>
-              <div className="learn-exam-stats" style={{ display: 'flex', gap: 20 }}>
-                {[
-                  { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
-                  { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
-                  { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
-                ].map((stat, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                    <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
-                    <span style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, whiteSpace: 'nowrap' }}>{stat.label}</span>
-                  </div>
-                ))}
+            {/* Text block */}
+            <div className="learn-exam-text">
+              <div className="learn-exam-eyebrow">
+                {language === 'ru' ? 'Официальный формат' : 'Επίσημη μορφή'}
               </div>
-
-              <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
-                <button
-                  className="exam-start-btn"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    padding: '12px 22px', borderRadius: 99,
-                    border: 'none', background: '#ECC85C', color: '#2F3532',
-                    fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                    fontFamily: 'inherit', whiteSpace: 'nowrap',
-                    transition: 'all 0.18s',
-                  }}
-                >
-                  {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
-                  <ArrowRight style={{ width: 15, height: 15 }} />
-                </button>
-              </Link>
+              <h2 className="learn-exam-title">
+                {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
+              </h2>
+              <p className="learn-exam-desc">
+                {language === 'ru'
+                  ? 'Все темы вместе, без подсказок — как в реальном тесте на гражданство'
+                  : 'Όλα τα θέματα μαζί, χωρίς βοήθεια — όπως στην πραγματική εξέταση'}
+              </p>
             </div>
+
+            {/* Stats pills */}
+            <div className="learn-exam-stats">
+              {[
+                { value: '20', label: language === 'ru' ? 'вопр.' : 'ερωτ.' },
+                { value: '45', label: language === 'ru' ? 'мин.' : 'λεπτά' },
+                { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
+              ].map((s, i) => (
+                <div key={i} className="learn-exam-stat">
+                  <span className="learn-exam-stat-val">{s.value}</span>
+                  <span className="learn-exam-stat-lbl">{s.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <Link to="/learn/exam" style={{ textDecoration: 'none', flexShrink: 0 }}>
+              <button className="learn-exam-cta">
+                {language === 'ru' ? 'Начать' : 'Έναρξη'}
+                <ArrowRight style={{ width: 16, height: 16 }} />
+              </button>
+            </Link>
           </div>
         </div>
 
       </div>
 
       <style>{`
-        .learn-topic-card {
-          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        /* ── Layout ── */
+        .learn-page-root {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 32px 20px 100px;
         }
-        .learn-topic-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 16px 40px -8px rgba(0,0,0,0.10);
+
+        /* ── Header ── */
+        .learn-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 28px;
+          flex-wrap: wrap;
         }
-        .learn-action-btn {
-          display: flex; align-items: center; gap: 5px;
-          padding: 8px 12px;
-          border: 1.5px solid rgba(47,53,50,0.30);
-          border-radius: 100px;
-          background: rgba(255,255,255,0.55);
-          color: #2F3532;
-          font-size: 12px; font-weight: 700;
-          cursor: pointer; font-family: inherit;
-          transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
+        .learn-title {
+          font-size: 28px;
+          font-weight: 600;
+          letter-spacing: -0.025em;
+          color: hsl(var(--foreground));
+          margin-bottom: 5px;
         }
-        .learn-action-btn:hover {
-          background: #fff;
-          border-color: rgba(47,53,50,0.18);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08);
+        .learn-subtitle {
+          font-size: 13.5px;
+          color: hsl(var(--muted-foreground));
+          line-height: 1.5;
         }
-        .learn-action-primary {
-          background: rgba(255,255,255,0.55);
-          color: #2F3532;
-          border-color: rgba(47,53,50,0.30);
+        .learn-due-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 6px 14px;
+          border-radius: 99px;
+          background: rgba(236,200,92,0.20);
+          color: #584610;
+          font-size: 12px;
           font-weight: 700;
+          border: 1px solid rgba(236,200,92,0.40);
+          white-space: nowrap;
+          flex-shrink: 0;
         }
-        .learn-action-primary:hover {
-          background: #fff !important;
-          border-color: rgba(47,53,50,0.45) !important;
-          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
+
+        /* ── Topics grid: 2 col on desktop, 1 on mobile ── */
+        .learn-topics-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+          margin-bottom: 36px;
         }
-        .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
-        .learn-exam-left { flex: 1 !important; }
-        @media (max-width: 639px) {
-          .learn-grid { gap: 12px !important; }
-          .learn-exam-card { flex-direction: column !important; align-items: flex-start !important; padding: 24px 20px !important; }
-          .learn-exam-left { flex: unset !important; }
+
+        /* ── Card ── */
+        .learn-card {
+          display: flex;
+          flex-direction: row;
+          overflow: hidden;
+          padding: 0;
+          border-radius: 20px;
+          cursor: default;
+          transition: transform 0.28s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.28s;
+        }
+        .learn-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 50px -10px rgba(0,0,0,0.13);
+        }
+        .learn-card-accent {
+          width: 5px;
+          flex-shrink: 0;
+          border-radius: 0;
+        }
+        .learn-card-body {
+          padding: 20px 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 13px;
+          flex: 1;
+          min-width: 0;
+        }
+
+        /* Top row */
+        .learn-card-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .learn-card-icon {
+          width: 46px;
+          height: 46px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        /* Progress ring */
+        .learn-progress-ring-wrap {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .learn-progress-pct {
+          position: absolute;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+        }
+
+        /* Text */
+        .learn-card-text { display: flex; flex-direction: column; gap: 3px; }
+        .learn-card-name {
+          font-size: 16px;
+          font-weight: 700;
+          color: hsl(var(--foreground));
+          letter-spacing: -0.01em;
+        }
+        .learn-card-desc {
+          font-size: 12px;
+          color: hsl(var(--muted-foreground));
+          line-height: 1.45;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        /* Progress bar */
+        .learn-progress-bar-track {
+          height: 4px;
+          background: rgba(47,53,50,0.07);
+          border-radius: 99px;
+          overflow: hidden;
+        }
+        .learn-progress-bar-fill {
+          height: 100%;
+          border-radius: 99px;
+          transition: width 0.7s ease;
+        }
+
+        /* Stats row */
+        .learn-card-stats {
+          display: flex;
+          gap: 6px;
+          flex-wrap: wrap;
+        }
+        .learn-stat-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 9px;
+          border-radius: 99px;
+          font-size: 11px;
+          font-weight: 600;
+          background: rgba(47,53,50,0.06);
+          color: hsl(var(--muted-foreground));
+          border: 1px solid rgba(47,53,50,0.10);
+        }
+
+        /* Action buttons */
+        .learn-card-actions {
+          display: flex;
+          gap: 8px;
+          margin-top: 2px;
+        }
+        .learn-btn {
+          width: 100%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 9px 10px;
+          border-radius: 12px;
+          font-size: 12.5px;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: inherit;
+          transition: all 0.18s;
+          border: none;
+        }
+        .learn-btn-ghost {
+          background: rgba(255,255,255,0.60);
+          color: #2F3532;
+          border: 1.5px solid rgba(47,53,50,0.18) !important;
+        }
+        .learn-btn-ghost:hover {
+          background: rgba(255,255,255,0.90);
+          border-color: rgba(47,53,50,0.30) !important;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px -3px rgba(0,0,0,0.09);
+        }
+        .learn-btn-filled {
+          color: #fff;
+          opacity: 0.92;
+        }
+        .learn-btn-filled:hover {
+          opacity: 1;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px -4px rgba(0,0,0,0.18);
+        }
+
+        /* ── Section label ── */
+        .learn-section-label {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 14px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: hsl(var(--muted-foreground));
+        }
+        .learn-divider {
+          flex: 1;
+          height: 1px;
+          background: rgba(47,53,50,0.08);
+        }
+
+        /* ── Exam card ── */
+        .learn-exam-card {
+          background: #2F3532;
+          border-radius: 24px;
+          padding: 32px 36px;
+          color: #fff;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 16px 56px -8px rgba(47,53,50,0.40);
+        }
+        .learn-exam-deco {
+          position: absolute;
+          right: -24px;
+          bottom: -40px;
+          width: 200px;
+          height: 200px;
+          color: rgba(255,255,255,0.035);
+          pointer-events: none;
+        }
+        .learn-exam-body {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+        .learn-exam-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 18px;
+          background: rgba(236,200,92,0.18);
+          color: #ECC85C;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .learn-exam-text {
+          flex: 1;
+          min-width: 160px;
+        }
+        .learn-exam-eyebrow {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #ECC85C;
+          opacity: 0.85;
+          margin-bottom: 5px;
+        }
+        .learn-exam-title {
+          font-size: 20px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          margin-bottom: 6px;
+        }
+        .learn-exam-desc {
+          font-size: 12.5px;
+          opacity: 0.52;
+          line-height: 1.55;
+        }
+        .learn-exam-stats {
+          display: flex;
+          gap: 20px;
+          flex-shrink: 0;
+        }
+        .learn-exam-stat {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 3px;
+        }
+        .learn-exam-stat-val {
+          font-size: 20px;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+        }
+        .learn-exam-stat-lbl {
+          font-size: 10px;
+          opacity: 0.45;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+        .learn-exam-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 13px 26px;
+          border-radius: 99px;
+          border: none;
+          background: #ECC85C;
+          color: #2F3532;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+          font-family: inherit;
+          white-space: nowrap;
+          transition: all 0.18s;
+          flex-shrink: 0;
+        }
+        .learn-exam-cta:hover {
+          background: #f5d575;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px -4px rgba(236,200,92,0.45);
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 600px) {
+          .learn-page-root { padding: 20px 14px 90px; }
+          .learn-title { font-size: 22px; }
+          .learn-topics-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .learn-card-body { padding: 16px 14px; gap: 11px; }
+          .learn-card-name { font-size: 15px; }
+          .learn-exam-card { padding: 22px 18px; }
+          .learn-exam-body { flex-direction: column; align-items: flex-start; gap: 16px; }
+          .learn-exam-icon { width: 48px; height: 48px; border-radius: 14px; }
+          .learn-exam-cta { width: 100%; justify-content: center; }
+          .learn-exam-title { font-size: 18px; }
         }
       `}</style>
     </Layout>
