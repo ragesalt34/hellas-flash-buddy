@@ -59,15 +59,15 @@ export default function Index() {
       const mins = Math.floor((totalSeconds % 3600) / 60);
       const studyTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
-      // Topic progress = cards seen / total cards in topic (%)
-      const topicSeen: Record<string, number> = {};
+      // Topic progress = mastered (is_known) / total questions in topic
+      const topicMastered: Record<string, number> = {};
       progress.forEach((p: any) => {
         const topic = p.questions?.topic;
-        if (!topic) return;
-        topicSeen[topic] = (topicSeen[topic] || 0) + 1;
+        if (!topic || !p.is_known) return;
+        topicMastered[topic] = (topicMastered[topic] || 0) + 1;
       });
       const topicAccuracy = Object.fromEntries(
-        Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicSeen[k] || 0) / topicTotal[k] * 100) : 0])
+        Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicMastered[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
       const now = new Date();
