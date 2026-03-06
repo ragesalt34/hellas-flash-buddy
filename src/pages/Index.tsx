@@ -57,7 +57,7 @@ export default function Index() {
         .reduce((s: number, se: any) => s + (se.duration_seconds || 0), 0);
       const hours = Math.floor(totalSeconds / 3600);
       const mins = Math.floor((totalSeconds % 3600) / 60);
-      const studyTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+      const studyTotalMinutes = hours * 60 + mins;
 
       // Topic progress = mastered (is_known) / total questions in topic
       const topicMastered: Record<string, number> = {};
@@ -82,7 +82,7 @@ export default function Index() {
       const streak = weekDays.map(day => sessionDays.has(day));
       const streakCount = streak.filter(Boolean).length;
 
-      return { accuracy, studyTime, topicMastery, streak, streakCount };
+      return { accuracy, studyTotalMinutes, topicMastery, streak, streakCount };
     },
     enabled: !!user,
   });
@@ -163,7 +163,7 @@ export default function Index() {
                   {language === 'ru' ? 'Тема дня' : 'Θέμα της ημέρας'}
                 </span>
                 <h3 style={{ fontWeight: 500, fontSize: '16px', color: '#2F3532', lineHeight: 1.3 }}>
-                  {language === 'ru' ? 'История Греции' : 'Πόλεμος της Ανεξαρτησίας'}
+                  {language === 'ru' ? 'История Греции' : 'Ιστορία της Ελλάδας'}
                 </h3>
                 <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '5px' }}>
                   {language === 'ru' ? 'Изучайте ключевые события' : 'Μελετήστε σημαντικά ιστορικά γεγονότα'}
@@ -185,7 +185,7 @@ export default function Index() {
           {/* === SECTION 2: Stats row === */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             {[
-              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: studyStats?.studyTime ?? '0m' },
+              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
               <div key={s.label} className="glass-panel" style={{ padding: '18px 20px' }}>
@@ -249,7 +249,7 @@ export default function Index() {
             {[
               { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
               { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
-              { emoji: '🎓', id: 'exam',       href: '/learn', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
+              { emoji: '🎓', id: 'exam',       href: '/learn/exam', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
             ].map(mode => (
               <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
                 <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', padding: '16px 18px' }}>

@@ -25,20 +25,20 @@ type KnowledgeArticle = {
 };
 
 const CATEGORIES = [
-  { value: 'citizenship', label: 'Гражданство' },
-  { value: 'visa', label: 'Визы' },
-  { value: 'documents', label: 'Документы' },
-  { value: 'procedures', label: 'Процедуры' },
-  { value: 'requirements', label: 'Требования' },
-  { value: 'general', label: 'Общее' },
+  { value: 'citizenship', labelRu: 'Гражданство', labelEl: 'Ιθαγένεια' },
+  { value: 'visa', labelRu: 'Визы', labelEl: 'Βίζες' },
+  { value: 'documents', labelRu: 'Документы', labelEl: 'Έγγραφα' },
+  { value: 'procedures', labelRu: 'Процедуры', labelEl: 'Διαδικασίες' },
+  { value: 'requirements', labelRu: 'Требования', labelEl: 'Απαιτήσεις' },
+  { value: 'general', labelRu: 'Общее', labelEl: 'Γενικά' },
 ];
 
 const AI_ACTIONS = [
-  { id: 'improve', label: 'Улучшить текст', prompt: 'Улучши и отредактируй следующий текст, сделай его более понятным и структурированным. Сохрани всю важную информацию. НЕ используй Markdown форматирование (звёздочки, решётки и т.д.). Верни только улучшенный текст без пояснений:' },
-  { id: 'expand', label: 'Расширить', prompt: 'Расширь и дополни следующий текст дополнительными деталями и примерами. НЕ используй Markdown форматирование. Верни только расширенный текст без пояснений:' },
-  { id: 'shorten', label: 'Сократить', prompt: 'Сократи следующий текст, сохранив ключевую информацию. НЕ используй Markdown форматирование. Верни только сокращённый текст без пояснений:' },
-  { id: 'format', label: 'Форматировать', prompt: 'Отформатируй следующий текст: добавь структуру с помощью нумерации (1. 2. 3.) и тире для списков. НЕ используй Markdown (звёздочки, решётки). Верни только отформатированный текст:' },
-  { id: 'fix', label: 'Исправить ошибки', prompt: 'Исправь грамматические и орфографические ошибки в следующем тексте. Не изменяй форматирование. Верни только исправленный текст без пояснений:' },
+  { id: 'improve', labelRu: 'Улучшить текст', labelEl: 'Βελτίωση κειμένου', prompt: 'Улучши и отредактируй следующий текст, сделай его более понятным и структурированным. Сохрани всю важную информацию. НЕ используй Markdown форматирование (звёздочки, решётки и т.д.). Верни только улучшенный текст без пояснений:' },
+  { id: 'expand', labelRu: 'Расширить', labelEl: 'Επέκταση', prompt: 'Расширь и дополни следующий текст дополнительными деталями и примерами. НЕ используй Markdown форматирование. Верни только расширенный текст без пояснений:' },
+  { id: 'shorten', labelRu: 'Сократить', labelEl: 'Συντόμευση', prompt: 'Сократи следующий текст, сохранив ключевую информацию. НЕ используй Markdown форматирование. Верни только сокращённый текст без пояснений:' },
+  { id: 'format', labelRu: 'Форматировать', labelEl: 'Μορφοποίηση', prompt: 'Отформатируй следующий текст: добавь структуру с помощью нумерации (1. 2. 3.) и тире для списков. НЕ используй Markdown (звёздочки, решётки). Верни только отформатированный текст:' },
+  { id: 'fix', labelRu: 'Исправить ошибки', labelEl: 'Διόρθωση σφαλμάτων', prompt: 'Исправь грамматические и орфографические ошибки в следующем тексте. Не изменяй форматирование. Верни только исправленный текст без пояснений:' },
 ];
 
 export function KnowledgeBaseManager() {
@@ -132,7 +132,7 @@ export function KnowledgeBaseManager() {
 
       if (result.trim()) {
         setFormData(prev => ({ ...prev, content: result.trim() }));
-        toast.success(language === 'ru' ? `Текст обработан: ${action.label}` : `Κείμενο επεξεργάστηκε: ${action.label}`);
+        toast.success(language === 'ru' ? `Текст обработан: ${action.labelRu}` : `Κείμενο επεξεργάστηκε: ${action.labelEl}`);
       }
     } catch (error) {
       console.error('AI error:', error);
@@ -276,6 +276,7 @@ export function KnowledgeBaseManager() {
   );
 
   const startEditing = (article: KnowledgeArticle) => {
+    setIsAdding(false); // close "add" form if open to avoid shared state conflict
     setEditingId(article.id);
     setFormData({
       title: article.title,
@@ -306,7 +307,7 @@ export function KnowledgeBaseManager() {
           {AI_ACTIONS.map(action => (
             <DropdownMenuItem key={action.id} onClick={() => processWithAI(action)}>
               <Sparkles className="h-4 w-4 mr-2" />
-              {action.label}
+              {language === 'ru' ? action.labelRu : action.labelEl}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
@@ -380,7 +381,7 @@ export function KnowledgeBaseManager() {
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map(cat => (
-                  <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                  <SelectItem key={cat.value} value={cat.value}>{language === 'ru' ? cat.labelRu : cat.labelEl}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -441,7 +442,7 @@ export function KnowledgeBaseManager() {
                       </SelectTrigger>
                       <SelectContent>
                         {CATEGORIES.map(cat => (
-                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                          <SelectItem key={cat.value} value={cat.value}>{language === 'ru' ? cat.labelRu : cat.labelEl}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -471,7 +472,7 @@ export function KnowledgeBaseManager() {
                       <div>
                         <h3 className="font-semibold text-lg">{article.title}</h3>
                         <span className="text-xs bg-muted px-2 py-1 rounded">
-                          {CATEGORIES.find(c => c.value === article.category)?.label || article.category}
+                          {(() => { const c = CATEGORIES.find(c => c.value === article.category); return c ? (language === 'ru' ? c.labelRu : c.labelEl) : article.category; })()}
                         </span>
                       </div>
                       <div className="flex gap-1">
@@ -482,7 +483,10 @@ export function KnowledgeBaseManager() {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive"
-                          onClick={() => deleteMutation.mutate(article.id)}
+                          onClick={() => {
+                            const msg = language === 'ru' ? 'Удалить эту статью?' : 'Διαγραφή αυτού του άρθρου;';
+                            if (window.confirm(msg)) deleteMutation.mutate(article.id);
+                          }}
                           disabled={deleteMutation.isPending}
                         >
                           <Trash2 className="h-4 w-4" />

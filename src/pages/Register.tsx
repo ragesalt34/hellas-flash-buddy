@@ -57,6 +57,7 @@ export default function Register() {
         description: msg,
         variant: 'destructive',
       });
+      setIsLoading(false);
     } else {
       toast({
         title: language === 'ru' ? 'Регистрация успешна!' : 'Επιτυχής εγγραφή!',
@@ -64,7 +65,6 @@ export default function Register() {
       });
       navigate('/learn');
     }
-    setIsLoading(false);
   };
 
   return (

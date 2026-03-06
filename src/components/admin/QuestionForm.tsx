@@ -88,6 +88,14 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
         throw new Error(language === 'ru' ? 'Правильный ответ совпадает с одним из неправильных' : 'Η σωστή απάντηση ταυτίζεται με μία λανθασμένη');
       }
 
+      // Also check Greek correct answer against Greek wrong answers
+      if (correctAnswerEl.trim() && filteredWrongAnswersEl.length > 0) {
+        const correctElNorm = correctAnswerEl.trim().toLowerCase();
+        if (filteredWrongAnswersEl.some(a => a.trim().toLowerCase() === correctElNorm)) {
+          throw new Error(language === 'ru' ? 'Правильный ответ (EL) совпадает с одним из неправильных (EL)' : 'Η σωστή απάντηση (EL) ταυτίζεται με μία λανθασμένη (EL)');
+        }
+      }
+
       const data = {
         topic,
         question: questionText.trim(),
@@ -98,7 +106,8 @@ export function QuestionForm({ question, defaultTopic, onSuccess, onCancel }: Qu
         correct_answer_el: correctAnswerEl.trim() || null,
         wrong_answers_el: filteredWrongAnswersEl.length > 0 ? filteredWrongAnswersEl : null,
         explanation_el: explanationEl.trim() || null,
-        created_by: user?.id || null,
+        // Only set created_by when creating a new question (preserve original author on edit)
+        ...(!question ? { created_by: user?.id || null } : {}),
       };
 
       if (question) {

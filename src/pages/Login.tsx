@@ -29,6 +29,7 @@ export default function Login() {
         description: language === 'ru' ? 'Неверный никнейм или пароль' : 'Λάθος ψευδώνυμο ή κωδικός',
         variant: 'destructive',
       });
+      setIsLoading(false);
     } else {
       toast({
         title: language === 'ru' ? 'Добро пожаловать!' : 'Καλώς ήρθατε!',
@@ -36,7 +37,6 @@ export default function Login() {
       });
       navigate('/learn');
     }
-    setIsLoading(false);
   };
 
   return (

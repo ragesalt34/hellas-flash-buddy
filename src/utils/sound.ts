@@ -1,12 +1,11 @@
 let ctx: AudioContext | null = null;
 
-export function playPing() {
+export async function playPing() {
   try {
     if (!ctx) ctx = new AudioContext();
     // Browser suspends AudioContext after inactivity or tab blur — resume it
     if (ctx.state === 'suspended') {
-      void ctx.resume();
-      return; // Skip this play; next call will work
+      await ctx.resume();
     }
     const now = ctx.currentTime;
 

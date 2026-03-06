@@ -218,8 +218,10 @@ export default function Stats() {
       const d = new Date(now); d.setDate(d.getDate() - i); days[toDateKey(d)] = 0;
     }
     studySessions?.forEach(s => {
+      const dur = s.duration_seconds || 0;
+      if (dur > MAX_VALID_SESSION_SECONDS) return; // apply same 30-min cap as totalStudyMinutes
       const key = toDateKey(new Date(s.started_at));
-      if (key in days) days[key] += Math.round((s.duration_seconds || 0) / 60);
+      if (key in days) days[key] += Math.round(dur / 60);
     });
     return Object.entries(days).map(([date, minutes]) => ({ date, minutes }));
   })();
@@ -244,7 +246,7 @@ export default function Stats() {
 
   const hardestTopicCounts: Record<string, number> = {};
   top5Hardest.forEach(p => {
-    const topic = ((p.questions as any)?.topic as string) || 'history';
+    const topic = ((p.questions as any)?.topic as string) || 'unknown';
     hardestTopicCounts[topic] = (hardestTopicCounts[topic] || 0) + p.incorrect_count;
   });
   const weakestTopic = Object.entries(hardestTopicCounts)
@@ -326,7 +328,7 @@ export default function Stats() {
                 { icon: <TrendingUp size={18} />, label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${accuracy}%`, sub: `${totalAnswered} ${language === 'ru' ? 'ответов' : 'απαντήσεις'}` },
                 { icon: <Target size={18} />, label: language === 'ru' ? 'Изучено' : 'Μάθατε', value: String(masteredCount), sub: language === 'ru' ? `из ${totalQuestionsCount}` : `από ${totalQuestionsCount}` },
                 { icon: <Flame size={18} />, label: language === 'ru' ? 'Серия дней' : 'Σερί ημερών', value: String(streak), sub: language === 'ru' ? 'подряд' : 'συνεχόμενες' },
-                { icon: <Clock size={18} />, label: language === 'ru' ? 'Время' : 'Χρόνος', value: totalStudyMinutes >= 60 ? `${Math.floor(totalStudyMinutes / 60)}ч` : `${totalStudyMinutes}м`, sub: language === 'ru' ? 'всего' : 'συνολικά' },
+                { icon: <Clock size={18} />, label: language === 'ru' ? 'Время' : 'Χρόνος', value: (() => { const h = Math.floor(totalStudyMinutes / 60); const m = totalStudyMinutes % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && m > 0) return `${h}${hL} ${m}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })(), sub: language === 'ru' ? 'всего' : 'συνολικά' },
               ].map((card, i) => (
                 <div key={i} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'hsl(var(--muted-foreground))' }}>

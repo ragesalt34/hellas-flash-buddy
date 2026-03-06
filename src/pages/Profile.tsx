@@ -43,6 +43,7 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [passwordChanging, setPasswordChanging] = useState(false);
 
   const [avatarUploading, setAvatarUploading] = useState(false);
 
@@ -110,7 +111,9 @@ export default function Profile() {
       return;
     }
 
+    setPasswordChanging(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setPasswordChanging(false);
     if (error) {
       setPasswordError(language === 'ru' ? 'Ошибка при смене пароля' : 'Σφάλμα αλλαγής κωδικού');
     } else {
@@ -367,11 +370,13 @@ export default function Profile() {
 
               <Button
                 onClick={handlePasswordChange}
-                disabled={!newPassword || !confirmPassword}
+                disabled={!newPassword || !confirmPassword || passwordChanging}
                 className="liquid-glass-button"
                 variant="outline"
               >
-                {language === 'ru' ? 'Изменить пароль' : 'Αλλαγή κωδικού'}
+                {passwordChanging
+                  ? (language === 'ru' ? 'Сохранение...' : 'Αποθήκευση...')
+                  : (language === 'ru' ? 'Изменить пароль' : 'Αλλαγή κωδικού')}
               </Button>
             </CardContent>
           </Card>

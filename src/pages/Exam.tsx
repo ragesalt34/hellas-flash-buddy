@@ -142,8 +142,9 @@ export default function Exam() {
   // so time is always saved to the correct slot regardless of forward/backward movement.
   const prevQuestionIndex = useRef<number>(-1); // -1 = exam not yet started
   
-  // Shuffle answers for current question
+  // Shuffle answers for current question (cached per index to avoid re-shuffle on back-nav)
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
+  const shuffledAnswersCache = useRef<Record<number, string[]>>({});
   
   // Sound warning refs
   const warned5min = useRef(false);
@@ -211,12 +212,17 @@ export default function Exam() {
     }
   }, [currentIndex, examStarted, isFinished]);
 
-  // Shuffle answers when question changes
+  // Shuffle answers when question changes (use cache to avoid re-shuffle on back-nav)
   useEffect(() => {
     if (questions.length > 0 && currentIndex < questions.length) {
-      const current = questions[currentIndex];
-      const allAnswers = [current.correct_answer, ...current.wrong_answers];
-      setShuffledAnswers(shuffleArray(allAnswers));
+      if (shuffledAnswersCache.current[currentIndex]) {
+        setShuffledAnswers(shuffledAnswersCache.current[currentIndex]);
+      } else {
+        const current = questions[currentIndex];
+        const allAnswers = shuffleArray([current.correct_answer, ...current.wrong_answers]);
+        shuffledAnswersCache.current[currentIndex] = allAnswers;
+        setShuffledAnswers(allAnswers);
+      }
     }
   }, [currentIndex, questions]);
 
@@ -284,6 +290,7 @@ export default function Exam() {
       : shuffledQuestions.slice(0, settings.questionCount);
     
     setQuestions(localizeQuestions(selectedQuestions, language));
+    shuffledAnswersCache.current = {};
     setExamStarted(true);
     setStartTime(new Date());
     lastQuestionTime.current = new Date();
@@ -430,6 +437,7 @@ export default function Exam() {
     setAnswers({});
     setFlagged(new Set());
     setQuestionTimes({});
+    shuffledAnswersCache.current = {};
     setIsFinished(false);
     setTimeLeft(settings.timeLimit * 60);
     setStartTime(new Date());
