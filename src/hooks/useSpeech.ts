@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
 
@@ -10,6 +11,7 @@ const urlCache = new Map<string, string>();
 const pendingKeys = new Set<string>();
 
 export function useSpeech() {
+  const { language } = useLanguage();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -98,7 +100,10 @@ export function useSpeech() {
     } catch (error) {
       console.error("Speech error:", error);
       setIsSpeaking(false);
-      toast.error('Ошибка воспроизведения', { description: 'Не удалось загрузить аудио' });
+      toast.error(
+        language === 'ru' ? 'Ошибка воспроизведения' : 'Σφάλμα αναπαραγωγής',
+        { description: language === 'ru' ? 'Не удалось загрузить аудио' : 'Αδυναμία φόρτωσης ήχου' },
+      );
     }
   }, [stop]);
 

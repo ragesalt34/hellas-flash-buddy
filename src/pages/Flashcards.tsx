@@ -174,7 +174,7 @@ export default function Flashcards() {
     if (!isFlipped || isTransitioning) return;
 
     const currentQ = questions[currentIndex];
-    if (user) void upsertProgress(user.id, currentQ.id, grade);
+    if (user) void upsertProgress(user.id, currentQ.id, grade, language);
 
     setIsFlipped(false);
     setIsTransitioning(true);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,10 @@ export function KnowledgeBaseManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [aiProcessing, setAiProcessing] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Cancel any in-flight AI request when component unmounts
+  useEffect(() => () => { abortRef.current?.abort(); }, []);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -74,6 +78,10 @@ export function KnowledgeBaseManager() {
       return;
     }
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setAiProcessing(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -90,6 +98,7 @@ export function KnowledgeBaseManager() {
           messages: [{ role: 'user', content: `${action.prompt}\n\n${formData.content}` }],
           skipContext: true, // Don't search knowledge base for this
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -114,7 +123,7 @@ export function KnowledgeBaseManager() {
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim();
             if (data === '[DONE]') continue;
-            
+
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices?.[0]?.delta?.content;
@@ -133,6 +142,7 @@ export function KnowledgeBaseManager() {
         toast.success(`Текст обработан: ${action.label}`);
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       console.error('AI error:', error);
       toast.error('Ошибка обработки AI');
     } finally {
@@ -147,6 +157,10 @@ export function KnowledgeBaseManager() {
       return;
     }
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setAiProcessing(true);
     try {
       const { data: { session: sess } } = await supabase.auth.getSession();
@@ -160,12 +174,13 @@ export function KnowledgeBaseManager() {
           'Authorization': `Bearer ${tkn}`,
         },
         body: JSON.stringify({
-          messages: [{ 
-            role: 'user', 
-            content: `Придумай короткий информативный заголовок (максимум 10 слов) для следующего текста. Верни только заголовок без кавычек и пояснений:\n\n${formData.content.slice(0, 500)}` 
+          messages: [{
+            role: 'user',
+            content: `Придумай короткий информативный заголовок (максимум 10 слов) для следующего текста. Верни только заголовок без кавычек и пояснений:\n\n${formData.content.slice(0, 500)}`,
           }],
           skipContext: true,
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok) throw new Error('Ошибка AI');
@@ -187,7 +202,7 @@ export function KnowledgeBaseManager() {
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim();
             if (data === '[DONE]') continue;
-            
+
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices?.[0]?.delta?.content;
@@ -202,6 +217,7 @@ export function KnowledgeBaseManager() {
         toast.success('Заголовок сгенерирован');
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       console.error('AI error:', error);
       toast.error('Ошибка генерации заголовка');
     } finally {
