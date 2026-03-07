@@ -9,8 +9,8 @@ DROP FUNCTION IF EXISTS public.upsert_progress(uuid, uuid, boolean);
 CREATE OR REPLACE FUNCTION public.upsert_progress(
   p_user_id     uuid,
   p_question_id uuid,
-  p_grade       integer  DEFAULT 2,    -- 1=Again, 2=Good, 3=Easy
-  p_correct     boolean  DEFAULT NULL, -- legacy compat (ignored when client sends p_grade)
+  p_grade       integer  DEFAULT NULL, -- 1=Again, 2=Good, 3=Easy; NULL → fall back to p_correct
+  p_correct     boolean  DEFAULT NULL, -- legacy compat: used when p_grade IS NULL
   p_known       boolean  DEFAULT NULL  -- legacy (unused)
 )
 RETURNS void
