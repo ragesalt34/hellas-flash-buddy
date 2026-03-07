@@ -157,6 +157,10 @@ serve(async (req) => {
 
     const questions = JSON.parse(jsonContent);
 
+    if (!Array.isArray(questions)) {
+      throw new Error("AI returned unexpected format (expected array of questions)");
+    }
+
     return new Response(
       JSON.stringify({ success: true, questions }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

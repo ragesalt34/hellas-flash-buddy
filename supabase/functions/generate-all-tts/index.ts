@@ -54,7 +54,10 @@ serve(async (req) => {
       );
     }
 
-    const { offset = 0, limit = 10, language } = await req.json().catch(() => ({}));
+    const raw = await req.json().catch(() => ({}));
+    const offset = Math.max(0, Number(raw.offset) || 0);
+    const limit  = Math.min(100, Math.max(1, Number(raw.limit) || 10));
+    const language = raw.language;
 
     const ttsUrl = `${supabaseUrl}/functions/v1/elevenlabs-tts`;
 
