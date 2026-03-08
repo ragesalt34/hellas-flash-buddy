@@ -223,16 +223,19 @@ export default function Learn() {
             <div style={{ position: 'absolute', inset: 0, borderRadius: 'inherit', background: 'radial-gradient(ellipse at 80% 100%, rgba(236,200,92,.16) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
             <div className="lp-exam-inner">
-              <div className="lp-exam-badge">⚡ {ru ? 'Финальный этап' : 'Τελικό στάδιο'}</div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div className="lp-exam-icon"><GraduationCap style={{ width: 24, height: 24 }} /></div>
-                <div>
-                  <div className="lp-exam-title">{ru ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}</div>
-                  <div className="lp-exam-sub">{ru ? 'Все темы, без подсказок' : 'Όλα τα θέματα, χωρίς βοήθεια'}</div>
+              {/* Left: badge + title */}
+              <div className="lp-exam-left">
+                <div className="lp-exam-badge">⚡ {ru ? 'Финальный этап' : 'Τελικό στάδιο'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div className="lp-exam-icon"><GraduationCap style={{ width: 24, height: 24 }} /></div>
+                  <div>
+                    <div className="lp-exam-title">{ru ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}</div>
+                    <div className="lp-exam-sub">{ru ? 'Все темы, без подсказок, реальные условия' : 'Όλα τα θέματα, χωρίς βοήθεια'}</div>
+                  </div>
                 </div>
               </div>
 
+              {/* Center: stats */}
               <div className="lp-exam-stats">
                 {[['20', ru ? 'вопросов' : 'ερωτ.'], ['45', ru ? 'минут' : 'λεπτά'], ['70%', ru ? 'проходной' : 'βάση']].map(([v, l], i) => (
                   <div key={i} className="lp-exam-stat">
@@ -242,7 +245,8 @@ export default function Learn() {
                 ))}
               </div>
 
-              <Link to="/learn/exam" style={{ textDecoration: 'none' }}>
+              {/* Right: CTA */}
+              <Link to="/learn/exam" style={{ textDecoration: 'none', flexShrink: 0 }}>
                 <button className="lp-exam-cta">
                   {ru ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
                   <ArrowRight style={{ width: 15, height: 15 }} />
