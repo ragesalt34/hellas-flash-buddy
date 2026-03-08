@@ -140,8 +140,8 @@ export function Header() {
             </div>
           )}
 
-          {/* Mobile hamburger */}
-          <div className="flex sm:hidden">
+          {/* Mobile hamburger — hidden (replaced by MobileBottomNav pill) */}
+          <div className="hidden sm:hidden">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" style={{ color: '#2F3532' }}>
