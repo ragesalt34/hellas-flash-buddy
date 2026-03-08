@@ -176,24 +176,25 @@ export default function Learn() {
                 className={`lp-card glass-panel${featured ? ' lp-card--featured' : ''}`}
                 style={{ '--tc': meta.color, '--trgb': meta.colorRgb } as React.CSSProperties}
               >
-                <BlobDecor color={meta.color} />
                 {/* ambient glow */}
-                <div className="lp-glow" style={{ background: `radial-gradient(ellipse at 60% 110%, rgba(${meta.colorRgb},.30) 0%, transparent 68%)` }} />
+                <div className="lp-glow" style={{ background: `radial-gradient(ellipse at 60% 110%, rgba(${meta.colorRgb},.28) 0%, transparent 68%)` }} />
 
-                {/* Top: icon + accuracy */}
+                {/* Top: icon */}
                 <div className="lp-card-top">
                   <div className="lp-icon" style={{ background: meta.bg, color: meta.color }}>
                     <Icon style={{ width: featured ? 20 : 17, height: featured ? 20 : 17 }} />
                   </div>
-                  {acc !== null && <AccBadge acc={acc} compact={!featured} />}
                 </div>
 
-                {/* Middle: ring + name */}
+                {/* Middle: ring + name + accuracy inline */}
                 <div className="lp-mid">
                   <Ring pct={pct} color={meta.color} size={featured ? 80 : 60} sw={featured ? 5.5 : 4.5} />
                   <div>
                     <div className="lp-name" style={{ fontSize: featured ? 17 : 14 }}>{t(`topic.${meta.id}`)}</div>
-                    <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3, flexWrap: 'wrap' }}>
+                      <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
+                      {acc !== null && <AccBadge acc={acc} compact />}
+                    </div>
                     {featured && <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>}
                   </div>
                 </div>
