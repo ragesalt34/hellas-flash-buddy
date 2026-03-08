@@ -252,19 +252,9 @@ export default function Learn() {
       </div>
 
       <style>{`
-        .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 32px; }
-
-        /* Header */
-        .lp-header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
-        .lp-title { font-family: var(--font-serif); font-size: clamp(22px,2.8vw,32px); font-weight: 500; letter-spacing: -0.03em; color: hsl(var(--foreground)); margin-bottom: 4px; line-height: 1.1; }
-        .lp-sub { font-size: 13px; color: hsl(var(--muted-foreground)); }
-        .lp-due { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: rgba(236,200,92,.20); color: #584610; font-size: 12px; font-weight: 700; border: 1px solid rgba(236,200,92,.4); }
-
-        /* ── Grid: 2×2 topics + exam bottom row ── */
-        .lp-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 14px;
+        .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 48px; }
+...
+          gap: 20px;
         }
 
         /* Card — full glass built-in, no glass-panel double-padding */
