@@ -184,8 +184,10 @@ export default function Learn() {
                   <Ring pct={pct} color={meta.color} size={featured ? 80 : 60} sw={featured ? 5.5 : 4.5} />
                   <div>
                     <div className="lp-name" style={{ fontSize: featured ? 18 : 15 }}>{t(`topic.${meta.id}`)}</div>
-                    <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
-                    {featured && <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>}
+                    <div className="lp-mastered">
+                      {(topicProgress?.[meta.id]?.mastered || 0)} / {topicTotals?.[meta.id] || '…'} {ru ? 'освоено' : 'κατακτήθηκε'}
+                    </div>
+                    <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>
                   </div>
                 </div>
 
@@ -268,7 +270,7 @@ export default function Learn() {
         /* Card — full glass built-in, no glass-panel double-padding */
         .lp-card {
           position: relative; overflow: hidden; border-radius: 22px;
-          padding: 20px; display: flex; flex-direction: column; gap: 14px;
+          padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
           background: rgba(255,255,255,0.52);
           backdrop-filter: blur(24px) saturate(1.4);
           -webkit-backdrop-filter: blur(24px) saturate(1.4);
@@ -281,9 +283,6 @@ export default function Learn() {
           box-shadow: 0 18px 40px -8px rgba(var(--trgb,47,53,50),.20), 0 6px 14px -4px rgba(0,0,0,.05);
         }
         .lp-card:active { transform: scale(.97); }
-
-        /* Featured card — taller to differentiate */
-        .lp-card--featured { min-height: 268px; }
 
         /* Exam: full-width bottom row */
         .lp-exam {
@@ -317,7 +316,7 @@ export default function Learn() {
         .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
-        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; margin-top: auto; }
+        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; }
         .lp-link { text-decoration: none; flex: 1; }
         .lp-btn {
           width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
