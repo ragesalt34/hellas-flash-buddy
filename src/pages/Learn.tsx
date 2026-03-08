@@ -263,13 +263,11 @@ export default function Learn() {
         .lp-sub { font-size: 13px; color: hsl(var(--muted-foreground)); }
         .lp-due { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: rgba(236,200,92,.20); color: #584610; font-size: 12px; font-weight: 700; border: 1px solid rgba(236,200,92,.4); }
 
-        /* Grid: 2 topic cols + exam col */
+        /* ── Grid: 2×2 topics + exam bottom row ── */
         .lp-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          grid-template-rows: auto auto;
+          grid-template-columns: 1fr 1fr;
           gap: 14px;
-          align-items: start;
         }
 
         /* Card */
@@ -284,23 +282,23 @@ export default function Learn() {
         }
         .lp-card:active { transform: scale(.97); }
 
-        /* Featured: spans 2 rows */
-        .lp-card--featured {
-          grid-column: 1;
-          grid-row: 1 / 3;
-        }
+        /* No featured spanning — all 4 cards equal size in 2×2 */
+        .lp-card--featured { grid-column: auto; grid-row: auto; }
 
-        /* Exam: col 3, spans 2 rows */
+        /* Exam: full-width bottom row */
         .lp-exam {
-          grid-column: 3;
-          grid-row: 1 / 3;
+          grid-column: 1 / 3;
           background: #2F3532; color: #fff;
           border-radius: 22px; position: relative; overflow: hidden;
           box-shadow: 0 12px 40px -8px rgba(47,53,50,.32);
           transition: transform .26s cubic-bezier(.25,.8,.25,1), box-shadow .26s;
         }
         .lp-exam:hover { transform: translateY(-4px); box-shadow: 0 22px 52px -8px rgba(47,53,50,.4); }
-        .lp-exam-inner { position: relative; z-index: 1; padding: 24px; display: flex; flex-direction: column; gap: 18px; height: 100%; }
+        .lp-exam-inner {
+          position: relative; z-index: 1; padding: 24px 28px;
+          display: flex; flex-direction: row; align-items: center;
+          gap: 28px; flex-wrap: wrap;
+        }
 
         /* Ambient glow */
         .lp-glow { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; opacity: .65; transition: opacity .3s; }
@@ -319,7 +317,7 @@ export default function Learn() {
         .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
-        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; }
+        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; margin-top: auto; }
         .lp-link { text-decoration: none; flex: 1; }
         .lp-btn {
           width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
@@ -333,35 +331,26 @@ export default function Learn() {
         .lp-btn--color:hover { opacity: .85; transform: translateY(-1px); box-shadow: 0 5px 14px -3px rgba(var(--brgb, 91,141,184),.45); }
 
         /* Exam internals */
+        .lp-exam-left { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
         .lp-exam-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 99px; background: rgba(236,200,92,.18); color: #ECC85C; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; width: fit-content; }
         .lp-exam-icon { width: 46px; height: 46px; border-radius: 14px; background: rgba(236,200,92,.18); color: #ECC85C; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .lp-exam-title { font-size: 16px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
+        .lp-exam-title { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
         .lp-exam-sub { font-size: 12px; opacity: .5; line-height: 1.4; }
-        .lp-exam-stats { display: flex; background: rgba(255,255,255,.05); border-radius: 12px; padding: 12px 6px; border: 1px solid rgba(255,255,255,.06); }
+        .lp-exam-stats { display: flex; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); min-width: 200px; }
         .lp-exam-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(255,255,255,.07); }
         .lp-exam-stat:last-child { border-right: none; }
-        .lp-exam-val { font-family: var(--font-serif); font-size: 20px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
+        .lp-exam-val { font-family: var(--font-serif); font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
         .lp-exam-lbl { font-size: 9px; opacity: .42; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
-        .lp-exam-cta { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; border-radius: 12px; border: none; background: #ECC85C; color: #2F3532; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .18s cubic-bezier(.25,.8,.25,1); }
+        .lp-exam-cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 12px; border: none; background: #ECC85C; color: #2F3532; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .18s cubic-bezier(.25,.8,.25,1); white-space: nowrap; flex-shrink: 0; }
         .lp-exam-cta:hover { background: #f5d575; transform: translateY(-1px); box-shadow: 0 6px 18px -4px rgba(236,200,92,.5); }
-
-        /* ── Tablet: 2 cols ── */
-        @media (max-width: 900px) and (min-width: 640px) {
-          .lp-grid {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto;
-          }
-          .lp-card--featured { grid-column: 1 / 3; grid-row: auto; }
-          .lp-exam { grid-column: 1 / 3; grid-row: auto; }
-          .lp-exam-inner { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 14px; }
-          .lp-exam-stats { flex: 1; min-width: 180px; }
-        }
 
         /* ── Mobile: 1 col ── */
         @media (max-width: 639px) {
           .lp-grid { grid-template-columns: 1fr; }
-          .lp-card--featured { grid-column: 1; grid-row: auto; }
-          .lp-exam { grid-column: 1; grid-row: auto; }
+          .lp-exam { grid-column: 1; }
+          .lp-exam-inner { flex-direction: column; align-items: flex-start; padding: 20px; gap: 16px; }
+          .lp-exam-stats { width: 100%; }
+          .lp-exam-cta { width: 100%; }
           .lp-card:hover { transform: none; }
           .lp-exam:hover { transform: none; }
         }
