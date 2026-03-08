@@ -48,12 +48,12 @@ export function Header() {
         {/* Brand */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0" style={{ textDecoration: 'none' }}>
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[17px] flex-shrink-0"
+            className="w-10 h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 rounded-full flex items-center justify-center text-white font-bold text-[17px] xl:text-[19px] 2xl:text-[22px] flex-shrink-0"
             style={{ background: '#2F3532' }}
           >
             Ελ
           </div>
-          <span className="font-semibold text-[15px] hidden sm:block" style={{ color: '#2F3532' }}>
+          <span className="font-semibold text-[15px] xl:text-[17px] 2xl:text-[20px] hidden sm:block" style={{ color: '#2F3532' }}>
             Hellas Flash Buddy
           </span>
         </Link>
