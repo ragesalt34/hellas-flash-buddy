@@ -100,10 +100,10 @@ export default function Index() {
         <MobileDashboard studyStats={studyStats} questionsCount={questionsCount ?? 0} />
 
         {/* ── DESKTOP: original dashboard (hidden on mobile via CSS) ── */}
-        <div className="glp-mobile-hidden max-w-[1200px] mx-auto px-4 sm:px-6 py-6 relative z-10">
+        <div className="glp-mobile-hidden max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2200px] mx-auto px-4 sm:px-6 xl:px-10 2xl:px-20 py-6 xl:py-10 2xl:py-14 relative z-10">
 
           {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
-          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 2xl:gap-8 mb-4 xl:mb-6 2xl:mb-8">
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center" style={{ padding: '20px 20px' }}>
               <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
