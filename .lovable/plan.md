@@ -1,21 +1,42 @@
 
-## Проблема
+## Redesign: Desktop Header — More Attractive
 
-Аномальная сессия `duration_seconds: 14722` (~245 минут) уже записана в базе и искажает статистику. Таймер неактивности (2 минуты) уже исправлен, но только для новых сессий. Старые данные нужно фильтровать на уровне отображения.
+### Current state
+The pill header has: logo left → nav links center → language switcher + user button right. It works but looks plain — white glass pill, flat dark text, no visual hierarchy, user avatar is a grey circle.
 
-## Решение
+### What to improve (based on the screenshot reference)
+The uploaded screenshot shows the current state — the goal is to make it more visually premium:
 
-Добавить фильтр `<= 1800 секунд` (30 минут) во всех местах, где суммируются сессии.
+1. **Logo area** — add a subtle gradient or warm-tinted background to the "Ελ" monogram, make the brand name slightly more styled with tracking
+2. **Nav links** — add an active indicator: a small filled pill/dot under or behind the active item instead of just opacity change, with smooth transition
+3. **Active nav pill** — a subtle background highlight (small rounded rectangle) behind the active nav link
+4. **User button** — replace the grey circle with an initials-based avatar using the project's pebble-green (`#7D8A57`) as background, show initials dynamically; improve pill styling with a gentle gradient border
+5. **Header pill itself** — add a very subtle warm inner gradient tint (hint of peach/sage from the palette), make the box-shadow warmer, add a faint inner top highlight line (specular)
+6. **Language switcher** — give the globe button a small pill background on hover, consistent with the active nav treatment
+7. **Spacing & proportions** — slight increase in nav gap, more breathing room
 
-## Изменения
+### Files to change
+- `src/components/layout/Header.tsx` — restructure JSX, add active pill indicator, initials avatar
+- `src/index.css` — update `.pill-header` styles + add `.nav-pill-active` and `.header-avatar` classes (no mobile impact, desktop only)
 
-**`src/pages/Stats.tsx`**
-- При подсчёте `totalStudyMinutes` — добавить `.filter(s => (s.duration_seconds || 0) <= 1800)`
-- При построении данных для еженедельного графика — тот же фильтр
+### Key design decisions
+- Active nav item gets a small rounded `background: rgba(47,53,50,0.07)` pill behind it, `border-radius: 9999px`, `padding: 5px 14px`
+- User avatar uses first 2 chars of username, background `#C5DEA7` (sage from GLP palette), dark text — matches the organic warmth of the brand
+- Header pill gets a whisper of warm gradient: `rgba(247,245,241,0.75)` → `rgba(255,255,255,0.55)` at 135deg, with stronger `box-shadow: 0 4px 32px rgba(47,53,50,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`
+- All changes scoped to `sm:` breakpoint and above, mobile unaffected
 
-**`src/components/StudyTimeWidget.tsx`**
-- Тот же фильтр при подсчёте времени для виджета
+### ASCII layout
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  [Ελ] Hellas Flash Buddy      Главная  [Темы]  Статистика      🌐   [◉ EA username] │
+│                              ──────                                                 │
+│                              active pill bg                                         │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+         brand (left)              nav (center, active has bg)      lang + user (right)
+```
 
-## Результат
+Active link: small rounded-full bg chip behind the text (not underline)
+User avatar: initials in sage-green circle, dark text, pill container has warm border
 
-Сессия в 14722 секунд будет тихо игнорироваться при отображении. Реальное время занятий будет корректным.
+### Strictly desktop-only changes
+All visual changes stay within the existing `sm:` and above breakpoints. Mobile header and bottom nav untouched.
