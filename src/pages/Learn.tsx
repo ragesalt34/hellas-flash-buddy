@@ -186,7 +186,7 @@ export default function Learn() {
                   <div className="lp-icon" style={{ background: meta.bg, color: meta.color }}>
                     <Icon style={{ width: 18, height: 18 }} />
                   </div>
-                  {acc !== null && <AccBadge acc={acc} compact />}
+                  <AccBadge acc={acc} compact />
                 </div>
 
                 {/* Middle: ring + name */}
