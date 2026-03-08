@@ -96,7 +96,11 @@ export default function Index() {
   if (user) {
     return (
       <Layout>
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 relative z-10">
+        {/* ── MOBILE: GLP-1 style dashboard ── */}
+        <MobileDashboard studyStats={studyStats} questionsCount={questionsCount ?? 0} />
+
+        {/* ── DESKTOP: original dashboard (hidden on mobile via CSS) ── */}
+        <div className="glp-mobile-hidden max-w-[1200px] mx-auto px-4 sm:px-6 py-6 relative z-10">
 
           {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
           <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
