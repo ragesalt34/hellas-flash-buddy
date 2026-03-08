@@ -153,13 +153,13 @@ export default function Index() {
             </div>
 
             {/* Focus of Day */}
-            <div className="glass-panel flex flex-col justify-between" style={{ padding: '20px 20px' }}>
+            <div className="glass-panel flex flex-col justify-between" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
               <div>
                 <span style={{
                   display: 'inline-block',
                   padding: '3px 10px',
                   borderRadius: '9999px',
-                  fontSize: '11px',
+                  fontSize: 'clamp(11px, 0.7vw, 14px)',
                   fontWeight: 600,
                   background: 'rgba(255,255,255,0.6)',
                   color: '#5B8DB8',
@@ -167,19 +167,19 @@ export default function Index() {
                 }}>
                   {language === 'ru' ? 'Тема дня' : 'Θέμα της ημέρας'}
                 </span>
-                <h3 style={{ fontWeight: 500, fontSize: '16px', color: '#2F3532', lineHeight: 1.3 }}>
+                <h3 style={{ fontWeight: 500, fontSize: 'clamp(16px, 1.1vw, 22px)', color: '#2F3532', lineHeight: 1.3 }}>
                   {language === 'ru' ? 'История Греции' : 'Ιστορία της Ελλάδας'}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '5px' }}>
+                <p style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))', marginTop: '5px' }}>
                   {language === 'ru' ? 'Изучайте ключевые события' : 'Μελετήστε σημαντικά ιστορικά γεγονότα'}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '16px' }}>
-                <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+                <span style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))' }}>
                   {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'κάρτες'}` : '—'}
                 </span>
                 <Link to="/learn/history/flashcards">
-                  <button className="btn-pebble" style={{ padding: '7px 12px', fontSize: '12px' }}>
+                  <button className="btn-pebble" style={{ padding: 'clamp(7px, 0.5vw, 12px) clamp(12px, 1vw, 20px)', fontSize: 'clamp(12px, 0.8vw, 15px)' }}>
                     {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
                   </button>
                 </Link>
