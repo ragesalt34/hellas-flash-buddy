@@ -105,15 +105,15 @@ export default function Index() {
           {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
           <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 2xl:gap-8 mb-4 xl:mb-6 2xl:mb-8">
             {/* Greeting */}
-            <div className="glass-panel flex flex-col justify-center" style={{ padding: '20px 20px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
+            <div className="glass-panel flex flex-col justify-center" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
+              <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
                 {language === 'ru' ? 'Добро пожаловать' : 'Καλώς ήρθατε'}
               </span>
-              <h1 className="idx-greeting-title" style={{ fontSize: '24px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
+              <h1 className="idx-greeting-title" style={{ fontSize: 'clamp(24px, 1.8vw, 36px)', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
                 {language === 'ru' ? 'Привет, ' : 'Γεια σου, '}
                 {user.email?.split('@')[0] || (language === 'ru' ? 'друг' : 'φίλε')}!
               </h1>
-              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
+              <p style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
                 {language === 'ru' ? 'Продолжай готовиться к гражданству' : 'Συνέχισε να προετοιμάζεσαι για την ιθαγένεια'}
               </p>
               <Link to="/learn" style={{ marginTop: '16px', display: 'inline-flex' }}>
