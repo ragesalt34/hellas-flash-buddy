@@ -50,9 +50,14 @@ export default function Index() {
         topicTotal[q.topic] = (topicTotal[q.topic] || 0) + 1;
       });
 
+      const now = new Date();
+      const toLocalDateKey = (d: Date) =>
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
+
       const todayKey = toLocalDateKey(now);
       const todaySeconds = sessions
         .filter((se: any) => (se.duration_seconds || 0) <= 1800 && toLocalDateKey(new Date(se.started_at)) === todayKey)
@@ -72,9 +77,6 @@ export default function Index() {
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicMastered[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
-      const now = new Date();
-      const toLocalDateKey = (d: Date) =>
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(now);
         d.setDate(d.getDate() - 6 + i);
