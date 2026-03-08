@@ -330,7 +330,7 @@ export default function Learn() {
         .lp-exam-icon { width: 46px; height: 46px; border-radius: 14px; background: rgba(236,200,92,.18); color: #ECC85C; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .lp-exam-title { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
         .lp-exam-sub { font-size: 12px; opacity: .5; line-height: 1.4; }
-        .lp-exam-stats { display: flex; flex: 1; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); }
+        .lp-exam-stats { display: flex; flex: 1; min-width: 180px; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); }
         .lp-exam-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(255,255,255,.07); }
         .lp-exam-stat:last-child { border-right: none; }
         .lp-exam-val { font-family: var(--font-serif); font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
