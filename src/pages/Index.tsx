@@ -53,11 +53,12 @@ export default function Index() {
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const totalSeconds = sessions
-        .filter((se: any) => (se.duration_seconds || 0) <= 1800)
+      const todayKey = toLocalDateKey(now);
+      const todaySeconds = sessions
+        .filter((se: any) => (se.duration_seconds || 0) <= 1800 && toLocalDateKey(new Date(se.started_at)) === todayKey)
         .reduce((s: number, se: any) => s + (se.duration_seconds || 0), 0);
-      const hours = Math.floor(totalSeconds / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const hours = Math.floor(todaySeconds / 3600);
+      const mins = Math.floor((todaySeconds % 3600) / 60);
       const studyTotalMinutes = hours * 60 + mins;
 
       // Topic progress = mastered (is_known) / total questions in topic
