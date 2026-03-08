@@ -250,7 +250,7 @@ export default function Learn() {
       </div>
 
       <style>{`
-        .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 100px; }
+        .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 32px; }
 
         /* Header */
         .lp-header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
@@ -265,10 +265,15 @@ export default function Learn() {
           gap: 14px;
         }
 
-        /* Card */
+        /* Card — full glass built-in, no glass-panel double-padding */
         .lp-card {
           position: relative; overflow: hidden; border-radius: 22px;
           padding: 20px; display: flex; flex-direction: column; gap: 14px;
+          background: rgba(255,255,255,0.52);
+          backdrop-filter: blur(24px) saturate(1.4);
+          -webkit-backdrop-filter: blur(24px) saturate(1.4);
+          border: 1px solid rgba(255,255,255,0.62);
+          box-shadow: 0 4px 24px -4px rgba(47,53,50,.08), 0 1px 0 0 rgba(255,255,255,.7) inset;
           transition: transform .26s cubic-bezier(.25,.8,.25,1), box-shadow .26s cubic-bezier(.25,.8,.25,1);
         }
         .lp-card:hover {
@@ -277,8 +282,8 @@ export default function Learn() {
         }
         .lp-card:active { transform: scale(.97); }
 
-        /* No featured spanning — all 4 cards equal size in 2×2 */
-        .lp-card--featured { grid-column: auto; grid-row: auto; }
+        /* Featured card — taller to differentiate */
+        .lp-card--featured { min-height: 268px; }
 
         /* Exam: full-width bottom row */
         .lp-exam {
@@ -308,7 +313,7 @@ export default function Learn() {
         /* Ring + name row */
         .lp-mid { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
         .lp-name { font-weight: 700; letter-spacing: -.02em; color: hsl(var(--foreground)); line-height: 1.1; margin-bottom: 3px; }
-        .lp-mastered { font-size: 11px; color: hsl(var(--muted-foreground)); font-weight: 500; }
+        .lp-mastered { font-size: 12px; color: hsl(var(--muted-foreground)); font-weight: 500; }
         .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
@@ -326,12 +331,12 @@ export default function Learn() {
         .lp-btn--color:hover { opacity: .85; transform: translateY(-1px); box-shadow: 0 5px 14px -3px rgba(var(--brgb, 91,141,184),.45); }
 
         /* Exam internals */
-        .lp-exam-left { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+        .lp-exam-left { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 10px; }
         .lp-exam-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 99px; background: rgba(236,200,92,.18); color: #ECC85C; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; width: fit-content; }
         .lp-exam-icon { width: 46px; height: 46px; border-radius: 14px; background: rgba(236,200,92,.18); color: #ECC85C; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .lp-exam-title { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
         .lp-exam-sub { font-size: 12px; opacity: .5; line-height: 1.4; }
-        .lp-exam-stats { display: flex; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); min-width: 200px; }
+        .lp-exam-stats { display: flex; flex: 1; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); }
         .lp-exam-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(255,255,255,.07); }
         .lp-exam-stat:last-child { border-right: none; }
         .lp-exam-val { font-family: var(--font-serif); font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
@@ -341,10 +346,11 @@ export default function Learn() {
 
         /* ── Mobile: 1 col ── */
         @media (max-width: 639px) {
+          .lp-wrap { padding-bottom: 100px; }
           .lp-grid { grid-template-columns: 1fr; }
           .lp-exam { grid-column: 1; }
           .lp-exam-inner { flex-direction: column; align-items: flex-start; padding: 20px; gap: 16px; }
-          .lp-exam-stats { width: 100%; }
+          .lp-exam-stats { width: 100%; flex: none; }
           .lp-exam-cta { width: 100%; }
           .lp-card:hover { transform: none; }
           .lp-exam:hover { transform: none; }
