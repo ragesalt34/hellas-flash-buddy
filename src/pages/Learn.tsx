@@ -253,9 +253,7 @@ export default function Learn() {
 
       <style>{`
         .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 48px; }
-...
-          gap: 20px;
-        }
+        .lp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
         /* Card — full glass built-in, no glass-panel double-padding */
         .lp-card {
