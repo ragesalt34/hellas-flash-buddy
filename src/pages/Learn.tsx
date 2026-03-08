@@ -184,8 +184,10 @@ export default function Learn() {
                   <Ring pct={pct} color={meta.color} size={featured ? 80 : 60} sw={featured ? 5.5 : 4.5} />
                   <div>
                     <div className="lp-name" style={{ fontSize: featured ? 18 : 15 }}>{t(`topic.${meta.id}`)}</div>
-                    <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
-                    {featured && <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>}
+                    <div className="lp-mastered">
+                      {(topicProgress?.[meta.id]?.mastered || 0)} / {topicTotals?.[meta.id] || '…'} {ru ? 'освоено' : 'κατακτήθηκε'}
+                    </div>
+                    <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>
                   </div>
                 </div>
 
