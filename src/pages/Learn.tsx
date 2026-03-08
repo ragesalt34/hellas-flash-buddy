@@ -17,16 +17,8 @@ const TOPIC_META = [
   { id: 'geography', icon: MapPin,   color: '#D4874A', colorRgb: '212,135,74',   bg: 'rgba(212,135,74,0.13)'  },
 ];
 
-/* Inline SVG blob decoration */
-const BlobDecor = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden style={{
-    position: 'absolute', top: -24, right: -24,
-    width: 110, height: 110,
-    opacity: 0.07, pointerEvents: 'none', zIndex: 0,
-  }}>
-    <path fill={color} d="M47.6,-66.3C58.9,-55.7,63.5,-38.6,66.8,-21.9C70.1,-5.1,72.1,11.3,67.1,25.7C62,40.1,49.9,52.4,35.8,60.3C21.7,68.1,5.6,71.6,-10.3,70.3C-26.3,69,-42.1,62.8,-52.6,51.9C-63.1,40.9,-68.4,25.1,-70.4,8.6C-72.4,-8,-71.2,-25.4,-63.1,-38.4C-54.9,-51.4,-39.8,-60,-24.5,-67.7C-9.2,-75.5,6.2,-82.5,19.8,-79.7C33.5,-76.9,36.2,-76.9,47.6,-66.3Z" transform="translate(100 100)" />
-  </svg>
-);
+
+
 
 /* Progress ring with number inside */
 const Ring = ({ pct, color, size, sw }: { pct: number; color: string; size: number; sw: number }) => {
@@ -176,24 +168,25 @@ export default function Learn() {
                 className={`lp-card glass-panel${featured ? ' lp-card--featured' : ''}`}
                 style={{ '--tc': meta.color, '--trgb': meta.colorRgb } as React.CSSProperties}
               >
-                <BlobDecor color={meta.color} />
                 {/* ambient glow */}
-                <div className="lp-glow" style={{ background: `radial-gradient(ellipse at 60% 110%, rgba(${meta.colorRgb},.30) 0%, transparent 68%)` }} />
+                <div className="lp-glow" style={{ background: `radial-gradient(ellipse at 60% 110%, rgba(${meta.colorRgb},.28) 0%, transparent 68%)` }} />
 
-                {/* Top: icon + accuracy */}
+                {/* Top: icon */}
                 <div className="lp-card-top">
                   <div className="lp-icon" style={{ background: meta.bg, color: meta.color }}>
                     <Icon style={{ width: featured ? 20 : 17, height: featured ? 20 : 17 }} />
                   </div>
-                  {acc !== null && <AccBadge acc={acc} compact={!featured} />}
                 </div>
 
-                {/* Middle: ring + name */}
+                {/* Middle: ring + name + accuracy inline */}
                 <div className="lp-mid">
                   <Ring pct={pct} color={meta.color} size={featured ? 80 : 60} sw={featured ? 5.5 : 4.5} />
                   <div>
                     <div className="lp-name" style={{ fontSize: featured ? 17 : 14 }}>{t(`topic.${meta.id}`)}</div>
-                    <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3, flexWrap: 'wrap' }}>
+                      <div className="lp-mastered">{ru ? 'освоено' : 'κατακτήθηκε'}</div>
+                      {acc !== null && <AccBadge acc={acc} compact />}
+                    </div>
                     {featured && <p className="lp-desc">{t(`topic.${meta.id}.desc`)}</p>}
                   </div>
                 </div>
