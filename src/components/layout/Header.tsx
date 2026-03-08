@@ -140,7 +140,10 @@ export function Header() {
             </div>
           )}
 
-          {/* Mobile hamburger removed — replaced by MobileBottomNav pill */}
+          {/* Language switcher — visible on mobile (hamburger removed) */}
+          <div className="flex sm:hidden">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </header>
