@@ -308,7 +308,7 @@ export default function Learn() {
         .lp-mid { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
         .lp-name { font-weight: 700; letter-spacing: -.02em; color: hsl(var(--foreground)); line-height: 1.1; margin-bottom: 3px; }
         .lp-mastered { font-size: 12px; color: hsl(var(--muted-foreground)); font-weight: 500; }
-        .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
         .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; }
@@ -330,7 +330,7 @@ export default function Learn() {
         .lp-exam-icon { width: 46px; height: 46px; border-radius: 14px; background: rgba(236,200,92,.18); color: #ECC85C; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .lp-exam-title { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 3px; }
         .lp-exam-sub { font-size: 12px; opacity: .5; line-height: 1.4; }
-        .lp-exam-stats { display: flex; flex: 1; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); }
+        .lp-exam-stats { display: flex; flex: 1; min-width: 180px; background: rgba(255,255,255,.05); border-radius: 12px; padding: 14px 8px; border: 1px solid rgba(255,255,255,.06); }
         .lp-exam-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(255,255,255,.07); }
         .lp-exam-stat:last-child { border-right: none; }
         .lp-exam-val { font-family: var(--font-serif); font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
