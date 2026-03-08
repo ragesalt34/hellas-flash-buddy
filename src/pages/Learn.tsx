@@ -11,11 +11,57 @@ import {
 } from 'lucide-react';
 
 const TOPIC_META = [
-  { id: 'history',   icon: History,  color: '#5B8DB8', bg: 'rgba(91,141,184,0.12)',  dataAttr: 'history' },
-  { id: 'culture',   icon: Palette,  color: '#9B7EC8', bg: 'rgba(155,126,200,0.12)', dataAttr: 'culture' },
-  { id: 'laws',      icon: Scale,    color: '#7D8A57', bg: 'rgba(125,138,87,0.12)',  dataAttr: 'laws' },
-  { id: 'geography', icon: MapPin,   color: '#D4874A', bg: 'rgba(212,135,74,0.12)',  dataAttr: 'geo' },
+  { id: 'history',   icon: History,  color: '#5B8DB8', colorRgb: '91,141,184',  bg: 'rgba(91,141,184,0.12)',  dataAttr: 'history',  featured: true  },
+  { id: 'culture',   icon: Palette,  color: '#9B7EC8', colorRgb: '155,126,200', bg: 'rgba(155,126,200,0.12)', dataAttr: 'culture',  featured: false },
+  { id: 'laws',      icon: Scale,    color: '#7D8A57', colorRgb: '125,138,87',  bg: 'rgba(125,138,87,0.12)',  dataAttr: 'laws',     featured: false },
+  { id: 'geography', icon: MapPin,   color: '#D4874A', colorRgb: '212,135,74',  bg: 'rgba(212,135,74,0.12)',  dataAttr: 'geo',      featured: false },
 ];
+
+/* SVG blob path — organic decoration */
+const BlobDecor = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style={{
+    position: 'absolute', top: -20, right: -20, width: 130, height: 130,
+    opacity: 0.08, pointerEvents: 'none', zIndex: 0,
+  }}>
+    <path fill={color} d="M47.6,-66.3C58.9,-55.7,63.5,-38.6,66.8,-21.9C70.1,-5.1,72.1,11.3,67.1,25.7C62,40.1,49.9,52.4,35.8,60.3C21.7,68.1,5.6,71.6,-10.3,70.3C-26.3,69,-42.1,62.8,-52.6,51.9C-63.1,40.9,-68.4,25.1,-70.4,8.6C-72.4,-8,-71.2,-25.4,-63.1,-38.4C-54.9,-51.4,-39.8,-60,-24.5,-67.7C-9.2,-75.5,6.2,-82.5,19.8,-79.7C33.5,-76.9,36.2,-76.9,47.6,-66.3Z" transform="translate(100 100)" />
+  </svg>
+);
+
+/* Circular progress ring */
+const ProgressRing = ({
+  pct, color, size, strokeWidth, serif,
+}: { pct: number; color: string; size: number; strokeWidth: number; serif?: boolean }) => {
+  const r = (size - strokeWidth * 2) / 2;
+  const circ = 2 * Math.PI * r;
+  return (
+    <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(47,53,50,0.08)" strokeWidth={strokeWidth} />
+        <circle
+          cx={size / 2} cy={size / 2} r={r} fill="none"
+          stroke={color} strokeWidth={strokeWidth}
+          strokeDasharray={circ}
+          strokeDashoffset={circ * (1 - pct / 100)}
+          strokeLinecap="round"
+          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)' }}
+        />
+      </svg>
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: serif ? 'var(--font-serif)' : 'inherit',
+        fontSize: serif ? size * 0.28 : size * 0.3,
+        fontWeight: serif ? 600 : 700,
+        color: pct > 0 ? color : 'rgba(47,53,50,0.3)',
+        letterSpacing: '-0.02em',
+        lineHeight: 1,
+      }}>
+        {pct}
+        <span style={{ fontSize: serif ? size * 0.16 : size * 0.18, marginTop: 2, fontFamily: 'var(--font-body)' }}>%</span>
+      </div>
+    </div>
+  );
+};
 
 export default function Learn() {
   const { user, isLoading } = useAuth();
@@ -82,298 +128,669 @@ export default function Learn() {
 
   if (!user) return <Navigate to="/login" replace />;
 
+  const featuredMeta = TOPIC_META[0]; // history
+  const restMeta = TOPIC_META.slice(1); // culture, laws, geography
+
+  const getTopicStats = (id: string) => {
+    const tp = topicProgress?.[id];
+    const total = topicTotals?.[id] || 0;
+    const seen = tp ? tp.mastered : 0;
+    const pct = total > 0 ? Math.round((seen / total) * 100) : 0;
+    const accuracy = tp && tp.total > 0 ? Math.round((tp.correct / tp.total) * 100) : null;
+    return { pct, accuracy, total };
+  };
+
   return (
     <Layout>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
+      <div className="learn-page-wrap">
 
-        {/* Page header */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 24 }}>
+        {/* ── Page header ── */}
+        <div className="learn-page-header">
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))', marginBottom: 4 }}>
+            <h1 className="learn-page-title">
               {language === 'ru' ? 'Выберите тему' : 'Επιλέξτε θέμα'}
             </h1>
-            <p style={{ fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
+            <p className="learn-page-subtitle">
               {language === 'ru'
-                ? 'Начните изучение с интересующей вас темы или продолжите прогресс'
-                : 'Ξεκινήστε με ένα θέμα ή συνεχίστε την πρόοδό σας'}
+                ? 'Изучайте темы или проверьте себя на экзамене'
+                : 'Μάθετε θέματα ή δοκιμαστείτε στην εξέταση'}
             </p>
           </div>
           {dueCount != null && dueCount > 0 && (
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', borderRadius: 99,
-              background: 'rgba(236,200,92,0.22)', color: '#584610',
-              fontSize: 12, fontWeight: 600,
-              border: '1px solid rgba(236,200,92,0.4)',
-            }}>
+            <div className="learn-due-badge">
               <Layers style={{ width: 13, height: 13 }} />
               {language === 'ru' ? `Сегодня: ${dueCount} карточек` : `Σήμερα: ${dueCount} κάρτες`}
             </div>
           )}
         </div>
 
-        {/* Topics grid — 2 columns on mobile, 2 on desktop */}
-        <div className="learn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, marginBottom: 32 }}>
-          {TOPIC_META.map(meta => {
-            const tp = topicProgress?.[meta.id];
-            const total = topicTotals?.[meta.id] || 0;
-            const seen = tp ? (tp.mastered) : 0;
-            const pct = total > 0 ? Math.round((seen / total) * 100) : 0;
-            const accuracy = tp && tp.total > 0 ? Math.round((tp.correct / tp.total) * 100) : null;
-            const Icon = meta.icon;
+        {/* ── Bento Grid ── */}
+        <div className="learn-bento-grid">
 
+          {/* FEATURED: History — large, row-span-2 */}
+          {(() => {
+            const meta = featuredMeta;
+            const { pct, accuracy } = getTopicStats(meta.id);
+            const Icon = meta.icon;
             return (
               <div
-                key={meta.id}
-                className="learn-topic-card glass-panel"
+                className="learn-bento-card learn-bento-featured glass-panel"
                 data-topic={meta.dataAttr}
-                style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, overflow: 'hidden', cursor: 'default' }}
+                style={{ '--topic-color': meta.color, '--topic-rgb': meta.colorRgb } as React.CSSProperties}
               >
-                {/* Colored top accent */}
-                <div style={{ height: 4, background: meta.color, borderRadius: '16px 16px 0 0', flexShrink: 0 }} />
+                <BlobDecor color={meta.color} />
+                <div className="learn-bento-glow" style={{ background: `radial-gradient(ellipse at 50% 120%, rgba(${meta.colorRgb},0.35) 0%, transparent 70%)` }} />
 
-                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
-                  {/* Icon row + progress */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: 38, height: 38, borderRadius: 12,
-                      background: meta.bg,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: meta.color,
-                    }}>
-                      <Icon style={{ width: 18, height: 18 }} />
-                    </div>
-
-                    {/* Progress circle mini */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <svg width="28" height="28" viewBox="0 0 32 32" style={{ transform: 'rotate(-90deg)' }}>
-                        <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(47,53,50,0.08)" strokeWidth="3" />
-                        <circle
-                          cx="16" cy="16" r="12" fill="none"
-                          stroke={meta.color} strokeWidth="3"
-                          strokeDasharray={`${2 * Math.PI * 12}`}
-                          strokeDashoffset={`${2 * Math.PI * 12 * (1 - pct / 100)}`}
-                          strokeLinecap="round"
-                          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-                        />
-                      </svg>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--foreground))' }}>{pct}%</span>
-                    </div>
+                {/* Top: icon + accuracy badge */}
+                <div className="learn-bento-toprow">
+                  <div className="learn-bento-icon" style={{ background: meta.bg, color: meta.color }}>
+                    <Icon style={{ width: 22, height: 22 }} />
                   </div>
-
-                  {/* Topic name + description */}
-                  <div>
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 3 }}>
-                      {t(`topic.${meta.id}`)}
-                    </h3>
-                    <p className="learn-topic-desc" style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {t(`topic.${meta.id}.desc`)}
-                    </p>
-                  </div>
-
-                  {/* Accuracy badge */}
                   {accuracy !== null && (
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      padding: '3px 8px', borderRadius: 99, width: 'fit-content',
-                      fontSize: 11, fontWeight: 700,
-                      background: accuracy >= 70 ? 'rgba(125,138,87,0.12)' : accuracy >= 50 ? 'rgba(236,200,92,0.18)' : 'rgba(224,108,108,0.10)',
-                      color: accuracy >= 70 ? '#4E5A33' : accuracy >= 50 ? '#7A5E0E' : '#A03030',
-                      border: `1px solid ${accuracy >= 70 ? 'rgba(125,138,87,0.2)' : accuracy >= 50 ? 'rgba(236,200,92,0.3)' : 'rgba(224,108,108,0.2)'}`,
-                    }}>
-                      {accuracy >= 70
-                        ? <CheckCircle style={{ width: 10, height: 10 }} />
-                        : accuracy >= 50
-                        ? <TrendingUp style={{ width: 10, height: 10 }} />
-                        : <AlertCircle style={{ width: 10, height: 10 }} />}
-                      {accuracy}%
-                    </div>
+                    <AccuracyBadge accuracy={accuracy} />
                   )}
+                </div>
 
-                  {/* Action buttons */}
-                  <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 2 }}>
+                {/* Progress ring — large, serif */}
+                <div className="learn-bento-ring-wrap">
+                  <ProgressRing pct={pct} color={meta.color} size={96} strokeWidth={6} serif />
+                  <div className="learn-bento-ring-label">
+                    <span className="learn-bento-topic-name">{t(`topic.${meta.id}`)}</span>
+                    <span className="learn-bento-mastered">
+                      {language === 'ru' ? 'освоено' : 'κατακτήθηκε'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="learn-bento-desc">{t(`topic.${meta.id}.desc`)}</p>
+
+                {/* Action buttons */}
+                <div className="learn-bento-actions">
+                  <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
+                    <button className="learn-btn learn-btn--secondary" style={{ width: '100%' }}>
+                      <Layers style={{ width: 15, height: 15 }} />
+                      {language === 'ru' ? 'Карточки' : 'Κάρτες'}
+                    </button>
+                  </Link>
+                  <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
+                    <button className="learn-btn learn-btn--primary" style={{ width: '100%', '--btn-color': meta.color, '--btn-rgb': meta.colorRgb } as React.CSSProperties}>
+                      <PenLine style={{ width: 15, height: 15 }} />
+                      {language === 'ru' ? 'Тест' : 'Κουίζ'}
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Right column: Culture + Laws */}
+          <div className="learn-bento-col">
+            {restMeta.slice(0, 2).map(meta => {
+              const { pct, accuracy } = getTopicStats(meta.id);
+              const Icon = meta.icon;
+              return (
+                <div
+                  key={meta.id}
+                  className="learn-bento-card learn-bento-compact glass-panel"
+                  data-topic={meta.dataAttr}
+                  style={{ '--topic-color': meta.color, '--topic-rgb': meta.colorRgb } as React.CSSProperties}
+                >
+                  <BlobDecor color={meta.color} />
+                  <div className="learn-bento-glow" style={{ background: `radial-gradient(ellipse at 50% 120%, rgba(${meta.colorRgb},0.28) 0%, transparent 70%)` }} />
+
+                  <div className="learn-bento-compact-inner">
+                    <div className="learn-bento-compact-left">
+                      <div className="learn-bento-icon learn-bento-icon--sm" style={{ background: meta.bg, color: meta.color }}>
+                        <Icon style={{ width: 16, height: 16 }} />
+                      </div>
+                      <div>
+                        <div className="learn-bento-topic-name">{t(`topic.${meta.id}`)}</div>
+                        {accuracy !== null && <AccuracyBadge accuracy={accuracy} compact />}
+                      </div>
+                    </div>
+                    <ProgressRing pct={pct} color={meta.color} size={56} strokeWidth={4.5} />
+                  </div>
+
+                  <div className="learn-bento-actions learn-bento-actions--sm">
                     <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button className="learn-action-btn" style={{ width: '100%', justifyContent: 'center' }}>
-                        <Layers style={{ width: 13, height: 13 }} />
+                      <button className="learn-btn learn-btn--secondary learn-btn--sm" style={{ width: '100%' }}>
+                        <Layers style={{ width: 12, height: 12 }} />
                         {language === 'ru' ? 'Карточки' : 'Κάρτες'}
                       </button>
                     </Link>
                     <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
-                      <button className="learn-action-btn learn-action-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                        <PenLine style={{ width: 13, height: 13 }} />
+                      <button className="learn-btn learn-btn--primary learn-btn--sm" style={{ width: '100%', '--btn-color': meta.color, '--btn-rgb': meta.colorRgb } as React.CSSProperties}>
+                        <PenLine style={{ width: 12, height: 12 }} />
                         {language === 'ru' ? 'Тест' : 'Κουίζ'}
                       </button>
                     </Link>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Exam section */}
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'hsl(var(--foreground))', margin: 0, whiteSpace: 'nowrap' }}>
-              {language === 'ru' ? 'Режимы экзамена' : 'Λειτουργίες εξέτασης'}
-            </h2>
-            <div style={{ flex: 1, height: 1, background: 'rgba(47,53,50,0.08)' }} />
+              );
+            })}
           </div>
 
-          {/* Dark exam card */}
-          <div className="learn-exam-card" style={{
-            background: '#2F3532',
-            color: '#fff',
-            borderRadius: 28,
-            display: 'flex', flexDirection: 'column',
-            padding: '24px 20px',
-            position: 'relative', overflow: 'hidden',
-            boxShadow: '0 12px 48px -8px rgba(47,53,50,0.35)',
-            gap: 20,
-          }}>
-            {/* Deco icon */}
-            <GraduationCap style={{ position: 'absolute', right: -20, bottom: -40, width: 180, height: 180, color: 'rgba(255,255,255,0.04)' }} />
+          {/* Bottom row: Geography */}
+          {(() => {
+            const meta = restMeta[2]; // geography
+            const { pct, accuracy } = getTopicStats(meta.id);
+            const Icon = meta.icon;
+            return (
+              <div
+                className="learn-bento-card learn-bento-compact learn-bento-geo glass-panel"
+                data-topic={meta.dataAttr}
+                style={{ '--topic-color': meta.color, '--topic-rgb': meta.colorRgb } as React.CSSProperties}
+              >
+                <BlobDecor color={meta.color} />
+                <div className="learn-bento-glow" style={{ background: `radial-gradient(ellipse at 50% 120%, rgba(${meta.colorRgb},0.28) 0%, transparent 70%)` }} />
 
-            {/* Top: icon + text */}
-            <div className="learn-exam-left" style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
-              <div style={{
-                width: 52, height: 52, borderRadius: 16,
-                background: 'rgba(236,200,92,0.20)',
-                color: '#ECC85C',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <GraduationCap style={{ width: 26, height: 26 }} />
-              </div>
-              <div>
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '3px 8px', borderRadius: 99, marginBottom: 6,
-                  fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
-                  background: 'rgba(236,200,92,0.20)', color: '#ECC85C',
-                }}>
-                  {language === 'ru' ? 'Финальный этап' : 'Τελικό στάδιο'}
+                <div className="learn-bento-compact-inner">
+                  <div className="learn-bento-compact-left">
+                    <div className="learn-bento-icon learn-bento-icon--sm" style={{ background: meta.bg, color: meta.color }}>
+                      <Icon style={{ width: 16, height: 16 }} />
+                    </div>
+                    <div>
+                      <div className="learn-bento-topic-name">{t(`topic.${meta.id}`)}</div>
+                      {accuracy !== null && <AccuracyBadge accuracy={accuracy} compact />}
+                    </div>
+                  </div>
+                  <ProgressRing pct={pct} color={meta.color} size={56} strokeWidth={4.5} />
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
-                  {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
-                </div>
-                <div style={{ fontSize: 12, opacity: 0.55, lineHeight: 1.5 }}>
-                  {language === 'ru'
-                    ? 'Проверьте себя в условиях реального теста. Все темы, без подсказок.'
-                    : 'Δοκιμάστε τον εαυτό σας σε συνθήκες κοντά στην πραγματική εξέταση.'}
-                </div>
-              </div>
-            </div>
 
-            {/* Stats + CTA row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1, flexWrap: 'wrap', gap: 12 }}>
-              <div className="learn-exam-stats" style={{ display: 'flex', gap: 20 }}>
+                <div className="learn-bento-actions learn-bento-actions--sm">
+                  <Link to={`/learn/${meta.id}/flashcards`} style={{ textDecoration: 'none', flex: 1 }}>
+                    <button className="learn-btn learn-btn--secondary learn-btn--sm" style={{ width: '100%' }}>
+                      <Layers style={{ width: 12, height: 12 }} />
+                      {language === 'ru' ? 'Карточки' : 'Κάρτες'}
+                    </button>
+                  </Link>
+                  <Link to={`/learn/${meta.id}/quiz`} style={{ textDecoration: 'none', flex: 1 }}>
+                    <button className="learn-btn learn-btn--primary learn-btn--sm" style={{ width: '100%', '--btn-color': meta.color, '--btn-rgb': meta.colorRgb } as React.CSSProperties}>
+                      <PenLine style={{ width: 12, height: 12 }} />
+                      {language === 'ru' ? 'Тест' : 'Κουίζ'}
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Exam card — spans bottom right */}
+          <div className="learn-bento-exam">
+            <GraduationCap style={{ position: 'absolute', right: -16, bottom: -32, width: 160, height: 160, color: 'rgba(255,255,255,0.04)', zIndex: 0 }} />
+            {/* exam glow */}
+            <div style={{ position: 'absolute', inset: 0, borderRadius: 'inherit', background: 'radial-gradient(ellipse at 80% 120%, rgba(236,200,92,0.18) 0%, transparent 60%)', zIndex: 0, pointerEvents: 'none' }} />
+
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+              {/* badge */}
+              <div className="learn-exam-badge">
+                <span>{language === 'ru' ? '⚡ Финальный этап' : '⚡ Τελικό στάδιο'}</span>
+              </div>
+
+              {/* icon + title */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div className="learn-exam-icon-wrap">
+                  <GraduationCap style={{ width: 26, height: 26 }} />
+                </div>
+                <div>
+                  <div className="learn-exam-title">
+                    {language === 'ru' ? 'Симуляция экзамена' : 'Προσομοίωση εξέτασης'}
+                  </div>
+                  <div className="learn-exam-sub">
+                    {language === 'ru'
+                      ? 'Все темы, без подсказок, реальные условия'
+                      : 'Όλα τα θέματα, χωρίς βοήθεια, πραγματικές συνθήκες'}
+                  </div>
+                </div>
+              </div>
+
+              {/* stats row */}
+              <div className="learn-exam-stats-row">
                 {[
-                  { value: '20', label: language === 'ru' ? 'вопросов' : 'ερωτήσεις' },
-                  { value: '45', label: language === 'ru' ? 'минут' : 'λεπτά' },
-                  { value: '70%', label: language === 'ru' ? 'проходной' : 'βάση' },
-                ].map((stat, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                    <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</span>
-                    <span style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, whiteSpace: 'nowrap' }}>{stat.label}</span>
+                  { v: '20', l: language === 'ru' ? 'вопросов' : 'ερωτ.' },
+                  { v: '45', l: language === 'ru' ? 'минут' : 'λεπτά' },
+                  { v: '70%', l: language === 'ru' ? 'проходной' : 'βάση' },
+                ].map((s, i) => (
+                  <div key={i} className="learn-exam-stat">
+                    <span className="learn-exam-stat-val">{s.v}</span>
+                    <span className="learn-exam-stat-lbl">{s.l}</span>
                   </div>
                 ))}
               </div>
 
-              <Link to="/learn/exam" style={{ textDecoration: 'none', position: 'relative', zIndex: 1 }}>
-                <button
-                  className="exam-start-btn"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    padding: '12px 22px', borderRadius: 99,
-                    border: 'none', background: '#ECC85C', color: '#2F3532',
-                    fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                    fontFamily: 'inherit', whiteSpace: 'nowrap',
-                    transition: 'all 0.18s',
-                  }}
-                >
-                  {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
-                  <ArrowRight style={{ width: 15, height: 15 }} />
-                </button>
-              </Link>
+              {/* CTA */}
+              <div style={{ marginTop: 'auto' }}>
+                <Link to="/learn/exam" style={{ textDecoration: 'none' }}>
+                  <button className="learn-exam-cta">
+                    {language === 'ru' ? 'Начать экзамен' : 'Έναρξη εξέτασης'}
+                    <ArrowRight style={{ width: 16, height: 16 }} />
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
       <style>{`
-        .learn-topic-card {
-          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        /* ── Page wrap ── */
+        .learn-page-wrap {
+          max-width: 1080px;
+          margin: 0 auto;
+          padding: 28px 16px 96px;
         }
-        .learn-topic-card:hover {
+
+        /* ── Page header ── */
+        .learn-page-header {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 28px;
+        }
+        .learn-page-title {
+          font-family: var(--font-serif);
+          font-size: clamp(24px, 3vw, 34px);
+          font-weight: 500;
+          letter-spacing: -0.03em;
+          color: hsl(var(--foreground));
+          margin-bottom: 5px;
+          line-height: 1.1;
+        }
+        .learn-page-subtitle {
+          font-size: 13px;
+          color: hsl(var(--muted-foreground));
+          line-height: 1.5;
+        }
+        .learn-due-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 15px;
+          border-radius: 99px;
+          background: rgba(236,200,92,0.20);
+          color: #584610;
+          font-size: 12px;
+          font-weight: 700;
+          border: 1px solid rgba(236,200,92,0.4);
+        }
+
+        /* ── Bento Grid ── */
+        .learn-bento-grid {
+          display: grid;
+          grid-template-columns: 1.35fr 1fr;
+          grid-template-rows: auto auto;
+          gap: 14px;
+        }
+
+        /* ── Card base ── */
+        .learn-bento-card {
+          position: relative;
+          overflow: hidden;
+          border-radius: 24px;
+          cursor: default;
+          transition: transform 0.28s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.28s cubic-bezier(0.25,0.8,0.25,1);
+        }
+        .learn-bento-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 48px -8px rgba(var(--topic-rgb, 47,53,50), 0.22), 0 8px 16px -4px rgba(0,0,0,0.06);
+        }
+        .learn-bento-card:active {
+          transform: scale(0.97) translateY(0);
+        }
+
+        /* ── Ambient glow ── */
+        .learn-bento-glow {
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          pointer-events: none;
+          z-index: 0;
+          opacity: 0.7;
+          transition: opacity 0.3s ease;
+        }
+        .learn-bento-card:hover .learn-bento-glow {
+          opacity: 1;
+        }
+
+        /* ── Featured card (History) ── */
+        .learn-bento-featured {
+          grid-column: 1;
+          grid-row: 1 / 3;
+          padding: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          min-height: 360px;
+        }
+
+        /* ── Right column (Culture + Laws) ── */
+        .learn-bento-col {
+          grid-column: 2;
+          grid-row: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        /* ── Compact card ── */
+        .learn-bento-compact {
+          padding: 20px 20px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .learn-bento-compact-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          position: relative;
+          z-index: 1;
+        }
+        .learn-bento-compact-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+
+        /* ── Geography card (bottom left) ── */
+        .learn-bento-geo {
+          grid-column: 1;
+          grid-row: 3;
+        }
+
+        /* ── Exam card ── */
+        .learn-bento-exam {
+          grid-column: 2;
+          grid-row: 2 / 4;
+          background: #2F3532;
+          color: #fff;
+          border-radius: 24px;
+          padding: 24px;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 12px 48px -8px rgba(47,53,50,0.35);
+          transition: transform 0.28s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.28s;
+        }
+        .learn-bento-exam:hover {
           transform: translateY(-4px);
-          box-shadow: 0 16px 40px -8px rgba(0,0,0,0.10);
+          box-shadow: 0 24px 56px -8px rgba(47,53,50,0.42);
         }
-        .learn-action-btn {
-          display: flex; align-items: center; gap: 5px;
-          padding: 8px 12px;
-          border: 1.5px solid rgba(47,53,50,0.30);
-          border-radius: 100px;
-          background: rgba(255,255,255,0.55);
+        .learn-exam-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 4px 10px;
+          border-radius: 99px;
+          background: rgba(236,200,92,0.18);
+          color: #ECC85C;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          width: fit-content;
+        }
+        .learn-exam-icon-wrap {
+          width: 50px;
+          height: 50px;
+          border-radius: 16px;
+          background: rgba(236,200,92,0.18);
+          color: #ECC85C;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .learn-exam-title {
+          font-size: 17px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          margin-bottom: 3px;
+        }
+        .learn-exam-sub {
+          font-size: 12px;
+          opacity: 0.52;
+          line-height: 1.5;
+        }
+        .learn-exam-stats-row {
+          display: flex;
+          gap: 0;
+          background: rgba(255,255,255,0.05);
+          border-radius: 14px;
+          padding: 12px 8px;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .learn-exam-stat {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 3px;
+          border-right: 1px solid rgba(255,255,255,0.08);
+        }
+        .learn-exam-stat:last-child { border-right: none; }
+        .learn-exam-stat-val {
+          font-family: var(--font-serif);
+          font-size: 22px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1;
+        }
+        .learn-exam-stat-lbl {
+          font-size: 9px;
+          opacity: 0.45;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          font-weight: 600;
+        }
+        .learn-exam-cta {
+          width: 100%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 13px 20px;
+          border-radius: 14px;
+          border: none;
+          background: #ECC85C;
           color: #2F3532;
-          font-size: 12px; font-weight: 700;
-          cursor: pointer; font-family: inherit;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: inherit;
           transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
         }
-        .learn-action-btn:hover {
-          background: #fff;
-          border-color: rgba(47,53,50,0.18);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08);
+        .learn-exam-cta:hover {
+          background: #f5d575;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px -4px rgba(236,200,92,0.5);
         }
-        .learn-action-primary {
-          background: rgba(255,255,255,0.55);
-          color: #2F3532;
-          border-color: rgba(47,53,50,0.30);
+
+        /* ── Icon ── */
+        .learn-bento-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 13px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          position: relative;
+          z-index: 1;
+        }
+        .learn-bento-icon--sm {
+          width: 34px;
+          height: 34px;
+          border-radius: 10px;
+        }
+
+        /* ── Top row ── */
+        .learn-bento-toprow {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          position: relative;
+          z-index: 1;
+        }
+
+        /* ── Progress ring section (featured) ── */
+        .learn-bento-ring-wrap {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          position: relative;
+          z-index: 1;
+        }
+        .learn-bento-ring-label {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .learn-bento-topic-name {
+          font-size: 18px;
           font-weight: 700;
+          letter-spacing: -0.02em;
+          color: hsl(var(--foreground));
+          line-height: 1.1;
         }
-        .learn-action-primary:hover {
-          background: #fff !important;
-          border-color: rgba(47,53,50,0.45) !important;
-          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08) !important;
+        .learn-bento-compact .learn-bento-topic-name {
+          font-size: 14px;
         }
-        /* Desktop: always row layout */
-        .learn-exam-card { flex-direction: row !important; align-items: center !important; padding: 36px 44px !important; }
-        .learn-exam-left { flex: 1 !important; }
+        .learn-bento-mastered {
+          font-size: 11px;
+          color: hsl(var(--muted-foreground));
+          font-weight: 500;
+        }
 
-        /* Mobile: iPhone 12 Pro (390px) */
+        /* ── Description ── */
+        .learn-bento-desc {
+          font-size: 13px;
+          color: hsl(var(--muted-foreground));
+          line-height: 1.55;
+          position: relative;
+          z-index: 1;
+          flex: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        /* ── Action buttons ── */
+        .learn-bento-actions {
+          display: flex;
+          gap: 8px;
+          margin-top: auto;
+          position: relative;
+          z-index: 1;
+        }
+        .learn-bento-actions--sm {
+          gap: 6px;
+        }
+        .learn-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 10px 16px;
+          border-radius: 12px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: inherit;
+          transition: all 0.18s cubic-bezier(0.25,0.8,0.25,1);
+          white-space: nowrap;
+          border: 1.5px solid transparent;
+        }
+        .learn-btn--secondary {
+          background: rgba(255,255,255,0.58);
+          border-color: rgba(47,53,50,0.18);
+          color: hsl(var(--foreground));
+        }
+        .learn-btn--secondary:hover {
+          background: rgba(255,255,255,0.85);
+          border-color: rgba(47,53,50,0.28);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px -2px rgba(0,0,0,0.07);
+        }
+        .learn-btn--primary {
+          background: var(--topic-color, hsl(var(--primary)));
+          border-color: transparent;
+          color: #fff;
+        }
+        .learn-btn--primary:hover {
+          opacity: 0.88;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px -4px rgba(var(--btn-rgb, 47,53,50), 0.45);
+        }
+        .learn-btn--sm {
+          padding: 8px 12px;
+          font-size: 12px;
+          border-radius: 10px;
+        }
+
+        /* ── Mobile: 1 column ── */
         @media (max-width: 639px) {
-          .learn-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-          .learn-topic-card:hover { transform: none; }
-
-          /* Topic card inner padding */
-          .learn-topic-card > div:last-child { padding: 14px !important; gap: 10px !important; }
-
-          /* Bigger topic name */
-          .learn-topic-card h3 { font-size: 16px !important; }
-
-          /* Action buttons — full width, taller tap target */
-          .learn-action-btn {
-            padding: 10px 14px !important;
-            font-size: 13px !important;
-            border-radius: 12px !important;
+          .learn-bento-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
           }
-
-          /* Exam card stacks vertically */
-          .learn-exam-card {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            padding: 20px 18px !important;
-            gap: 16px !important;
+          .learn-bento-featured {
+            grid-column: 1;
+            grid-row: auto;
+            min-height: unset;
+            padding: 22px;
           }
-          .learn-exam-left { flex: unset !important; width: 100% !important; }
-
-          /* Exam stats + button row: stack on very narrow */
-          .learn-exam-stats { gap: 16px !important; }
-          .exam-start-btn { width: 100% !important; justify-content: center !important; padding: 13px 20px !important; font-size: 15px !important; }
+          .learn-bento-col {
+            grid-column: 1;
+            grid-row: auto;
+          }
+          .learn-bento-geo {
+            grid-column: 1;
+            grid-row: auto;
+          }
+          .learn-bento-exam {
+            grid-column: 1;
+            grid-row: auto;
+            padding: 22px;
+          }
+          .learn-bento-card:hover {
+            transform: none;
+          }
+          .learn-page-title {
+            font-size: 26px;
+          }
         }
       `}</style>
     </Layout>
+  );
+}
+
+/* ── Accuracy badge ── */
+function AccuracyBadge({ accuracy, compact }: { accuracy: number; compact?: boolean }) {
+  const high = accuracy >= 70;
+  const mid = accuracy >= 50;
+  return (
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 3,
+      padding: compact ? '2px 7px' : '4px 10px',
+      borderRadius: 99,
+      fontSize: compact ? 10 : 11,
+      fontWeight: 700,
+      background: high ? 'rgba(125,138,87,0.12)' : mid ? 'rgba(236,200,92,0.18)' : 'rgba(224,108,108,0.10)',
+      color: high ? '#4E5A33' : mid ? '#7A5E0E' : '#A03030',
+      border: `1px solid ${high ? 'rgba(125,138,87,0.2)' : mid ? 'rgba(236,200,92,0.3)' : 'rgba(224,108,108,0.2)'}`,
+      position: 'relative',
+      zIndex: 1,
+    }}>
+      {high ? <CheckCircle style={{ width: 9, height: 9 }} /> : mid ? <TrendingUp style={{ width: 9, height: 9 }} /> : <AlertCircle style={{ width: 9, height: 9 }} />}
+      {accuracy}%
+    </div>
   );
 }
