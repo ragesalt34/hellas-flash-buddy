@@ -308,7 +308,7 @@ export default function Learn() {
         .lp-mid { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
         .lp-name { font-weight: 700; letter-spacing: -.02em; color: hsl(var(--foreground)); line-height: 1.1; margin-bottom: 3px; }
         .lp-mastered { font-size: 12px; color: hsl(var(--muted-foreground)); font-weight: 500; }
-        .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
         .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; }
