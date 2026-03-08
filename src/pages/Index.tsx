@@ -205,34 +205,34 @@ export default function Index() {
           </div>
 
           {/* === SECTION 3: Study Topics === */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '16px' }}>
-            <h2 className="idx-section-title" style={{ fontSize: '20px', fontWeight: 500, color: '#2F3532' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
+            <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532' }}>
               {language === 'ru' ? 'Темы для изучения' : 'Θέματα μελέτης'}
             </h2>
-            <Link to="/learn" style={{ fontSize: '13px', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
+            <Link to="/learn" style={{ fontSize: 'clamp(13px, 0.9vw, 17px)', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
               {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8 2xl:mb-10">
             {TOPICS.map(topic => {
               const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
-                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '16px' }}>
+                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: 'clamp(16px, 1.4vw, 28px)' }}>
                     <div>
                       <div style={{
-                        width: '38px', height: '38px', borderRadius: '50%',
+                        width: 'clamp(38px, 2.8vw, 54px)', height: 'clamp(38px, 2.8vw, 54px)', borderRadius: '50%',
                         background: 'rgba(255,255,255,0.5)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '18px', marginBottom: '8px',
+                        fontSize: 'clamp(18px, 1.4vw, 26px)', marginBottom: '8px',
                       }}>
                         {topic.emoji}
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: '13px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
-                      <div className="idx-topic-sub" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px', lineHeight: 1.3 }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
+                      <div style={{ fontWeight: 600, fontSize: 'clamp(13px, 0.9vw, 17px)', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
+                      <div className="idx-topic-sub" style={{ fontSize: 'clamp(11px, 0.75vw, 14px)', color: 'hsl(var(--muted-foreground))', marginTop: '2px', lineHeight: 1.3 }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
                     </div>
                     <div style={{ marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '4px', color: 'hsl(var(--muted-foreground))' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 0.65vw, 13px)', marginBottom: '4px', color: 'hsl(var(--muted-foreground))' }}>
                         <span>{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
                         <span>{acc}%</span>
                       </div>
