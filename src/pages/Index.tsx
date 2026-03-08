@@ -125,12 +125,12 @@ export default function Index() {
             </div>
 
             {/* Weekly Streak */}
-            <div className="glass-panel flex flex-col gap-2" style={{ padding: '20px 20px' }}>
+            <div className="glass-panel flex flex-col gap-2" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
                   {language === 'ru' ? 'Серия недели' : 'Εβδομαδιαίο σερί'}
                 </span>
-                <span style={{ fontWeight: 700, fontSize: '17px', color: '#2F3532' }}>
+                <span style={{ fontWeight: 700, fontSize: 'clamp(17px, 1.2vw, 24px)', color: '#2F3532' }}>
                   {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'ημ.'}
                 </span>
               </div>
@@ -143,9 +143,9 @@ export default function Index() {
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                       <div
                         className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`}
-                        style={{ width: '28px', height: '28px' }}
+                        style={{ width: 'clamp(28px, 2vw, 42px)', height: 'clamp(28px, 2vw, 42px)' }}
                       />
-                      <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
+                      <span style={{ fontSize: 'clamp(10px, 0.65vw, 13px)', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
                     </div>
                   );
                 })}
