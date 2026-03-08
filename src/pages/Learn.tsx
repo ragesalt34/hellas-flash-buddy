@@ -194,7 +194,7 @@ export default function Learn() {
                 {/* Buttons */}
                 <div className="lp-btns">
                   <Link to={`/learn/${meta.id}/flashcards`} className="lp-link">
-                    <button className="lp-btn lp-btn--ghost">
+                    <button className="lp-btn lp-btn--tint" style={{ '--bc': meta.color, '--brgb': meta.colorRgb } as React.CSSProperties}>
                       <Layers style={{ width: 13, height: 13 }} />
                       {ru ? 'Карточки' : 'Κάρτες'}
                     </button>
@@ -321,6 +321,8 @@ export default function Learn() {
         }
         .lp-btn--ghost { background: rgba(232,227,217,.72); border-color: rgba(47,53,50,.22); color: hsl(var(--foreground)); }
         .lp-btn--ghost:hover { background: rgba(232,227,217,1); border-color: rgba(47,53,50,.34); transform: translateY(-1px); box-shadow: 0 3px 10px -2px rgba(0,0,0,.09); }
+        .lp-btn--tint { background: rgba(var(--brgb, 91,141,184),.12); border-color: rgba(var(--brgb, 91,141,184),.35); color: var(--bc, #5B8DB8); }
+        .lp-btn--tint:hover { background: rgba(var(--brgb, 91,141,184),.22); border-color: rgba(var(--brgb, 91,141,184),.55); transform: translateY(-1px); box-shadow: 0 3px 10px -2px rgba(var(--brgb, 91,141,184),.2); }
         .lp-btn--color { background: var(--bc, #5B8DB8); color: #fff; }
         .lp-btn--color:hover { opacity: .85; transform: translateY(-1px); box-shadow: 0 5px 14px -3px rgba(var(--brgb, 91,141,184),.45); }
 
