@@ -140,76 +140,9 @@ export function Header() {
             </div>
           )}
 
-          {/* Mobile hamburger */}
+          {/* Language switcher — visible on mobile (hamburger removed) */}
           <div className="flex sm:hidden">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" style={{ color: '#2F3532' }}>
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="w-72 p-0"
-                style={{ background: 'rgba(232,230,225,0.97)', backdropFilter: 'blur(20px)', borderLeft: '1px solid rgba(255,255,255,0.5)' }}
-              >
-                <div className="flex flex-col h-full pt-12 pb-8 px-6">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[17px]" style={{ background: '#2F3532' }}>
-                      Ελ
-                    </div>
-                    <span className="font-semibold text-[15px]" style={{ color: '#2F3532' }}>Hellas Flash Buddy</span>
-                  </div>
-
-                  <nav className="flex flex-col gap-1 flex-1">
-                    {navLinks.map(link => (
-                      <Link
-                        key={link.to}
-                        to={link.to}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center h-12 px-4 rounded-xl font-medium text-[15px] transition-all"
-                        style={{
-                          color: '#2F3532',
-                          background: isActive(link.to) ? 'rgba(255,255,255,0.6)' : 'transparent',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                    <div className="mt-4">
-                      <LanguageSwitcher />
-                    </div>
-                  </nav>
-
-                  <div className="mt-auto flex flex-col gap-2">
-                    {user ? (
-                      <button
-                        onClick={handleSignOut}
-                        className="flex items-center gap-3 h-12 px-4 rounded-xl font-medium text-[15px] w-full text-destructive"
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-                      >
-                        <LogOut className="h-5 w-5" />
-                        {t('nav.logout')}
-                      </button>
-                    ) : (
-                      <>
-                        <Link to="/login" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full h-12 rounded-xl" style={{ color: '#2F3532' }}>
-                            {t('nav.login')}
-                          </Button>
-                        </Link>
-                        <Link to="/register" onClick={() => setMobileOpen(false)}>
-                          <button className="btn-pebble w-full justify-center" style={{ borderRadius: '12px', padding: '12px', width: '100%' }}>
-                            {t('nav.register')}
-                          </button>
-                        </Link>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
