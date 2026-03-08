@@ -194,7 +194,7 @@ export default function Learn() {
                 {/* Buttons */}
                 <div className="lp-btns">
                   <Link to={`/learn/${meta.id}/flashcards`} className="lp-link">
-                    <button className="lp-btn lp-btn--ghost">
+                    <button className="lp-btn lp-btn--tint" style={{ '--bc': meta.color, '--brgb': meta.colorRgb } as React.CSSProperties}>
                       <Layers style={{ width: 13, height: 13 }} />
                       {ru ? 'Карточки' : 'Κάρτες'}
                     </button>
