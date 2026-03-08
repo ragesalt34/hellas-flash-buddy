@@ -188,16 +188,16 @@ export default function Index() {
           </div>
 
           {/* === SECTION 2: Stats row === */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 xl:gap-6 2xl:gap-8 mb-6 xl:mb-8 2xl:mb-10">
             {[
               { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
-              <div key={s.label} className="glass-panel" style={{ padding: '18px 20px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+              <div key={s.label} className="glass-panel" style={{ padding: 'clamp(18px, 1.5vw, 36px) clamp(20px, 1.8vw, 40px)' }}>
+                <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
                   {s.label}
                 </span>
-                <div className="idx-dash-stat-value" style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
+                <div className="idx-dash-stat-value" style={{ fontSize: 'clamp(32px, 2.5vw, 54px)', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
                   {s.value}
                 </div>
               </div>
