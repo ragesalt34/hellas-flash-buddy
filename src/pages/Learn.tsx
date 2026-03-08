@@ -319,8 +319,8 @@ export default function Learn() {
           cursor: pointer; font-family: inherit; transition: all .18s cubic-bezier(.25,.8,.25,1);
           border: 1.5px solid transparent; white-space: nowrap;
         }
-        .lp-btn--ghost { background: rgba(255,255,255,.58); border-color: rgba(47,53,50,.18); color: hsl(var(--foreground)); }
-        .lp-btn--ghost:hover { background: rgba(255,255,255,.88); border-color: rgba(47,53,50,.28); transform: translateY(-1px); box-shadow: 0 3px 10px -2px rgba(0,0,0,.07); }
+        .lp-btn--ghost { background: rgba(232,227,217,.72); border-color: rgba(47,53,50,.22); color: hsl(var(--foreground)); }
+        .lp-btn--ghost:hover { background: rgba(232,227,217,1); border-color: rgba(47,53,50,.34); transform: translateY(-1px); box-shadow: 0 3px 10px -2px rgba(0,0,0,.09); }
         .lp-btn--color { background: var(--bc, #5B8DB8); color: #fff; }
         .lp-btn--color:hover { opacity: .85; transform: translateY(-1px); box-shadow: 0 5px 14px -3px rgba(var(--brgb, 91,141,184),.45); }
 
