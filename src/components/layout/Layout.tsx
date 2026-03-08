@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
+import { MobileBottomNav } from './MobileBottomNav';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LayoutProps {
