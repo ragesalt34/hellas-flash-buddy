@@ -927,12 +927,117 @@
 
 /* Floating pill header */
 .pill-header {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.50);
+  background: linear-gradient(135deg, rgba(247, 245, 241, 0.82) 0%, rgba(255, 255, 255, 0.62) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 9999px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 4px 32px rgba(47, 53, 50, 0.08),
+    0 1px 2px rgba(47, 53, 50, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+/* Logo badge */
+.header-logo-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #4A6348 0%, #2F3532 100%);
+  box-shadow: 0 2px 8px rgba(47, 53, 50, 0.22), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* Brand name */
+.header-brand-name {
+  font-size: clamp(14px, 1vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #2F3532;
+}
+
+/* Nav links */
+.header-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: clamp(14px, 0.95vw, 17px);
+  font-weight: 500;
+  color: #2F3532;
+  opacity: 0.5;
+  text-decoration: none;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.header-nav-link:hover {
+  opacity: 0.8;
+  background: rgba(47, 53, 50, 0.04);
+}
+
+.header-nav-link--active {
+  opacity: 1;
+  background: rgba(47, 53, 50, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Lang switcher wrapper — hover pill */
+.header-lang-wrap button:hover {
+  background: rgba(47, 53, 50, 0.06) !important;
+  border-radius: 9999px;
+}
+
+/* User pill trigger */
+.header-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  padding: 4px 14px 4px 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 4px rgba(47, 53, 50, 0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.header-user-pill:hover {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 8px rgba(47, 53, 50, 0.10), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* Initials avatar */
+.header-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #C5DEA7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #2F3532;
+  flex-shrink: 0;
+  border: 1px solid rgba(47, 53, 50, 0.12);
+}
+
+.header-username {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2F3532;
+  letter-spacing: -0.01em;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Light glass panel */
