@@ -50,7 +50,17 @@ const Ring = ({ pct, color, size, sw }: { pct: number; color: string; size: numb
   );
 };
 
-function AccBadge({ acc, compact }: { acc: number; compact?: boolean }) {
+function AccBadge({ acc, compact }: { acc: number | null; compact?: boolean }) {
+  if (acc === null) return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 3,
+      padding: compact ? '2px 7px' : '3px 9px',
+      borderRadius: 99, fontSize: compact ? 10 : 11, fontWeight: 700,
+      background: 'rgba(47,53,50,0.06)',
+      color: 'rgba(47,53,50,0.32)',
+      border: '1px solid rgba(47,53,50,0.10)',
+    }}>—</span>
+  );
   const hi = acc >= 70, mid = acc >= 50;
   return (
     <span style={{
