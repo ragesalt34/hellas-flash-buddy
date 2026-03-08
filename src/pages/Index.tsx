@@ -247,28 +247,28 @@ export default function Index() {
           </div>
 
           {/* === SECTION 4: Learning Modes === */}
-          <h2 className="idx-section-title" style={{ fontSize: '20px', fontWeight: 500, color: '#2F3532', marginBottom: '16px' }}>
+          <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
             {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8">
             {[
               { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
               { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
               { emoji: '🎓', id: 'exam',       href: '/learn/exam', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
             ].map(mode => (
               <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
-                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', padding: '16px 18px' }}>
+                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: 'clamp(14px, 1.1vw, 22px)', cursor: 'pointer', padding: 'clamp(16px, 1.4vw, 28px) clamp(18px, 1.5vw, 30px)' }}>
                   <div style={{
-                    width: '42px', height: '42px', borderRadius: '50%',
+                    width: 'clamp(42px, 3vw, 60px)', height: 'clamp(42px, 3vw, 60px)', borderRadius: '50%',
                     border: '1.5px solid rgba(47,53,50,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '20px', flexShrink: 0,
+                    fontSize: 'clamp(20px, 1.5vw, 28px)', flexShrink: 0,
                   }}>
                     {mode.emoji}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`mode.${mode.id}`)}</div>
-                    <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{mode.desc}</div>
+                    <div style={{ fontWeight: 500, fontSize: 'clamp(14px, 1vw, 19px)', color: '#2F3532' }}>{t(`mode.${mode.id}`)}</div>
+                    <div style={{ fontSize: 'clamp(12px, 0.8vw, 16px)', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{mode.desc}</div>
                   </div>
                 </div>
               </Link>
