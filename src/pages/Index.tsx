@@ -193,7 +193,7 @@ export default function Index() {
           {/* === SECTION 2: Stats row === */}
           <div className="grid grid-cols-2 gap-4 xl:gap-6 2xl:gap-8 mb-6 xl:mb-8 2xl:mb-10">
             {[
-              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
+              { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
               <div key={s.label} className="glass-panel" style={{ padding: 'clamp(18px, 1.5vw, 36px) clamp(20px, 1.8vw, 40px)' }}>
