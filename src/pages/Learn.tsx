@@ -165,7 +165,7 @@ export default function Learn() {
             return (
               <div
                 key={meta.id}
-                className={`lp-card glass-panel${featured ? ' lp-card--featured' : ''}`}
+                className={`lp-card${featured ? ' lp-card--featured' : ''}`}
                 style={{ '--tc': meta.color, '--trgb': meta.colorRgb } as React.CSSProperties}
               >
                 {/* ambient glow */}
