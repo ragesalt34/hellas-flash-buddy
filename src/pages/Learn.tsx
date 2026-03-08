@@ -253,6 +253,13 @@ export default function Learn() {
 
       <style>{`
         .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 48px; }
+
+        /* Header */
+        .lp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .lp-title { font-size: 24px; font-weight: 800; letter-spacing: -.03em; color: hsl(var(--foreground)); line-height: 1.1; margin: 0 0 4px; }
+        .lp-sub { font-size: 14px; color: hsl(var(--muted-foreground)); margin: 0; line-height: 1.5; }
+        .lp-due { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 99px; background: rgba(91,141,184,0.12); color: #3a6a96; font-size: 12px; font-weight: 600; border: 1px solid rgba(91,141,184,0.22); flex-shrink: 0; margin-top: 4px; }
+
         .lp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
         /* Card — full glass built-in, no glass-panel double-padding */
