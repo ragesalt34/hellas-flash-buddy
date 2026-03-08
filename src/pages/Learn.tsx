@@ -174,16 +174,16 @@ export default function Learn() {
                 {/* Top: icon + accuracy badge */}
                 <div className="lp-card-top">
                   <div className="lp-icon" style={{ background: meta.bg, color: meta.color }}>
-                    <Icon style={{ width: featured ? 20 : 17, height: featured ? 20 : 17 }} />
+                    <Icon style={{ width: 18, height: 18 }} />
                   </div>
                   {acc !== null && <AccBadge acc={acc} compact />}
                 </div>
 
                 {/* Middle: ring + name */}
                 <div className="lp-mid">
-                  <Ring pct={pct} color={meta.color} size={featured ? 80 : 60} sw={featured ? 5.5 : 4.5} />
+                  <Ring pct={pct} color={meta.color} size={72} sw={5} />
                   <div>
-                    <div className="lp-name" style={{ fontSize: featured ? 18 : 15 }}>{t(`topic.${meta.id}`)}</div>
+                    <div className="lp-name" style={{ fontSize: 16 }}>{t(`topic.${meta.id}`)}</div>
                     <div className="lp-mastered">
                       {(topicProgress?.[meta.id]?.mastered || 0)} / {topicTotals?.[meta.id] || '…'} {ru ? 'освоено' : 'κατακτήθηκε'}
                     </div>
