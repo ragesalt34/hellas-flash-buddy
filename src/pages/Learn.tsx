@@ -200,7 +200,7 @@ export default function Learn() {
                     </button>
                   </Link>
                   <Link to={`/learn/${meta.id}/quiz`} className="lp-link">
-                    <button className="lp-btn lp-btn--color" style={{ '--bc': meta.color, '--brgb': meta.colorRgb } as React.CSSProperties}>
+                    <button className="lp-btn lp-btn--tint" style={{ '--bc': meta.color, '--brgb': meta.colorRgb } as React.CSSProperties}>
                       <PenLine style={{ width: 13, height: 13 }} />
                       {ru ? 'Тест' : 'Κουίζ'}
                     </button>
