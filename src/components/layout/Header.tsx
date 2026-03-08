@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { LogOut, User, Settings, Menu } from 'lucide-react';
+import { LogOut, User, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,21 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSignOut = async () => {
-    setMobileOpen(false);
     await signOut();
     navigate('/');
   };
@@ -42,41 +35,39 @@ export function Header() {
     return location.pathname.startsWith(path);
   };
 
+  const getInitials = (email: string) => {
+    const name = email.split('@')[0];
+    return name.slice(0, 2).toUpperCase();
+  };
+
   return (
     <header className="sticky top-4 z-50 px-4 xl:px-8 2xl:px-16 mb-8 2xl:mb-12">
       <div className="max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2200px] mx-auto pill-header flex items-center justify-between h-[60px] xl:h-[70px] 2xl:h-[80px] px-5 xl:px-8 2xl:px-12">
+
         {/* Brand */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0" style={{ textDecoration: 'none' }}>
-          <div
-            className="w-10 h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 rounded-full flex items-center justify-center text-white font-bold text-[17px] xl:text-[19px] 2xl:text-[22px] flex-shrink-0"
-            style={{ background: '#2F3532' }}
-          >
+          <div className="header-logo-badge">
             Ελ
           </div>
-          <span className="font-semibold text-[15px] xl:text-[17px] 2xl:text-[20px] hidden sm:block" style={{ color: '#2F3532' }}>
+          <span className="header-brand-name hidden sm:block">
             Hellas Flash Buddy
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden sm:flex items-center gap-8 xl:gap-12 2xl:gap-16">
+        <nav className="hidden sm:flex items-center gap-1 xl:gap-2">
           {navLinks.map(link => (
             <Link
               key={link.to}
               to={link.to}
-              style={{
-                color: '#2F3532',
-                opacity: isActive(link.to) ? 1 : 0.5,
-                fontWeight: 500,
-                fontSize: 'clamp(15px, 1vw, 18px)',
-                textDecoration: 'none',
-                transition: 'opacity 0.2s',
-              }}
+              className={`header-nav-link ${isActive(link.to) ? 'header-nav-link--active' : ''}`}
             >
               {link.label}
             </Link>
           ))}
-          <LanguageSwitcher />
+          <div className="header-lang-wrap">
+            <LanguageSwitcher />
+          </div>
         </nav>
 
         {/* Right side */}
@@ -84,19 +75,13 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  className="flex items-center gap-2 rounded-full cursor-pointer transition-all"
-                  style={{
-                    background: 'rgba(255,255,255,0.5)',
-                    border: '1px solid rgba(255,255,255,0.5)',
-                    padding: '4px 12px 4px 4px',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    color: '#2F3532',
-                  }}
-                >
-                  <div className="w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#D4D2CD' }} />
-                  <span className="hidden sm:block">{user.email?.split('@')[0]}</span>
+                <button className="header-user-pill">
+                  <div className="header-avatar">
+                    {getInitials(user.email ?? 'US')}
+                  </div>
+                  <span className="hidden sm:block header-username">
+                    {user.email?.split('@')[0]}
+                  </span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -140,7 +125,7 @@ export function Header() {
             </div>
           )}
 
-          {/* Language switcher — visible on mobile (hamburger removed) */}
+          {/* Language switcher — mobile only */}
           <div className="flex sm:hidden">
             <LanguageSwitcher />
           </div>
@@ -149,3 +134,4 @@ export function Header() {
     </header>
   );
 }
+
