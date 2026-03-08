@@ -50,14 +50,20 @@ export default function Index() {
         topicTotal[q.topic] = (topicTotal[q.topic] || 0) + 1;
       });
 
+      const now = new Date();
+      const toLocalDateKey = (d: Date) =>
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const totalSeconds = sessions
-        .filter((se: any) => (se.duration_seconds || 0) <= 1800)
+
+      const todayKey = toLocalDateKey(now);
+      const todaySeconds = sessions
+        .filter((se: any) => (se.duration_seconds || 0) <= 1800 && toLocalDateKey(new Date(se.started_at)) === todayKey)
         .reduce((s: number, se: any) => s + (se.duration_seconds || 0), 0);
-      const hours = Math.floor(totalSeconds / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const hours = Math.floor(todaySeconds / 3600);
+      const mins = Math.floor((todaySeconds % 3600) / 60);
       const studyTotalMinutes = hours * 60 + mins;
 
       // Topic progress = mastered (is_known) / total questions in topic
@@ -71,9 +77,6 @@ export default function Index() {
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicMastered[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
-      const now = new Date();
-      const toLocalDateKey = (d: Date) =>
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(now);
         d.setDate(d.getDate() - 6 + i);
@@ -190,7 +193,7 @@ export default function Index() {
           {/* === SECTION 2: Stats row === */}
           <div className="grid grid-cols-2 gap-4 xl:gap-6 2xl:gap-8 mb-6 xl:mb-8 2xl:mb-10">
             {[
-              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
+              { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
               <div key={s.label} className="glass-panel" style={{ padding: 'clamp(18px, 1.5vw, 36px) clamp(20px, 1.8vw, 40px)' }}>
