@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import { MobileDashboard } from '@/components/layout/MobileDashboard';
 
 const TOPICS = [
   { id: 'history',   emoji: '🏛️', subtitle_ru: 'Древняя и современная', subtitle_el: 'Αρχαία και σύγχρονη' },
