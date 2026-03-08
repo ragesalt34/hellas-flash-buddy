@@ -316,7 +316,7 @@ export default function Learn() {
         .lp-desc { font-size: 12px; color: hsl(var(--muted-foreground)); line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* Buttons */
-        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; margin-top: auto; }
+        .lp-btns { display: flex; gap: 7px; position: relative; z-index: 1; }
         .lp-link { text-decoration: none; flex: 1; }
         .lp-btn {
           width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
