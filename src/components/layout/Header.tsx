@@ -43,23 +43,23 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-4 z-50 px-4 mb-8">
-      <div className="max-w-[1200px] mx-auto pill-header flex items-center justify-between h-[60px] px-5">
+    <header className="sticky top-4 z-50 px-4 xl:px-8 2xl:px-16 mb-8 2xl:mb-12">
+      <div className="max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2200px] mx-auto pill-header flex items-center justify-between h-[60px] xl:h-[70px] 2xl:h-[80px] px-5 xl:px-8 2xl:px-12">
         {/* Brand */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0" style={{ textDecoration: 'none' }}>
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[17px] flex-shrink-0"
+            className="w-10 h-10 xl:w-12 xl:h-12 2xl:w-14 2xl:h-14 rounded-full flex items-center justify-center text-white font-bold text-[17px] xl:text-[19px] 2xl:text-[22px] flex-shrink-0"
             style={{ background: '#2F3532' }}
           >
             Ελ
           </div>
-          <span className="font-semibold text-[15px] hidden sm:block" style={{ color: '#2F3532' }}>
+          <span className="font-semibold text-[15px] xl:text-[17px] 2xl:text-[20px] hidden sm:block" style={{ color: '#2F3532' }}>
             Hellas Flash Buddy
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden sm:flex items-center gap-8">
+        <nav className="hidden sm:flex items-center gap-8 xl:gap-12 2xl:gap-16">
           {navLinks.map(link => (
             <Link
               key={link.to}
@@ -68,7 +68,7 @@ export function Header() {
                 color: '#2F3532',
                 opacity: isActive(link.to) ? 1 : 0.5,
                 fontWeight: 500,
-                fontSize: '15px',
+                fontSize: 'clamp(15px, 1vw, 18px)',
                 textDecoration: 'none',
                 transition: 'opacity 0.2s',
               }}

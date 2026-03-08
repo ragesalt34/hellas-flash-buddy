@@ -1389,3 +1389,90 @@
 @media (min-width: 640px) {
   .glp-mobile-root { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════
+   24" Monitor Adaptation — 1920px+
+   ═══════════════════════════════════════════════════ */
+@media (min-width: 1920px) {
+  /* Body dot grid — scale up slightly */
+  body {
+    background-size: 32px 32px;
+  }
+
+  /* Glass panel — more generous padding and radius */
+  .glass-panel {
+    border-radius: 20px !important;
+  }
+
+  /* Pill header wider */
+  .pill-header {
+    border-radius: 28px !important;
+  }
+
+  /* Pebbles larger */
+  .pebble, .pebble-active, .pebble-current {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* btn-pebble */
+  .btn-pebble {
+    padding: 10px 22px !important;
+    font-size: 15px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Ambient blobs — scale up */
+  .ambient-blob-1 {
+    width: 700px !important;
+    height: 700px !important;
+  }
+  .ambient-blob-2 {
+    width: 500px !important;
+    height: 500px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   27" Monitor Adaptation — 2560px+
+   ═══════════════════════════════════════════════════ */
+@media (min-width: 2560px) {
+  body {
+    background-size: 40px 40px;
+  }
+
+  .glass-panel {
+    border-radius: 24px !important;
+  }
+
+  .pill-header {
+    border-radius: 32px !important;
+  }
+
+  .pebble, .pebble-active, .pebble-current {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .btn-pebble {
+    padding: 12px 28px !important;
+    font-size: 17px !important;
+    border-radius: 18px !important;
+    gap: 10px !important;
+  }
+
+  .ambient-blob-1 {
+    width: 900px !important;
+    height: 900px !important;
+  }
+  .ambient-blob-2 {
+    width: 650px !important;
+    height: 650px !important;
+  }
+
+  /* Scrollbar wider */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+
