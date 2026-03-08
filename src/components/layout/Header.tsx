@@ -59,7 +59,7 @@ export function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden sm:flex items-center gap-8">
+        <nav className="hidden sm:flex items-center gap-8 xl:gap-12 2xl:gap-16">
           {navLinks.map(link => (
             <Link
               key={link.to}
@@ -68,7 +68,7 @@ export function Header() {
                 color: '#2F3532',
                 opacity: isActive(link.to) ? 1 : 0.5,
                 fontWeight: 500,
-                fontSize: '15px',
+                fontSize: 'clamp(15px, 1vw, 18px)',
                 textDecoration: 'none',
                 transition: 'opacity 0.2s',
               }}
