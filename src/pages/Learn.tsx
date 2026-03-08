@@ -270,7 +270,7 @@ export default function Learn() {
         /* Card — full glass built-in, no glass-panel double-padding */
         .lp-card {
           position: relative; overflow: hidden; border-radius: 22px;
-          padding: 20px; display: flex; flex-direction: column; gap: 14px;
+          padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
           background: rgba(255,255,255,0.52);
           backdrop-filter: blur(24px) saturate(1.4);
           -webkit-backdrop-filter: blur(24px) saturate(1.4);
@@ -283,9 +283,6 @@ export default function Learn() {
           box-shadow: 0 18px 40px -8px rgba(var(--trgb,47,53,50),.20), 0 6px 14px -4px rgba(0,0,0,.05);
         }
         .lp-card:active { transform: scale(.97); }
-
-        /* Featured card — taller to differentiate */
-        .lp-card--featured { min-height: 268px; }
 
         /* Exam: full-width bottom row */
         .lp-exam {
