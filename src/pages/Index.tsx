@@ -216,7 +216,7 @@ export default function Index() {
               {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8 2xl:mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8 qhd:mb-10">
             {TOPICS.map(topic => {
               const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
