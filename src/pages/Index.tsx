@@ -103,20 +103,20 @@ export default function Index() {
         <MobileDashboard studyStats={studyStats} questionsCount={questionsCount ?? 0} />
 
         {/* ── DESKTOP: original dashboard (hidden on mobile via CSS) ── */}
-        <div className="glp-mobile-hidden max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2200px] mx-auto px-4 sm:px-6 fhd:px-10 qhd:px-20 py-6 fhd:py-10 qhd:py-14 relative z-10">
+        <div className="idx-dash-wrapper glp-mobile-hidden mx-auto px-6 py-6 relative z-10">
 
-          {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
-          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 fhd:gap-6 qhd:gap-8 mb-4 fhd:mb-6 qhd:mb-8">
+          {/* === SECTION 1: Greeting + Streak === */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {/* Greeting */}
-            <div className="glass-panel flex flex-col justify-center" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
-              <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
+            <div className="glass-panel flex flex-col justify-center">
+              <span className="idx-label">
                 {language === 'ru' ? 'Добро пожаловать' : 'Καλώς ήρθατε'}
               </span>
-              <h1 className="idx-greeting-title" style={{ fontSize: 'clamp(24px, 1.8vw, 36px)', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
+              <h1 className="idx-greeting-title">
                 {language === 'ru' ? 'Привет, ' : 'Γεια σου, '}
                 {user.email?.split('@')[0] || (language === 'ru' ? 'друг' : 'φίλε')}!
               </h1>
-              <p style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
+              <p className="idx-body" style={{ marginTop: '6px' }}>
                 {language === 'ru' ? 'Продолжай готовиться к гражданству' : 'Συνέχισε να προετοιμάζεσαι για την ιθαγένεια'}
               </p>
               <Link to="/learn" style={{ marginTop: '16px', display: 'inline-flex' }}>
@@ -128,12 +128,12 @@ export default function Index() {
             </div>
 
             {/* Weekly Streak */}
-            <div className="glass-panel flex flex-col gap-2" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
+            <div className="glass-panel flex flex-col gap-2">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                <span className="idx-label">
                   {language === 'ru' ? 'Серия недели' : 'Εβδομαδιαίο σερί'}
                 </span>
-                <span style={{ fontWeight: 700, fontSize: 'clamp(17px, 1.2vw, 24px)', color: '#2F3532' }}>
+                <span className="idx-streak-count">
                   {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'ημ.'}
                 </span>
               </div>
@@ -144,11 +144,8 @@ export default function Index() {
                   const isActive = studyStats?.streak[streakIdx];
                   return (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`}
-                        style={{ width: 'clamp(28px, 2vw, 42px)', height: 'clamp(28px, 2vw, 42px)' }}
-                      />
-                      <span style={{ fontSize: 'clamp(10px, 0.65vw, 13px)', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
+                      <div className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`} />
+                      <span className="idx-day-label">{day}</span>
                     </div>
                   );
                 })}
@@ -156,33 +153,24 @@ export default function Index() {
             </div>
 
             {/* Focus of Day */}
-            <div className="glass-panel flex flex-col justify-between" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
+            <div className="glass-panel flex flex-col justify-between">
               <div>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '3px 10px',
-                  borderRadius: '9999px',
-                  fontSize: 'clamp(11px, 0.7vw, 14px)',
-                  fontWeight: 600,
-                  background: 'rgba(255,255,255,0.6)',
-                  color: '#5B8DB8',
-                  marginBottom: '8px',
-                }}>
+                <span className="idx-focus-tag">
                   {language === 'ru' ? 'Тема дня' : 'Θέμα της ημέρας'}
                 </span>
-                <h3 style={{ fontWeight: 500, fontSize: 'clamp(16px, 1.1vw, 22px)', color: '#2F3532', lineHeight: 1.3 }}>
+                <h3 className="idx-focus-title">
                   {language === 'ru' ? 'История Греции' : 'Ιστορία της Ελλάδας'}
                 </h3>
-                <p style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))', marginTop: '5px' }}>
+                <p className="idx-body" style={{ marginTop: '5px' }}>
                   {language === 'ru' ? 'Изучайте ключевые события' : 'Μελετήστε σημαντικά ιστορικά γεγονότα'}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '16px' }}>
-                <span style={{ fontSize: 'clamp(13px, 0.85vw, 17px)', color: 'hsl(var(--muted-foreground))' }}>
+                <span className="idx-body">
                   {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'κάρτες'}` : '—'}
                 </span>
                 <Link to="/learn/history/flashcards">
-                  <button className="btn-pebble" style={{ padding: 'clamp(7px, 0.5vw, 12px) clamp(12px, 1vw, 20px)', fontSize: 'clamp(12px, 0.8vw, 15px)' }}>
+                  <button className="btn-pebble">
                     {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
                   </button>
                 </Link>
@@ -191,53 +179,44 @@ export default function Index() {
           </div>
 
           {/* === SECTION 2: Stats row === */}
-          <div className="grid grid-cols-2 gap-4 fhd:gap-6 qhd:gap-8 mb-6 fhd:mb-8 qhd:mb-10">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             {[
               { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
-              <div key={s.label} className="glass-panel" style={{ padding: 'clamp(18px, 1.5vw, 36px) clamp(20px, 1.8vw, 40px)' }}>
-                <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
-                  {s.label}
-                </span>
-                <div className="idx-dash-stat-value" style={{ fontSize: 'clamp(32px, 2.5vw, 54px)', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
-                  {s.value}
-                </div>
+              <div key={s.label} className="glass-panel">
+                <span className="idx-label">{s.label}</span>
+                <div className="idx-dash-stat-value">{s.value}</div>
               </div>
             ))}
           </div>
 
           {/* === SECTION 3: Study Topics === */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
-            <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '16px' }}>
+            <h2 className="idx-section-title">
               {language === 'ru' ? 'Темы для изучения' : 'Θέματα μελέτης'}
             </h2>
-            <Link to="/learn" style={{ fontSize: 'clamp(13px, 0.9vw, 17px)', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
+            <Link to="/learn" className="idx-see-all">
               {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8 qhd:mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {TOPICS.map(topic => {
               const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
-                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: 'clamp(16px, 1.4vw, 28px)' }}>
+                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}>
                     <div>
-                      <div style={{
-                        width: 'clamp(38px, 2.8vw, 54px)', height: 'clamp(38px, 2.8vw, 54px)', borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.5)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 'clamp(18px, 1.4vw, 26px)', marginBottom: '8px',
-                      }}>
+                      <div className="idx-topic-emoji-wrap">
                         {topic.emoji}
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: 'clamp(13px, 0.9vw, 17px)', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
-                      <div className="idx-topic-sub" style={{ fontSize: 'clamp(11px, 0.75vw, 14px)', color: 'hsl(var(--muted-foreground))', marginTop: '2px', lineHeight: 1.3 }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
+                      <div className="idx-topic-name">{t(`topic.${topic.id}`)}</div>
+                      <div className="idx-topic-sub">{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
                     </div>
                     <div style={{ marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 0.65vw, 13px)', marginBottom: '4px', color: 'hsl(var(--muted-foreground))' }}>
-                        <span>{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
-                        <span>{acc}%</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <span className="idx-micro">{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
+                        <span className="idx-micro">{acc}%</span>
                       </div>
                       <div style={{ height: '3px', background: 'rgba(0,0,0,0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
                         <div className={`progress-fill-${topic.id}`} style={{ height: '100%', width: `${acc}%`, borderRadius: '9999px', transition: 'width 0.5s ease' }} />
@@ -250,28 +229,23 @@ export default function Index() {
           </div>
 
           {/* === SECTION 4: Learning Modes === */}
-          <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
+          <h2 className="idx-section-title" style={{ marginBottom: '16px' }}>
             {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
             {[
               { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
               { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
               { emoji: '🎓', id: 'exam',       href: '/learn/exam', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
             ].map(mode => (
               <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
-                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: 'clamp(14px, 1.1vw, 22px)', cursor: 'pointer', padding: 'clamp(16px, 1.4vw, 28px) clamp(18px, 1.5vw, 30px)' }}>
-                  <div style={{
-                    width: 'clamp(42px, 3vw, 60px)', height: 'clamp(42px, 3vw, 60px)', borderRadius: '50%',
-                    border: '1.5px solid rgba(47,53,50,0.12)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 'clamp(20px, 1.5vw, 28px)', flexShrink: 0,
-                  }}>
+                <div className="glass-panel idx-mode-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
+                  <div className="idx-mode-emoji-wrap">
                     {mode.emoji}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 500, fontSize: 'clamp(14px, 1vw, 19px)', color: '#2F3532' }}>{t(`mode.${mode.id}`)}</div>
-                    <div style={{ fontSize: 'clamp(12px, 0.8vw, 16px)', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{mode.desc}</div>
+                    <div className="idx-mode-title">{t(`mode.${mode.id}`)}</div>
+                    <div className="idx-body" style={{ marginTop: '2px' }}>{mode.desc}</div>
                   </div>
                 </div>
               </Link>
