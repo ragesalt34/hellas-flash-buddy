@@ -103,10 +103,10 @@ export default function Index() {
         <MobileDashboard studyStats={studyStats} questionsCount={questionsCount ?? 0} />
 
         {/* ── DESKTOP: original dashboard (hidden on mobile via CSS) ── */}
-        <div className="glp-mobile-hidden max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2200px] mx-auto px-4 sm:px-6 xl:px-10 2xl:px-20 py-6 xl:py-10 2xl:py-14 relative z-10">
+        <div className="glp-mobile-hidden max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2200px] mx-auto px-4 sm:px-6 fhd:px-10 qhd:px-20 py-6 fhd:py-10 qhd:py-14 relative z-10">
 
           {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
-          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 2xl:gap-8 mb-4 xl:mb-6 2xl:mb-8">
+          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 fhd:gap-6 qhd:gap-8 mb-4 fhd:mb-6 qhd:mb-8">
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
               <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
@@ -191,7 +191,7 @@ export default function Index() {
           </div>
 
           {/* === SECTION 2: Stats row === */}
-          <div className="grid grid-cols-2 gap-4 xl:gap-6 2xl:gap-8 mb-6 xl:mb-8 2xl:mb-10">
+          <div className="grid grid-cols-2 gap-4 fhd:gap-6 qhd:gap-8 mb-6 fhd:mb-8 qhd:mb-10">
             {[
               { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
@@ -216,7 +216,7 @@ export default function Index() {
               {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8 2xl:mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8 qhd:mb-10">
             {TOPICS.map(topic => {
               const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
@@ -253,7 +253,7 @@ export default function Index() {
           <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
             {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8">
             {[
               { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
               { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
@@ -295,7 +295,7 @@ export default function Index() {
   // Guest Landing Page
   return (
     <Layout>
-      <div className="idx-guest-container max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2100px] mx-auto px-4 sm:px-6 xl:px-12 2xl:px-20 py-12 relative z-10">
+      <div className="idx-guest-container max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2100px] mx-auto px-4 sm:px-6 fhd:px-12 qhd:px-20 py-12 relative z-10">
 
         {/* Hero */}
         <div className="glass-panel text-center max-w-2xl mx-auto mb-12 idx-hero" style={{ padding: '48px 40px' }}>

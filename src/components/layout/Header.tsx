@@ -41,8 +41,8 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-4 z-50 px-4 xl:px-8 2xl:px-16 mb-8 2xl:mb-12">
-      <div className="max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2200px] mx-auto pill-header flex items-center justify-between h-[60px] xl:h-[70px] 2xl:h-[80px] px-5 xl:px-8 2xl:px-12">
+    <header className="sticky top-4 z-50 px-4 fhd:px-8 qhd:px-16 mb-8 qhd:mb-12">
+      <div className="max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2200px] mx-auto pill-header flex items-center justify-between h-[60px] fhd:h-[70px] qhd:h-[80px] px-5 fhd:px-8 qhd:px-12">
 
         {/* Brand */}
         <Link to="/" className="flex items-center gap-3 flex-shrink-0" style={{ textDecoration: 'none' }}>
