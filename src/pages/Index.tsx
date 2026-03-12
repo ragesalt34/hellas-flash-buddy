@@ -253,15 +253,6 @@ export default function Index() {
           </div>
 
         </div>
-        <style>{`
-          @media (max-width: 430px) {
-            .idx-dash-stat-value { font-size: 24px !important; }
-            .idx-section-title { font-size: 18px !important; }
-            .idx-greeting-title { font-size: 22px !important; }
-            .idx-topic-card { min-height: 130px !important; }
-            .idx-topic-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-          }
-        `}</style>
       </Layout>
     );
   }
