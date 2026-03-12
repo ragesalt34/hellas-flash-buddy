@@ -1495,6 +1495,24 @@
   .glp-mobile-root { display: none; }
 }
 
+/* Stats page responsive container */
+.stats-page-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (min-width: 1920px) {
+  .stats-page-container {
+    max-width: 1500px !important;
+    padding: 32px 24px 100px !important;
+  }
+}
+@media (min-width: 2560px) {
+  .stats-page-container {
+    max-width: 2000px !important;
+    padding: 44px 32px 120px !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════════
    24" Monitor Adaptation (FHD) — 1920px+
    ═══════════════════════════════════════════════════ */
