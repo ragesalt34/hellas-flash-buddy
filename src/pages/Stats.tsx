@@ -279,7 +279,7 @@ export default function Stats() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
+      <div className="stats-page-container" style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 80px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: 24 }}>

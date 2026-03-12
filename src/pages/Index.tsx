@@ -295,7 +295,7 @@ export default function Index() {
   // Guest Landing Page
   return (
     <Layout>
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 relative z-10">
+      <div className="idx-guest-container max-w-[1200px] xl:max-w-[1600px] 2xl:max-w-[2100px] mx-auto px-4 sm:px-6 xl:px-12 2xl:px-20 py-12 relative z-10">
 
         {/* Hero */}
         <div className="glass-panel text-center max-w-2xl mx-auto mb-12 idx-hero" style={{ padding: '48px 40px' }}>
