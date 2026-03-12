@@ -106,7 +106,7 @@ export default function Index() {
         <div className="glp-mobile-hidden max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2200px] mx-auto px-4 sm:px-6 fhd:px-10 qhd:px-20 py-6 fhd:py-10 qhd:py-14 relative z-10">
 
           {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
-          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 2xl:gap-8 mb-4 xl:mb-6 2xl:mb-8">
+          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 fhd:gap-6 qhd:gap-8 mb-4 fhd:mb-6 qhd:mb-8">
             {/* Greeting */}
             <div className="glass-panel flex flex-col justify-center" style={{ padding: 'clamp(20px, 2vw, 40px)' }}>
               <span style={{ fontSize: 'clamp(11px, 0.7vw, 14px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
