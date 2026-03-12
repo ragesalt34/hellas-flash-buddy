@@ -253,7 +253,7 @@ export default function Index() {
           <h2 className="idx-section-title" style={{ fontSize: 'clamp(20px, 1.4vw, 28px)', fontWeight: 500, color: '#2F3532', marginBottom: 'clamp(16px, 1.2vw, 28px)' }}>
             {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 xl:gap-5 2xl:gap-7 mb-6 xl:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 fhd:gap-5 qhd:gap-7 mb-6 fhd:mb-8">
             {[
               { emoji: '📚', id: 'flashcards', href: '/learn', desc: language === 'ru' ? 'Флэш-карточки с переворотом' : 'Γυρίστε κάρτες για μάθηση' },
               { emoji: '✏️', id: 'quiz',       href: '/learn', desc: language === 'ru' ? 'Тест с 4 вариантами' : 'Τεστ πολλαπλής επιλογής' },
