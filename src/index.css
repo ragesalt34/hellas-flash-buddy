@@ -1728,3 +1728,71 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════
+   FHD stats card values — larger numbers on 24"+
+   ═══════════════════════════════════════════════════ */
+@media (min-width: 1920px) {
+  /* Dashboard big stat number */
+  .idx-dash-stat-value {
+    font-size: clamp(44px, 3vw, 64px) !important;
+  }
+  /* Stats page heading */
+  .stats-page-container h1 {
+    font-size: 32px !important;
+  }
+  /* Stats page tab font */
+  .stats-page-container button[style] {
+    font-size: 15px !important;
+    padding: 9px 16px !important;
+  }
+  /* Stats 4-card values */
+  .stats-grid-4 .glass-panel [style*="font-size: 32"] {
+    font-size: 40px !important;
+  }
+  /* Guest landing hero */
+  .idx-guest-container .idx-hero {
+    padding: 64px 56px !important;
+  }
+  .idx-hero-title {
+    font-size: 52px !important;
+  }
+  .idx-hero-title + p {
+    font-size: 18px !important;
+  }
+  /* Guest stats cards */
+  .idx-stats-emoji { font-size: 38px !important; }
+  .idx-stats-value { font-size: 40px !important; }
+}
+
+@media (min-width: 2560px) {
+  /* Dashboard big stat number */
+  .idx-dash-stat-value {
+    font-size: clamp(56px, 3.5vw, 80px) !important;
+  }
+  /* Stats page heading */
+  .stats-page-container h1 {
+    font-size: 42px !important;
+  }
+  .stats-page-container p[style] {
+    font-size: 16px !important;
+  }
+  /* Stats 4-card values */
+  .stats-grid-4 .glass-panel [style*="font-size: 32"] {
+    font-size: 50px !important;
+  }
+  /* Guest landing hero */
+  .idx-guest-container .idx-hero {
+    padding: 80px 72px !important;
+  }
+  .idx-hero-title {
+    font-size: 68px !important;
+  }
+  .idx-hero-title + p {
+    font-size: 22px !important;
+  }
+  /* Guest stats cards */
+  .idx-stats-emoji { font-size: 46px !important; }
+  .idx-stats-value { font-size: 52px !important; }
+}
+
+
