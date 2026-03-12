@@ -1496,88 +1496,217 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   24" Monitor Adaptation — 1920px+
+   24" Monitor Adaptation (FHD) — 1920px+
    ═══════════════════════════════════════════════════ */
 @media (min-width: 1920px) {
-  /* Body dot grid — scale up slightly */
+  /* Body dot grid — scale up */
   body {
-    background-size: 32px 32px;
+    background-size: 30px 30px;
   }
 
-  /* Glass panel — more generous padding and radius */
+  /* Glass panel */
   .glass-panel {
-    border-radius: 20px !important;
+    border-radius: 28px !important;
+    padding: 32px !important;
+  }
+  .glass-panel:hover {
+    transform: translateY(-3px) !important;
   }
 
-  /* Pill header wider */
+  /* Pill header */
   .pill-header {
     border-radius: 28px !important;
   }
 
-  /* Pebbles larger */
-  .pebble, .pebble-active, .pebble-current {
-    width: 36px !important;
-    height: 36px !important;
+  /* Header logo badge */
+  .header-logo-badge {
+    width: 46px !important;
+    height: 46px !important;
+    font-size: 17px !important;
+  }
+
+  /* Header brand name */
+  .header-brand-name {
+    font-size: 19px !important;
+  }
+
+  /* Header nav links */
+  .header-nav-link {
+    font-size: 16px !important;
+    padding: 8px 20px !important;
+  }
+
+  /* Header user pill */
+  .header-user-pill {
+    padding: 6px 18px 6px 6px !important;
+  }
+  .header-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 13px !important;
+  }
+  .header-username {
+    font-size: 15px !important;
+    max-width: 160px !important;
+  }
+
+  /* Pebbles */
+  .pebble {
+    width: 38px !important;
+    height: 38px !important;
   }
 
   /* btn-pebble */
   .btn-pebble {
-    padding: 10px 22px !important;
+    padding: 12px 26px !important;
     font-size: 15px !important;
     border-radius: 16px !important;
+    gap: 9px !important;
   }
 
-  /* Ambient blobs — scale up */
+  /* Progress bar fills */
+  .progress-fill-history,
+  .progress-fill-culture,
+  .progress-fill-laws,
+  .progress-fill-geography {
+    height: 4px !important;
+  }
+
+  /* Text micro */
+  .text-micro {
+    font-size: 12px !important;
+    letter-spacing: 0.07em !important;
+  }
+
+  /* Activity bars */
+  .activity-bar {
+    border-radius: 6px !important;
+  }
+
+  /* Ambient blobs */
   .ambient-blob-1 {
-    width: 700px !important;
-    height: 700px !important;
+    width: 750px !important;
+    height: 750px !important;
   }
   .ambient-blob-2 {
-    width: 500px !important;
-    height: 500px !important;
+    width: 600px !important;
+    height: 600px !important;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 7px; }
+
+  /* lp-page styles */
+  .lp-topic-grid {
+    gap: 28px !important;
+  }
+  .lp-topic-card {
+    border-radius: 28px !important;
   }
 }
 
 /* ═══════════════════════════════════════════════════
-   27" Monitor Adaptation — 2560px+
+   27" Monitor Adaptation (QHD / 4K) — 2560px+
    ═══════════════════════════════════════════════════ */
 @media (min-width: 2560px) {
   body {
-    background-size: 40px 40px;
+    background-size: 38px 38px;
   }
 
+  /* Glass panel */
   .glass-panel {
-    border-radius: 24px !important;
+    border-radius: 32px !important;
+    padding: 44px !important;
+  }
+  .glass-panel:hover {
+    transform: translateY(-4px) !important;
   }
 
+  /* Pill header */
   .pill-header {
     border-radius: 32px !important;
   }
 
-  .pebble, .pebble-active, .pebble-current {
-    width: 44px !important;
-    height: 44px !important;
+  /* Header logo badge */
+  .header-logo-badge {
+    width: 54px !important;
+    height: 54px !important;
+    font-size: 19px !important;
   }
 
-  .btn-pebble {
-    padding: 12px 28px !important;
-    font-size: 17px !important;
-    border-radius: 18px !important;
+  /* Header brand */
+  .header-brand-name {
+    font-size: 22px !important;
+  }
+
+  /* Header nav links */
+  .header-nav-link {
+    font-size: 18px !important;
+    padding: 10px 24px !important;
+  }
+
+  /* Header user pill */
+  .header-user-pill {
+    padding: 7px 22px 7px 7px !important;
     gap: 10px !important;
   }
+  .header-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 15px !important;
+  }
+  .header-username {
+    font-size: 17px !important;
+    max-width: 200px !important;
+  }
 
+  /* Pebbles */
+  .pebble {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  /* btn-pebble */
+  .btn-pebble {
+    padding: 14px 34px !important;
+    font-size: 18px !important;
+    border-radius: 18px !important;
+    gap: 11px !important;
+  }
+
+  /* Progress bar height */
+  .progress-fill-history,
+  .progress-fill-culture,
+  .progress-fill-laws,
+  .progress-fill-geography {
+    height: 5px !important;
+  }
+
+  /* Text micro */
+  .text-micro {
+    font-size: 13px !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  /* Ambient blobs */
   .ambient-blob-1 {
-    width: 900px !important;
-    height: 900px !important;
+    width: 1000px !important;
+    height: 1000px !important;
   }
   .ambient-blob-2 {
-    width: 650px !important;
-    height: 650px !important;
+    width: 800px !important;
+    height: 800px !important;
   }
 
-  /* Scrollbar wider */
-  ::-webkit-scrollbar {
-    width: 8px;
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 9px; }
+
+  /* lp-page styles */
+  .lp-topic-grid {
+    gap: 36px !important;
+  }
+  .lp-topic-card {
+    border-radius: 36px !important;
   }
 }
 
