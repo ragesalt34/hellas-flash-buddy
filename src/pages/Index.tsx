@@ -191,7 +191,7 @@ export default function Index() {
           </div>
 
           {/* === SECTION 2: Stats row === */}
-          <div className="grid grid-cols-2 gap-4 xl:gap-6 2xl:gap-8 mb-6 xl:mb-8 2xl:mb-10">
+          <div className="grid grid-cols-2 gap-4 fhd:gap-6 qhd:gap-8 mb-6 fhd:mb-8 qhd:mb-10">
             {[
               { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
