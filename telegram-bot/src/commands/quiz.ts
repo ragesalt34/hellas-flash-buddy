@@ -20,7 +20,7 @@ export async function handleQuiz(ctx: Context): Promise<void> {
   if (!from) return;
 
   // Parse topic from message text
-  const text = 'text' in ctx.message! ? (ctx.message as { text: string }).text : '';
+  const text = ctx.message && 'text' in ctx.message ? (ctx.message as { text: string }).text : '';
   const args = text.split(' ').slice(1).join(' ');
   const topic = parseTopic(args || undefined);
 
