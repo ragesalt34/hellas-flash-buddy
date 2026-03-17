@@ -16,7 +16,7 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw } from 'lucide-react';
+import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw, MessageCircle, Unlink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type ProfileData = {
@@ -47,12 +47,19 @@ export default function Profile() {
 
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  const [linkCode, setLinkCode] = useState('');
+  const [linkError, setLinkError] = useState('');
+  const [linkSuccess, setLinkSuccess] = useState(false);
+  const [linkLoading, setLinkLoading] = useState(false);
+  const linkTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
   const nameTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const passwordTimerRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
     return () => {
       clearTimeout(nameTimerRef.current);
       clearTimeout(passwordTimerRef.current);
+      clearTimeout(linkTimerRef.current);
     };
   }, []);
 
@@ -184,6 +191,66 @@ export default function Profile() {
       setAvatarUploading(false);
     }
   };
+
+  // Telegram link status
+  const { data: telegramLink, isLoading: telegramLoading } = useQuery({
+    queryKey: ['telegram-link', user?.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('telegram_users')
+        .select('telegram_id, username, display_name')
+        .eq('user_id', user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data as { telegram_id: number; username: string | null; display_name: string | null } | null;
+    },
+    enabled: !!user,
+  });
+
+  const handleLinkTelegram = async () => {
+    const code = linkCode.trim().toUpperCase();
+    if (!code) return;
+    setLinkError('');
+    setLinkSuccess(false);
+    setLinkLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('telegram-link', {
+        body: { code },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        setLinkError(data.error);
+        return;
+      }
+      setLinkSuccess(true);
+      setLinkCode('');
+      queryClient.invalidateQueries({ queryKey: ['telegram-link', user?.id] });
+      clearTimeout(linkTimerRef.current);
+      linkTimerRef.current = setTimeout(() => setLinkSuccess(false), 3000);
+    } catch (err: any) {
+      const msg = err?.message || err?.context?.json?.error;
+      setLinkError(msg || (language === 'ru' ? 'Ошибка привязки' : 'Σφάλμα σύνδεσης'));
+    } finally {
+      setLinkLoading(false);
+    }
+  };
+
+  const unlinkMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('telegram-link', {
+        body: { action: 'unlink' },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['telegram-link', user?.id] });
+      toast.success(language === 'ru' ? 'Telegram отвязан' : 'Το Telegram αποσυνδέθηκε');
+    },
+    onError: () => {
+      toast.error(language === 'ru' ? 'Ошибка при отвязке' : 'Σφάλμα αποσύνδεσης');
+    },
+  });
 
   if (authLoading || (user && profileLoading)) {
     return (
@@ -381,8 +448,101 @@ export default function Profile() {
             </CardContent>
           </Card>
 
+          {/* Telegram */}
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.25s' }}>
+            <CardHeader>
+              <CardTitle className="font-display flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <MessageCircle className="h-4 w-4 text-primary" />
+                </div>
+                Telegram
+              </CardTitle>
+              <CardDescription>
+                {language === 'ru'
+                  ? 'Привяжи Telegram для синхронизации прогресса с ботом'
+                  : 'Συνδέστε το Telegram για συγχρονισμό με το bot'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {telegramLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              ) : telegramLink ? (
+                /* Already linked */
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-success/10 border border-success/20">
+                    <Check className="h-5 w-5 text-success shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-success">
+                        {language === 'ru' ? 'Привязан' : 'Συνδεδεμένο'}
+                      </p>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {telegramLink.username
+                          ? `@${telegramLink.username}`
+                          : telegramLink.display_name || `ID: ${telegramLink.telegram_id}`}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 text-destructive hover:text-destructive"
+                    onClick={() => unlinkMutation.mutate()}
+                    disabled={unlinkMutation.isPending}
+                  >
+                    {unlinkMutation.isPending
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <Unlink className="h-4 w-4" />}
+                    {language === 'ru' ? 'Отвязать' : 'Αποσύνδεση'}
+                  </Button>
+                </div>
+              ) : (
+                /* Not linked — show code input */
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ru'
+                      ? 'Введи код из Telegram-бота (команда /link)'
+                      : 'Εισάγετε τον κωδικό από το Telegram bot (εντολή /link)'}
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={linkCode}
+                      onChange={e => setLinkCode(e.target.value.toUpperCase())}
+                      placeholder="ABC123"
+                      maxLength={6}
+                      className="liquid-glass font-mono tracking-widest text-center uppercase max-w-[160px]"
+                      onKeyDown={e => e.key === 'Enter' && handleLinkTelegram()}
+                    />
+                    <Button
+                      onClick={handleLinkTelegram}
+                      disabled={linkLoading || linkCode.trim().length < 4}
+                      className="liquid-glass-button"
+                      variant="outline"
+                    >
+                      {linkLoading
+                        ? <Loader2 className="h-4 w-4 animate-spin" />
+                        : (language === 'ru' ? 'Привязать' : 'Σύνδεση')}
+                    </Button>
+                  </div>
+
+                  {linkError && (
+                    <div className="flex items-center gap-2 text-destructive text-sm">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      {linkError}
+                    </div>
+                  )}
+                  {linkSuccess && (
+                    <div className="flex items-center gap-2 text-success text-sm">
+                      <Check className="h-4 w-4" />
+                      {language === 'ru' ? 'Telegram привязан!' : 'Το Telegram συνδέθηκε!'}
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Danger zone */}
-          <Card className="liquid-glass-card animate-fade-in border-destructive/30" style={{ animationDelay: '0.3s' }}>
+          <Card className="liquid-glass-card animate-fade-in border-destructive/30" style={{ animationDelay: '0.35s' }}>
             <CardHeader>
               <CardTitle className="font-display flex items-center gap-2 text-lg">
                 <div className="p-2 rounded-lg bg-destructive/10">
