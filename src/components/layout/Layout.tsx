@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
+import { MobileBottomNav } from './MobileBottomNav';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LayoutProps {
@@ -20,7 +21,7 @@ export function Layout({ children }: LayoutProps) {
       <main className="flex-1 relative z-10">
         {children}
       </main>
-      <footer className="relative z-10 liquid-glass-footer py-5 text-center text-sm text-muted-foreground">
+      <footer className="relative z-10 liquid-glass-footer py-5 text-center text-sm text-muted-foreground mobile-footer-hidden">
         <div className="container">
           © {new Date().getFullYear()}{' '}
           {language === 'ru'
@@ -28,6 +29,7 @@ export function Layout({ children }: LayoutProps) {
             : 'Δρόμος προς την ελληνική ιθαγένεια. Με επιφύλαξη παντός δικαιώματος.'}
         </div>
       </footer>
+      <MobileBottomNav />
     </div>
   );
 }

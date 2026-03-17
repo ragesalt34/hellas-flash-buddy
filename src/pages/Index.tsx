@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import { MobileDashboard } from '@/components/layout/MobileDashboard';
 
 const TOPICS = [
   { id: 'history',   emoji: '🏛️', subtitle_ru: 'Древняя и современная', subtitle_el: 'Αρχαία και σύγχρονη' },
@@ -49,14 +50,20 @@ export default function Index() {
         topicTotal[q.topic] = (topicTotal[q.topic] || 0) + 1;
       });
 
+      const now = new Date();
+      const toLocalDateKey = (d: Date) =>
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
       const totalCorrect = progress.reduce((s, p) => s + (p.correct_count || 0), 0);
       const totalAnswers = progress.reduce((s, p) => s + (p.correct_count || 0) + (p.incorrect_count || 0), 0);
       const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
-      const totalSeconds = sessions
-        .filter((se: any) => (se.duration_seconds || 0) <= 1800)
+
+      const todayKey = toLocalDateKey(now);
+      const todaySeconds = sessions
+        .filter((se: any) => (se.duration_seconds || 0) <= 1800 && toLocalDateKey(new Date(se.started_at)) === todayKey)
         .reduce((s: number, se: any) => s + (se.duration_seconds || 0), 0);
-      const hours = Math.floor(totalSeconds / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const hours = Math.floor(todaySeconds / 3600);
+      const mins = Math.floor((todaySeconds % 3600) / 60);
       const studyTotalMinutes = hours * 60 + mins;
 
       // Topic progress = mastered (is_known) / total questions in topic
@@ -70,9 +77,6 @@ export default function Index() {
         Object.keys(topicTotal).map(k => [k, topicTotal[k] > 0 ? Math.round((topicMastered[k] || 0) / topicTotal[k] * 100) : 0])
       );
 
-      const now = new Date();
-      const toLocalDateKey = (d: Date) =>
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const weekDays = Array.from({ length: 7 }, (_, i) => {
         const d = new Date(now);
         d.setDate(d.getDate() - 6 + i);
@@ -95,20 +99,24 @@ export default function Index() {
   if (user) {
     return (
       <Layout>
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 relative z-10">
+        {/* ── MOBILE: GLP-1 style dashboard ── */}
+        <MobileDashboard studyStats={studyStats} questionsCount={questionsCount ?? 0} />
 
-          {/* === SECTION 1: Greeting + Streak (stacked on mobile) === */}
-          <div className="idx-top-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* ── DESKTOP: original dashboard (hidden on mobile via CSS) ── */}
+        <div className="idx-dash-wrapper glp-mobile-hidden mx-auto px-6 py-6 relative z-10">
+
+          {/* === SECTION 1: Greeting + Streak === */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {/* Greeting */}
-            <div className="glass-panel flex flex-col justify-center" style={{ padding: '20px 20px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: '6px' }}>
+            <div className="glass-panel flex flex-col justify-center">
+              <span className="idx-label">
                 {language === 'ru' ? 'Добро пожаловать' : 'Καλώς ήρθατε'}
               </span>
-              <h1 className="idx-greeting-title" style={{ fontSize: '24px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', lineHeight: 1.2 }}>
+              <h1 className="idx-greeting-title">
                 {language === 'ru' ? 'Привет, ' : 'Γεια σου, '}
                 {user.email?.split('@')[0] || (language === 'ru' ? 'друг' : 'φίλε')}!
               </h1>
-              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '6px' }}>
+              <p className="idx-body" style={{ marginTop: '6px' }}>
                 {language === 'ru' ? 'Продолжай готовиться к гражданству' : 'Συνέχισε να προετοιμάζεσαι για την ιθαγένεια'}
               </p>
               <Link to="/learn" style={{ marginTop: '16px', display: 'inline-flex' }}>
@@ -120,12 +128,12 @@ export default function Index() {
             </div>
 
             {/* Weekly Streak */}
-            <div className="glass-panel flex flex-col gap-2" style={{ padding: '20px 20px' }}>
+            <div className="glass-panel flex flex-col gap-2">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
+                <span className="idx-label">
                   {language === 'ru' ? 'Серия недели' : 'Εβδομαδιαίο σερί'}
                 </span>
-                <span style={{ fontWeight: 700, fontSize: '17px', color: '#2F3532' }}>
+                <span className="idx-streak-count">
                   {studyStats?.streakCount ?? 0} {language === 'ru' ? 'дн.' : 'ημ.'}
                 </span>
               </div>
@@ -136,11 +144,8 @@ export default function Index() {
                   const isActive = studyStats?.streak[streakIdx];
                   return (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`}
-                        style={{ width: '28px', height: '28px' }}
-                      />
-                      <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground))', fontWeight: 600 }}>{day}</span>
+                      <div className={`pebble${isActive ? (i === todayIdx ? ' pebble-current' : ' pebble-active') : ''}`} />
+                      <span className="idx-day-label">{day}</span>
                     </div>
                   );
                 })}
@@ -148,33 +153,24 @@ export default function Index() {
             </div>
 
             {/* Focus of Day */}
-            <div className="glass-panel flex flex-col justify-between" style={{ padding: '20px 20px' }}>
+            <div className="glass-panel flex flex-col justify-between">
               <div>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '3px 10px',
-                  borderRadius: '9999px',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  background: 'rgba(255,255,255,0.6)',
-                  color: '#5B8DB8',
-                  marginBottom: '8px',
-                }}>
+                <span className="idx-focus-tag">
                   {language === 'ru' ? 'Тема дня' : 'Θέμα της ημέρας'}
                 </span>
-                <h3 style={{ fontWeight: 500, fontSize: '16px', color: '#2F3532', lineHeight: 1.3 }}>
+                <h3 className="idx-focus-title">
                   {language === 'ru' ? 'История Греции' : 'Ιστορία της Ελλάδας'}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '5px' }}>
+                <p className="idx-body" style={{ marginTop: '5px' }}>
                   {language === 'ru' ? 'Изучайте ключевые события' : 'Μελετήστε σημαντικά ιστορικά γεγονότα'}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '16px' }}>
-                <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+                <span className="idx-body">
                   {questionsCount ? `${questionsCount} ${language === 'ru' ? 'карточек' : 'κάρτες'}` : '—'}
                 </span>
                 <Link to="/learn/history/flashcards">
-                  <button className="btn-pebble" style={{ padding: '7px 12px', fontSize: '12px' }}>
+                  <button className="btn-pebble">
                     {language === 'ru' ? 'Повторить' : 'Επανάληψη'}
                   </button>
                 </Link>
@@ -185,26 +181,22 @@ export default function Index() {
           {/* === SECTION 2: Stats row === */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             {[
-              { label: language === 'ru' ? 'Время учёбы' : 'Χρόνος μελέτης', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
+              { label: language === 'ru' ? 'Время учёбы сегодня' : 'Μελέτη σήμερα', value: (() => { const m = studyStats?.studyTotalMinutes ?? 0; const h = Math.floor(m / 60); const r = m % 60; const hL = language === 'ru' ? 'ч' : 'ω'; const mL = language === 'ru' ? 'м' : 'λ'; if (h > 0 && r > 0) return `${h}${hL} ${r}${mL}`; if (h > 0) return `${h}${hL}`; return `${m}${mL}`; })() },
               { label: language === 'ru' ? 'Точность' : 'Ακρίβεια', value: `${studyStats?.accuracy ?? 0}%` },
             ].map(s => (
-              <div key={s.label} className="glass-panel" style={{ padding: '18px 20px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))' }}>
-                  {s.label}
-                </span>
-                <div className="idx-dash-stat-value" style={{ fontSize: '32px', fontWeight: 500, letterSpacing: '-0.02em', color: '#2F3532', marginTop: '4px' }}>
-                  {s.value}
-                </div>
+              <div key={s.label} className="glass-panel">
+                <span className="idx-label">{s.label}</span>
+                <div className="idx-dash-stat-value">{s.value}</div>
               </div>
             ))}
           </div>
 
           {/* === SECTION 3: Study Topics === */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '16px' }}>
-            <h2 className="idx-section-title" style={{ fontSize: '20px', fontWeight: 500, color: '#2F3532' }}>
+            <h2 className="idx-section-title">
               {language === 'ru' ? 'Темы для изучения' : 'Θέματα μελέτης'}
             </h2>
-            <Link to="/learn" style={{ fontSize: '13px', color: '#2F3532', opacity: 0.6, textDecoration: 'none', fontWeight: 500 }}>
+            <Link to="/learn" className="idx-see-all">
               {language === 'ru' ? 'Все темы' : 'Προβολή όλων'}
             </Link>
           </div>
@@ -213,23 +205,18 @@ export default function Index() {
               const acc = studyStats?.topicMastery[topic.id] ?? 0;
               return (
                 <Link to={`/learn/${topic.id}/flashcards`} key={topic.id} style={{ textDecoration: 'none' }}>
-                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', padding: '16px' }}>
+                  <div className="glass-panel idx-topic-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}>
                     <div>
-                      <div style={{
-                        width: '38px', height: '38px', borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.5)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '18px', marginBottom: '8px',
-                      }}>
+                      <div className="idx-topic-emoji-wrap">
                         {topic.emoji}
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: '13px', color: '#2F3532' }}>{t(`topic.${topic.id}`)}</div>
-                      <div className="idx-topic-sub" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px', lineHeight: 1.3 }}>{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
+                      <div className="idx-topic-name">{t(`topic.${topic.id}`)}</div>
+                      <div className="idx-topic-sub">{language === 'ru' ? topic.subtitle_ru : topic.subtitle_el}</div>
                     </div>
                     <div style={{ marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '4px', color: 'hsl(var(--muted-foreground))' }}>
-                        <span>{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
-                        <span>{acc}%</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <span className="idx-micro">{language === 'ru' ? 'Прогресс' : 'Πρόοδος'}</span>
+                        <span className="idx-micro">{acc}%</span>
                       </div>
                       <div style={{ height: '3px', background: 'rgba(0,0,0,0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
                         <div className={`progress-fill-${topic.id}`} style={{ height: '100%', width: `${acc}%`, borderRadius: '9999px', transition: 'width 0.5s ease' }} />
@@ -242,7 +229,7 @@ export default function Index() {
           </div>
 
           {/* === SECTION 4: Learning Modes === */}
-          <h2 className="idx-section-title" style={{ fontSize: '20px', fontWeight: 500, color: '#2F3532', marginBottom: '16px' }}>
+          <h2 className="idx-section-title" style={{ marginBottom: '16px' }}>
             {language === 'ru' ? 'Режимы обучения' : 'Τρόποι μάθησης'}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
@@ -252,18 +239,13 @@ export default function Index() {
               { emoji: '🎓', id: 'exam',       href: '/learn/exam', desc: language === 'ru' ? 'Симуляция экзамена' : 'Προσομοιώστε την εξέταση' },
             ].map(mode => (
               <Link to={mode.href} key={mode.id} style={{ textDecoration: 'none' }}>
-                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', padding: '16px 18px' }}>
-                  <div style={{
-                    width: '42px', height: '42px', borderRadius: '50%',
-                    border: '1.5px solid rgba(47,53,50,0.12)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '20px', flexShrink: 0,
-                  }}>
+                <div className="glass-panel idx-mode-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
+                  <div className="idx-mode-emoji-wrap">
                     {mode.emoji}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 500, fontSize: '14px', color: '#2F3532' }}>{t(`mode.${mode.id}`)}</div>
-                    <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{mode.desc}</div>
+                    <div className="idx-mode-title">{t(`mode.${mode.id}`)}</div>
+                    <div className="idx-body" style={{ marginTop: '2px' }}>{mode.desc}</div>
                   </div>
                 </div>
               </Link>
@@ -271,15 +253,6 @@ export default function Index() {
           </div>
 
         </div>
-        <style>{`
-          @media (max-width: 430px) {
-            .idx-dash-stat-value { font-size: 24px !important; }
-            .idx-section-title { font-size: 18px !important; }
-            .idx-greeting-title { font-size: 22px !important; }
-            .idx-topic-card { min-height: 130px !important; }
-            .idx-topic-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-          }
-        `}</style>
       </Layout>
     );
   }
@@ -287,7 +260,7 @@ export default function Index() {
   // Guest Landing Page
   return (
     <Layout>
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 relative z-10">
+      <div className="idx-guest-container max-w-[1200px] fhd:max-w-[1600px] qhd:max-w-[2100px] mx-auto px-4 sm:px-6 fhd:px-12 qhd:px-20 py-12 relative z-10">
 
         {/* Hero */}
         <div className="glass-panel text-center max-w-2xl mx-auto mb-12 idx-hero" style={{ padding: '48px 40px' }}>
