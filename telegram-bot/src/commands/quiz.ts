@@ -112,6 +112,6 @@ export async function sendQuestion(ctx: Context, session: QuizSession): Promise<
 
   await updateSession(session.id, {
     current_answer_order: answerOptions,
-    ...(sentMessage ? { last_message_id: sentMessage.message_id } : {}),
+    ...(sentMessage?.message_id ? { last_message_id: sentMessage.message_id } : {}),
   });
 }

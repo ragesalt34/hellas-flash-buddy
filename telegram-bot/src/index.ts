@@ -2,9 +2,8 @@ import 'dotenv/config';
 import { bot } from './bot';
 import { handleStart } from './commands/start';
 import { handleQuiz } from './commands/quiz';
-import { handleFlashcards, handleFlashcardCallback } from './commands/flashcards';
+import { handleFlashcards, handleFlashcardCallback, cleanupStaleSessions } from './commands/flashcards';
 import { handleStats } from './commands/stats';
-import { handleLink, handleLinkCallback } from './commands/link';
 import { handleRemind } from './commands/remind';
 import {
   handleQuizAnswer,
@@ -13,14 +12,14 @@ import {
   handleRestart,
 } from './callbacks/quizAnswer';
 import { startScheduler } from './scheduler';
+import { withErrorHandler } from './utils/withErrorHandler';
 
 // Commands
-bot.start(handleStart);
-bot.command('quiz', handleQuiz);
-bot.command('flashcards', handleFlashcards);
-bot.command('stats', handleStats);
-bot.command('link', handleLink);
-bot.command('remind', handleRemind);
+bot.start(withErrorHandler(handleStart));
+bot.command('quiz', withErrorHandler(handleQuiz));
+bot.command('flashcards', withErrorHandler(handleFlashcards));
+bot.command('stats', withErrorHandler(handleStats));
+bot.command('remind', withErrorHandler(handleRemind));
 bot.command('help', (ctx) =>
   ctx.reply(
     `*Команды бота:*\n\n` +
@@ -28,8 +27,7 @@ bot.command('help', (ctx) =>
       `/quiz история|культура|право|география — по теме\n` +
       `/flashcards — флеш-карточки с SRS\n` +
       `/stats — твоя статистика\n` +
-      `/link — привязать веб-аккаунт\n` +
-      `/remind ЧЧ:ММ — ежедневное напоминание\n` +
+      `/remind ЧЧ:ММ [часовой пояс] — ежедневное напоминание\n` +
       `/remind off — отключить напоминание`,
     { parse_mode: 'Markdown' }
   )
@@ -54,16 +52,12 @@ bot.on('callback_query', async (ctx) => {
       await handleRestart(ctx, data.slice(8));
     } else if (data.startsWith('fc:')) {
       await handleFlashcardCallback(ctx, data.slice(3));
-    } else if (data.startsWith('link:')) {
-      await handleLinkCallback(ctx, data.slice(5));
     } else if (data === 'menu:quiz') {
       await handleQuiz(ctx);
     } else if (data === 'menu:flashcards') {
       await handleFlashcards(ctx);
     } else if (data === 'menu:stats') {
       await handleStats(ctx);
-    } else if (data === 'menu:link') {
-      await handleLink(ctx);
     } else {
       await ctx.answerCbQuery();
     }
@@ -86,6 +80,12 @@ bot.catch((err, ctx) => {
 // Start
 async function main() {
   startScheduler();
+
+  // Cleanup stale flashcard sessions every 10 minutes
+  setInterval(() => {
+    const cleaned = cleanupStaleSessions();
+    if (cleaned > 0) console.log(`Cleaned ${cleaned} stale flashcard sessions`);
+  }, 10 * 60 * 1000);
 
   const webhookUrl = process.env.WEBHOOK_URL;
   if (webhookUrl && process.env.NODE_ENV === 'production') {

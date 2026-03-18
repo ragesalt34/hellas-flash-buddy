@@ -27,16 +27,6 @@ export async function fetchQuizQuestions(
   topic: string,
   limit = 10
 ): Promise<QuizQuestion[]> {
-  let query = supabase
-    .from('questions')
-    .select('id, question, correct_answer, wrong_answers, explanation, topic')
-    .order('random' as never);
-
-  if (topic !== 'mixed') {
-    query = query.eq('topic', topic);
-  }
-
-  // Use random ordering via RPC or fallback to limit
   const { data, error } = await supabase.rpc('get_random_questions', {
     p_topic: topic === 'mixed' ? null : topic,
     p_limit: limit,
@@ -44,12 +34,15 @@ export async function fetchQuizQuestions(
 
   if (error) {
     // Fallback: direct query without random RPC
-    const { data: fallback, error: fallbackError } = await supabase
+    let fallbackQuery = supabase
       .from('questions')
-      .select('id, question, correct_answer, wrong_answers, explanation, topic')
-      .eq(topic !== 'mixed' ? 'topic' : 'id', topic !== 'mixed' ? topic : supabase)
-      .limit(limit);
+      .select('id, question, correct_answer, wrong_answers, explanation, topic');
 
+    if (topic !== 'mixed') {
+      fallbackQuery = fallbackQuery.eq('topic', topic);
+    }
+
+    const { data: fallback, error: fallbackError } = await fallbackQuery.limit(limit);
     if (fallbackError) throw fallbackError;
     return shuffleArray((fallback ?? []) as QuizQuestion[]);
   }
@@ -146,6 +139,35 @@ export async function fetchRandomFlashcards(limit = 20): Promise<FlashcardItem[]
     srs_level: 0,
     next_review_at: null,
   }));
+}
+
+// SRS intervals: grade 1 (Hard) resets, grade 2 (Good) advances +1, grade 3 (Easy) advances +2
+const SRS_INTERVALS_MS = [
+  1 * 60 * 1000,            // level 0 → 1 min
+  10 * 60 * 1000,           // level 1 → 10 min
+  24 * 60 * 60 * 1000,      // level 2 → 1 day
+  3 * 24 * 60 * 60 * 1000,  // level 3 → 3 days
+  7 * 24 * 60 * 60 * 1000,  // level 4 → 7 days
+  14 * 24 * 60 * 60 * 1000, // level 5 → 14 days
+  30 * 24 * 60 * 60 * 1000, // level 6 → 30 days
+];
+
+export function computeNextReview(
+  currentLevel: number,
+  grade: number
+): { newLevel: number; nextReviewAt: string } {
+  let newLevel: number;
+  if (grade === 1) {
+    newLevel = 0;
+  } else if (grade === 3) {
+    newLevel = Math.min(currentLevel + 2, SRS_INTERVALS_MS.length - 1);
+  } else {
+    newLevel = Math.min(currentLevel + 1, SRS_INTERVALS_MS.length - 1);
+  }
+
+  const interval = SRS_INTERVALS_MS[newLevel] ?? SRS_INTERVALS_MS[SRS_INTERVALS_MS.length - 1];
+  const nextReviewAt = new Date(Date.now() + interval).toISOString();
+  return { newLevel, nextReviewAt };
 }
 
 export function shuffleArray<T>(arr: T[]): T[] {

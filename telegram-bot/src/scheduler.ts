@@ -8,19 +8,27 @@ export function startScheduler(): void {
     try {
       const users = await getUsersWithReminder();
       const now = new Date();
-      const nowHH = now.getUTCHours().toString().padStart(2, '0');
-      const nowMM = now.getUTCMinutes().toString().padStart(2, '0');
-      // Simple Moscow time offset (UTC+3)
-      const mskHours = (now.getUTCHours() + 3) % 24;
-      const mskHH = mskHours.toString().padStart(2, '0');
-      const mskMM = nowMM;
 
       for (const user of users) {
         if (!user.remind_time) continue;
 
-        // Compare HH:MM (stored as MSK by default)
+        // Get current time in user's timezone (defaults to Moscow)
+        const tz = user.remind_tz || 'Europe/Moscow';
+        let userHH: string;
+        let userMM: string;
+        try {
+          const userNow = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+          userHH = userNow.getHours().toString().padStart(2, '0');
+          userMM = userNow.getMinutes().toString().padStart(2, '0');
+        } catch {
+          // Invalid timezone — fallback to Moscow
+          const mskHours = (now.getUTCHours() + 3) % 24;
+          userHH = mskHours.toString().padStart(2, '0');
+          userMM = now.getUTCMinutes().toString().padStart(2, '0');
+        }
+
         const [rh, rm] = user.remind_time.split(':');
-        if (rh === mskHH && rm === mskMM) {
+        if (rh === userHH && rm === userMM) {
           try {
             await bot.telegram.sendMessage(
               user.telegram_id,

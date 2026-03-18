@@ -113,20 +113,17 @@ export async function handleQuizAnswer(ctx: Context, indexStr: string): Promise<
     });
   }
 
-  // Save progress if linked account
-  if (isCorrect || true) {
-    // Save regardless (record attempt)
-    const user = await getUser(from.id);
-    if (user?.user_id) {
-      try {
-        await supabase.rpc('upsert_progress', {
-          p_user_id: user.user_id,
-          p_question_id: question.id,
-          p_correct: isCorrect,
-        });
-      } catch (err) {
-        console.error('upsert_progress error:', err);
-      }
+  // Save progress (record every attempt)
+  const user = await getUser(from.id);
+  if (user?.user_id) {
+    try {
+      await supabase.rpc('upsert_progress', {
+        p_user_id: user.user_id,
+        p_question_id: question.id,
+        p_correct: isCorrect,
+      });
+    } catch (err) {
+      console.error('upsert_progress error:', err);
     }
   }
 

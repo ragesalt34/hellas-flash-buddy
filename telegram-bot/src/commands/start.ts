@@ -28,7 +28,6 @@ export async function handleStart(ctx: Context): Promise<void> {
       `/quiz география — география\n` +
       `/flashcards — флеш-карточки (SRS)\n` +
       `/stats — твоя статистика\n` +
-      `/link — привязать веб-аккаунт\n` +
       `/remind 09:00 — ежедневное напоминание\n` +
       `/help — справка`,
     {
@@ -39,10 +38,7 @@ export async function handleStart(ctx: Context): Promise<void> {
             { text: '📝 Квиз', callback_data: 'menu:quiz' },
             { text: '🃏 Карточки', callback_data: 'menu:flashcards' },
           ],
-          [
-            { text: '📊 Статистика', callback_data: 'menu:stats' },
-            { text: '🔗 Привязать аккаунт', callback_data: 'menu:link' },
-          ],
+          [{ text: '📊 Статистика', callback_data: 'menu:stats' }],
         ],
       },
     }

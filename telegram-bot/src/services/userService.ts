@@ -54,23 +54,6 @@ export async function setReminder(
   if (error) throw error;
 }
 
-export async function saveLinkCode(
-  telegramId: number,
-  code: string,
-  expiresAt: Date
-): Promise<void> {
-  const { error } = await supabase
-    .from('telegram_users')
-    .update({
-      link_code: code,
-      link_code_expires_at: expiresAt.toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('telegram_id', telegramId);
-
-  if (error) throw error;
-}
-
 export async function getUsersWithReminder(): Promise<TelegramUser[]> {
   const { data, error } = await supabase
     .from('telegram_users')

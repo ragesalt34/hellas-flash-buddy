@@ -3,14 +3,27 @@ import { getUser } from '../services/userService';
 import {
   fetchDueFlashcards,
   fetchRandomFlashcards,
+  computeNextReview,
 } from '../services/questionService';
 import { FlashcardItem } from '../types';
 
 // In-memory flashcard sessions (ephemeral — acceptable for flashcards)
 const flashSessions = new Map<
   number,
-  { cards: FlashcardItem[]; index: number; messageId?: number }
+  { cards: FlashcardItem[]; index: number; messageId?: number; lastActivity: number }
 >();
+
+export function cleanupStaleSessions(maxAge = 30 * 60 * 1000): number {
+  const now = Date.now();
+  let cleaned = 0;
+  for (const [id, session] of flashSessions) {
+    if (now - session.lastActivity > maxAge) {
+      flashSessions.delete(id);
+      cleaned++;
+    }
+  }
+  return cleaned;
+}
 
 export async function handleFlashcards(ctx: Context): Promise<void> {
   const from = ctx.from;
@@ -20,7 +33,12 @@ export async function handleFlashcards(ctx: Context): Promise<void> {
   let cards: FlashcardItem[];
 
   if (user?.user_id) {
-    cards = await fetchDueFlashcards(user.user_id, 20);
+    try {
+      cards = await fetchDueFlashcards(user.user_id, 20);
+    } catch (err) {
+      console.error('fetchDueFlashcards error:', err);
+      cards = await fetchRandomFlashcards(20);
+    }
     if (cards.length === 0) {
       await ctx.reply(
         '🎉 Отлично! Нет карточек для повторения прямо сейчас.\n\nВсе карточки будут готовы к повторению позже.',
@@ -36,13 +54,9 @@ export async function handleFlashcards(ctx: Context): Promise<void> {
     }
   } else {
     cards = await fetchRandomFlashcards(20);
-    await ctx.reply(
-      '💡 *Подсказка:* Привяжи аккаунт через /link чтобы видеть только карточки для повторения и сохранять прогресс.',
-      { parse_mode: 'Markdown' }
-    );
   }
 
-  flashSessions.set(from.id, { cards, index: 0 });
+  flashSessions.set(from.id, { cards, index: 0, lastActivity: Date.now() });
   await sendFlashcard(ctx, from.id);
 }
 
@@ -87,7 +101,7 @@ export async function sendFlashcard(ctx: Context, telegramId: number): Promise<v
     },
   }) as unknown as { message_id: number };
 
-  flashSessions.set(telegramId, { ...session, messageId: sent.message_id });
+  flashSessions.set(telegramId, { ...session, messageId: sent.message_id, lastActivity: Date.now() });
 }
 
 export async function handleFlashcardCallback(
@@ -150,21 +164,28 @@ export async function handleFlashcardCallback(
     if (user?.user_id) {
       try {
         const { supabase } = await import('../supabase');
-        // grade: 1=Again → incorrect, 2/3=Good/Easy → correct
-        await supabase.rpc('upsert_progress', {
-          p_user_id: user.user_id,
-          p_question_id: card.question_id,
-          p_correct: grade !== 1,
-        });
+        const { newLevel, nextReviewAt } = computeNextReview(card.srs_level, grade);
+        await supabase
+          .from('user_progress')
+          .upsert(
+            {
+              user_id: user.user_id,
+              question_id: card.question_id,
+              srs_level: newLevel,
+              next_review_at: nextReviewAt,
+              is_known: newLevel >= 4,
+              correct: grade !== 1 ? 1 : 0,
+              incorrect: grade === 1 ? 1 : 0,
+            },
+            { onConflict: 'user_id,question_id' }
+          );
       } catch (err) {
-        console.error('upsert_progress error:', err);
+        console.error('SRS upsert error:', err);
       }
     }
 
-    flashSessions.set(from.id, { ...session, index: index + 1 });
+    flashSessions.set(from.id, { ...session, index: index + 1, lastActivity: Date.now() });
     await ctx.answerCbQuery();
     await sendFlashcard(ctx, from.id);
   }
 }
-
-export { flashSessions };

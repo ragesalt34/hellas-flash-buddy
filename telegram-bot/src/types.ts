@@ -3,8 +3,6 @@ export interface TelegramUser {
   user_id: string | null;
   username: string | null;
   display_name: string | null;
-  link_code: string | null;
-  link_code_expires_at: string | null;
   remind_time: string | null;
   remind_tz: string;
   created_at: string;
