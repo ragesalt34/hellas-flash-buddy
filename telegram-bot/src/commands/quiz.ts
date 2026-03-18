@@ -19,16 +19,15 @@ export async function handleQuiz(ctx: Context): Promise<void> {
   const from = ctx.from;
   if (!from) return;
 
-  // Parse topic from message text
-  const text = ctx.message && 'text' in ctx.message ? (ctx.message as { text: string }).text : '';
-  const args = text.split(' ').slice(1).join(' ');
-  const topic = parseTopic(args || undefined);
-
   await upsertUser(
     from.id,
     from.username,
     [from.first_name, from.last_name].filter(Boolean).join(' ') || undefined
   );
+
+  // Parse topic from message text (if provided as argument)
+  const text = ctx.message && 'text' in ctx.message ? (ctx.message as { text: string }).text : '';
+  const args = text.split(' ').slice(1).join(' ').trim();
 
   // Check for active session
   const existing = await getActiveSession(from.id);
@@ -46,7 +45,39 @@ export async function handleQuiz(ctx: Context): Promise<void> {
     return;
   }
 
-  await startQuiz(ctx, from.id, topic);
+  // If topic provided as argument, start directly
+  if (args) {
+    const topic = parseTopic(args);
+    if (topic !== 'mixed') {
+      await startQuiz(ctx, from.id, topic);
+      return;
+    }
+  }
+
+  // Show topic selection menu
+  await showTopicMenu(ctx);
+}
+
+export async function showTopicMenu(ctx: Context): Promise<void> {
+  await ctx.reply(
+    '*Выбери тему квиза:*',
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📚 Все темы', callback_data: 'topic:mixed' }],
+          [
+            { text: '🏛 История', callback_data: 'topic:history' },
+            { text: '🎭 Культура', callback_data: 'topic:culture' },
+          ],
+          [
+            { text: '⚖️ Право', callback_data: 'topic:laws' },
+            { text: '🌍 География', callback_data: 'topic:geography' },
+          ],
+        ],
+      },
+    }
+  );
 }
 
 export async function startQuiz(

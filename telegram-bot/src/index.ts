@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { bot } from './bot';
 import { handleStart } from './commands/start';
-import { handleQuiz } from './commands/quiz';
+import { handleQuiz, showTopicMenu, startQuiz } from './commands/quiz';
 import { handleFlashcards, handleFlashcardCallback, cleanupStaleSessions } from './commands/flashcards';
 import { handleStats } from './commands/stats';
 import { handleRemind } from './commands/remind';
@@ -23,12 +23,12 @@ bot.command('remind', withErrorHandler(handleRemind));
 bot.command('help', (ctx) =>
   ctx.reply(
     `*Команды бота:*\n\n` +
-      `/quiz — викторина (10 вопросов)\n` +
-      `/quiz история|культура|право|география — по теме\n` +
+      `/quiz — выбрать тему и начать квиз\n` +
       `/flashcards — флеш-карточки с SRS\n` +
       `/stats — твоя статистика\n` +
-      `/remind ЧЧ:ММ [часовой пояс] — ежедневное напоминание\n` +
-      `/remind off — отключить напоминание`,
+      `/remind ЧЧ:ММ — ежедневное напоминание\n` +
+      `/remind off — отключить напоминание\n` +
+      `/help — эта справка`,
     { parse_mode: 'Markdown' }
   )
 );
@@ -42,6 +42,7 @@ bot.on('callback_query', async (ctx) => {
   if (!data) return;
 
   try {
+    // Quiz answers
     if (data.startsWith('a:')) {
       await handleQuizAnswer(ctx, data.slice(2));
     } else if (data === 'next') {
@@ -50,14 +51,48 @@ bot.on('callback_query', async (ctx) => {
       await handleAbandon(ctx, data.slice(8));
     } else if (data.startsWith('restart:')) {
       await handleRestart(ctx, data.slice(8));
+
+    // Topic selection
+    } else if (data.startsWith('topic:')) {
+      const from = ctx.from;
+      if (!from) return;
+      await ctx.answerCbQuery();
+      const topic = data.slice(6); // 'mixed', 'history', 'culture', 'laws', 'geography'
+      await startQuiz(ctx, from.id, topic);
+
+    // Flashcard callbacks
     } else if (data.startsWith('fc:')) {
       await handleFlashcardCallback(ctx, data.slice(3));
+
+    // Menu navigation
     } else if (data === 'menu:quiz') {
-      await handleQuiz(ctx);
+      await ctx.answerCbQuery();
+      await showTopicMenu(ctx);
     } else if (data === 'menu:flashcards') {
       await handleFlashcards(ctx);
     } else if (data === 'menu:stats') {
       await handleStats(ctx);
+    } else if (data === 'menu:remind') {
+      await ctx.answerCbQuery();
+      await ctx.reply(
+        `*⏰ Ежедневное напоминание*\n\n` +
+          `Напиши команду:\n` +
+          `/remind 09:00 — по Москве\n` +
+          `/remind 09:00 Афины — по Афинам\n` +
+          `/remind off — отключить`,
+        { parse_mode: 'Markdown' }
+      );
+    } else if (data === 'menu:help') {
+      await ctx.answerCbQuery();
+      await ctx.reply(
+        `*Команды бота:*\n\n` +
+          `/quiz — выбрать тему и начать квиз\n` +
+          `/flashcards — флеш-карточки с SRS\n` +
+          `/stats — твоя статистика\n` +
+          `/remind ЧЧ:ММ — ежедневное напоминание\n` +
+          `/help — эта справка`,
+        { parse_mode: 'Markdown' }
+      );
     } else {
       await ctx.answerCbQuery();
     }

@@ -20,25 +20,16 @@ export async function handleStart(ctx: Context): Promise<void> {
   await ctx.reply(
     `Привет, ${name}! 👋\n\n` +
       `Я помогу тебе подготовиться к экзамену на греческое гражданство.\n\n` +
-      `*Команды:*\n` +
-      `/quiz — викторина (10 вопросов)\n` +
-      `/quiz история — история Греции\n` +
-      `/quiz культура — культура\n` +
-      `/quiz право — законодательство\n` +
-      `/quiz география — география\n` +
-      `/flashcards — флеш-карточки (SRS)\n` +
-      `/stats — твоя статистика\n` +
-      `/remind 09:00 — ежедневное напоминание\n` +
-      `/help — справка`,
+      `Выбери что хочешь сделать:`,
     {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [
-            { text: '📝 Квиз', callback_data: 'menu:quiz' },
-            { text: '🃏 Карточки', callback_data: 'menu:flashcards' },
-          ],
+          [{ text: '📝 Квиз', callback_data: 'menu:quiz' }],
+          [{ text: '🃏 Флеш-карточки', callback_data: 'menu:flashcards' }],
           [{ text: '📊 Статистика', callback_data: 'menu:stats' }],
+          [{ text: '⏰ Напоминание', callback_data: 'menu:remind' }],
+          [{ text: '❓ Помощь', callback_data: 'menu:help' }],
         ],
       },
     }
