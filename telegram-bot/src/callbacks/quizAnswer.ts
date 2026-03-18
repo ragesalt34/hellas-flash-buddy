@@ -191,10 +191,13 @@ export async function handleAbandon(ctx: Context, answer: string): Promise<void>
   if (!from) return;
 
   if (answer === 'no') {
+    await ctx.answerCbQuery();
     const session = await getActiveSession(from.id);
     if (session) {
-      await ctx.editMessageText('Продолжаем текущий квиз!');
-      await ctx.answerCbQuery();
+      // Clear last_message_id so sendQuestion sends a new message instead of editing
+      await updateSession(session.id, { last_message_id: null });
+      session.last_message_id = null;
+      try { await ctx.editMessageText('Продолжаем!'); } catch {}
       await sendQuestion(ctx, session);
     }
     return;
