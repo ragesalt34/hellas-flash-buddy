@@ -35,7 +35,7 @@ export async function handleRemind(ctx: Context): Promise<void> {
   const from = ctx.from;
   if (!from) return;
 
-  const text = 'text' in ctx.message! ? (ctx.message as { text: string }).text : '';
+  const text = ctx.message && 'text' in ctx.message ? (ctx.message as { text: string }).text : '';
   const args = text.split(' ').slice(1);
   const firstArg = args[0]?.trim();
 
@@ -68,9 +68,9 @@ export async function handleRemind(ctx: Context): Promise<void> {
   }
 
   const tzInput = args.slice(1).join(' ').trim() || undefined;
-  const tz = resolveTimezone(tzInput, from.language_code);
+  const tz = resolveTimezone(tzInput, from.language_code) || 'Europe/Moscow';
 
-  if (tzInput && !tz) {
+  if (tzInput && tz === 'Europe/Moscow' && !TZ_ALIASES[tzInput.trim().toLowerCase()]) {
     await ctx.reply(
       `Неизвестный часовой пояс: "${tzInput}"\n\n` +
         `Доступные: мск, Афины, Греция, или IANA формат (Europe/Athens)`

@@ -47,14 +47,15 @@ export async function handleQuizAnswer(ctx: Context, indexStr: string): Promise<
     return `${letter}  ${ans}`;
   });
 
+  const icon = isCorrect ? '✅' : '❌';
   const feedbackText =
-    `*Вопрос ${progress} | ${topicLabel}*\n` +
-    `━━━━━━━━━━━━━━━\n\n` +
+    `${icon} *Вопрос ${progress}* — ${topicLabel}\n\n` +
     `${question.question}\n\n` +
     lines.join('\n') +
     (question.explanation
       ? `\n\n💬 _${question.explanation}_`
-      : '');
+      : '') +
+    `\n`;
 
   if (session.last_message_id && ctx.chat) {
     try {
@@ -165,12 +166,11 @@ async function showResults(
   else if (pct >= 60) emoji = '👍';
 
   const text =
-    `${emoji} *Викторина завершена!*\n` +
-    `━━━━━━━━━━━━━━━\n\n` +
-    `Тема: ${topicLabel}\n` +
-    `Результат: *${score} / ${total}* (${pct}%)\n\n` +
-    `⭐ Верно: ${score}\n` +
-    `💔 Неверно: ${total - score}`;
+    `${emoji} *Викторина завершена!*\n\n` +
+    `Тема: *${topicLabel}*\n` +
+    `Результат: *${score}/${total}* (${pct}%)\n\n` +
+    `✅ Верно: ${score}\n` +
+    `❌ Неверно: ${total - score}`;
 
   await ctx.reply(text, {
     parse_mode: 'Markdown',
@@ -194,7 +194,8 @@ export async function handleAbandon(ctx: Context, answer: string): Promise<void>
     await ctx.answerCbQuery();
     const session = await getActiveSession(from.id);
     if (session) {
-      // Clear locally so sendQuestion sends a new message instead of editing the old one
+      // Clear so sendQuestion sends a new message instead of editing the old one
+      await updateSession(session.id, { last_message_id: null });
       session.last_message_id = null;
       try { await ctx.editMessageText('Продолжаем!'); } catch {}
       await sendQuestion(ctx, session);

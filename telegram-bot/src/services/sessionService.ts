@@ -50,7 +50,7 @@ export async function updateSession(
     current_index: number;
     score: number;
     answers: AnswerRecord[];
-    last_message_id: number;
+    last_message_id: number | null;
     current_answer_order: string[];
     completed_at: string;
   }>
