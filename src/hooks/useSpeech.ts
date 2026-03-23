@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
 
@@ -10,6 +11,7 @@ const urlCache = new Map<string, string>();
 const pendingKeys = new Set<string>();
 
 export function useSpeech() {
+  const { language } = useLanguage();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -55,20 +57,16 @@ export function useSpeech() {
         throw new Error("Not authenticated");
       }
 
-      let response: Response;
-      try {
-        response = await fetch(TTS_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ text, cacheKey }),
-        });
-      } finally {
-        // Always release the key, even on network error — so retries work
-        if (cacheKey) pendingKeys.delete(cacheKey);
-      }
+      const response = await fetch(TTS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text, cacheKey }),
+      });
+
+      if (cacheKey) pendingKeys.delete(cacheKey);
 
       if (!response.ok) {
         throw new Error(`TTS failed: ${response.status}`);
@@ -101,28 +99,13 @@ export function useSpeech() {
       await audio.play();
     } catch (error) {
       console.error("Speech error:", error);
-      // Clear stale cache entry so retry attempts re-fetch fresh audio
-      if (cacheKey) {
-        const cached = urlCache.get(cacheKey);
-        if (cached?.startsWith('blob:')) URL.revokeObjectURL(cached);
-        urlCache.delete(cacheKey);
-      }
       setIsSpeaking(false);
-      const lang = localStorage.getItem('language') || 'ru';
       toast.error(
-        lang === 'ru' ? 'Ошибка воспроизведения' : 'Σφάλμα αναπαραγωγής',
-        { description: lang === 'ru' ? 'Не удалось загрузить аудио' : 'Αδυναμία φόρτωσης ήχου' },
+        language === 'ru' ? 'Ошибка воспроизведения' : 'Σφάλμα αναπαραγωγής',
+        { description: language === 'ru' ? 'Не удалось загрузить аудио' : 'Αδυναμία φόρτωσης ήχου' },
       );
     }
   }, [stop]);
-
-  // Stop audio playback when component unmounts (e.g. user navigates away mid-TTS)
-  useEffect(() => {
-    return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { speak, stop, isSpeaking, isSupported: true };
 }

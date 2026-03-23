@@ -65,8 +65,9 @@ serve(async (req) => {
 
       if (searchError) {
         console.log("Text search failed, trying simple search:", searchError.message);
-        // Sanitize search term to prevent injection via .or() string interpolation
-        const searchTerm = userMessage.split(" ")[0].replace(/[%_\\]/g, "\\$&").slice(0, 100);
+        // Sanitize search term: escape LIKE special chars and strip commas to prevent
+        // PostgREST .or() filter-string injection (commas delimit conditions in .or()).
+        const searchTerm = userMessage.split(" ")[0].replace(/[%_\\,]/g, "\\$&").slice(0, 100);
         
         const { data: fallbackArticles } = await supabase
           .from("knowledge_base")

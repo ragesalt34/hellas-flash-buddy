@@ -16,7 +16,7 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw } from 'lucide-react';
+import { Loader2, Camera, User, Lock, Check, AlertCircle, RotateCcw, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type ProfileData = {
@@ -47,6 +47,12 @@ export default function Profile() {
 
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  const [linkCode, setLinkCode] = useState('');
+  const [linkLoading, setLinkLoading] = useState(false);
+  const [linkSuccess, setLinkSuccess] = useState(false);
+  const [linkError, setLinkError] = useState('');
+  const [telegramUsername, setTelegramUsername] = useState<string | null>(null);
+
   const nameTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const passwordTimerRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
@@ -68,6 +74,21 @@ export default function Profile() {
       const typed = data as unknown as ProfileData;
       if (typed) setDisplayName(typed.display_name || '');
       return typed;
+    },
+    enabled: !!user,
+  });
+
+  // Check if Telegram is already linked
+  useQuery({
+    queryKey: ['telegram-link', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('telegram_users')
+        .select('username, telegram_id')
+        .eq('user_id', user!.id)
+        .maybeSingle();
+      if (data) setTelegramUsername(data.username ?? `ID: ${data.telegram_id}`);
+      return data;
     },
     enabled: !!user,
   });
@@ -142,6 +163,54 @@ export default function Profile() {
       toast.error(language === 'ru' ? 'Ошибка при сбросе прогресса' : 'Σφάλμα επαναφοράς προόδου');
     },
   });
+
+  const handleTelegramLink = async () => {
+    const code = linkCode.trim().toUpperCase();
+    if (!code || !user) return;
+    setLinkLoading(true);
+    setLinkError('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-link`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ code }),
+        }
+      );
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Ошибка');
+      setLinkSuccess(true);
+      setLinkCode('');
+      setTelegramUsername('Telegram');
+    } catch (e: any) {
+      setLinkError(e.message);
+    } finally {
+      setLinkLoading(false);
+    }
+  };
+
+  const handleTelegramUnlink = async () => {
+    if (!user) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-link`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ action: 'unlink' }),
+      }
+    );
+    setTelegramUsername(null);
+    setLinkSuccess(false);
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -378,6 +447,83 @@ export default function Profile() {
                   ? (language === 'ru' ? 'Сохранение...' : 'Αποθήκευση...')
                   : (language === 'ru' ? 'Изменить пароль' : 'Αλλαγή κωδικού')}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Telegram linking */}
+          <Card className="liquid-glass-card animate-fade-in" style={{ animationDelay: '0.25s' }}>
+            <CardHeader>
+              <CardTitle className="font-display flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg liquid-glass-button">
+                  <Send className="h-4 w-4 text-primary" />
+                </div>
+                Telegram
+              </CardTitle>
+              <CardDescription>
+                {language === 'ru'
+                  ? 'Привяжи Telegram-бота для квизов и напоминаний'
+                  : 'Συνδέστε το Telegram bot για κουίζ και υπενθυμίσεις'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {telegramUsername ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-success">
+                    <Check className="h-4 w-4" />
+                    {language === 'ru'
+                      ? `Привязан: @${telegramUsername}`
+                      : `Συνδέθηκε: @${telegramUsername}`}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="liquid-glass-button"
+                    onClick={handleTelegramUnlink}
+                  >
+                    {language === 'ru' ? 'Отвязать' : 'Αποσύνδεση'}
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ru' ? (
+                      <>1. Напиши боту <code className="bg-muted px-1 rounded">/link</code> и получи код<br />2. Введи его ниже</>
+                    ) : (
+                      <>1. Στείλε <code className="bg-muted px-1 rounded">/link</code> στο bot και πάρε κωδικό<br />2. Εισάγαλε παρακάτω</>
+                    )}
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={linkCode}
+                      onChange={e => setLinkCode(e.target.value.toUpperCase())}
+                      placeholder="ABC123"
+                      maxLength={6}
+                      className="liquid-glass font-mono uppercase"
+                      onKeyDown={e => e.key === 'Enter' && handleTelegramLink()}
+                    />
+                    <Button
+                      onClick={handleTelegramLink}
+                      disabled={linkLoading || linkCode.length < 6}
+                      className="liquid-glass-button"
+                      variant="outline"
+                    >
+                      {linkLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (language === 'ru' ? 'Привязать' : 'Σύνδεση')}
+                    </Button>
+                  </div>
+                  {linkError && (
+                    <div className="flex items-center gap-2 text-destructive text-sm">
+                      <AlertCircle className="h-4 w-4" />
+                      {linkError}
+                    </div>
+                  )}
+                  {linkSuccess && (
+                    <div className="flex items-center gap-2 text-success text-sm">
+                      <Check className="h-4 w-4" />
+                      {language === 'ru' ? 'Telegram привязан!' : 'Το Telegram συνδέθηκε!'}
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 

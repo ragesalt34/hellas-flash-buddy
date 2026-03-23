@@ -41,16 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // Then fetch current session to set initial state
+    // Fetch current session for initial state; checkAdminRole is handled by the
+    // listener above (INITIAL_SESSION event) so we don't call it here again.
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
-      if (session?.user) {
-        void checkAdminRole(session.user.id);
-      } else {
-        setIsAdmin(false);
-      }
+      if (!session?.user) setIsAdmin(false);
     }).catch(() => {
       setIsLoading(false);
     });
@@ -76,18 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (username: string, password: string) => {
     const fakeEmail = toFakeEmail(username);
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: fakeEmail,
       password,
       options: {
         data: { display_name: username },
       },
     });
-    // Supabase may return no error but also no session for duplicate emails
-    // (when email confirmation is enabled, or identities array is empty)
-    if (!error && (!data.session || data.user?.identities?.length === 0)) {
-      return { error: new Error('User already registered') };
-    }
     return { error };
   };
 

@@ -18,6 +18,26 @@ import {
 import { StudyTimeWidget } from '@/components/StudyTimeWidget';
 
 const TOPICS = ['history', 'culture', 'laws', 'geography'] as const;
+
+function computeStreak(sessions: { started_at: string }[]): number {
+  if (!sessions || sessions.length === 0) return 0;
+  const uniqueDays = new Set(
+    sessions.map(s => {
+      const d = new Date(s.started_at);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }),
+  );
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  let streak = 0;
+  const checkDate = new Date(today);
+  if (!uniqueDays.has(todayStr)) checkDate.setDate(checkDate.getDate() - 1);
+  while (true) {
+    const ds = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+    if (uniqueDays.has(ds)) { streak++; checkDate.setDate(checkDate.getDate() - 1); } else break;
+  }
+  return streak;
+}
 type TopicKey = typeof TOPICS[number];
 
 const TOPIC_COLORS: Record<string, string> = {
@@ -89,21 +109,7 @@ export default function Stats() {
 
   useEffect(() => {
     if (!user || !studySessions || studySessions.length === 0) return;
-    const uniqueDays = new Set(
-      studySessions.map(s => {
-        const d = new Date(s.started_at);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      }),
-    );
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    let s = 0;
-    const checkDate = new Date(today);
-    if (!uniqueDays.has(todayStr)) checkDate.setDate(checkDate.getDate() - 1);
-    while (true) {
-      const ds = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
-      if (uniqueDays.has(ds)) { s++; checkDate.setDate(checkDate.getDate() - 1); } else break;
-    }
+    const s = computeStreak(studySessions);
     if (s === 0 || ![3, 7, 14, 30].includes(s)) return;
     const key = `streak_milestone_${user.id}_${s}`;
     if (localStorage.getItem(key)) return;
@@ -180,27 +186,7 @@ export default function Stats() {
       accuracy: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0,
     }));
 
-  const calculateStreak = (): number => {
-    if (!studySessions || studySessions.length === 0) return 0;
-    const uniqueDays = new Set(
-      studySessions.map(s => {
-        const d = new Date(s.started_at);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      }),
-    );
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    let streak = 0;
-    const checkDate = new Date(today);
-    if (!uniqueDays.has(todayStr)) checkDate.setDate(checkDate.getDate() - 1);
-    while (true) {
-      const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
-      if (uniqueDays.has(dateStr)) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
-      else break;
-    }
-    return streak;
-  };
-  const streak = calculateStreak();
+  const streak = computeStreak(studySessions ?? []);
 
   const examChartData = examResults
     ?.slice(0, 10).reverse()

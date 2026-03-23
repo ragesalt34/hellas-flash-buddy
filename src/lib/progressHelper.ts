@@ -13,6 +13,7 @@ export async function upsertProgress(
   userId: string,
   questionId: string,
   gradeOrCorrect: 1 | 2 | 3 | boolean,
+  lang: 'ru' | 'el' = 'ru',
 ) {
   const grade = typeof gradeOrCorrect === 'boolean'
     ? (gradeOrCorrect ? 2 : 1)
@@ -28,9 +29,8 @@ export async function upsertProgress(
   });
   if (error) {
     console.error('Error saving progress:', error);
-    const lang = localStorage.getItem('language') || 'ru';
     toast.error(
-      lang === 'ru' ? 'Ошибка записи прогресса' : 'Σφάλμα αποθήκευσης προόδου',
+      lang === 'ru' ? 'Ошибка записи прогресса' : 'Σφάλμα καταγραφής προόδου',
       { description: error.message },
     );
   }

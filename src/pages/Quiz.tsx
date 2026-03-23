@@ -119,7 +119,7 @@ export default function Quiz() {
     setIsAnswered(true);
     const isCorrect = answer === questions[currentIndex].correct_answer;
     if (isCorrect) setScore(prev => prev + 1);
-    if (user) void upsertProgress(user.id, questions[currentIndex].id, isCorrect);
+    if (user) void upsertProgress(user.id, questions[currentIndex].id, isCorrect, language);
   };
 
   const handleNext = () => {
