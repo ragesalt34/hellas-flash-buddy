@@ -9,6 +9,10 @@ const TZ_ALIASES: Record<string, string> = {
   'афины': 'Europe/Athens',
   'греция': 'Europe/Athens',
   'кипр': 'Asia/Nicosia',
+  'прага': 'Europe/Prague',
+  'чехия': 'Europe/Prague',
+  'prague': 'Europe/Prague',
+  'czech': 'Europe/Prague',
   'moscow': 'Europe/Moscow',
   'athens': 'Europe/Athens',
   'greece': 'Europe/Athens',
@@ -45,9 +49,10 @@ export async function handleRemind(ctx: Context): Promise<void> {
         `Использование: \`/remind ЧЧ:ММ [часовой пояс]\`\n\n` +
         `Примеры:\n` +
         `/remind 09:00 — по Москве\n` +
+        `/remind 09:00 Прага — по Праге\n` +
         `/remind 09:00 Афины — по Афинам\n` +
         `/remind 19:30 Europe/Athens\n\n` +
-        `Часовые пояса: мск, Москва, Афины, Греция, или IANA (Europe/Athens)\n\n` +
+        `Часовые пояса: мск, Прага, Чехия, Афины, Греция, или IANA\n\n` +
         `Для отключения: /remind off`,
       { parse_mode: 'Markdown' }
     );
@@ -74,7 +79,7 @@ export async function handleRemind(ctx: Context): Promise<void> {
   if (tzInput && !resolved) {
     await ctx.reply(
       `Неизвестный часовой пояс: "${tzInput}"\n\n` +
-        `Доступные: мск, Афины, Греция, или IANA формат (Europe/Athens)`
+        `Доступные: мск, Прага, Чехия, Афины, Греция, или IANA формат (Europe/Prague)`
     );
     return;
   }
@@ -83,7 +88,13 @@ export async function handleRemind(ctx: Context): Promise<void> {
 
   await setReminder(from.id, firstArg, tz);
 
-  const tzLabel = tz === 'Europe/Moscow' ? 'МСК' : tz === 'Europe/Athens' ? 'Афины' : tz;
+  const TZ_LABELS: Record<string, string> = {
+    'Europe/Moscow': 'МСК',
+    'Europe/Athens': 'Афины',
+    'Europe/Prague': 'Прага',
+    'Asia/Nicosia': 'Кипр',
+  };
+  const tzLabel = TZ_LABELS[tz] || tz;
   await ctx.reply(
     `Напоминание установлено на *${firstArg}* (${tzLabel}).\n\n` +
       `Каждый день в это время я напомню тебе позаниматься.`,
