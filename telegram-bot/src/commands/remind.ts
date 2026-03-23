@@ -68,15 +68,18 @@ export async function handleRemind(ctx: Context): Promise<void> {
   }
 
   const tzInput = args.slice(1).join(' ').trim() || undefined;
-  const tz = resolveTimezone(tzInput, from.language_code) || 'Europe/Moscow';
+  const resolved = resolveTimezone(tzInput, from.language_code);
 
-  if (tzInput && tz === 'Europe/Moscow' && !TZ_ALIASES[tzInput.trim().toLowerCase()]) {
+  // If user provided a timezone but it's invalid, show error
+  if (tzInput && !resolved) {
     await ctx.reply(
       `Неизвестный часовой пояс: "${tzInput}"\n\n` +
         `Доступные: мск, Афины, Греция, или IANA формат (Europe/Athens)`
     );
     return;
   }
+
+  const tz = resolved || 'Europe/Moscow';
 
   await setReminder(from.id, firstArg, tz);
 

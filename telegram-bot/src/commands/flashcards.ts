@@ -53,7 +53,13 @@ export async function handleFlashcards(ctx: Context): Promise<void> {
       return;
     }
   } else {
-    cards = await fetchRandomFlashcards(20);
+    try {
+      cards = await fetchRandomFlashcards(20);
+    } catch (err) {
+      console.error('fetchRandomFlashcards error:', err);
+      await ctx.reply('Не удалось загрузить карточки. Попробуй позже.');
+      return;
+    }
   }
 
   flashSessions.set(from.id, { cards, index: 0, lastActivity: Date.now() });
@@ -134,12 +140,27 @@ export async function handleFlashcardCallback(
       (card.explanation ? `\n\n💬 ${card.explanation}` : '');
 
     if (session.messageId && ctx.chat) {
-      await ctx.telegram.editMessageText(
-        ctx.chat.id,
-        session.messageId,
-        undefined,
-        answerText,
-        {
+      try {
+        await ctx.telegram.editMessageText(
+          ctx.chat.id,
+          session.messageId,
+          undefined,
+          answerText,
+          {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '😕 Сложно', callback_data: 'fc:grade:1' },
+                  { text: '😊 Нормально', callback_data: 'fc:grade:2' },
+                  { text: '✅ Знаю', callback_data: 'fc:grade:3' },
+                ],
+              ],
+            },
+          }
+        );
+      } catch {
+        await ctx.reply(answerText, {
           parse_mode: 'Markdown',
           reply_markup: {
             inline_keyboard: [
@@ -150,8 +171,8 @@ export async function handleFlashcardCallback(
               ],
             ],
           },
-        }
-      );
+        });
+      }
     }
     await ctx.answerCbQuery();
     return;

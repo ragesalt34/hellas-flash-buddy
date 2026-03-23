@@ -57,6 +57,9 @@ export async function handleQuizAnswer(ctx: Context, indexStr: string): Promise<
       : '') +
     `\n`;
 
+  // Answer callback FIRST to avoid Telegram timeout
+  await ctx.answerCbQuery(isCorrect ? '✅ Верно!' : '❌ Неверно');
+
   if (session.last_message_id && ctx.chat) {
     try {
       await ctx.telegram.editMessageText(
@@ -128,7 +131,6 @@ export async function handleQuizAnswer(ctx: Context, indexStr: string): Promise<
     }
   }
 
-  await ctx.answerCbQuery(isCorrect ? '✅ Верно!' : '❌ Неверно');
 }
 
 export async function handleNext(ctx: Context): Promise<void> {

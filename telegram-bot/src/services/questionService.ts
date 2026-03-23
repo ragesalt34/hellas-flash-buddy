@@ -23,33 +23,6 @@ export const TOPIC_LABELS: Record<string, string> = {
   mixed: 'Все темы',
 };
 
-export async function fetchQuizQuestions(
-  topic: string,
-  limit = 10
-): Promise<QuizQuestion[]> {
-  const { data, error } = await supabase.rpc('get_random_questions', {
-    p_topic: topic === 'mixed' ? null : topic,
-    p_limit: limit,
-  });
-
-  if (error) {
-    // Fallback: direct query without random RPC
-    let fallbackQuery = supabase
-      .from('questions')
-      .select('id, question, correct_answer, wrong_answers, explanation, topic');
-
-    if (topic !== 'mixed') {
-      fallbackQuery = fallbackQuery.eq('topic', topic);
-    }
-
-    const { data: fallback, error: fallbackError } = await fallbackQuery.limit(limit);
-    if (fallbackError) throw fallbackError;
-    return shuffleArray((fallback ?? []) as QuizQuestion[]);
-  }
-
-  return (data ?? []) as QuizQuestion[];
-}
-
 export async function fetchQuestionsRandom(
   topic: string,
   limit = 10
@@ -89,29 +62,34 @@ export async function fetchDueFlashcards(
 
   if (error) throw error;
 
-  return ((data ?? []) as unknown[]).map((row: unknown) => {
-    const r = row as {
-      question_id: string;
-      srs_level: number;
-      next_review_at: string | null;
-      questions: {
-        id: string;
-        question: string;
-        correct_answer: string;
-        explanation: string | null;
-        topic: string | null;
+  return ((data ?? []) as unknown[])
+    .filter((row: unknown) => {
+      const r = row as { questions?: unknown };
+      return r.questions != null;
+    })
+    .map((row: unknown) => {
+      const r = row as {
+        question_id: string;
+        srs_level: number;
+        next_review_at: string | null;
+        questions: {
+          id: string;
+          question: string;
+          correct_answer: string;
+          explanation: string | null;
+          topic: string | null;
+        };
       };
-    };
-    return {
-      question_id: r.question_id,
-      question: r.questions.question,
-      correct_answer: r.questions.correct_answer,
-      explanation: r.questions.explanation,
-      topic: r.questions.topic,
-      srs_level: r.srs_level,
-      next_review_at: r.next_review_at,
-    };
-  });
+      return {
+        question_id: r.question_id,
+        question: r.questions.question,
+        correct_answer: r.questions.correct_answer,
+        explanation: r.questions.explanation,
+        topic: r.questions.topic,
+        srs_level: r.srs_level,
+        next_review_at: r.next_review_at,
+      };
+    });
 }
 
 export async function fetchRandomFlashcards(limit = 20): Promise<FlashcardItem[]> {

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { bot } from './bot';
 import { handleStart } from './commands/start';
 import { handleQuiz, showTopicMenu, startQuiz } from './commands/quiz';
+import { getActiveSession } from './services/sessionService';
 import { handleFlashcards, handleFlashcardCallback, cleanupStaleSessions } from './commands/flashcards';
 import { handleStats } from './commands/stats';
 import { handleRemind } from './commands/remind';
@@ -56,8 +57,14 @@ bot.on('callback_query', async (ctx) => {
     } else if (data.startsWith('topic:')) {
       const from = ctx.from;
       if (!from) return;
+      // Prevent double session creation on rapid clicks
+      const existing = await getActiveSession(from.id);
+      if (existing) {
+        await ctx.answerCbQuery('Квиз уже идёт!');
+        return;
+      }
       await ctx.answerCbQuery();
-      const topic = data.slice(6); // 'mixed', 'history', 'culture', 'laws', 'geography'
+      const topic = data.slice(6);
       await startQuiz(ctx, from.id, topic);
 
     // Flashcard callbacks
