@@ -22,6 +22,7 @@ import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 import { upsertProgress } from '@/lib/progressHelper';
 import { playPing } from '@/utils/sound';
+import { shuffleArray } from '@/utils/shuffle';
 
 type Question = {
   id: string;
@@ -48,15 +49,6 @@ const topicEmoji: Record<TopicType, string> = {
   geography: '🗺️',
 };
 
-
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 function hexToRgba(hex: string, alpha: number) {
   const r = parseInt(hex.slice(1, 3), 16);

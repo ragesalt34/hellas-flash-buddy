@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const toFakeEmail = (username: string) =>
-    `${username.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}@hellas.local`;
+    `${encodeURIComponent(username.toLowerCase())}@hellas.local`;
 
   const signUp = async (username: string, password: string) => {
     const fakeEmail = toFakeEmail(username);

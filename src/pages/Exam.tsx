@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { playPing } from '@/utils/sound';
+import { shuffleArray } from '@/utils/shuffle';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,15 +77,6 @@ const TOPICS: QuestionTopic[] = ['history', 'culture', 'laws', 'geography'];
 const QUESTION_OPTIONS = [10, 20, 30, 0]; // 0 = all
 const TIME_OPTIONS = [15, 30, 45, 60, 0]; // 0 = no limit
 const PASSING_SCORE = 70;
-
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);

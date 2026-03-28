@@ -12,6 +12,7 @@ import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { cn } from '@/lib/utils';
 import { upsertProgress } from '@/lib/progressHelper';
 import { playPing } from '@/utils/sound';
+import { shuffleArray } from '@/utils/shuffle';
 
 type Question = { id: string; question: string; correct_answer: string; wrong_answers: string[]; explanation: string | null; };
 type TopicType = 'history' | 'culture' | 'laws' | 'geography';
@@ -24,15 +25,6 @@ const TOPIC_COLORS: Record<TopicType, string> = {
   laws: 'hsl(var(--laws))',
   geography: 'hsl(var(--geography))',
 };
-
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 export default function Quiz() {
   const { topic } = useParams<{ topic: string }>();
