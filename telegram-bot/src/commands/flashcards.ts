@@ -195,8 +195,6 @@ export async function handleFlashcardCallback(
               srs_level: newLevel,
               next_review_at: nextReviewAt,
               is_known: newLevel >= 4,
-              correct: grade !== 1 ? 1 : 0,
-              incorrect: grade === 1 ? 1 : 0,
             },
             { onConflict: 'user_id,question_id' }
           );
