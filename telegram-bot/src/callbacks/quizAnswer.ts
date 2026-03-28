@@ -206,8 +206,8 @@ export async function handleAbandon(ctx: Context, answer: string): Promise<void>
   }
 
   // yes — will be handled when /quiz is called again with startQuiz
-  await ctx.editMessageText('Хорошо! Выбери тему для нового квиза:');
   await ctx.answerCbQuery();
+  await ctx.editMessageText('Хорошо! Выбери тему для нового квиза:');
 
   if (from) {
     await startQuiz(ctx, from.id, 'mixed');

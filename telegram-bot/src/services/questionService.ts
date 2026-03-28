@@ -35,7 +35,7 @@ export async function fetchQuestionsRandom(
     query = query.eq('topic', topic);
   }
 
-  const { data, error } = await query.limit(limit * 3); // fetch more, shuffle locally
+  const { data, error } = await query; // fetch all, shuffle locally for true randomness
   if (error) throw error;
 
   const all = (data ?? []) as QuizQuestion[];
@@ -95,8 +95,7 @@ export async function fetchDueFlashcards(
 export async function fetchRandomFlashcards(limit = 20): Promise<FlashcardItem[]> {
   const { data, error } = await supabase
     .from('questions')
-    .select('id, question, correct_answer, explanation, topic')
-    .limit(limit * 3);
+    .select('id, question, correct_answer, explanation, topic');
 
   if (error) throw error;
 
