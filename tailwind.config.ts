@@ -15,24 +15,21 @@ export default {
   	extend: {
   		fontFamily: {
   			display: [
-  				'Playfair Display',
-  				'serif'
+  				'DM Sans',
+  				'ui-sans-serif',
+  				'system-ui',
+  				'sans-serif'
   			],
   			body: [
-  				'Inter',
+  				'DM Sans',
+  				'ui-sans-serif',
+  				'system-ui',
   				'sans-serif'
   			],
   			sans: [
-  				'Lato',
+  				'DM Sans',
   				'ui-sans-serif',
   				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
   				'sans-serif'
   			],
   			serif: [
