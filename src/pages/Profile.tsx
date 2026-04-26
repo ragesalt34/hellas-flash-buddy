@@ -82,7 +82,7 @@ export default function Profile() {
   useQuery({
     queryKey: ['telegram-link', user?.id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from('telegram_users')
         .select('username, telegram_id')
         .eq('user_id', user!.id)
