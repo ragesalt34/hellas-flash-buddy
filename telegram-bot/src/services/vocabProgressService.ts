@@ -28,20 +28,47 @@ function load(): void {
     if (fs.existsSync(PROGRESS_FILE)) {
       store = JSON.parse(fs.readFileSync(PROGRESS_FILE, 'utf-8'));
     }
-  } catch {
+  } catch (err) {
+    // Corrupt/partial file (e.g. process hard-killed mid-write). Preserve it for
+    // recovery instead of silently wiping every user's progress, then start fresh.
+    console.error('vocab_progress load failed — backing up corrupt file:', err);
+    try {
+      fs.renameSync(PROGRESS_FILE, `${PROGRESS_FILE}.corrupt-${Date.now()}`);
+    } catch (backupErr) {
+      console.error('vocab_progress backup failed:', backupErr);
+    }
     store = {};
   }
 }
 
 function save(): void {
+  // Atomic write: write to a temp file then rename, so a crash mid-write can't
+  // truncate/corrupt the live file (rename is atomic on the same filesystem).
+  const tmp = `${PROGRESS_FILE}.tmp`;
   try {
-    fs.writeFileSync(PROGRESS_FILE, JSON.stringify(store), 'utf-8');
+    fs.writeFileSync(tmp, JSON.stringify(store), 'utf-8');
+    fs.renameSync(tmp, PROGRESS_FILE);
   } catch (err) {
     console.error('vocab_progress save error:', err);
+    try {
+      if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    } catch {
+      /* ignore cleanup failure */
+    }
   }
 }
 
 load();
+
+/** Fisher–Yates shuffle (kept local so this DB-free service has no heavy deps). */
+function shuffle<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 export function getDueVocabIds(userId: number, allIds: number[], limit: number): number[] {
   const key = String(userId);
@@ -63,7 +90,7 @@ export function getDueVocabIds(userId: number, allIds: number[], limit: number):
   const result = [...due];
   if (result.length < limit) {
     // shuffle unseen and fill up to limit
-    const shuffled = unseen.sort(() => Math.random() - 0.5);
+    const shuffled = shuffle(unseen);
     result.push(...shuffled.slice(0, limit - result.length));
   }
   return result.slice(0, limit);
