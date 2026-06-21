@@ -1,4 +1,4 @@
-import { Context } from 'telegraf';
+import { Context } from 'grammy';
 
 export function withErrorHandler(
   handler: (ctx: Context) => Promise<void>
@@ -9,7 +9,7 @@ export function withErrorHandler(
     } catch (err) {
       console.error(`Command error [${ctx.from?.id}]:`, err);
       try {
-        await ctx.reply('Произошла ошибка. Попробуй ещё раз или напиши /start');
+        await ctx.reply('Παρουσιάστηκε σφάλμα. Δοκίμασε ξανά ή γράψε /start');
       } catch {}
     }
   };

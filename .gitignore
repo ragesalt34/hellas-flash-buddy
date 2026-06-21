@@ -15,6 +15,11 @@ dist-ssr
 .env.*
 !.env.example
 
+# Bot runtime data / local tooling (not source)
+telegram-bot/cloudflared.exe
+telegram-bot/vocab_progress.json
+*.tsbuildinfo
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

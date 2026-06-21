@@ -1,9 +1,11 @@
-import { Context } from 'telegraf';
+import { Context } from 'grammy';
 import { setReminder } from '../services/userService';
+import { DIVIDER } from '../utils/progressBar';
 
 const TIME_REGEX = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
 const TZ_ALIASES: Record<string, string> = {
+  // Russian
   'мск': 'Europe/Moscow',
   'москва': 'Europe/Moscow',
   'афины': 'Europe/Athens',
@@ -11,6 +13,18 @@ const TZ_ALIASES: Record<string, string> = {
   'кипр': 'Asia/Nicosia',
   'прага': 'Europe/Prague',
   'чехия': 'Europe/Prague',
+  // Greek
+  'αθήνα': 'Europe/Athens',
+  'αθηνα': 'Europe/Athens',
+  'ελλάδα': 'Europe/Athens',
+  'ελλαδα': 'Europe/Athens',
+  'κύπρος': 'Asia/Nicosia',
+  'κυπρος': 'Asia/Nicosia',
+  'πράγα': 'Europe/Prague',
+  'πραγα': 'Europe/Prague',
+  'μόσχα': 'Europe/Moscow',
+  'μοσχα': 'Europe/Moscow',
+  // Latin
   'prague': 'Europe/Prague',
   'czech': 'Europe/Prague',
   'moscow': 'Europe/Moscow',
@@ -45,29 +59,31 @@ export async function handleRemind(ctx: Context): Promise<void> {
 
   if (!firstArg) {
     await ctx.reply(
-      `*Ежедневное напоминание*\n\n` +
-        `Использование: \`/remind ЧЧ:ММ [часовой пояс]\`\n\n` +
-        `Примеры:\n` +
-        `/remind 09:00 — по Москве\n` +
-        `/remind 09:00 Прага — по Праге\n` +
-        `/remind 09:00 Афины — по Афинам\n` +
-        `/remind 19:30 Europe/Athens\n\n` +
-        `Часовые пояса: мск, Прага, Чехия, Афины, Греция, или IANA\n\n` +
-        `Для отключения: /remind off`,
-      { parse_mode: 'Markdown' }
+      `⏰ <b>Καθημερινή υπενθύμιση</b>\n` +
+        `${DIVIDER}\n\n` +
+        `Χρήση: <code>/remind ΩΩ:ΛΛ [ζώνη ώρας]</code>\n\n` +
+        `<b>Παραδείγματα:</b>\n` +
+        `<code>/remind 09:00</code> — ώρα Μόσχας\n` +
+        `<code>/remind 09:00 Πράγα</code> — ώρα Πράγας\n` +
+        `<code>/remind 09:00 Αθήνα</code> — ώρα Αθήνας\n` +
+        `<code>/remind 19:30 Europe/Athens</code>\n\n` +
+        `<i>Ζώνες ώρας: Μόσχα, Πράγα, Αθήνα, Ελλάδα, ή IANA</i>\n\n` +
+        `Για απενεργοποίηση: <code>/remind off</code>`,
+      { parse_mode: 'HTML' }
     );
     return;
   }
 
   if (firstArg === 'off' || firstArg === 'выкл') {
     await setReminder(from.id, null);
-    await ctx.reply('Напоминания отключены.');
+    await ctx.reply('🔕 Οι υπενθυμίσεις απενεργοποιήθηκαν.');
     return;
   }
 
   if (!TIME_REGEX.test(firstArg)) {
     await ctx.reply(
-      `Неверный формат времени. Используй ЧЧ:ММ, например: /remind 09:00`
+      `❌ Λάθος μορφή ώρας. Χρησιμοποίησε ΩΩ:ΛΛ, π.χ.: <code>/remind 09:00</code>`,
+      { parse_mode: 'HTML' }
     );
     return;
   }
@@ -78,26 +94,37 @@ export async function handleRemind(ctx: Context): Promise<void> {
   // If user provided a timezone but it's invalid, show error
   if (tzInput && !resolved) {
     await ctx.reply(
-      `Неизвестный часовой пояс: "${tzInput}"\n\n` +
-        `Доступные: мск, Прага, Чехия, Афины, Греция, или IANA формат (Europe/Prague)`
+      `❌ Άγνωστη ζώνη ώρας: "<b>${tzInput}</b>"\n\n` +
+        `<i>Διαθέσιμες: Μόσχα, Πράγα, Αθήνα, Ελλάδα, Κύπρος, ή IANA (Europe/Athens)</i>`,
+      { parse_mode: 'HTML' }
     );
     return;
   }
 
-  const tz = resolved || 'Europe/Moscow';
+  const tz = resolved || 'Europe/Athens';
 
   await setReminder(from.id, firstArg, tz);
 
   const TZ_LABELS: Record<string, string> = {
-    'Europe/Moscow': 'МСК',
-    'Europe/Athens': 'Афины',
-    'Europe/Prague': 'Прага',
-    'Asia/Nicosia': 'Кипр',
+    'Europe/Moscow': 'Μόσχα',
+    'Europe/Athens': 'Αθήνα',
+    'Europe/Prague': 'Πράγα',
+    'Asia/Nicosia': 'Κύπρος',
   };
   const tzLabel = TZ_LABELS[tz] || tz;
   await ctx.reply(
-    `Напоминание установлено на *${firstArg}* (${tzLabel}).\n\n` +
-      `Каждый день в это время я напомню тебе позаниматься.`,
-    { parse_mode: 'Markdown' }
+    `✅ <b>Η υπενθύμιση ορίστηκε</b>\n` +
+      `${DIVIDER}\n\n` +
+      `🕐 Ώρα: <b>${firstArg}</b>  ·  📍 ${tzLabel}\n\n` +
+      `<i>Κάθε μέρα αυτή την ώρα θα σου θυμίζω να μελετήσεις.</i>`,
+    {
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📝 Δοκίμασε κουίζ τώρα', callback_data: 'menu:quiz', style: 'primary' as const }],
+          [{ text: '🏠 Μενού', callback_data: 'menu:home' }],
+        ],
+      },
+    }
   );
 }

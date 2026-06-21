@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { bot } from './bot';
 import { getUsersWithReminder } from './services/userService';
+import { MESSAGE_EFFECTS, DIVIDER } from './utils/progressBar';
 
 export function startScheduler(): void {
   // Check every minute for due reminders
@@ -12,7 +13,6 @@ export function startScheduler(): void {
       for (const user of users) {
         if (!user.remind_time) continue;
 
-        // Get current time in user's timezone (defaults to Moscow)
         const tz = user.remind_tz || 'Europe/Moscow';
         let userHH: string;
         let userMM: string;
@@ -30,16 +30,21 @@ export function startScheduler(): void {
         const [rh, rm] = user.remind_time.split(':');
         if (rh === userHH && rm === userMM) {
           try {
-            await bot.telegram.sendMessage(
+            await bot.api.sendMessage(
               user.telegram_id,
-              `🔔 *Время учиться!*\n\nНе забудь пройти квиз или повторить флеш-карточки сегодня.`,
+              `🔔 <b>Ώρα για μελέτη!</b>\n` +
+                `${DIVIDER}\n\n` +
+                `Μην ξεχάσεις να κάνεις κουίζ ή να επαναλάβεις τις κάρτες σήμερα. ` +
+                `Κάθε μέρα — ένα βήμα πιο κοντά στις εξετάσεις.`,
               {
-                parse_mode: 'Markdown',
+                parse_mode: 'HTML',
+                message_effect_id: MESSAGE_EFFECTS.FIRE,
                 reply_markup: {
                   inline_keyboard: [
+                    [{ text: '🌅 Ερώτηση της ημέρας', callback_data: 'menu:qotd', style: 'success' as const }],
                     [
-                      { text: '📝 Квиз', callback_data: 'menu:quiz' },
-                      { text: '🃏 Карточки', callback_data: 'menu:flashcards' },
+                      { text: '📝 Κουίζ',  callback_data: 'menu:quiz',       style: 'primary' as const },
+                      { text: '🎴 Κάρτες', callback_data: 'menu:flashcards', style: 'primary' as const },
                     ],
                   ],
                 },

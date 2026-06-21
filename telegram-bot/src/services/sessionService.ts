@@ -78,6 +78,62 @@ export interface UserStats {
   last_activity: string | null;
 }
 
+/**
+ * Calculate user's current consecutive-day streak based on completed quiz sessions.
+ * Streak = N if user has completed at least one quiz on each of the last N days
+ * (today inclusive). Returns 0 if user didn't practice today or yesterday.
+ */
+export async function getUserStreak(telegramId: number): Promise<number> {
+  const cutoff = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('telegram_quiz_sessions')
+    .select('completed_at')
+    .eq('telegram_id', telegramId)
+    .not('completed_at', 'is', null)
+    .gte('completed_at', cutoff)
+    .order('completed_at', { ascending: false });
+
+  if (error || !data || data.length === 0) return 0;
+
+  // Convert each session's completed_at to YYYY-MM-DD (in UTC for stability)
+  const activeDays = new Set(
+    data.map((r: { completed_at: string }) => r.completed_at.slice(0, 10))
+  );
+
+  // Walk backwards from today
+  const today = new Date();
+  let streak = 0;
+  for (let i = 0; i < 60; i++) {
+    const d = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+    const key = d.toISOString().slice(0, 10);
+    if (activeDays.has(key)) {
+      streak++;
+    } else if (i === 0) {
+      // No activity today — check yesterday (streak still counts from yesterday)
+      continue;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+/** Delete incomplete sessions older than `hours` (default 24h). Call on bot startup. */
+export async function cleanupStaleQuizSessions(hours = 24): Promise<number> {
+  const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('telegram_quiz_sessions')
+    .delete()
+    .is('completed_at', null)
+    .lt('started_at', cutoff)
+    .select('id');
+  if (error) {
+    console.error('cleanupStaleQuizSessions error:', error.message);
+    return 0;
+  }
+  return data?.length ?? 0;
+}
+
 export async function getUserStats(telegramId: number): Promise<UserStats> {
   const { data, error } = await supabase
     .from('telegram_quiz_sessions')

@@ -2,11 +2,18 @@ import { supabase } from '../supabase';
 import { QuizQuestion, FlashcardItem } from '../types';
 
 const TOPIC_MAP: Record<string, string> = {
+  // Russian aliases (legacy)
   история: 'history',
   культура: 'culture',
   право: 'laws',
   законы: 'laws',
   география: 'geography',
+  // Greek aliases
+  ιστορία: 'history',
+  πολιτισμός: 'culture',
+  νομοθεσία: 'laws',
+  δίκαιο: 'laws',
+  γεωγραφία: 'geography',
 };
 
 export function parseTopic(input: string | undefined): string {
@@ -16,20 +23,52 @@ export function parseTopic(input: string | undefined): string {
 }
 
 export const TOPIC_LABELS: Record<string, string> = {
-  history: 'История',
-  culture: 'Культура',
-  laws: 'Законодательство',
-  geography: 'География',
-  mixed: 'Все темы',
+  history: 'Ιστορία',
+  culture: 'Πολιτισμός',
+  laws: 'Νομοθεσία',
+  geography: 'Γεωγραφία',
+  mixed: 'Όλα τα θέματα',
 };
+
+// --- Language helpers: prefer Greek (_el) fields, fall back to Russian ---
+const t = (el: string | null | undefined, ru: string): string =>
+  el && el.trim() ? el : ru;
+const tArr = (el: string[] | null | undefined, ru: string[]): string[] =>
+  el && el.length > 0 ? el : ru;
+
+const QUESTION_COLS =
+  'id, question, question_el, correct_answer, correct_answer_el, ' +
+  'wrong_answers, wrong_answers_el, explanation, explanation_el, topic';
+
+interface RawQuestion {
+  id: string;
+  question: string;
+  question_el: string | null;
+  correct_answer: string;
+  correct_answer_el: string | null;
+  wrong_answers: string[];
+  wrong_answers_el: string[] | null;
+  explanation: string | null;
+  explanation_el: string | null;
+  topic: string | null;
+}
+
+function toQuizQuestion(r: RawQuestion): QuizQuestion {
+  return {
+    id: r.id,
+    question: t(r.question_el, r.question),
+    correct_answer: t(r.correct_answer_el, r.correct_answer),
+    wrong_answers: tArr(r.wrong_answers_el, r.wrong_answers),
+    explanation: r.explanation_el?.trim() ? r.explanation_el : r.explanation,
+    topic: r.topic,
+  };
+}
 
 export async function fetchQuestionsRandom(
   topic: string,
   limit = 10
 ): Promise<QuizQuestion[]> {
-  let query = supabase
-    .from('questions')
-    .select('id, question, correct_answer, wrong_answers, explanation, topic');
+  let query = supabase.from('questions').select(QUESTION_COLS);
 
   if (topic !== 'mixed') {
     query = query.eq('topic', topic);
@@ -38,7 +77,7 @@ export async function fetchQuestionsRandom(
   const { data, error } = await query; // fetch all, shuffle locally for true randomness
   if (error) throw error;
 
-  const all = (data ?? []) as QuizQuestion[];
+  const all = ((data ?? []) as unknown as RawQuestion[]).map(toQuizQuestion);
   return shuffleArray(all).slice(0, limit);
 }
 
@@ -46,105 +85,95 @@ export async function fetchDueFlashcards(
   userId: string,
   limit = 20
 ): Promise<FlashcardItem[]> {
-  const { data, error } = await supabase
+  const now = new Date().toISOString();
+
+  // 1. Due cards (already seen, review time passed)
+  const { data: progressData, error: progressError } = await supabase
     .from('user_progress')
     .select(
-      `
-      question_id,
-      srs_level,
-      next_review_at,
-      questions!inner(id, question, correct_answer, explanation, topic)
-    `
+      `question_id,
+       next_review_at,
+       questions!inner(${QUESTION_COLS})`
     )
     .eq('user_id', userId)
-    .or(`next_review_at.is.null,next_review_at.lte.${new Date().toISOString()}`)
+    .or(`next_review_at.is.null,next_review_at.lte.${now}`)
+    .order('next_review_at', { ascending: true })
     .limit(limit);
 
-  if (error) throw error;
+  if (progressError) throw progressError;
 
-  return ((data ?? []) as unknown[])
-    .filter((row: unknown) => {
-      const r = row as { questions?: unknown };
-      return r.questions != null;
-    })
+  const dueCards: FlashcardItem[] = ((progressData ?? []) as unknown[])
+    .filter((row: unknown) => (row as { questions?: unknown }).questions != null)
     .map((row: unknown) => {
       const r = row as {
         question_id: string;
-        srs_level: number;
         next_review_at: string | null;
-        questions: {
-          id: string;
-          question: string;
-          correct_answer: string;
-          explanation: string | null;
-          topic: string | null;
-        };
+        questions: RawQuestion;
       };
+      const q = toQuizQuestion(r.questions);
       return {
         question_id: r.question_id,
-        question: r.questions.question,
-        correct_answer: r.questions.correct_answer,
-        explanation: r.questions.explanation,
-        topic: r.questions.topic,
-        srs_level: r.srs_level,
-        next_review_at: r.next_review_at,
+        question: q.question,
+        correct_answer: q.correct_answer,
+        explanation: q.explanation,
+        topic: q.topic,
       };
     });
+
+  // If we already have enough due cards, return them
+  if (dueCards.length >= limit) return dueCards;
+
+  // 2. Unseen cards (never rated — not in user_progress at all)
+  const seenIds = dueCards.map(c => c.question_id);
+
+  // Also fetch all seen question_ids (including not-yet-due) to exclude them
+  const { data: allProgress } = await supabase
+    .from('user_progress')
+    .select('question_id')
+    .eq('user_id', userId);
+
+  const allSeenIds = (allProgress ?? []).map((r: { question_id: string }) => r.question_id);
+  const excludeIds = [...new Set([...seenIds, ...allSeenIds])];
+
+  const { data: allQuestions, error: qError } = await supabase
+    .from('questions')
+    .select(QUESTION_COLS);
+
+  if (qError) throw qError;
+
+  const unseenCards: FlashcardItem[] = shuffleArray(
+    ((allQuestions ?? []) as unknown as RawQuestion[]).filter((q) => !excludeIds.includes(q.id))
+  )
+    .slice(0, limit - dueCards.length)
+    .map((raw) => {
+      const q = toQuizQuestion(raw);
+      return {
+        question_id: q.id,
+        question: q.question,
+        correct_answer: q.correct_answer,
+        explanation: q.explanation,
+        topic: q.topic,
+      };
+    });
+
+  return [...dueCards, ...unseenCards];
 }
 
 export async function fetchRandomFlashcards(limit = 20): Promise<FlashcardItem[]> {
   const { data, error } = await supabase
     .from('questions')
-    .select('id, question, correct_answer, explanation, topic');
+    .select(QUESTION_COLS);
 
   if (error) throw error;
 
-  const shuffled = shuffleArray(data ?? []).slice(0, limit) as {
-    id: string;
-    question: string;
-    correct_answer: string;
-    explanation: string | null;
-    topic: string | null;
-  }[];
-
-  return shuffled.map((q) => ({
+  const all = ((data ?? []) as unknown as RawQuestion[]).map(toQuizQuestion);
+  return shuffleArray(all).slice(0, limit).map((q) => ({
     question_id: q.id,
     question: q.question,
     correct_answer: q.correct_answer,
     explanation: q.explanation,
     topic: q.topic,
-    srs_level: 0,
-    next_review_at: null,
   }));
-}
-
-// SRS intervals: grade 1 (Hard) resets, grade 2 (Good) advances +1, grade 3 (Easy) advances +2
-const SRS_INTERVALS_MS = [
-  1 * 60 * 1000,            // level 0 → 1 min
-  10 * 60 * 1000,           // level 1 → 10 min
-  24 * 60 * 60 * 1000,      // level 2 → 1 day
-  3 * 24 * 60 * 60 * 1000,  // level 3 → 3 days
-  7 * 24 * 60 * 60 * 1000,  // level 4 → 7 days
-  14 * 24 * 60 * 60 * 1000, // level 5 → 14 days
-  30 * 24 * 60 * 60 * 1000, // level 6 → 30 days
-];
-
-export function computeNextReview(
-  currentLevel: number,
-  grade: number
-): { newLevel: number; nextReviewAt: string } {
-  let newLevel: number;
-  if (grade === 1) {
-    newLevel = 0;
-  } else if (grade === 3) {
-    newLevel = Math.min(currentLevel + 2, SRS_INTERVALS_MS.length - 1);
-  } else {
-    newLevel = Math.min(currentLevel + 1, SRS_INTERVALS_MS.length - 1);
-  }
-
-  const interval = SRS_INTERVALS_MS[newLevel] ?? SRS_INTERVALS_MS[SRS_INTERVALS_MS.length - 1];
-  const nextReviewAt = new Date(Date.now() + interval).toISOString();
-  return { newLevel, nextReviewAt };
 }
 
 export function shuffleArray<T>(arr: T[]): T[] {

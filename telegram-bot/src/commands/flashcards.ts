@@ -1,11 +1,10 @@
-import { Context } from 'telegraf';
+import { Context } from 'grammy';
 import { getUser } from '../services/userService';
-import {
-  fetchDueFlashcards,
-  fetchRandomFlashcards,
-  computeNextReview,
-} from '../services/questionService';
+import { fetchDueFlashcards, fetchRandomFlashcards } from '../services/questionService';
 import { FlashcardItem } from '../types';
+import { progressHeader, MESSAGE_EFFECTS } from '../utils/progressBar';
+
+const escHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // In-memory flashcard sessions (ephemeral — acceptable for flashcards)
 const flashSessions = new Map<
@@ -41,11 +40,11 @@ export async function handleFlashcards(ctx: Context): Promise<void> {
     }
     if (cards.length === 0) {
       await ctx.reply(
-        '🎉 Отлично! Нет карточек для повторения прямо сейчас.\n\nВсе карточки будут готовы к повторению позже.',
+        '🎉 Τέλεια! Δεν υπάρχουν κάρτες για επανάληψη αυτή τη στιγμή.\n\nΌλες οι κάρτες θα είναι έτοιμες για επανάληψη αργότερα.',
         {
           reply_markup: {
             inline_keyboard: [
-              [{ text: '📝 Пройти квиз', callback_data: 'menu:quiz' }],
+              [{ text: '📝 Κάνε κουίζ', callback_data: 'menu:quiz' }],
             ],
           },
         }
@@ -57,7 +56,7 @@ export async function handleFlashcards(ctx: Context): Promise<void> {
       cards = await fetchRandomFlashcards(20);
     } catch (err) {
       console.error('fetchRandomFlashcards error:', err);
-      await ctx.reply('Не удалось загрузить карточки. Попробуй позже.');
+      await ctx.reply('Δεν ήταν δυνατή η φόρτωση των καρτών. Δοκίμασε αργότερα.');
       return;
     }
   }
@@ -75,14 +74,19 @@ export async function sendFlashcard(ctx: Context, telegramId: number): Promise<v
   if (index >= cards.length) {
     flashSessions.delete(telegramId);
     await ctx.reply(
-      '✅ Сессия завершена! Все карточки пройдены.',
+      `🎉 <b>Η συνεδρία ολοκληρώθηκε!</b>\n\n` +
+        `🎴 Κάρτες που έγιναν: <b>${cards.length}</b>\n` +
+        `<i>Οι κάρτες θα επιστρέψουν όταν έρθει η ώρα της επανάληψης.</i>`,
       {
+        parse_mode: 'HTML',
+        message_effect_id: MESSAGE_EFFECTS.PARTY,
         reply_markup: {
           inline_keyboard: [
             [
-              { text: '🔄 Ещё раз', callback_data: 'fc:restart' },
-              { text: '📝 Квиз', callback_data: 'menu:quiz' },
+              { text: '🔄 Ξανά',  callback_data: 'fc:restart', style: 'success' as const },
+              { text: '📝 Κουίζ', callback_data: 'menu:quiz',  style: 'primary' as const },
             ],
+            [{ text: '🏠 Μενού', callback_data: 'menu:home' }],
           ],
         },
       }
@@ -91,21 +95,20 @@ export async function sendFlashcard(ctx: Context, telegramId: number): Promise<v
   }
 
   const card = cards[index];
-  const progress = `${index + 1}/${cards.length}`;
+  const current = index + 1;
 
   const text =
-    `*Карточка ${progress}*\n` +
-    `━━━━━━━━━━━━━━━\n\n` +
-    `${card.question}`;
+    `${progressHeader(current, cards.length, '🎴 Κάρτες')}\n\n` +
+    `<b>${escHtml(card.question)}</b>`;
 
   const sent = await ctx.reply(text, {
-    parse_mode: 'Markdown',
+    parse_mode: 'HTML',
     reply_markup: {
       inline_keyboard: [
-        [{ text: '👀 Показать ответ', callback_data: 'fc:show' }],
+        [{ text: '👀 Δείξε απάντηση', callback_data: 'fc:show', style: 'primary' as const }],
       ],
     },
-  }) as unknown as { message_id: number };
+  });
 
   flashSessions.set(telegramId, { ...session, messageId: sent.message_id, lastActivity: Date.now() });
 }
@@ -124,7 +127,7 @@ export async function handleFlashcardCallback(
 
   const session = flashSessions.get(from.id);
   if (!session) {
-    await ctx.answerCbQuery('Сессия истекла. Запусти /flashcards заново.');
+    await ctx.answerCallbackQuery('Η συνεδρία έληξε. Ξεκίνα ξανά με /flashcards.');
     return;
   }
 
@@ -132,49 +135,41 @@ export async function handleFlashcardCallback(
   const card = cards[index];
 
   if (action === 'show') {
+    const current = index + 1;
     const answerText =
-      `*Карточка ${index + 1}/${cards.length}*\n` +
-      `━━━━━━━━━━━━━━━\n\n` +
-      `${card.question}\n\n` +
-      `✅ *Ответ:* ${card.correct_answer}` +
-      (card.explanation ? `\n\n💬 ${card.explanation}` : '');
+      `${progressHeader(current, cards.length, '🎴 Κάρτες')}\n\n` +
+      `<b>${escHtml(card.question)}</b>\n\n` +
+      `✅ <b>${escHtml(card.correct_answer)}</b>` +
+      (card.explanation ? `\n\n<blockquote expandable>💬 ${escHtml(card.explanation)}</blockquote>` : '') +
+      `\n\n<i>Πόσο καλά ήξερες;</i>`;
+
+    const gradeKeyboard = [
+      [
+        { text: '😕 Δύσκολο', callback_data: 'fc:grade:1', style: 'danger' as const },
+        { text: '😊 Καλά',    callback_data: 'fc:grade:2', style: 'primary' as const },
+        { text: '🎯 Το ξέρω', callback_data: 'fc:grade:3', style: 'success' as const },
+      ],
+    ];
 
     if (session.messageId && ctx.chat) {
       try {
-        await ctx.telegram.editMessageText(
+        await ctx.api.editMessageText(
           ctx.chat.id,
           session.messageId,
-          undefined,
           answerText,
           {
-            parse_mode: 'Markdown',
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: '😕 Сложно', callback_data: 'fc:grade:1' },
-                  { text: '😊 Нормально', callback_data: 'fc:grade:2' },
-                  { text: '✅ Знаю', callback_data: 'fc:grade:3' },
-                ],
-              ],
-            },
+            parse_mode: 'HTML',
+            reply_markup: { inline_keyboard: gradeKeyboard },
           }
         );
       } catch {
         await ctx.reply(answerText, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [
-                { text: '😕 Сложно', callback_data: 'fc:grade:1' },
-                { text: '😊 Нормально', callback_data: 'fc:grade:2' },
-                { text: '✅ Знаю', callback_data: 'fc:grade:3' },
-              ],
-            ],
-          },
+          parse_mode: 'HTML',
+          reply_markup: { inline_keyboard: gradeKeyboard },
         });
       }
     }
-    await ctx.answerCbQuery();
+    await ctx.answerCallbackQuery();
     return;
   }
 
@@ -185,26 +180,19 @@ export async function handleFlashcardCallback(
     if (user?.user_id) {
       try {
         const { supabase } = await import('../supabase');
-        const { newLevel, nextReviewAt } = computeNextReview(card.srs_level, grade);
-        await supabase
-          .from('user_progress')
-          .upsert(
-            {
-              user_id: user.user_id,
-              question_id: card.question_id,
-              srs_level: newLevel,
-              next_review_at: nextReviewAt,
-              is_known: newLevel >= 4,
-            },
-            { onConflict: 'user_id,question_id' }
-          );
+        const { error } = await supabase.rpc('upsert_progress', {
+          p_user_id: user.user_id,
+          p_question_id: card.question_id,
+          p_grade: grade,
+        });
+        if (error) console.error('SRS upsert error:', error);
       } catch (err) {
         console.error('SRS upsert error:', err);
       }
     }
 
     flashSessions.set(from.id, { ...session, index: index + 1, lastActivity: Date.now() });
-    await ctx.answerCbQuery();
+    await ctx.answerCallbackQuery();
     await sendFlashcard(ctx, from.id);
   }
 }

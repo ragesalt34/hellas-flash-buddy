@@ -1,4 +1,4 @@
-import { Context } from 'telegraf';
+import { Context } from 'grammy';
 import { upsertUser } from '../services/userService';
 import {
   fetchQuestionsRandom,
@@ -12,8 +12,9 @@ import {
   updateSession,
 } from '../services/sessionService';
 import { QuizSession } from '../types';
+import { progressHeader } from '../utils/progressBar';
 
-const ANSWER_LETTERS = ['A', 'B', 'C', 'D'];
+const ANSWER_LETTERS = ['🅐', '🅑', '🅒', '🅓'];
 
 export async function handleQuiz(ctx: Context): Promise<void> {
   const from = ctx.from;
@@ -32,12 +33,12 @@ export async function handleQuiz(ctx: Context): Promise<void> {
   // Check for active session
   const existing = await getActiveSession(from.id);
   if (existing) {
-    await ctx.reply('У тебя есть незавершённый квиз. Начать заново?', {
+    await ctx.reply('Έχεις ένα κουίζ που δεν ολοκληρώθηκε. Να ξεκινήσεις από την αρχή;', {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: '✅ Да, начать заново', callback_data: 'abandon:yes' },
-            { text: '❌ Нет, продолжить', callback_data: 'abandon:no' },
+            { text: '🔄 Από την αρχή', callback_data: 'abandon:yes', style: 'danger' as const },
+            { text: '▶️ Συνέχεια',     callback_data: 'abandon:no',  style: 'success' as const },
           ],
         ],
       },
@@ -60,19 +61,19 @@ export async function handleQuiz(ctx: Context): Promise<void> {
 
 export async function showTopicMenu(ctx: Context): Promise<void> {
   await ctx.reply(
-    '*Выбери тему квиза:*',
+    '🎯 <b>Διάλεξε θέμα κουίζ</b>\n<i>10 τυχαίες ερωτήσεις</i>',
     {
-      parse_mode: 'Markdown',
+      parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '📚 Все темы', callback_data: 'topic:mixed' }],
+          [{ text: '🎲 Όλα τα θέματα μαζί', callback_data: 'topic:mixed', style: 'primary' as const }],
           [
-            { text: '🏛 История', callback_data: 'topic:history' },
-            { text: '🎭 Культура', callback_data: 'topic:culture' },
+            { text: '🏛 Ιστορία',    callback_data: 'topic:history',    style: 'primary' as const },
+            { text: '🎭 Πολιτισμός', callback_data: 'topic:culture',    style: 'primary' as const },
           ],
           [
-            { text: '⚖️ Право', callback_data: 'topic:laws' },
-            { text: '🌍 География', callback_data: 'topic:geography' },
+            { text: '⚖️ Νομοθεσία', callback_data: 'topic:laws',       style: 'primary' as const },
+            { text: '🌍 Γεωγραφία', callback_data: 'topic:geography',  style: 'primary' as const },
           ],
         ],
       },
@@ -88,7 +89,7 @@ export async function startQuiz(
   const questions = await fetchQuestionsRandom(topic, 10);
 
   if (questions.length === 0) {
-    await ctx.reply('Вопросы не найдены. Попробуй другую тему.');
+    await ctx.reply('Δεν βρέθηκαν ερωτήσεις. Δοκίμασε άλλο θέμα.');
     return;
   }
 
@@ -100,45 +101,47 @@ export async function sendQuestion(ctx: Context, session: QuizSession): Promise<
   const q = session.questions[session.current_index];
   const answerOptions = buildAnswerOptions(q);
   const topicLabel = TOPIC_LABELS[session.topic] ?? session.topic;
-  const progress = `${session.current_index + 1}/${session.questions.length}`;
+  const current = session.current_index + 1;
+  const total = session.questions.length;
+
+  const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const questionText =
-    `*Вопрос ${progress} | ${topicLabel}*\n` +
-    `━━━━━━━━━━━━━━━\n\n` +
-    `${q.question}\n\n` +
-    answerOptions.map((ans, i) => `*${ANSWER_LETTERS[i]}*  ${ans}`).join('\n');
+    `${progressHeader(current, total, topicLabel)}\n\n` +
+    `<b>${escape(q.question)}</b>\n\n` +
+    answerOptions.map((ans, i) => `${ANSWER_LETTERS[i]}  ${escape(ans)}`).join('\n');
 
-  const keyboard = answerOptions.map((_, i) => ({
+  const answerRow = answerOptions.map((_, i) => ({
     text: ANSWER_LETTERS[i],
     callback_data: `a:${i}`,
+    style: 'primary' as const,
   }));
+  const keyboard = [answerRow, [{ text: '⏭ Παράλειψη', callback_data: 'skip' }]];
 
   let sentMessage: { message_id: number } | undefined;
 
   if (session.last_message_id && ctx.chat) {
     try {
-      await ctx.telegram.editMessageText(
+      await ctx.api.editMessageText(
         ctx.chat.id,
         session.last_message_id,
-        undefined,
         questionText,
         {
-          parse_mode: 'Markdown',
-          reply_markup: { inline_keyboard: [keyboard] },
+          parse_mode: 'HTML',
+          reply_markup: { inline_keyboard: keyboard },
         }
       );
     } catch {
-      // Message might be too old to edit
       sentMessage = await ctx.reply(questionText, {
-        parse_mode: 'Markdown',
-        reply_markup: { inline_keyboard: [keyboard] },
-      }) as unknown as { message_id: number };
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: keyboard },
+      });
     }
   } else {
     sentMessage = await ctx.reply(questionText, {
-      parse_mode: 'Markdown',
-      reply_markup: { inline_keyboard: [keyboard] },
-    }) as unknown as { message_id: number };
+      parse_mode: 'HTML',
+      reply_markup: { inline_keyboard: keyboard },
+    });
   }
 
   await updateSession(session.id, {

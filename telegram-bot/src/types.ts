@@ -45,6 +45,4 @@ export interface FlashcardItem {
   correct_answer: string;
   explanation: string | null;
   topic: string | null;
-  srs_level: number;
-  next_review_at: string | null;
 }
