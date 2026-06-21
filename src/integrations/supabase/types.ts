@@ -215,6 +215,95 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_quiz_sessions: {
+        Row: {
+          answers: Json
+          completed_at: string | null
+          current_answer_order: Json | null
+          current_index: number
+          id: string
+          last_message_id: number | null
+          questions: Json
+          score: number
+          started_at: string
+          telegram_id: number
+          topic: string
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string | null
+          current_answer_order?: Json | null
+          current_index?: number
+          id?: string
+          last_message_id?: number | null
+          questions: Json
+          score?: number
+          started_at?: string
+          telegram_id: number
+          topic: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string | null
+          current_answer_order?: Json | null
+          current_index?: number
+          id?: string
+          last_message_id?: number | null
+          questions?: Json
+          score?: number
+          started_at?: string
+          telegram_id?: number
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_quiz_sessions_telegram_id_fkey"
+            columns: ["telegram_id"]
+            isOneToOne: false
+            referencedRelation: "telegram_users"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
+      telegram_users: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          link_code: string | null
+          link_code_expires_at: string | null
+          remind_time: string | null
+          remind_tz: string
+          telegram_id: number
+          updated_at: string
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          link_code?: string | null
+          link_code_expires_at?: string | null
+          remind_time?: string | null
+          remind_tz?: string
+          telegram_id: number
+          updated_at?: string
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          link_code?: string | null
+          link_code_expires_at?: string | null
+          remind_time?: string | null
+          remind_tz?: string
+          telegram_id?: number
+          updated_at?: string
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           correct_count: number
@@ -292,7 +381,9 @@ export type Database = {
         }
         Returns: boolean
       }
+      link_telegram: { Args: { p_code: string }; Returns: Json }
       reset_user_progress: { Args: { p_user_id: string }; Returns: undefined }
+      unlink_telegram: { Args: never; Returns: Json }
       upsert_progress: {
         Args: {
           p_correct: boolean
