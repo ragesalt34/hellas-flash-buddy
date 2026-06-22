@@ -17,7 +17,11 @@ dist-ssr
 
 # Bot runtime data / local tooling (not source)
 telegram-bot/cloudflared.exe
+telegram-bot/ngrok.exe
 telegram-bot/vocab_progress.json
+telegram-bot/tunnel.log
+telegram-bot/_tunnel.bat
+telegram-bot/_tunnel.vbs
 *.tsbuildinfo
 
 # Editor directories and files
