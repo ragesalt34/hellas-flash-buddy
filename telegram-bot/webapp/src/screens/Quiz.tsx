@@ -1,16 +1,27 @@
 import { useState } from 'react';
+import {
+  Shuffle,
+  Landmark,
+  Drama,
+  Scale,
+  Globe2,
+  Check,
+  X,
+  ArrowRight,
+  type LucideIcon,
+} from 'lucide-react';
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
 import { Loading, ProgressBar, Ring } from '../ui';
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
-const TOPICS = [
-  { id: 'mixed', label: 'Όλα τα θέματα', ic: '🎲', span: true },
-  { id: 'history', label: 'Ιστορία', ic: '🏛' },
-  { id: 'culture', label: 'Πολιτισμός', ic: '🎭' },
-  { id: 'laws', label: 'Νομοθεσία', ic: '⚖️' },
-  { id: 'geography', label: 'Γεωγραφία', ic: '🌍' },
+const TOPICS: { id: string; label: string; icon: LucideIcon; color: string; span?: boolean }[] = [
+  { id: 'mixed', label: 'Όλα τα θέματα', icon: Shuffle, color: 'var(--amber)', span: true },
+  { id: 'history', label: 'Ιστορία', icon: Landmark, color: 'var(--accent)' },
+  { id: 'culture', label: 'Πολιτισμός', icon: Drama, color: 'var(--purple)' },
+  { id: 'laws', label: 'Νομοθεσία', icon: Scale, color: 'var(--coral)' },
+  { id: 'geography', label: 'Γεωγραφία', icon: Globe2, color: 'var(--mint)' },
 ];
 
 interface AnswerRec {
@@ -91,22 +102,27 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       <div className="fade-in">
         <div className="section-label">Διάλεξε θέμα</div>
         <div className="tiles stagger">
-          {TOPICS.map((t, i) =>
-            t.span ? (
+          {TOPICS.map((t, i) => {
+            const Icon = t.icon;
+            return t.span ? (
               <button
                 key={t.id}
                 className="tile feature warm"
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(t.id)}
               >
-                <span className="tile-ic">{t.ic}</span>
+                <span className="tile-ic">
+                  <Icon size={26} strokeWidth={2.2} />
+                </span>
                 <span className="grow">
                   <span className="tile-t" style={{ display: 'block' }}>
                     {t.label}
                   </span>
                   <span className="tile-d">10 τυχαίες ερωτήσεις</span>
                 </span>
-                <span className="arrow">→</span>
+                <span className="arrow">
+                  <ArrowRight size={22} strokeWidth={2.6} />
+                </span>
               </button>
             ) : (
               <button
@@ -115,11 +131,13 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(t.id)}
               >
-                <span className="tile-ic">{t.ic}</span>
+                <span className="tile-ic" style={{ background: `color-mix(in srgb, ${t.color} 18%, transparent)`, color: t.color }}>
+                  <Icon size={24} strokeWidth={2.2} />
+                </span>
                 <span className="tile-t">{t.label}</span>
               </button>
-            )
-          )}
+            );
+          })}
         </div>
       </div>
     );
@@ -192,6 +210,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
               else if (opt === chosen) cls += ' wrong';
               else cls += ' dim';
             }
+            const showCheck = chosen && opt === q.correct_answer;
+            const showX = chosen && opt === chosen && opt !== q.correct_answer;
             return (
               <button
                 key={i}
@@ -200,7 +220,9 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 onClick={() => choose(opt)}
               >
                 <span className="lt">{LETTERS[i] ?? i + 1}</span>
-                <span>{opt}</span>
+                <span style={{ flex: 1 }}>{opt}</span>
+                {showCheck && <Check size={20} strokeWidth={3} />}
+                {showX && <X size={20} strokeWidth={3} />}
               </button>
             );
           })}
@@ -215,7 +237,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         <>
           <div className="spacer" />
           <button className="btn btn-block" onClick={next}>
-            {idx + 1 >= questions.length ? '🏁 Αποτέλεσμα' : 'Επόμενη →'}
+            {idx + 1 >= questions.length ? 'Αποτέλεσμα' : 'Επόμενη'}
+            <ArrowRight size={20} strokeWidth={2.6} />
           </button>
         </>
       )}

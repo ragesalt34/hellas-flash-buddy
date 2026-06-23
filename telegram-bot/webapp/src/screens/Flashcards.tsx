@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Eye } from 'lucide-react';
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
 import { Empty, Loading, ProgressBar } from '../ui';
@@ -82,7 +83,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           </div>
         ) : (
           <button className="btn btn-block" onClick={() => { haptic(); setRevealed(true); }}>
-            👀 Δείξε απάντηση
+            <Eye size={20} strokeWidth={2.4} /> Δείξε απάντηση
           </button>
         )}
       </div>

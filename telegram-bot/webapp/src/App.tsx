@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { House, BookOpen, Layers, Languages, BarChart3, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
 import { Home } from './screens/Home';
 import { Quiz } from './screens/Quiz';
@@ -8,12 +9,12 @@ import { Stats } from './screens/Stats';
 
 export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats';
 
-const NAV: { id: View; icon: string; label: string }[] = [
-  { id: 'home', icon: '🏠', label: 'Αρχική' },
-  { id: 'quiz', icon: '📝', label: 'Κουίζ' },
-  { id: 'flashcards', icon: '🎴', label: 'Κάρτες' },
-  { id: 'vocab', icon: '📚', label: 'Λεξιλόγιο' },
-  { id: 'stats', icon: '📊', label: 'Πρόοδος' },
+const NAV: { id: View; icon: LucideIcon; label: string }[] = [
+  { id: 'home', icon: House, label: 'Αρχική' },
+  { id: 'quiz', icon: BookOpen, label: 'Κουίζ' },
+  { id: 'flashcards', icon: Layers, label: 'Κάρτες' },
+  { id: 'vocab', icon: Languages, label: 'Λεξιλόγιο' },
+  { id: 'stats', icon: BarChart3, label: 'Πρόοδος' },
 ];
 
 export function App() {
@@ -51,17 +52,23 @@ export function App() {
 
       <nav className="bottomnav" aria-label="Κύρια πλοήγηση">
         <div className="bottomnav-inner glass">
-          {NAV.map((n) => (
-            <button
-              key={n.id}
-              className={`navbtn${view === n.id ? ' active' : ''}`}
-              aria-current={view === n.id ? 'page' : undefined}
-              onClick={() => goTab(n.id)}
-            >
-              <span className="nav-ic">{n.icon}</span>
-              <span className="nav-l">{n.label}</span>
-            </button>
-          ))}
+          {NAV.map((n) => {
+            const Icon = n.icon;
+            const active = view === n.id;
+            return (
+              <button
+                key={n.id}
+                className={`navbtn${active ? ' active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+                onClick={() => goTab(n.id)}
+              >
+                <span className="nav-ic">
+                  <Icon size={24} strokeWidth={active ? 2.6 : 2.1} />
+                </span>
+                <span className="nav-l">{n.label}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
     </>

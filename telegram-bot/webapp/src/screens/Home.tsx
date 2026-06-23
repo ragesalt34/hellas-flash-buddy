@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight } from 'lucide-react';
 import { api, MeResponse } from '../api';
 import { haptic } from '../telegram';
 import { Loading } from '../ui';
@@ -38,18 +39,26 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   return (
     <div className="fade-in">
       <div className="hero">
-        <h1>Γεια σου, {me.user.name}! 👋</h1>
-        <p className="sub">Έτοιμος για λίγη εξάσκηση;</p>
+        <p className="sub">Καλώς ήρθες πίσω,</p>
+        <h1>{me.user.name}</h1>
         <div className="hero-chips">
           {me.streak >= 2 && (
             <span className="chip">
-              🔥 {me.streak} {me.streak === 1 ? 'μέρα' : 'μέρες'}
+              <Flame size={15} color="var(--coral)" />
+              {me.streak} {me.streak === 1 ? 'μέρα' : 'μέρες'}
             </span>
           )}
-          <span className="chip">🎯 {acc}%</span>
-          <span className="chip">📝 {me.stats.total_sessions} κουίζ</span>
           <span className="chip">
-            ⭐ {me.vocab.mastered}/{me.vocab.total}
+            <Target size={15} color="var(--mint)" />
+            {acc}%
+          </span>
+          <span className="chip">
+            <BookOpen size={15} color="var(--accent)" />
+            {me.stats.total_sessions}
+          </span>
+          <span className="chip">
+            <Star size={15} color="var(--amber)" />
+            {me.vocab.mastered}/{me.vocab.total}
           </span>
         </div>
       </div>
@@ -61,23 +70,31 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           style={{ animationDelay: '40ms' }}
           onClick={() => nav('quiz')}
         >
-          <span className="tile-ic">📝</span>
+          <span className="tile-ic">
+            <BookOpen size={26} strokeWidth={2.2} />
+          </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
               Κουίζ
             </span>
             <span className="tile-d">10 ερωτήσεις ανά θέμα</span>
           </span>
-          <span className="arrow">→</span>
+          <span className="arrow">
+            <ArrowRight size={22} strokeWidth={2.6} />
+          </span>
         </button>
 
         <button className="tile" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
-          <span className="tile-ic">🎴</span>
+          <span className="tile-ic">
+            <Layers size={24} strokeWidth={2.2} />
+          </span>
           <span className="tile-t">Κάρτες</span>
           <span className="tile-d">Επανάληψη με SRS</span>
         </button>
         <button className="tile" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
-          <span className="tile-ic">📚</span>
+          <span className="tile-ic">
+            <Languages size={24} strokeWidth={2.2} />
+          </span>
           <span className="tile-t">Λεξιλόγιο</span>
           <span className="tile-d">150 λέξεις</span>
         </button>
@@ -87,15 +104,17 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           style={{ animationDelay: '180ms', flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 'auto' }}
           onClick={() => nav('stats')}
         >
-          <span className="tile-ic">📊</span>
+          <span className="tile-ic">
+            <BarChart3 size={24} strokeWidth={2.2} />
+          </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
               Στατιστικά
             </span>
             <span className="tile-d">Η πρόοδός σου & ιστορικό</span>
           </span>
-          <span className="arrow" style={{ color: 'var(--tg-hint)' }}>
-            →
+          <span className="arrow" style={{ color: 'var(--muted)' }}>
+            <ArrowRight size={20} strokeWidth={2.4} />
           </span>
         </button>
       </div>
