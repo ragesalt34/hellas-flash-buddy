@@ -93,12 +93,15 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
               <span className="e">😕</span>Δύσκολο
+              <span className="gsub">10 λεπτά</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
               <span className="e">😊</span>Καλά
+              <span className="gsub">1 ημέρα</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
               <span className="e">🎯</span>Το ξέρω
+              <span className="gsub">4 ημέρες</span>
             </button>
           </div>
         </>

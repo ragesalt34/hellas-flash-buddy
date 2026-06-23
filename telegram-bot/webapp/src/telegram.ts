@@ -50,9 +50,9 @@ declare global {
 
 export const tg: TelegramWebApp | undefined = window.Telegram?.WebApp;
 
-// Our own brand background per scheme — must match :root / [data-scheme="dark"] --tg-bg in styles.css.
-const APP_BG_LIGHT = '#f3f5f9';
-const APP_BG_DARK = '#0f1620';
+// Our own brand background per scheme — must match :root / [data-scheme] --bg in styles.css.
+const APP_BG_LIGHT = '#fbf7f9';
+const APP_BG_DARK = '#0e0a0f';
 
 /**
  * Switch light/dark scheme only. We intentionally do NOT inherit the user's literal
