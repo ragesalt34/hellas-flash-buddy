@@ -3,6 +3,7 @@ import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight
 import { api, MeResponse } from '../api';
 import { haptic } from '../telegram';
 import { Loading } from '../ui';
+import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
@@ -12,6 +13,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   useEffect(() => {
     api.me().then(setMe).catch((e) => setErr(e?.message ?? String(e)));
   }, []);
+
+  const { show: showStreak, dismiss: dismissStreak } = useStreakCelebration(me?.streak ?? 0);
 
   if (err)
     return (
@@ -120,6 +123,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
         </button>
       </div>
+
+      {showStreak && <StreakCelebration streak={me.streak} onDismiss={dismissStreak} />}
     </div>
   );
 }
