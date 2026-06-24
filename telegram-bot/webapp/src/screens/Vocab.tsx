@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target } from 'lucide-react';
+import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, VocabCard } from '../api';
 import { haptic } from '../telegram';
+import { speakGreek } from '../speech';
 import { Empty, Loading, ProgressBar } from '../ui';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
@@ -76,7 +77,16 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="card">
-        <div className="vocab-word">{card.word}</div>
+        <div className="speak-row center">
+          <div className="vocab-word">{card.word}</div>
+          <button
+            className="speak-btn"
+            aria-label="Προφορά"
+            onClick={() => { haptic(); speakGreek(card.word, `vocab_${card.id}`); }}
+          >
+            <Volume2 size={17} strokeWidth={2.3} />
+          </button>
+        </div>
         <div
           className={`spoiler${revealed ? '' : ' hidden'}`}
           onClick={() => {

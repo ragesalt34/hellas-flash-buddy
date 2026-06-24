@@ -40,6 +40,11 @@ export const api = {
     }),
   stats: () => request<StatsResponse>('/stats'),
   history: () => request<HistoryResponse>('/history'),
+  tts: (text: string, cacheKey: string) =>
+    request<{ audioUrl: string }>('/tts', {
+      method: 'POST',
+      body: JSON.stringify({ text, cacheKey }),
+    }),
 };
 
 // ---- Shared types ----

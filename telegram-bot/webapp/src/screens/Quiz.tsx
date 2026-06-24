@@ -16,10 +16,12 @@ import {
   LayoutGrid,
   House,
   Lightbulb,
+  Volume2,
   type LucideIcon,
 } from 'lucide-react';
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
+import { speakGreek } from '../speech';
 import { Loading, ProgressBar, Ring } from '../ui';
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
@@ -215,7 +217,16 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       <ProgressBar value={idx + (chosen ? 1 : 0)} total={questions.length} />
       <div className="spacer" />
       <div className="card">
-        <div className="qtext">{q.question}</div>
+        <div className="speak-row">
+          <div className="qtext">{q.question}</div>
+          <button
+            className="speak-btn"
+            aria-label="Προφορά"
+            onClick={() => { haptic(); speakGreek(q.question, `q_${q.id}`); }}
+          >
+            <Volume2 size={17} strokeWidth={2.3} />
+          </button>
+        </div>
         <div className="options">
           {q.options.map((opt, i) => {
             let cls = 'option';

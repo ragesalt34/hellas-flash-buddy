@@ -15,6 +15,7 @@ import { getUserStats, getUserStreak } from '../services/sessionService';
 import { upsertUser, getUser } from '../services/userService';
 import { getDueVocabIds, gradeVocab, getVocabStats } from '../services/vocabProgressService';
 import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
+import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
 
@@ -232,6 +233,25 @@ export function createApiApp(): express.Express {
         getUserStreak(u.id).catch(() => 0),
       ]);
       res.json({ stats, streak, vocab: getVocabStats(u.id, ALL_VOCAB_IDS), topicLabels: TOPIC_LABELS });
+    })
+  );
+
+  // POST /api/tts  { text, cacheKey } -> { audioUrl } — Greek pronunciation (Google Cloud TTS)
+  api.post(
+    '/tts',
+    wrap(async (req, res) => {
+      const { text, cacheKey } = req.body ?? {};
+      if (typeof text !== 'string' || !text.trim() || typeof cacheKey !== 'string' || !cacheKey.trim()) {
+        res.status(400).json({ error: 'bad_request' });
+        return;
+      }
+      try {
+        const audioUrl = await getOrSynthesizeGreekSpeech(text, cacheKey);
+        res.json({ audioUrl });
+      } catch (err) {
+        console.error('tts error:', err);
+        res.status(500).json({ error: 'tts_failed' });
+      }
     })
   );
 

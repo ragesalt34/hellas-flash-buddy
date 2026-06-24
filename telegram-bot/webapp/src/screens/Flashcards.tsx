@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target } from 'lucide-react';
+import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
+import { speakGreek } from '../speech';
 import { Empty, Loading, ProgressBar } from '../ui';
 
 export function Flashcards({ onHome }: { onHome: () => void }) {
@@ -78,7 +79,16 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="card">
-        <div className="qtext">{card.question}</div>
+        <div className="speak-row">
+          <div className="qtext">{card.question}</div>
+          <button
+            className="speak-btn"
+            aria-label="Προφορά"
+            onClick={() => { haptic(); speakGreek(card.question, `fc_${card.question_id}`); }}
+          >
+            <Volume2 size={17} strokeWidth={2.3} />
+          </button>
+        </div>
 
         {revealed ? (
           <div className="fade-in">

@@ -405,6 +405,42 @@ svg {
   line-height: 1.22;
 }
 
+/* Greek-text row with an inline pronunciation button */
+.speak-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.speak-row .qtext {
+  flex: 1;
+  margin: 0;
+}
+.speak-row.center {
+  justify-content: center;
+  align-items: center;
+  margin: 14px 0 22px;
+}
+.speak-row.center .vocab-word {
+  flex: none;
+  margin: 0;
+}
+.speak-btn {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  color: var(--accent);
+  cursor: pointer;
+  transition: transform 0.13s var(--spring);
+}
+.speak-btn:active {
+  transform: scale(0.88);
+}
+
 /* ============ Quiz options ============ */
 .options {
   display: flex;
