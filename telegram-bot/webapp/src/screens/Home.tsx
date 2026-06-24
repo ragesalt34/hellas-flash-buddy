@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight } from 'lucide-react';
+import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff } from 'lucide-react';
 import { api, MeResponse } from '../api';
 import { haptic } from '../telegram';
 import { Loading } from '../ui';
@@ -16,7 +16,9 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   if (err)
     return (
       <div className="empty fade-in">
-        <div className="e">😕</div>
+        <div className="e">
+          <WifiOff size={52} strokeWidth={1.8} />
+        </div>
         <p>
           Σφάλμα σύνδεσης.
           <br />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BarChart3, Flame, Star, BookOpen, House, Trophy, ThumbsUp, Meh, type LucideIcon } from 'lucide-react';
 import { api, HistoryResponse, StatsResponse } from '../api';
 import { Empty, Loading, ProgressBar, Ring } from '../ui';
 
@@ -15,7 +16,7 @@ export function Stats({ onHome }: { onHome: () => void }) {
 
   const { stats, streak, vocab, topicLabels } = data;
   if (stats.total_sessions === 0)
-    return <Empty emoji="📊" text="Δεν έχεις κάνει ακόμα κουίζ. Ξεκίνα τώρα!" onHome={onHome} />;
+    return <Empty icon={BarChart3} text="Δεν έχεις κάνει ακόμα κουίζ. Ξεκίνα τώρα!" onHome={onHome} />;
 
   const acc =
     stats.total_questions > 0
@@ -24,10 +25,10 @@ export function Stats({ onHome }: { onHome: () => void }) {
 
   const topics = Object.entries(stats.by_topic).sort((a, b) => b[1].total - a[1].total);
 
-  function icon(pct: number) {
-    if (pct >= 80) return '🏆';
-    if (pct >= 60) return '👍';
-    return '😅';
+  function resultIcon(pct: number): LucideIcon {
+    if (pct >= 80) return Trophy;
+    if (pct >= 60) return ThumbsUp;
+    return Meh;
   }
 
   return (
@@ -47,7 +48,9 @@ export function Stats({ onHome }: { onHome: () => void }) {
           </div>
           <div className="mini">
             <span className="k">Σερί</span>
-            <span className="v">🔥 {streak}</span>
+            <span className="v" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <Flame size={16} strokeWidth={2.6} /> {streak}
+            </span>
           </div>
         </div>
       </div>
@@ -74,15 +77,20 @@ export function Stats({ onHome }: { onHome: () => void }) {
       <div className="card">
         <div className="bar-row">
           <div className="lab">
-            <span>⭐ Κατακτημένες λέξεις</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Star size={15} strokeWidth={2.4} /> Κατακτημένες λέξεις
+            </span>
             <span className="pc">
               {vocab.mastered}/{vocab.total}
             </span>
           </div>
           <ProgressBar value={vocab.mastered} total={vocab.total} />
         </div>
-        <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>
-          📖 Επαναλήφθηκαν: {vocab.seen}/{vocab.total}
+        <div
+          className="muted"
+          style={{ fontSize: 13, marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          <BookOpen size={14} strokeWidth={2.4} /> Επαναλήφθηκαν: {vocab.seen}/{vocab.total}
         </div>
       </div>
 
@@ -92,13 +100,16 @@ export function Stats({ onHome }: { onHome: () => void }) {
           <div className="card">
             {history.sessions.map((s, i) => {
               const pct = s.total > 0 ? Math.round((s.score / s.total) * 100) : 0;
+              const Icon = resultIcon(pct);
               const date = new Date(s.completed_at).toLocaleDateString('el-GR', {
                 day: '2-digit',
                 month: 'short',
               });
               return (
                 <div className="history-item" key={i}>
-                  <span className="ic">{icon(pct)}</span>
+                  <span className="ic">
+                    <Icon size={22} strokeWidth={2} />
+                  </span>
                   <div className="grow">
                     <div className="sc">
                       {s.score}/{s.total}{' '}
@@ -118,7 +129,7 @@ export function Stats({ onHome }: { onHome: () => void }) {
 
       <div className="spacer" />
       <button className="btn btn-block secondary" onClick={onHome}>
-        🏠 Μενού
+        <House size={18} strokeWidth={2.4} /> Μενού
       </button>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
+import { House, type LucideIcon } from 'lucide-react';
 
 export function Skeleton({ h, w, r, style }: { h: number; w?: string; r?: number; style?: React.CSSProperties }) {
   return (
@@ -87,22 +88,24 @@ export function Ring({
 }
 
 export function Empty({
-  emoji,
+  icon: Icon,
   text,
   onHome,
 }: {
-  emoji: string;
+  icon: LucideIcon;
   text: string;
   onHome: () => void;
 }) {
   return (
     <div className="fade-in">
       <div className="empty">
-        <div className="e">{emoji}</div>
+        <div className="e">
+          <Icon size={52} strokeWidth={1.8} />
+        </div>
         <p>{text}</p>
       </div>
       <button className="btn btn-block secondary" onClick={onHome}>
-        🏠 Μενού
+        <House size={18} strokeWidth={2.4} /> Μενού
       </button>
     </div>
   );

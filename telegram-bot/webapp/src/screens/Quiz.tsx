@@ -8,6 +8,14 @@ import {
   Check,
   X,
   ArrowRight,
+  BookOpen,
+  Zap,
+  ThumbsUp,
+  Trophy,
+  RotateCcw,
+  LayoutGrid,
+  House,
+  Lightbulb,
   type LucideIcon,
 } from 'lucide-react';
 import { api, QuizQuestion } from '../api';
@@ -149,16 +157,16 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   if (phase === 'result') {
     const total = questions.length;
     const pct = total ? Math.round((score / total) * 100) : 0;
-    let emoji = '📚';
+    let ResultIcon: LucideIcon = BookOpen;
     let ttl = 'Μπορείς καλύτερα';
     if (pct >= 80) {
-      emoji = '🏆';
+      ResultIcon = Trophy;
       ttl = 'Εξαιρετικά!';
     } else if (pct >= 60) {
-      emoji = '👍';
+      ResultIcon = ThumbsUp;
       ttl = 'Μπράβο!';
     } else if (pct >= 40) {
-      emoji = '💪';
+      ResultIcon = Zap;
       ttl = 'Συνέχισε!';
     }
     return (
@@ -168,21 +176,27 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             <div className="ring-pct">{pct}%</div>
             <div className="ring-sub">{score}/{total}</div>
           </Ring>
-          <div className="ttl">
-            {emoji} {ttl}
+          <div className="ttl" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <ResultIcon size={22} strokeWidth={2.4} /> {ttl}
           </div>
-          <div className="line">
-            ✅ {score} σωστά · ❌ {total - score} λάθος
+          <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Check size={15} strokeWidth={3} /> {score} σωστά
+            </span>
+            ·
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <X size={15} strokeWidth={3} /> {total - score} λάθος
+            </span>
           </div>
         </div>
         <button className="btn btn-block good" onClick={() => start(topic)}>
-          🔄 Ξανά
+          <RotateCcw size={18} strokeWidth={2.4} /> Ξανά
         </button>
         <button className="btn btn-block" onClick={() => setPhase('topic')}>
-          🎯 Άλλο θέμα
+          <LayoutGrid size={18} strokeWidth={2.4} /> Άλλο θέμα
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>
-          🏠 Μενού
+          <House size={18} strokeWidth={2.4} /> Μενού
         </button>
       </div>
     );
@@ -229,7 +243,12 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         </div>
         {chosen && q.explanation && (
           <div className="explain">
-            <b>💡</b> {q.explanation}
+            <Lightbulb
+              size={16}
+              strokeWidth={2.4}
+              style={{ display: 'inline', verticalAlign: '-3px', marginRight: 6 }}
+            />
+            {q.explanation}
           </div>
         )}
       </div>

@@ -576,8 +576,9 @@ svg {
   border-radius: var(--r-xl);
 }
 .result .emoji {
-  font-size: 60px;
-  line-height: 1;
+  display: flex;
+  justify-content: center;
+  color: var(--accent);
   animation: pop 0.45s var(--spring);
 }
 .result .ttl {
@@ -731,8 +732,10 @@ svg {
   color: var(--muted);
 }
 .empty .e {
-  font-size: 56px;
-  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 14px;
 }
 
 .fade-in {

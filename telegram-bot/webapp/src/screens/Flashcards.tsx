@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target } from 'lucide-react';
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
 import { Empty, Loading, ProgressBar } from '../ui';
@@ -25,21 +25,27 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   if (!cards) return <Loading />;
   if (cards.length === 0)
-    return <Empty emoji="🎉" text="Δεν υπάρχουν κάρτες για επανάληψη τώρα. Έλα αργότερα!" onHome={onHome} />;
+    return (
+      <Empty icon={CheckCircle2} text="Δεν υπάρχουν κάρτες για επανάληψη τώρα. Έλα αργότερα!" onHome={onHome} />
+    );
 
   if (done) {
     return (
       <div className="fade-in center-col">
         <div className="result">
-          <div className="emoji">🎉</div>
+          <div className="emoji">
+            <PartyPopper size={56} strokeWidth={1.8} />
+          </div>
           <div className="ttl">Η συνεδρία ολοκληρώθηκε!</div>
-          <div className="line">🎴 {cards.length} κάρτες</div>
+          <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Layers size={16} strokeWidth={2.4} /> {cards.length} κάρτες
+          </div>
         </div>
         <button className="btn btn-block" onClick={load}>
-          🔄 Ξανά
+          <RotateCcw size={18} strokeWidth={2.4} /> Ξανά
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>
-          🏠 Μενού
+          <House size={18} strokeWidth={2.4} /> Μενού
         </button>
       </div>
     );
@@ -61,7 +67,9 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   return (
     <div className="fade-in" key={i}>
       <div className="topbar">
-        <span className="meta">🎴 Κάρτες</span>
+        <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <Layers size={14} strokeWidth={2.6} /> Κάρτες
+        </span>
         <span className="counter">
           {i + 1}/{cards.length}
         </span>
@@ -74,10 +82,17 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
         {revealed ? (
           <div className="fade-in">
-            <div className="answer">✅ {card.correct_answer}</div>
+            <div className="answer" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Check size={22} strokeWidth={3} /> {card.correct_answer}
+            </div>
             {card.explanation && (
               <div className="explain">
-                <b>💡</b> {card.explanation}
+                <Lightbulb
+                  size={16}
+                  strokeWidth={2.4}
+                  style={{ display: 'inline', verticalAlign: '-3px', marginRight: 6 }}
+                />
+                {card.explanation}
               </div>
             )}
           </div>
@@ -93,15 +108,24 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <div className="spacer" />
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
-              <span className="e">😕</span>Δύσκολο
+              <span className="e">
+                <Frown size={22} strokeWidth={2.2} />
+              </span>
+              Δύσκολο
               <span className="gsub">10 λεπτά</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
-              <span className="e">😊</span>Καλά
+              <span className="e">
+                <Smile size={22} strokeWidth={2.2} />
+              </span>
+              Καλά
               <span className="gsub">1 ημέρα</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
-              <span className="e">🎯</span>Το ξέρω
+              <span className="e">
+                <Target size={22} strokeWidth={2.2} />
+              </span>
+              Το ξέρω
               <span className="gsub">4 ημέρες</span>
             </button>
           </div>
