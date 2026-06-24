@@ -410,6 +410,7 @@ svg {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  margin-bottom: 20px;
 }
 .speak-row .qtext {
   flex: 1;
