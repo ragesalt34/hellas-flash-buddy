@@ -4,7 +4,7 @@ const TTS_BUCKET = 'tts-audio';
 const SAFE_KEY = /^[A-Za-z0-9_-]{1,128}$/;
 
 // Pinned Greek voice: Chirp3-HD (Google's newest, most natural). Overridable via env.
-const VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Charon';
+const VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Algenib';
 
 /** Returns a signed URL for cached/synthesized Greek speech audio. Reuses the
  * `tts-audio` bucket already provisioned for the web app's ElevenLabs TTS,
