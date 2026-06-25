@@ -35,10 +35,19 @@ function tone(freq: number, startAt: number, dur: number, type: OscillatorType =
   o.stop(t + dur + 0.02);
 }
 
-/** Correct answer — bright ascending chime (rewarding). */
+/** Correct answer — plays a bundled sound file (richer than synth). */
+let correctAudio: HTMLAudioElement | null = null;
 export function playCorrect(): void {
-  tone(659, 0, 0.13, 'triangle', 0.17);   // E5
-  tone(988, 0.085, 0.22, 'triangle', 0.16); // B5
+  try {
+    if (!correctAudio) {
+      correctAudio = new Audio('/sounds/correct.mp3');
+      correctAudio.volume = 0.6;
+    }
+    correctAudio.currentTime = 0;
+    void correctAudio.play();
+  } catch {
+    /* ignore */
+  }
 }
 
 /** Wrong answer — soft low note (gentle, never harsh). */
