@@ -22,6 +22,7 @@ import {
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
 import { speakGreek } from '../speech';
+import { playCorrect, playWrong } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
@@ -79,8 +80,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     if (correct) {
       setScore((s) => s + 1);
       notify('success');
+      playCorrect();
     } else {
       notify('error');
+      playWrong();
     }
     setAnswers((a) => [
       ...a,

@@ -3,6 +3,7 @@ import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightb
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek } from '../speech';
+import { playGrade } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 
 export function Flashcards({ onHome }: { onHome: () => void }) {
@@ -56,6 +57,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   function grade(g: number) {
     haptic();
+    playGrade(g);
     api.flashcardGrade(card.question_id, g).catch(() => {});
     if (i + 1 >= cards!.length) {
       setDone(true);
