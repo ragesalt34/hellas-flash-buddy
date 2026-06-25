@@ -35,16 +35,47 @@ function tone(freq: number, startAt: number, dur: number, type: OscillatorType =
   o.stop(t + dur + 0.02);
 }
 
-/** Correct answer — plays a bundled sound file (richer than synth). */
-let correctAudio: HTMLAudioElement | null = null;
+/** Correct answer — bundled mp3, preloaded into a buffer for zero-latency playback. */
+const CORRECT_VOL = 0.4;
+let correctBuf: AudioBuffer | null = null;
+let correctEl: HTMLAudioElement | null = null;
+
+function preloadCorrect(): void {
+  const c = ac();
+  if (!c) return;
+  fetch('/sounds/correct.mp3')
+    .then((r) => r.arrayBuffer())
+    .then((a) => c.decodeAudioData(a))
+    .then((b) => {
+      correctBuf = b;
+    })
+    .catch(() => {
+      /* will fall back to <audio> */
+    });
+}
+// Decode once up front (works even while the context is suspended on iOS).
+preloadCorrect();
+
 export function playCorrect(): void {
+  const c = ac();
+  if (c && correctBuf) {
+    const src = c.createBufferSource();
+    const g = c.createGain();
+    src.buffer = correctBuf;
+    g.gain.value = CORRECT_VOL;
+    src.connect(g);
+    g.connect(c.destination);
+    src.start();
+    return;
+  }
+  // fallback if the buffer isn't decoded yet
   try {
-    if (!correctAudio) {
-      correctAudio = new Audio('/sounds/correct.mp3');
-      correctAudio.volume = 0.6;
+    if (!correctEl) {
+      correctEl = new Audio('/sounds/correct.mp3');
+      correctEl.volume = CORRECT_VOL;
     }
-    correctAudio.currentTime = 0;
-    void correctAudio.play();
+    correctEl.currentTime = 0;
+    void correctEl.play();
   } catch {
     /* ignore */
   }
