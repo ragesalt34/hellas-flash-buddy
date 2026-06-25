@@ -3,35 +3,8 @@ import { supabase } from '../supabase';
 const TTS_BUCKET = 'tts-audio';
 const SAFE_KEY = /^[A-Za-z0-9_-]{1,128}$/;
 
-let cachedVoiceName: string | null = null;
-
-interface GoogleVoice {
-  name: string;
-}
-
-async function pickGreekVoice(apiKey: string): Promise<string> {
-  if (cachedVoiceName) return cachedVoiceName;
-
-  const res = await fetch(
-    `https://texttospeech.googleapis.com/v1/voices?languageCode=el-GR&key=${apiKey}`
-  );
-  if (!res.ok) {
-    throw new Error(`Google TTS voices:list failed: ${res.status} ${await res.text()}`);
-  }
-  const data = (await res.json()) as { voices?: GoogleVoice[] };
-  const voices = data.voices ?? [];
-
-  const pick =
-    voices.find((v) => v.name.includes('Chirp3-HD')) ??
-    voices.find((v) => v.name.includes('Neural2')) ??
-    voices.find((v) => v.name.includes('Wavenet')) ??
-    voices[0];
-
-  if (!pick) throw new Error('No el-GR voices available from Google Cloud TTS');
-
-  cachedVoiceName = pick.name;
-  return pick.name;
-}
+// Pinned Greek voice: Chirp3-HD (Google's newest, most natural). Overridable via env.
+const VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Charon';
 
 /** Returns a signed URL for cached/synthesized Greek speech audio. Reuses the
  * `tts-audio` bucket already provisioned for the web app's ElevenLabs TTS,
@@ -58,8 +31,6 @@ export async function getOrSynthesizeGreekSpeech(
   const apiKey = process.env.GOOGLE_TTS_API_KEY;
   if (!apiKey) throw new Error('GOOGLE_TTS_API_KEY not configured');
 
-  const voiceName = await pickGreekVoice(apiKey);
-
   const res = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
     {
@@ -67,7 +38,7 @@ export async function getOrSynthesizeGreekSpeech(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         input: { text: text.slice(0, 500) },
-        voice: { languageCode: 'el-GR', name: voiceName },
+        voice: { languageCode: 'el-GR', name: VOICE },
         audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 },
       }),
     }

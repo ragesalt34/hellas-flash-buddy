@@ -84,7 +84,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <button
             className="speak-btn"
             aria-label="Προφορά"
-            onClick={() => { haptic(); speakGreek(card.question, `fc_${card.question_id}`); }}
+            onClick={() => { haptic(); speakGreek(card.question, `q_${card.question_id}`); }}
           >
             <Volume2 size={17} strokeWidth={2.3} />
           </button>
