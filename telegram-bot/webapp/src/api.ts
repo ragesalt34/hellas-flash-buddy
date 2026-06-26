@@ -1,7 +1,16 @@
 import { tg } from './telegram';
 
-// In dev without Telegram, allow a fake user id via ?devUserId= (server must run with ALLOW_DEV_AUTH=true)
-const devUserId = new URLSearchParams(location.search).get('devUserId');
+// Backend base URL. Empty (relative) inside Telegram (same-origin via the tunnel).
+// For the native iOS build there is no Telegram origin, so VITE_API_BASE is set
+// at build time to the bot's public URL (see CAPACITOR.md).
+const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '').replace(/\/$/, '');
+
+// Outside Telegram (native build / browser) there's no initData — fall back to a
+// dev user id: from ?devUserId= (local browser) or VITE_DEV_USER_ID (native build).
+// Requires the bot to run with ALLOW_DEV_AUTH=true.
+const devUserId =
+  new URLSearchParams(location.search).get('devUserId') ??
+  ((import.meta.env.VITE_DEV_USER_ID as string | undefined) || null);
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
@@ -12,7 +21,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   if (initData) headers['X-Telegram-Init-Data'] = initData;
   if (!initData && devUserId) headers['X-Dev-User-Id'] = devUserId;
 
-  const res = await fetch(`/api${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`API ${res.status}: ${body || res.statusText}`);

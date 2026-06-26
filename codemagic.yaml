@@ -1,0 +1,46 @@
+# Codemagic CI — builds an UNSIGNED iOS .ipa of the Hellas Study Mini App for
+# personal sideloading (no Apple Developer Program needed; Sideloadly re-signs it
+# with a free Apple ID). Free tier: ~500 macOS build-minutes/month.
+#
+# Setup (one-time): see telegram-bot/CAPACITOR.md.
+# Set VITE_API_BASE (your STABLE bot URL) and VITE_DEV_USER_ID (your Telegram id)
+# below or — better — as encrypted env vars in the Codemagic UI.
+
+workflows:
+  ios-sideload:
+    name: Hellas Study — iOS (unsigned, sideload)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      node: 20
+      vars:
+        # >>> EDIT THESE <<<
+        VITE_API_BASE: "https://CHANGE-ME.example.com"   # permanent bot/Mini App URL (no trailing slash)
+        VITE_DEV_USER_ID: "CHANGE-ME"                     # your numeric Telegram user id
+    scripts:
+      - name: Build web app
+        script: |
+          cd telegram-bot/webapp
+          npm ci
+          npm run build
+      - name: Add iOS platform & sync Capacitor
+        script: |
+          cd telegram-bot/webapp
+          [ -d ios ] || npx cap add ios
+          npx cap sync ios
+      - name: CocoaPods
+        script: |
+          cd telegram-bot/webapp/ios/App
+          pod install
+      - name: Build unsigned .ipa
+        script: |
+          cd telegram-bot/webapp/ios/App
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -configuration Release -sdk iphoneos \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+          cd build/Build/Products/Release-iphoneos
+          mkdir -p Payload
+          cp -R App.app Payload/
+          zip -r "$CM_BUILD_DIR/HellasStudy-unsigned.ipa" Payload
+    artifacts:
+      - HellasStudy-unsigned.ipa
