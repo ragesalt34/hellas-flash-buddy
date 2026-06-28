@@ -6,6 +6,7 @@
     "@expo-google-fonts/nunito": "^0.4.2",
     "@react-navigation/bottom-tabs": "^7.18.3",
     "@react-navigation/native": "^7.3.4",
+    "babel-preset-expo": "~54.0.10",
     "expo": "^54.0.35",
     "expo-asset": "~12.0.13",
     "expo-audio": "~1.1.1",
