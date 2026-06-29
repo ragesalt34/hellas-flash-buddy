@@ -11,6 +11,8 @@ primary_region = 'ams'
 [env]
   NODE_ENV = 'production'
   PORT = '3000'
+  API_PORT = '3000'
+  API_ONLY = 'true'
 
 [http_service]
   internal_port = 3000

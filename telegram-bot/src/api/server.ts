@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { validateInitData, WebAppUser } from './auth';
@@ -52,6 +53,21 @@ export function createApiApp(): express.Express {
     if (!user && process.env.ALLOW_DEV_AUTH === 'true') {
       const devId = Number(req.header('X-Dev-User-Id') ?? req.query.devUserId);
       if (devId) user = { id: devId, first_name: 'Dev' };
+    }
+
+    // Native app (outside Telegram, no initData) — shared-secret header instead of
+    // a guessable-id bypass. Both APP_SECRET and the user's own id are required, and
+    // the secret comparison is constant-time. Safe for a public deployment.
+    if (!user && process.env.APP_SECRET) {
+      const secret = req.header('X-App-Secret') ?? '';
+      const secretBuf = Buffer.from(secret);
+      const expectedBuf = Buffer.from(process.env.APP_SECRET);
+      const validSecret =
+        secretBuf.length === expectedBuf.length && crypto.timingSafeEqual(secretBuf, expectedBuf);
+      if (validSecret) {
+        const appUserId = Number(req.header('X-App-User-Id'));
+        if (appUserId) user = { id: appUserId, first_name: 'App' };
+      }
     }
 
     if (!user) {

@@ -6,12 +6,15 @@ import { Empty, Loading, ProgressBar, Ring } from '../ui';
 export function Stats({ onHome }: { onHome: () => void }) {
   const [data, setData] = useState<StatsResponse | null>(null);
   const [history, setHistory] = useState<HistoryResponse | null>(null);
+  const [err, setErr] = useState(false);
 
   useEffect(() => {
-    api.stats().then(setData).catch(() => setData(null));
+    api.stats().then(setData).catch(() => setErr(true));
     api.history().then(setHistory).catch(() => setHistory(null));
   }, []);
 
+  if (err)
+    return <Empty icon={BarChart3} text="Σφάλμα σύνδεσης. Δοκίμασε ξανά." onHome={onHome} />;
   if (!data) return <Loading />;
 
   const { stats, streak, vocab, topicLabels } = data;

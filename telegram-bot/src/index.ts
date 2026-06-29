@@ -157,10 +157,19 @@ bot.catch((err) => {
 
 // Start
 async function main() {
-  startScheduler();
-
-  // Mini App REST API (used by the Telegram Web App frontend)
+  // Mini App / native app REST API — always needed
   startApiServer(Number(process.env.API_PORT ?? 3001));
+
+  // API_ONLY=true (cloud deploy, e.g. Fly.io) serves just the REST API, with no
+  // Telegram polling/scheduler — those keep running from the bot's existing
+  // local-PC process, and a second getUpdates poller for the same token would
+  // 409-conflict with it.
+  if (process.env.API_ONLY === 'true') {
+    console.log('API_ONLY mode — Telegram bot polling/scheduler disabled');
+    return;
+  }
+
+  startScheduler();
 
   // Cleanup stale flashcard sessions every 10 minutes
   setInterval(() => {

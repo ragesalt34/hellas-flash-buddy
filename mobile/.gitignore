@@ -32,6 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+
+# local dev binaries (not part of the app — downloaded tooling)
+ngrok.exe
+*.exe
 
 # typescript
 *.tsbuildinfo

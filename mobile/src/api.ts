@@ -1,20 +1,24 @@
 // Backend client for the native app. Talks to the same bot API the Mini App uses
 // (questions, flashcards, vocab, stats, TTS). Outside Telegram there's no initData,
-// so it authenticates with the dev-auth header (requires ALLOW_DEV_AUTH=true on the bot).
+// so it authenticates with a shared secret + the user's own Telegram id
+// (requires APP_SECRET set on the bot — see telegram-bot/src/api/server.ts).
 //
 // Config via Expo public env (app.json `extra` or EXPO_PUBLIC_* / .env):
-//   EXPO_PUBLIC_API_BASE     — bot's public base URL (stable domain), no trailing slash
-//   EXPO_PUBLIC_DEV_USER_ID  — your numeric Telegram user id
+//   EXPO_PUBLIC_API_BASE   — bot's public base URL (stable domain), no trailing slash
+//   EXPO_PUBLIC_APP_SECRET — same value as the bot's APP_SECRET env var
+//   EXPO_PUBLIC_USER_ID    — your numeric Telegram user id
 
 const API_BASE = (process.env.EXPO_PUBLIC_API_BASE ?? '').replace(/\/$/, '');
-const DEV_USER_ID = process.env.EXPO_PUBLIC_DEV_USER_ID ?? '';
+const APP_SECRET = process.env.EXPO_PUBLIC_APP_SECRET ?? '';
+const USER_ID = process.env.EXPO_PUBLIC_USER_ID ?? '';
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (DEV_USER_ID) headers['X-Dev-User-Id'] = DEV_USER_ID;
+  if (APP_SECRET) headers['X-App-Secret'] = APP_SECRET;
+  if (USER_ID) headers['X-App-User-Id'] = USER_ID;
 
   const res = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
   if (!res.ok) {
