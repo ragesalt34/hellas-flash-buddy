@@ -43,6 +43,11 @@ export function createApiApp(): express.Express {
   app.use(cors());
   app.use(express.json({ limit: '1mb' }));
 
+  // Public health check (no auth) — used by cloud host (Render) deploy probes.
+  app.get('/healthz', (_req, res) => {
+    res.json({ ok: true });
+  });
+
   // --- Auth middleware: validate Telegram initData on every /api route ---
   const auth = (req: AuthedRequest, res: Response, next: NextFunction): void => {
     const initData = req.header('X-Telegram-Init-Data') ?? '';

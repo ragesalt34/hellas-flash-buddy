@@ -157,8 +157,10 @@ bot.catch((err) => {
 
 // Start
 async function main() {
-  // Mini App / native app REST API — always needed
-  startApiServer(Number(process.env.API_PORT ?? 3001));
+  // Mini App / native app REST API — always needed.
+  // Cloud hosts (Render/Fly) inject the port to bind via PORT; locally we fall
+  // back to API_PORT (3001) so the bot's webhook PORT logic stays untouched.
+  startApiServer(Number(process.env.PORT ?? process.env.API_PORT ?? 3001));
 
   // API_ONLY=true (cloud deploy, e.g. Fly.io) serves just the REST API, with no
   // Telegram polling/scheduler — those keep running from the bot's existing

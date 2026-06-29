@@ -5,12 +5,10 @@ services:
     plan: free
     rootDir: telegram-bot
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/me
+    healthCheckPath: /healthz
     envVars:
       - key: NODE_ENV
         value: production
-      - key: API_PORT
-        value: "3000"
       - key: API_ONLY
         value: "true"
       - key: BOT_TOKEN
