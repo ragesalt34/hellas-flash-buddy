@@ -1,0 +1,7 @@
+tunnel: 9da2fd28-d67f-49de-bf9d-e23253244086
+credentials-file: C:\Users\user\.cloudflared\9da2fd28-d67f-49de-bf9d-e23253244086.json
+
+ingress:
+  - hostname: app.hellas.study
+    service: http://localhost:3001
+  - service: http_status:404

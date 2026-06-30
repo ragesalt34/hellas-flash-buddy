@@ -1,0 +1,16 @@
+{
+  "name": "Hellas Study",
+  "short_name": "Hellas",
+  "description": "Μάθε ελληνικά — κουίζ, κάρτες και λεξιλόγιο με έξυπνη επανάληψη.",
+  "lang": "el",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e0a0f",
+  "theme_color": "#0e0a0f",
+  "icons": [
+    { "src": "/icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}
