@@ -1,18 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff } from 'lucide-react';
-import { api, MeResponse } from '../api';
+import { api } from '../api';
 import { haptic } from '../telegram';
-import { Loading } from '../ui';
+import { Loading, useCached } from '../ui';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
-  const [me, setMe] = useState<MeResponse | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  useEffect(() => {
-    api.me().then(setMe).catch((e) => setErr(e?.message ?? String(e)));
-  }, []);
+  const { data: me, err } = useCached('me', api.me);
 
   const { show: showStreak, dismiss: dismissStreak } = useStreakCelebration(me?.streak ?? 0);
 

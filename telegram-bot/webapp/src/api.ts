@@ -11,6 +11,35 @@ const USER_ID =
   new URLSearchParams(location.search).get('devUserId') ??
   ((import.meta.env.VITE_USER_ID as string | undefined) || '');
 
+// ---- Lightweight client cache (stale-while-revalidate) ----
+// Read-only dashboard data (me/stats/history) is cached in memory + localStorage
+// so switching sections paints instantly while fresh data loads in the background.
+const mem = new Map<string, unknown>();
+
+export function cacheGet<T>(key: string): T | undefined {
+  if (mem.has(key)) return mem.get(key) as T;
+  try {
+    const s = localStorage.getItem(`hs_cache_${key}`);
+    if (s) {
+      const v = JSON.parse(s) as T;
+      mem.set(key, v);
+      return v;
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
+}
+
+export function cacheSet<T>(key: string, value: T): void {
+  mem.set(key, value);
+  try {
+    localStorage.setItem(`hs_cache_${key}`, JSON.stringify(value));
+  } catch {
+    /* ignore quota / private-mode errors */
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

@@ -40,7 +40,9 @@ const wrap =
 
 export function createApiApp(): express.Express {
   const app = express();
-  app.use(cors());
+  // maxAge caches the CORS preflight (OPTIONS) for 24h in the browser, so
+  // repeat API calls skip the extra preflight round-trip (faster navigation).
+  app.use(cors({ maxAge: 86400 }));
   app.use(express.json({ limit: '1mb' }));
 
   // Public health check (no auth) — used by cloud host (Render) deploy probes.

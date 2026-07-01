@@ -1,5 +1,35 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { House, type LucideIcon } from 'lucide-react';
+import { cacheGet, cacheSet } from './api';
+
+/**
+ * Stale-while-revalidate data hook: returns cached data instantly (so the
+ * screen paints with no skeleton on repeat visits), then refreshes in the
+ * background. An error only surfaces if there's no cached data to fall back on.
+ */
+export function useCached<T>(key: string, fetcher: () => Promise<T>) {
+  const [data, setData] = useState<T | undefined>(() => cacheGet<T>(key));
+  const [err, setErr] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetcher()
+      .then((v) => {
+        if (!alive) return;
+        cacheSet(key, v);
+        setData(v);
+        setErr(null);
+      })
+      .catch((e) => {
+        if (!alive) return;
+        if (cacheGet<T>(key) === undefined) setErr(e?.message ?? String(e));
+      });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return { data, err };
+}
 
 export function Skeleton({ h, w, r, style }: { h: number; w?: string; r?: number; style?: React.CSSProperties }) {
   return (
