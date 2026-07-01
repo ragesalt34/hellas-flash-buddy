@@ -12,6 +12,12 @@ const FEATURES: { icon: LucideIcon; color: string; title: string; text: string }
   { icon: BarChart3, color: 'var(--pink)', title: 'Πρόοδος', text: 'Στατιστικά ανά θέμα, ιστορικό και ποσοστό επιτυχίας.' },
 ];
 
+const STEPS: { title: string; text: string }[] = [
+  { title: 'Διάλεξε τρόπο', text: 'Κουίζ, κάρτες ή λεξιλόγιο — ξεκίνα από όπου θέλεις, χωρίς εγγραφή.' },
+  { title: 'Εξασκήσου καθημερινά', text: 'Το σύστημα SRS φέρνει κάθε ερώτηση τη σωστή στιγμή για να μείνει στη μνήμη.' },
+  { title: 'Δες την πρόοδο', text: 'Σερί, καθημερινός στόχος και στατιστικά ανά θέμα σε κρατούν συνεπή.' },
+];
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const rise = {
   hidden: { opacity: 0, y: 28 },
@@ -66,6 +72,27 @@ export function Landing({ onStart }: { onStart: () => void }) {
           </div>
         </motion.div>
       </header>
+
+      <motion.h2 className="lp-steps-h" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
+        Πώς λειτουργεί
+      </motion.h2>
+      <section className="lp-steps">
+        {STEPS.map((s, i) => (
+          <motion.div
+            key={s.title}
+            className={`lp-step s${i + 1}`}
+            variants={rise}
+            custom={i}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: '-60px' }}
+          >
+            <span className="num">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </motion.div>
+        ))}
+      </section>
 
       <section className="lp-features">
         {FEATURES.map((f, i) => {
