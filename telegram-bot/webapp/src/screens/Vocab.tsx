@@ -111,8 +111,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       </div>
 
       {revealed && (
-        <>
-          <div className="spacer" />
+        <div className="actionbar">
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
               <span className="e">
@@ -136,7 +135,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">4 ημέρες</span>
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -552,6 +552,10 @@ svg { display: block; }
 .center-col { display: flex; flex-direction: column; gap: 12px; }
 .muted { color: var(--muted); }
 
+/* Primary-action wrapper. On mobile it's just spacing above the control;
+   on desktop it becomes a fixed bottom action bar (see the 900px block). */
+.actionbar { margin-top: 14px; }
+
 .skeleton {
   background: linear-gradient(90deg, var(--sk1) 25%, var(--sk2) 37%, var(--sk1) 63%);
   background-size: 400% 100%;
@@ -576,10 +580,12 @@ svg { display: block; }
   color: var(--accent);
 }
 
+/* opacity-only (no transform) so a screen's .fade-in wrapper never becomes the
+   containing block for a position:fixed descendant like .actionbar */
 .fade-in { animation: fade 0.32s var(--ease); }
 @keyframes fade {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -750,17 +756,32 @@ svg { display: block; }
     padding-top: calc(20px + env(safe-area-inset-top));
     padding-right: 24px;
     padding-left: 24px;
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
-    /* vertically center short screens (quiz card, flashcard, vocab) instead of
-       leaving a tall void below; `safe` keeps tall screens (Stats) top-aligned
-       and scrollable */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: safe center;
+    /* extra bottom room so content clears the fixed action bar (see .actionbar) */
+    padding-bottom: 120px;
   }
-  .app > * { width: 100%; }
   .tile { min-height: 138px; }
+
+  /* Duolingo-style: primary action pinned to a bottom bar spanning the area
+     right of the sidebar, content stays top-aligned above it */
+  .actionbar {
+    position: fixed;
+    left: 150px;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    margin-top: 0;
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 2px solid var(--border);
+    display: flex;
+    justify-content: center;
+  }
+  .actionbar > *,
+  .actionbar > .grade-row {
+    width: 100%;
+    max-width: 672px;
+    margin: 0;
+  }
 }
 
 /* Wide desktop — a touch more room */

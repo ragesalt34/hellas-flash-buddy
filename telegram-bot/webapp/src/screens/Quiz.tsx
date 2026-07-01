@@ -267,13 +267,12 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         )}
       </div>
       {chosen && (
-        <>
-          <div className="spacer" />
+        <div className="actionbar">
           <button className="btn btn-block" onClick={next}>
             {idx + 1 >= questions.length ? 'Αποτέλεσμα' : 'Επόμενη'}
             <ArrowRight size={20} strokeWidth={2.6} />
           </button>
-        </>
+        </div>
       )}
     </div>
   );

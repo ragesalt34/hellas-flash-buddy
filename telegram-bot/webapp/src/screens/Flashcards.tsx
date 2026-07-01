@@ -92,7 +92,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           </button>
         </div>
 
-        {revealed ? (
+        {revealed && (
           <div className="fade-in">
             <div className="answer" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Check size={22} strokeWidth={3} /> {card.correct_answer}
@@ -108,16 +108,11 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               </div>
             )}
           </div>
-        ) : (
-          <button className="btn btn-block" onClick={() => { haptic(); setRevealed(true); }}>
-            <Eye size={20} strokeWidth={2.4} /> Δείξε απάντηση
-          </button>
         )}
       </div>
 
-      {revealed && (
-        <>
-          <div className="spacer" />
+      <div className="actionbar">
+        {revealed ? (
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
               <span className="e">
@@ -141,8 +136,12 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="gsub">4 ημέρες</span>
             </button>
           </div>
-        </>
-      )}
+        ) : (
+          <button className="btn btn-block" onClick={() => { haptic(); setRevealed(true); }}>
+            <Eye size={20} strokeWidth={2.4} /> Δείξε απάντηση
+          </button>
+        )}
+      </div>
     </div>
   );
 }
