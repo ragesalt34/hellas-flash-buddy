@@ -751,7 +751,15 @@ svg { display: block; }
     padding-right: 24px;
     padding-left: 24px;
     padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    /* vertically center short screens (quiz card, flashcard, vocab) instead of
+       leaving a tall void below; `safe` keeps tall screens (Stats) top-aligned
+       and scrollable */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
   }
+  .app > * { width: 100%; }
   .tile { min-height: 138px; }
 }
 
