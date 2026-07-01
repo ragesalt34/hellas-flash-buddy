@@ -556,6 +556,9 @@ svg { display: block; }
    on desktop it becomes a fixed bottom action bar (see the 900px block). */
 .actionbar { margin-top: 14px; }
 
+/* Focus-mode close button — desktop-only (mobile keeps the bottom nav). */
+.focus-close { display: none; }
+
 .skeleton {
   background: linear-gradient(90deg, var(--sk1) 25%, var(--sk2) 37%, var(--sk1) 63%);
   background-size: 400% 100%;
@@ -748,37 +751,62 @@ svg { display: block; }
   .navbtn { padding: 13px 4px; border-radius: 14px; }
   .navbtn .nav-l { font-size: 11.5px; }
 
+  /* Menu screens (home/stats): content column offset past the sidebar,
+     top-aligned and scrollable */
   .app {
     max-width: 720px;
-    /* center the column in the viewport, but keep at least 172px on the left so
-       it never slides under the fixed 150px sidebar on narrower desktops */
     margin: 0 0 0 max(172px, calc((100vw - 720px) / 2));
-    padding: 24px 24px 132px;
-    /* vertically center short screens (quiz/flashcard/vocab) in the space above
-       the fixed action bar; `safe` keeps tall screens (Stats) top-aligned */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: safe center;
+    padding: 24px 24px 40px;
   }
-  .app > * { width: 100%; }
   .tile { min-height: 138px; }
 
-  /* Duolingo-style: primary action pinned to a bottom bar aligned exactly with
-     the content column above it */
+  /* ---- Focus mode (quiz / flashcards / vocab) — Duolingo-style ----
+     Hide the sidebar, center the content full-width, pin the action to a
+     bottom bar spanning the whole width. A close (X) returns to the menu. */
+  body.focus .bottomnav { display: none; }
+  body.focus .app {
+    max-width: 640px;
+    margin: 0 auto;
+    /* upper-area anchor (not dead-center) with room for the fixed bottom bar */
+    padding: clamp(40px, 10vh, 104px) 24px 132px;
+  }
+
+  .focus-close { display: none; }
+  body.focus .focus-close {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 60;
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    box-shadow: var(--e1);
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+  }
+  body.focus .focus-close:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 0 var(--border); }
+  body.focus .focus-close:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
+
+  /* full-width bottom action bar, content centered to the column width */
   .actionbar {
     position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
-    /* left edge + width match the .app content box (720 - 2*24 padding = 672) */
-    left: calc(max(172px, calc((100vw - 720px) / 2)) + 24px);
-    width: 672px;
     z-index: 40;
     margin-top: 0;
-    padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
     background: var(--surface);
     border-top: 2px solid var(--border);
+    display: flex;
+    justify-content: center;
   }
-  .actionbar > * { width: 100%; margin: 0; }
+  .actionbar > * { width: 100%; max-width: 592px; margin: 0; }
 }
 
 /* Wide desktop — a touch more room */
@@ -787,10 +815,11 @@ svg { display: block; }
     max-width: 820px;
     margin-left: max(172px, calc((100vw - 820px) / 2));
   }
-  .actionbar {
-    left: calc(max(172px, calc((100vw - 820px) / 2)) + 24px);
-    width: 772px;
+  body.focus .app {
+    max-width: 680px;
+    margin: 0 auto;
   }
+  .actionbar > * { max-width: 632px; }
 }
 
 /* ============================================================

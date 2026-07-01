@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, type LucideIcon } from 'lucide-react';
+import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, X, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
 import { Landing } from './screens/Landing';
 import { Home } from './screens/Home';
@@ -33,6 +33,14 @@ export function App() {
   // Bump key to force a screen to remount (reset its internal phase) when its tab is re-tapped.
   const [navKey, setNavKey] = useState(0);
   const home = () => setView('home');
+
+  // Focus mode (quiz/flashcards/vocab): on desktop the sidebar is hidden and the
+  // content is centred full-width with a bottom action bar (Duolingo-style).
+  const focus = view === 'quiz' || view === 'flashcards' || view === 'vocab';
+  useEffect(() => {
+    document.body.classList.toggle('focus', focus);
+    return () => document.body.classList.remove('focus');
+  }, [focus]);
 
   const enter = () => {
     localStorage.setItem(ENTERED_KEY, '1');
@@ -76,6 +84,10 @@ export function App() {
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
         {view === 'stats' && <Stats key={navKey} onHome={home} />}
       </div>
+
+      <button className="focus-close" aria-label="Κλείσιμο" onClick={home}>
+        <X size={22} strokeWidth={2.6} />
+      </button>
 
       <nav className="bottomnav" aria-label="Κύρια πλοήγηση">
         <div className="bottomnav-inner glass">
