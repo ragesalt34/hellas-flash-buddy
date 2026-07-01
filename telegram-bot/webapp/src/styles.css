@@ -752,36 +752,33 @@ svg { display: block; }
     max-width: 720px;
     /* center the column in the viewport, but keep at least 172px on the left so
        it never slides under the fixed 150px sidebar on narrower desktops */
-    margin: 0 auto 0 max(172px, calc((100vw - 720px) / 2));
-    padding-top: calc(20px + env(safe-area-inset-top));
-    padding-right: 24px;
-    padding-left: 24px;
-    /* extra bottom room so content clears the fixed action bar (see .actionbar) */
-    padding-bottom: 120px;
+    margin: 0 0 0 max(172px, calc((100vw - 720px) / 2));
+    padding: 24px 24px 132px;
+    /* vertically center short screens (quiz/flashcard/vocab) in the space above
+       the fixed action bar; `safe` keeps tall screens (Stats) top-aligned */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
   }
+  .app > * { width: 100%; }
   .tile { min-height: 138px; }
 
-  /* Duolingo-style: primary action pinned to a bottom bar spanning the area
-     right of the sidebar, content stays top-aligned above it */
+  /* Duolingo-style: primary action pinned to a bottom bar aligned exactly with
+     the content column above it */
   .actionbar {
     position: fixed;
-    left: 150px;
-    right: 0;
     bottom: 0;
+    /* left edge + width match the .app content box (720 - 2*24 padding = 672) */
+    left: calc(max(172px, calc((100vw - 720px) / 2)) + 24px);
+    width: 672px;
     z-index: 40;
     margin-top: 0;
-    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+    padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
     background: var(--surface);
     border-top: 2px solid var(--border);
-    display: flex;
-    justify-content: center;
   }
-  .actionbar > *,
-  .actionbar > .grade-row {
-    width: 100%;
-    max-width: 672px;
-    margin: 0;
-  }
+  .actionbar > * { width: 100%; margin: 0; }
 }
 
 /* Wide desktop — a touch more room */
@@ -789,6 +786,10 @@ svg { display: block; }
   .app {
     max-width: 820px;
     margin-left: max(172px, calc((100vw - 820px) / 2));
+  }
+  .actionbar {
+    left: calc(max(172px, calc((100vw - 820px) / 2)) + 24px);
+    width: 772px;
   }
 }
 
