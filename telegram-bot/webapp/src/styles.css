@@ -744,9 +744,12 @@ svg { display: block; }
 
   .app {
     max-width: 720px;
-    margin: 0;
-    padding-left: 172px;
+    /* center the column in the viewport, but keep at least 172px on the left so
+       it never slides under the fixed 150px sidebar on narrower desktops */
+    margin: 0 auto 0 max(172px, calc((100vw - 720px) / 2));
+    padding-top: calc(20px + env(safe-area-inset-top));
     padding-right: 24px;
+    padding-left: 24px;
     padding-bottom: calc(40px + env(safe-area-inset-bottom));
   }
   .tile { min-height: 138px; }
@@ -754,7 +757,10 @@ svg { display: block; }
 
 /* Wide desktop — a touch more room */
 @media (min-width: 1200px) {
-  .app { max-width: 820px; }
+  .app {
+    max-width: 820px;
+    margin-left: max(172px, calc((100vw - 820px) / 2));
+  }
 }
 
 /* ============================================================
