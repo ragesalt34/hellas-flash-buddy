@@ -40,7 +40,7 @@ export function Landing({ onStart }: { onStart: () => void }) {
           <Sparkles size={15} color="var(--accent-2)" /> Μάθε ελληνικά <b>έξυπνα</b>
         </motion.span>
         <motion.h1 initial="hidden" animate="show" variants={rise}>
-          Τα ελληνικά,<br /><span className="grad-text">όπως ποτέ πριν.</span>
+          Τα ελληνικά,<br /><span className="highlight">όπως ποτέ πριν.</span>
         </motion.h1>
         <motion.p initial="hidden" animate="show" custom={1} variants={rise}>
           Κουίζ, κάρτες με έξυπνη επανάληψη και λεξιλόγιο με προφορά — όλα σε μία καθαρή,
