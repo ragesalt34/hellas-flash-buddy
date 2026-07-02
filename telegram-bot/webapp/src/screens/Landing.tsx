@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles, type LucideIcon,
+  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles,
+  MousePointerClick, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -25,6 +27,56 @@ const rise = {
   hidden: { opacity: 0, y: 28 },
   show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.06, ease: EASE } }),
 };
+
+// Real vocab items from the app — the hero demo IS the product.
+const DEMO_WORDS: { word: string; ru: string }[] = [
+  { word: 'η ιθαγένεια', ru: 'гражданство' },
+  { word: 'η πατρίδα', ru: 'родина' },
+  { word: 'η σημαία', ru: 'флаг' },
+  { word: 'το σύνταγμα', ru: 'конституция' },
+];
+
+/** Interactive vocab card in the hero: tap to reveal, tap again for the next word. */
+function DemoCard() {
+  const { t } = useLanguage();
+  const [i, setI] = useState(0);
+  const [revealed, setRevealed] = useState(false);
+  const w = DEMO_WORDS[i % DEMO_WORDS.length];
+
+  const tap = () => {
+    if (!revealed) setRevealed(true);
+    else {
+      setI((n) => n + 1);
+      setRevealed(false);
+    }
+  };
+
+  return (
+    <div className="card lp-demo" onClick={tap} role="button" tabIndex={0}>
+      <span className="hero-badge" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M3 21 V3 H21 V21 H9 V9 H15 V15 H12"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="square"
+          />
+        </svg>
+      </span>
+      <div className="vocab-word">{w.word}</div>
+      <div className={`spoiler${revealed ? '' : ' hidden'}`}>
+        <div className="reveal">
+          <div className="ru">{w.ru}</div>
+        </div>
+        {!revealed && (
+          <div className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <MousePointerClick size={14} strokeWidth={2.4} /> {t('vocab.tapToReveal')}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function Landing({ onStart }: { onStart: () => void }) {
   const { t } = useLanguage();
@@ -57,24 +109,12 @@ export function Landing({ onStart }: { onStart: () => void }) {
         </motion.div>
 
         <motion.div
-          className="lp-preview"
           initial={{ opacity: 0, y: 40, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
         >
-          <div className="lp-preview-row">
-            {FEATURES.slice(0, 3).map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.titleKey} className="tile" style={{ minHeight: 120 }}>
-                  <span className="tile-ic" style={{ background: `color-mix(in srgb, ${f.color} 20%, transparent)`, color: f.color }}>
-                    <Icon size={24} strokeWidth={2.3} />
-                  </span>
-                  <span className="tile-t">{t(f.titleKey)}</span>
-                </div>
-              );
-            })}
-          </div>
+          <div className="lp-demo-label">{t('landing.demo.label')}</div>
+          <DemoCard />
         </motion.div>
       </header>
 
