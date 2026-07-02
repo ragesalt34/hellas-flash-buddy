@@ -73,7 +73,9 @@ export function createApiApp(): express.Express {
         secretBuf.length === expectedBuf.length && crypto.timingSafeEqual(secretBuf, expectedBuf);
       if (validSecret) {
         const appUserId = Number(req.header('X-App-User-Id'));
-        if (appUserId) user = { id: appUserId, first_name: 'App' };
+        // No first_name here so /api/me falls back to the friendly Greek default
+        // ("φίλε") instead of greeting the user as literally "App".
+        if (appUserId) user = { id: appUserId };
       }
     }
 

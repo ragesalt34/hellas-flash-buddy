@@ -127,7 +127,7 @@ export function Empty({
   onHome: () => void;
 }) {
   return (
-    <div className="fade-in">
+    <div className="fade-in center-col">
       <div className="empty">
         <div className="e">
           <Icon size={52} strokeWidth={1.8} />
