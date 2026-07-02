@@ -5,8 +5,10 @@ import { haptic } from '../telegram';
 import { speakGreek } from '../speech';
 import { playGrade } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
+import { useLanguage } from '../i18n';
 
 export function Flashcards({ onHome }: { onHome: () => void }) {
+  const { t, language } = useLanguage();
   const [cards, setCards] = useState<Flashcard[] | null>(null);
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -23,13 +25,12 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       .catch(() => setCards([]));
   }
 
-  useEffect(load, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(load, [language]);
 
   if (!cards) return <Loading />;
   if (cards.length === 0)
-    return (
-      <Empty icon={CheckCircle2} text="Δεν υπάρχουν κάρτες για επανάληψη τώρα. Έλα αργότερα!" onHome={onHome} />
-    );
+    return <Empty icon={CheckCircle2} text={t('flashcards.empty')} onHome={onHome} />;
 
   if (done) {
     return (
@@ -38,16 +39,16 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <div className="emoji">
             <PartyPopper size={56} strokeWidth={1.8} />
           </div>
-          <div className="ttl">Η συνεδρία ολοκληρώθηκε!</div>
+          <div className="ttl">{t('flashcards.done')}</div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={16} strokeWidth={2.4} /> {cards.length} κάρτες
+            <Layers size={16} strokeWidth={2.4} /> {cards.length} {t('flashcards.cardsCount')}
           </div>
         </div>
         <button className="btn btn-block" onClick={load}>
-          <RotateCcw size={18} strokeWidth={2.4} /> Ξανά
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> Μενού
+          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
         </button>
       </div>
     );
@@ -71,7 +72,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     <div className="fade-in" key={i}>
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Layers size={14} strokeWidth={2.6} /> Κάρτες
+          <Layers size={14} strokeWidth={2.6} /> {t('nav.flashcards')}
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
@@ -85,7 +86,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <div className="qtext">{card.question}</div>
           <button
             className="speak-btn"
-            aria-label="Προφορά"
+            aria-label={t('common.pronounce')}
             onClick={() => { haptic(); speakGreek(card.question, `q_${card.question_id}`); }}
           >
             <Volume2 size={17} strokeWidth={2.3} />
@@ -118,27 +119,27 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
-              Δύσκολο
-              <span className="gsub">10 λεπτά</span>
+              {t('grade.hard')}
+              <span className="gsub">{t('grade.hard.sub')}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
-              Καλά
-              <span className="gsub">1 ημέρα</span>
+              {t('grade.good')}
+              <span className="gsub">{t('grade.good.sub')}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
-              Το ξέρω
-              <span className="gsub">4 ημέρες</span>
+              {t('grade.easy')}
+              <span className="gsub">{t('grade.easy.sub')}</span>
             </button>
           </div>
         ) : (
           <button className="btn btn-block" onClick={() => { haptic(); setRevealed(true); }}>
-            <Eye size={20} strokeWidth={2.4} /> Δείξε απάντηση
+            <Eye size={20} strokeWidth={2.4} /> {t('flashcards.showAnswer')}
           </button>
         )}
       </div>

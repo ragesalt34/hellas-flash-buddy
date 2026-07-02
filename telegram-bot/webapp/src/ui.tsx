@@ -1,6 +1,7 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { House, type LucideIcon } from 'lucide-react';
 import { cacheGet, cacheSet } from './api';
+import { useLanguage } from './i18n';
 
 /**
  * Stale-while-revalidate data hook: returns cached data instantly (so the
@@ -126,6 +127,7 @@ export function Empty({
   text: string;
   onHome: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="fade-in center-col">
       <div className="empty">
@@ -135,7 +137,7 @@ export function Empty({
         <p>{text}</p>
       </div>
       <button className="btn btn-block secondary" onClick={onHome}>
-        <House size={18} strokeWidth={2.4} /> Μενού
+        <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
       </button>
     </div>
   );

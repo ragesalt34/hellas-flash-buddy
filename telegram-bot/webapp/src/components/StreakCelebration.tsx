@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { haptic, notify } from '../telegram';
+import { useLanguage } from '../i18n';
 
 const SEEN_KEY = 'hellas_seen_streak';
 
@@ -22,6 +23,7 @@ export function useStreakCelebration(streak: number): { show: boolean; dismiss: 
 }
 
 export function StreakCelebration({ streak, onDismiss }: { streak: number; onDismiss: () => void }) {
+  const { t } = useLanguage();
   return (
     <div className="sheet-overlay" onClick={onDismiss}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
@@ -30,8 +32,8 @@ export function StreakCelebration({ streak, onDismiss }: { streak: number; onDis
           <Flame size={40} strokeWidth={2.2} />
           <span className="badge-num">{streak}</span>
         </div>
-        <h1 className="sheet-headline">{streak} ημέρες σερί!</h1>
-        <p className="sheet-sub">Συνέχισε έτσι, η πρόοδός σου είναι εκπληκτική.</p>
+        <h1 className="sheet-headline">{streak} {t('streak.title')}</h1>
+        <p className="sheet-sub">{t('streak.sub')}</p>
         <button
           className="btn btn-block"
           onClick={() => {
@@ -39,7 +41,7 @@ export function StreakCelebration({ streak, onDismiss }: { streak: number; onDis
             onDismiss();
           }}
         >
-          Συνέχεια
+          {t('streak.continue')}
         </button>
       </div>
     </div>

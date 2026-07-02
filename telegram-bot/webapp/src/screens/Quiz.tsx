@@ -24,15 +24,16 @@ import { haptic, notify } from '../telegram';
 import { speakGreek } from '../speech';
 import { playCorrect, playWrong } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
+import { useLanguage } from '../i18n';
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
-const TOPICS: { id: string; label: string; icon: LucideIcon; color: string; span?: boolean }[] = [
-  { id: 'mixed', label: 'Όλα τα θέματα', icon: Shuffle, color: 'var(--amber)', span: true },
-  { id: 'history', label: 'Ιστορία', icon: Landmark, color: 'var(--accent)' },
-  { id: 'culture', label: 'Πολιτισμός', icon: Drama, color: 'var(--purple)' },
-  { id: 'laws', label: 'Νομοθεσία', icon: Scale, color: 'var(--coral)' },
-  { id: 'geography', label: 'Γεωγραφία', icon: Globe2, color: 'var(--mint)' },
+const TOPICS: { id: string; key: string; icon: LucideIcon; color: string; span?: boolean }[] = [
+  { id: 'mixed', key: 'topic.mixed', icon: Shuffle, color: 'var(--amber)', span: true },
+  { id: 'history', key: 'topic.history', icon: Landmark, color: 'var(--accent)' },
+  { id: 'culture', key: 'topic.culture', icon: Drama, color: 'var(--purple)' },
+  { id: 'laws', key: 'topic.laws', icon: Scale, color: 'var(--coral)' },
+  { id: 'geography', key: 'topic.geography', icon: Globe2, color: 'var(--mint)' },
 ];
 
 interface AnswerRec {
@@ -45,6 +46,7 @@ interface AnswerRec {
 type Phase = 'topic' | 'loading' | 'play' | 'result';
 
 export function Quiz({ onHome }: { onHome: () => void }) {
+  const { t } = useLanguage();
   const [phase, setPhase] = useState<Phase>('topic');
   const [topic, setTopic] = useState('mixed');
   const [topicLabel, setTopicLabel] = useState('');
@@ -54,12 +56,12 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   const [answers, setAnswers] = useState<AnswerRec[]>([]);
   const [score, setScore] = useState(0);
 
-  async function start(t: string) {
+  async function start(topicId: string) {
     haptic();
-    setTopic(t);
+    setTopic(topicId);
     setPhase('loading');
     try {
-      const r = await api.quiz(t, 10);
+      const r = await api.quiz(topicId, 10);
       setQuestions(r.questions);
       setTopicLabel(r.topicLabel);
       setIdx(0);
@@ -113,25 +115,25 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   if (phase === 'topic') {
     return (
       <div className="fade-in">
-        <div className="section-label">Διάλεξε θέμα</div>
+        <div className="section-label">{t('quiz.chooseTopic')}</div>
         <div className="tiles stagger">
-          {TOPICS.map((t, i) => {
-            const Icon = t.icon;
-            return t.span ? (
+          {TOPICS.map((topicDef, i) => {
+            const Icon = topicDef.icon;
+            return topicDef.span ? (
               <button
-                key={t.id}
+                key={topicDef.id}
                 className="tile feature warm"
                 style={{ animationDelay: `${40 + i * 45}ms` }}
-                onClick={() => start(t.id)}
+                onClick={() => start(topicDef.id)}
               >
                 <span className="tile-ic">
                   <Icon size={26} strokeWidth={2.2} />
                 </span>
                 <span className="grow">
                   <span className="tile-t" style={{ display: 'block' }}>
-                    {t.label}
+                    {t(topicDef.key)}
                   </span>
-                  <span className="tile-d">10 τυχαίες ερωτήσεις</span>
+                  <span className="tile-d">{t('topic.mixed.desc')}</span>
                 </span>
                 <span className="arrow">
                   <ArrowRight size={22} strokeWidth={2.6} />
@@ -139,15 +141,15 @@ export function Quiz({ onHome }: { onHome: () => void }) {
               </button>
             ) : (
               <button
-                key={t.id}
+                key={topicDef.id}
                 className="tile"
                 style={{ animationDelay: `${40 + i * 45}ms` }}
-                onClick={() => start(t.id)}
+                onClick={() => start(topicDef.id)}
               >
-                <span className="tile-ic" style={{ background: `color-mix(in srgb, ${t.color} 18%, transparent)`, color: t.color }}>
+                <span className="tile-ic" style={{ background: `color-mix(in srgb, ${topicDef.color} 18%, transparent)`, color: topicDef.color }}>
                   <Icon size={24} strokeWidth={2.2} />
                 </span>
-                <span className="tile-t">{t.label}</span>
+                <span className="tile-t">{t(topicDef.key)}</span>
               </button>
             );
           })}
@@ -163,16 +165,16 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     const total = questions.length;
     const pct = total ? Math.round((score / total) * 100) : 0;
     let ResultIcon: LucideIcon = BookOpen;
-    let ttl = 'Μπορείς καλύτερα';
+    let ttlKey = 'quiz.result.tryHarder';
     if (pct >= 80) {
       ResultIcon = Trophy;
-      ttl = 'Εξαιρετικά!';
+      ttlKey = 'quiz.result.great';
     } else if (pct >= 60) {
       ResultIcon = ThumbsUp;
-      ttl = 'Μπράβο!';
+      ttlKey = 'quiz.result.good';
     } else if (pct >= 40) {
       ResultIcon = Zap;
-      ttl = 'Συνέχισε!';
+      ttlKey = 'quiz.result.keepGoing';
     }
     return (
       <div className="fade-in center-col">
@@ -182,26 +184,26 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             <div className="ring-sub">{score}/{total}</div>
           </Ring>
           <div className="ttl" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <ResultIcon size={22} strokeWidth={2.4} /> {ttl}
+            <ResultIcon size={22} strokeWidth={2.4} /> {t(ttlKey)}
           </div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <Check size={15} strokeWidth={3} /> {score} σωστά
+              <Check size={15} strokeWidth={3} /> {score} {t('common.correct')}
             </span>
             ·
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <X size={15} strokeWidth={3} /> {total - score} λάθος
+              <X size={15} strokeWidth={3} /> {total - score} {t('common.wrong')}
             </span>
           </div>
         </div>
         <button className="btn btn-block good" onClick={() => start(topic)}>
-          <RotateCcw size={18} strokeWidth={2.4} /> Ξανά
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
         </button>
         <button className="btn btn-block" onClick={() => setPhase('topic')}>
-          <LayoutGrid size={18} strokeWidth={2.4} /> Άλλο θέμα
+          <LayoutGrid size={18} strokeWidth={2.4} /> {t('quiz.otherTopic')}
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> Μενού
+          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
         </button>
       </div>
     );
@@ -224,7 +226,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           <div className="qtext">{q.question}</div>
           <button
             className="speak-btn"
-            aria-label="Προφορά"
+            aria-label={t('common.pronounce')}
             onClick={() => { haptic(); speakGreek(q.question, `q_${q.id}`); }}
           >
             <Volume2 size={17} strokeWidth={2.3} />
@@ -269,7 +271,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       {chosen && (
         <div className="actionbar">
           <button className="btn btn-block" onClick={next}>
-            {idx + 1 >= questions.length ? 'Αποτέλεσμα' : 'Επόμενη'}
+            {idx + 1 >= questions.length ? t('quiz.result') : t('quiz.next')}
             <ArrowRight size={20} strokeWidth={2.6} />
           </button>
         </div>

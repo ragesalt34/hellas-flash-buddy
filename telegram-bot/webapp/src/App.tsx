@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, X, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
+import { useLanguage } from './i18n';
+import { LanguageSwitch } from './components/LanguageSwitch';
 import { Landing } from './screens/Landing';
 import { Home } from './screens/Home';
 import { Quiz } from './screens/Quiz';
@@ -17,15 +19,16 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: View; icon: LucideIcon; label: string }[] = [
-  { id: 'home', icon: House, label: 'Αρχική' },
-  { id: 'quiz', icon: BookOpen, label: 'Κουίζ' },
-  { id: 'flashcards', icon: Layers, label: 'Κάρτες' },
-  { id: 'vocab', icon: Languages, label: 'Λεξιλόγιο' },
-  { id: 'stats', icon: BarChart3, label: 'Πρόοδος' },
+const NAV: { id: View; icon: LucideIcon; key: string }[] = [
+  { id: 'home', icon: House, key: 'nav.home' },
+  { id: 'quiz', icon: BookOpen, key: 'nav.quiz' },
+  { id: 'flashcards', icon: Layers, key: 'nav.flashcards' },
+  { id: 'vocab', icon: Languages, key: 'nav.vocab' },
+  { id: 'stats', icon: BarChart3, key: 'nav.stats' },
 ];
 
 export function App() {
+  const { t } = useLanguage();
   const [entered, setEntered] = useState(
     () => !!tg || isStandalonePWA || localStorage.getItem(ENTERED_KEY) === '1'
   );
@@ -85,11 +88,11 @@ export function App() {
         {view === 'stats' && <Stats key={navKey} onHome={home} />}
       </div>
 
-      <button className="focus-close" aria-label="Κλείσιμο" onClick={home}>
+      <button className="focus-close" aria-label={t('nav.close')} onClick={home}>
         <X size={22} strokeWidth={2.6} />
       </button>
 
-      <nav className="bottomnav" aria-label="Κύρια πλοήγηση">
+      <nav className="bottomnav" aria-label={t('nav.aria')}>
         <div className="bottomnav-inner glass">
           <div className="nav-brand" aria-hidden="true">
             <Sparkles size={22} color="#fff" strokeWidth={2.4} />
@@ -107,10 +110,11 @@ export function App() {
                 <span className="nav-ic">
                   <Icon size={24} strokeWidth={active ? 2.6 : 2.1} />
                 </span>
-                <span className="nav-l">{n.label}</span>
+                <span className="nav-l">{t(n.key)}</span>
               </button>
             );
           })}
+          <LanguageSwitch />
         </div>
       </nav>
     </>

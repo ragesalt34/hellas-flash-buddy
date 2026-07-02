@@ -22,6 +22,8 @@ export function parseTopic(input: string | undefined): string {
   return TOPIC_MAP[normalized] ?? 'mixed';
 }
 
+export type ContentLang = 'ru' | 'el';
+
 export const TOPIC_LABELS: Record<string, string> = {
   history: 'Ιστορία',
   culture: 'Πολιτισμός',
@@ -30,11 +32,27 @@ export const TOPIC_LABELS: Record<string, string> = {
   mixed: 'Όλα τα θέματα',
 };
 
-// --- Language helpers: prefer Greek (_el) fields, fall back to Russian ---
-const t = (el: string | null | undefined, ru: string): string =>
-  el && el.trim() ? el : ru;
-const tArr = (el: string[] | null | undefined, ru: string[]): string[] =>
-  el && el.length > 0 ? el : ru;
+export const TOPIC_LABELS_RU: Record<string, string> = {
+  history: 'История',
+  culture: 'Культура',
+  laws: 'Законы',
+  geography: 'География',
+  mixed: 'Все темы',
+};
+
+export const topicLabels = (lang: ContentLang): Record<string, string> =>
+  lang === 'ru' ? TOPIC_LABELS_RU : TOPIC_LABELS;
+
+// --- Language helpers: pick the requested language's field, falling back to
+// the other one when it's empty (data isn't fully translated for every row). ---
+const t = (el: string | null | undefined, ru: string, lang: ContentLang): string => {
+  if (lang === 'ru') return ru && ru.trim() ? ru : el ?? '';
+  return el && el.trim() ? el : ru;
+};
+const tArr = (el: string[] | null | undefined, ru: string[], lang: ContentLang): string[] => {
+  if (lang === 'ru') return ru && ru.length > 0 ? ru : el ?? [];
+  return el && el.length > 0 ? el : ru;
+};
 
 const QUESTION_COLS =
   'id, question, question_el, correct_answer, correct_answer_el, ' +
@@ -53,20 +71,25 @@ interface RawQuestion {
   topic: string | null;
 }
 
-function toQuizQuestion(r: RawQuestion): QuizQuestion {
+function toQuizQuestion(r: RawQuestion, lang: ContentLang = 'el'): QuizQuestion {
+  const explanation =
+    lang === 'ru'
+      ? (r.explanation?.trim() ? r.explanation : r.explanation_el)
+      : (r.explanation_el?.trim() ? r.explanation_el : r.explanation);
   return {
     id: r.id,
-    question: t(r.question_el, r.question),
-    correct_answer: t(r.correct_answer_el, r.correct_answer),
-    wrong_answers: tArr(r.wrong_answers_el, r.wrong_answers),
-    explanation: r.explanation_el?.trim() ? r.explanation_el : r.explanation,
+    question: t(r.question_el, r.question, lang),
+    correct_answer: t(r.correct_answer_el, r.correct_answer, lang),
+    wrong_answers: tArr(r.wrong_answers_el, r.wrong_answers, lang),
+    explanation,
     topic: r.topic,
   };
 }
 
 export async function fetchQuestionsRandom(
   topic: string,
-  limit = 10
+  limit = 10,
+  lang: ContentLang = 'el'
 ): Promise<QuizQuestion[]> {
   let query = supabase.from('questions').select(QUESTION_COLS);
 
@@ -77,13 +100,14 @@ export async function fetchQuestionsRandom(
   const { data, error } = await query; // fetch all, shuffle locally for true randomness
   if (error) throw error;
 
-  const all = ((data ?? []) as unknown as RawQuestion[]).map(toQuizQuestion);
+  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
   return shuffleArray(all).slice(0, limit);
 }
 
 export async function fetchDueFlashcards(
   userId: string,
-  limit = 20
+  limit = 20,
+  lang: ContentLang = 'el'
 ): Promise<FlashcardItem[]> {
   const now = new Date().toISOString();
 
@@ -110,7 +134,7 @@ export async function fetchDueFlashcards(
         next_review_at: string | null;
         questions: RawQuestion;
       };
-      const q = toQuizQuestion(r.questions);
+      const q = toQuizQuestion(r.questions, lang);
       return {
         question_id: r.question_id,
         question: q.question,
@@ -146,7 +170,7 @@ export async function fetchDueFlashcards(
   )
     .slice(0, limit - dueCards.length)
     .map((raw) => {
-      const q = toQuizQuestion(raw);
+      const q = toQuizQuestion(raw, lang);
       return {
         question_id: q.id,
         question: q.question,
@@ -159,14 +183,17 @@ export async function fetchDueFlashcards(
   return [...dueCards, ...unseenCards];
 }
 
-export async function fetchRandomFlashcards(limit = 20): Promise<FlashcardItem[]> {
+export async function fetchRandomFlashcards(
+  limit = 20,
+  lang: ContentLang = 'el'
+): Promise<FlashcardItem[]> {
   const { data, error } = await supabase
     .from('questions')
     .select(QUESTION_COLS);
 
   if (error) throw error;
 
-  const all = ((data ?? []) as unknown as RawQuestion[]).map(toQuizQuestion);
+  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
   return shuffleArray(all).slice(0, limit).map((q) => ({
     question_id: q.id,
     question: q.question,

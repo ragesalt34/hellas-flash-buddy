@@ -1,18 +1,20 @@
 import { BarChart3, Flame, Star, BookOpen, House, Trophy, ThumbsUp, Meh, type LucideIcon } from 'lucide-react';
 import { api } from '../api';
 import { Empty, Loading, ProgressBar, Ring, useCached } from '../ui';
+import { useLanguage } from '../i18n';
 
 export function Stats({ onHome }: { onHome: () => void }) {
-  const { data, err } = useCached('stats', api.stats);
-  const { data: history } = useCached('history', api.history);
+  const { t, language } = useLanguage();
+  const { data, err } = useCached(`stats:${language}`, api.stats);
+  const { data: history } = useCached(`history:${language}`, api.history);
 
   if (err && !data)
-    return <Empty icon={BarChart3} text="Σφάλμα σύνδεσης. Δοκίμασε ξανά." onHome={onHome} />;
+    return <Empty icon={BarChart3} text={t('stats.error')} onHome={onHome} />;
   if (!data) return <Loading />;
 
   const { stats, streak, vocab, topicLabels } = data;
   if (stats.total_sessions === 0)
-    return <Empty icon={BarChart3} text="Δεν έχεις κάνει ακόμα κουίζ. Ξεκίνα τώρα!" onHome={onHome} />;
+    return <Empty icon={BarChart3} text={t('stats.empty')} onHome={onHome} />;
 
   const acc =
     stats.total_questions > 0
@@ -29,21 +31,21 @@ export function Stats({ onHome }: { onHome: () => void }) {
 
   return (
     <div className="fade-in">
-      <div className="section-label">Σύνοψη</div>
+      <div className="section-label">{t('stats.summary')}</div>
       <div className="card stat-hero">
         <Ring pct={acc} size={108} stroke={11}>
           <div className="ring-pct" style={{ fontSize: 24 }}>
             {acc}%
           </div>
-          <div className="ring-sub">επιτυχία</div>
+          <div className="ring-sub">{t('stats.accuracy')}</div>
         </Ring>
         <div className="stat-hero-side">
           <div className="mini">
-            <span className="k">Κουίζ</span>
+            <span className="k">{t('stats.quiz')}</span>
             <span className="v">{stats.total_sessions}</span>
           </div>
           <div className="mini">
-            <span className="k">Σερί</span>
+            <span className="k">{t('stats.streak')}</span>
             <span className="v" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
               <Flame size={16} strokeWidth={2.6} /> {streak}
             </span>
@@ -51,7 +53,7 @@ export function Stats({ onHome }: { onHome: () => void }) {
         </div>
       </div>
 
-      <div className="section-label">Ανά θέμα</div>
+      <div className="section-label">{t('stats.byTopic')}</div>
       <div className="card">
         {topics.map(([topic, d]) => {
           const pct = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
@@ -69,12 +71,12 @@ export function Stats({ onHome }: { onHome: () => void }) {
         })}
       </div>
 
-      <div className="section-label">Λεξιλόγιο</div>
+      <div className="section-label">{t('stats.vocabSection')}</div>
       <div className="card">
         <div className="bar-row">
           <div className="lab">
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Star size={15} strokeWidth={2.4} /> Κατακτημένες λέξεις
+              <Star size={15} strokeWidth={2.4} /> {t('stats.masteredWords')}
             </span>
             <span className="pc">
               {vocab.mastered}/{vocab.total}
@@ -86,18 +88,18 @@ export function Stats({ onHome }: { onHome: () => void }) {
           className="muted"
           style={{ fontSize: 13, marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          <BookOpen size={14} strokeWidth={2.4} /> Επαναλήφθηκαν: {vocab.seen}/{vocab.total}
+          <BookOpen size={14} strokeWidth={2.4} /> {t('stats.reviewed')}: {vocab.seen}/{vocab.total}
         </div>
       </div>
 
       {history && history.sessions.length > 0 && (
         <>
-          <div className="section-label">Ιστορικό</div>
+          <div className="section-label">{t('stats.history')}</div>
           <div className="card">
             {history.sessions.map((s, i) => {
               const pct = s.total > 0 ? Math.round((s.score / s.total) * 100) : 0;
               const Icon = resultIcon(pct);
-              const date = new Date(s.completed_at).toLocaleDateString('el-GR', {
+              const date = new Date(s.completed_at).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'el-GR', {
                 day: '2-digit',
                 month: 'short',
               });
@@ -125,7 +127,7 @@ export function Stats({ onHome }: { onHome: () => void }) {
 
       <div className="spacer" />
       <button className="btn btn-block secondary" onClick={onHome}>
-        <House size={18} strokeWidth={2.4} /> Μενού
+        <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
       </button>
     </div>
   );

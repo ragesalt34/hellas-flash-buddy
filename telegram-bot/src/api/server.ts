@@ -10,7 +10,8 @@ import {
   fetchDueFlashcards,
   fetchRandomFlashcards,
   buildAnswerOptions,
-  TOPIC_LABELS,
+  topicLabels,
+  type ContentLang,
 } from '../services/questionService';
 import { getUserStats, getUserStreak } from '../services/sessionService';
 import { upsertUser, getUser } from '../services/userService';
@@ -27,6 +28,10 @@ interface AuthedRequest extends Request {
 
 const displayName = (u: WebAppUser): string | undefined =>
   [u.first_name, u.last_name].filter(Boolean).join(' ') || undefined;
+
+// Content language for quiz/flashcard/topic-label text — defaults to Greek
+// (the bot's original behaviour) unless the client asks for Russian.
+const getLang = (req: Request): ContentLang => (req.query.lang === 'ru' ? 'ru' : 'el');
 
 /** Wrap an async handler so thrown errors become 500s instead of crashing the process. */
 const wrap =
@@ -103,26 +108,28 @@ export function createApiApp(): express.Express {
         getUserStreak(u.id).catch(() => 0),
       ]);
       const vocab = getVocabStats(u.id, ALL_VOCAB_IDS);
+      const lang = getLang(req);
       res.json({
-        user: { id: u.id, name: u.first_name ?? 'φίλε', username: u.username ?? null },
+        user: { id: u.id, name: u.first_name ?? (lang === 'ru' ? 'друг' : 'φίλε'), username: u.username ?? null },
         stats,
         streak,
         vocab,
-        topicLabels: TOPIC_LABELS,
+        topicLabels: topicLabels(lang),
       });
     })
   );
 
-  // GET /api/quiz?topic=mixed&limit=10
+  // GET /api/quiz?topic=mixed&limit=10&lang=ru|el
   api.get(
     '/quiz',
     wrap(async (req, res) => {
       const topic = String(req.query.topic ?? 'mixed');
       const limit = Math.min(30, Math.max(1, Number(req.query.limit ?? 10)));
-      const questions = await fetchQuestionsRandom(topic, limit);
+      const lang = getLang(req);
+      const questions = await fetchQuestionsRandom(topic, limit, lang);
       res.json({
         topic,
-        topicLabel: TOPIC_LABELS[topic] ?? topic,
+        topicLabel: topicLabels(lang)[topic] ?? topic,
         questions: questions.map((q) => ({
           id: q.id,
           question: q.question,
@@ -177,16 +184,17 @@ export function createApiApp(): express.Express {
     '/flashcards',
     wrap(async (req, res) => {
       const u = req.tgUser!;
+      const lang = getLang(req);
       const user = await getUser(u.id);
       let cards;
       if (user?.user_id) {
         try {
-          cards = await fetchDueFlashcards(user.user_id, 20);
+          cards = await fetchDueFlashcards(user.user_id, 20, lang);
         } catch {
-          cards = await fetchRandomFlashcards(20);
+          cards = await fetchRandomFlashcards(20, lang);
         }
       } else {
-        cards = await fetchRandomFlashcards(20);
+        cards = await fetchRandomFlashcards(20, lang);
       }
       res.json({ cards });
     })
@@ -257,7 +265,7 @@ export function createApiApp(): express.Express {
         getUserStats(u.id),
         getUserStreak(u.id).catch(() => 0),
       ]);
-      res.json({ stats, streak, vocab: getVocabStats(u.id, ALL_VOCAB_IDS), topicLabels: TOPIC_LABELS });
+      res.json({ stats, streak, vocab: getVocabStats(u.id, ALL_VOCAB_IDS), topicLabels: topicLabels(getLang(req)) });
     })
   );
 
@@ -299,7 +307,7 @@ export function createApiApp(): express.Express {
         total: s.questions.length,
         completed_at: s.completed_at,
       }));
-      res.json({ sessions, topicLabels: TOPIC_LABELS });
+      res.json({ sessions, topicLabels: topicLabels(getLang(req)) });
     })
   );
 

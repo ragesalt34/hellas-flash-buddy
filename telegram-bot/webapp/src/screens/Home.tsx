@@ -2,11 +2,13 @@ import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight
 import { api } from '../api';
 import { haptic } from '../telegram';
 import { Loading, useCached } from '../ui';
+import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
-  const { data: me, err } = useCached('me', api.me);
+  const { t, language } = useLanguage();
+  const { data: me, err } = useCached(`me:${language}`, api.me);
 
   const { show: showStreak, dismiss: dismissStreak } = useStreakCelebration(me?.streak ?? 0);
 
@@ -17,7 +19,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <WifiOff size={52} strokeWidth={1.8} />
         </div>
         <p>
-          Σφάλμα σύνδεσης.
+          {t('common.error')}
           <br />
           <span className="muted">{err}</span>
         </p>
@@ -49,7 +51,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             />
           </svg>
         </span>
-        <p className="sub">Καλώς ήρθες πίσω,</p>
+        <p className="sub">{t('home.welcome')}</p>
         <h1>
           <span className="highlight">{me.user.name}</span>
         </h1>
@@ -57,7 +59,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           {me.streak >= 2 && (
             <span className="chip">
               <Flame size={15} color="var(--coral)" />
-              {me.streak} {me.streak === 1 ? 'μέρα' : 'μέρες'}
+              {me.streak} {t(me.streak === 1 ? 'home.streakDay' : 'home.streakDays')}
             </span>
           )}
           <span className="chip">
@@ -75,7 +77,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </div>
       </div>
 
-      <div className="section-label">Μάθηση</div>
+      <div className="section-label">{t('home.section.learn')}</div>
       <div className="tiles stagger">
         <button
           className="tile feature"
@@ -87,9 +89,9 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
-              Κουίζ
+              {t('nav.quiz')}
             </span>
-            <span className="tile-d">10 ερωτήσεις ανά θέμα</span>
+            <span className="tile-d">{t('home.quiz.desc')}</span>
           </span>
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
@@ -100,15 +102,15 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <span className="tile-ic">
             <Layers size={24} strokeWidth={2.2} />
           </span>
-          <span className="tile-t">Κάρτες</span>
-          <span className="tile-d">Επανάληψη με SRS</span>
+          <span className="tile-t">{t('nav.flashcards')}</span>
+          <span className="tile-d">{t('home.flashcards.desc')}</span>
         </button>
         <button className="tile" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="tile-ic">
             <Languages size={24} strokeWidth={2.2} />
           </span>
-          <span className="tile-t">Λεξιλόγιο</span>
-          <span className="tile-d">150 λέξεις</span>
+          <span className="tile-t">{t('nav.vocab')}</span>
+          <span className="tile-d">{t('home.vocab.desc')}</span>
         </button>
 
         <button
@@ -121,9 +123,9 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
-              Στατιστικά
+              {t('home.stats.title')}
             </span>
-            <span className="tile-d">Η πρόοδός σου & ιστορικό</span>
+            <span className="tile-d">{t('home.stats.desc')}</span>
           </span>
           <span className="arrow" style={{ color: 'var(--muted)' }}>
             <ArrowRight size={20} strokeWidth={2.4} />

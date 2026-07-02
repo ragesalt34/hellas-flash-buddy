@@ -1,4 +1,5 @@
 import { tg } from './telegram';
+import { getStoredLanguage } from './i18n';
 
 // Backend base URL — the bot's public API (Render). Set at build time.
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '').replace(/\/$/, '');
@@ -53,7 +54,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     if (USER_ID) headers['X-App-User-Id'] = USER_ID;
   }
 
-  const res = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
+  // Tag every request with the current UI language so quiz/flashcard content
+  // and topic labels come back in the right language (server defaults to 'el').
+  const sep = path.includes('?') ? '&' : '?';
+  const url = `${API_BASE}/api${path}${sep}lang=${getStoredLanguage()}`;
+
+  const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`API ${res.status}: ${body || res.statusText}`);

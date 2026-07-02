@@ -5,8 +5,10 @@ import { haptic } from '../telegram';
 import { speakGreek } from '../speech';
 import { playGrade } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
+import { useLanguage } from '../i18n';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
+  const { t } = useLanguage();
   const [cards, setCards] = useState<VocabCard[] | null>(null);
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -27,7 +29,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   if (!cards) return <Loading />;
   if (cards.length === 0)
-    return <Empty icon={CheckCircle2} text="Δεν υπάρχουν λέξεις για σήμερα. Έλα αύριο για νέες!" onHome={onHome} />;
+    return <Empty icon={CheckCircle2} text={t('vocab.empty')} onHome={onHome} />;
 
   if (done) {
     return (
@@ -36,16 +38,16 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           <div className="emoji">
             <PartyPopper size={56} strokeWidth={1.8} />
           </div>
-          <div className="ttl">Ολοκληρώθηκε!</div>
+          <div className="ttl">{t('vocab.done')}</div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Languages size={16} strokeWidth={2.4} /> {cards.length} λέξεις
+            <Languages size={16} strokeWidth={2.4} /> {cards.length} {t('vocab.wordsCount')}
           </div>
         </div>
         <button className="btn btn-block" onClick={load}>
-          <RotateCcw size={18} strokeWidth={2.4} /> Ξανά
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> Μενού
+          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
         </button>
       </div>
     );
@@ -69,7 +71,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
     <div className="fade-in" key={i}>
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Languages size={14} strokeWidth={2.6} /> Λεξιλόγιο
+          <Languages size={14} strokeWidth={2.6} /> {t('nav.vocab')}
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
@@ -83,7 +85,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           <div className="vocab-word">{card.word}</div>
           <button
             className="speak-btn"
-            aria-label="Προφορά"
+            aria-label={t('common.pronounce')}
             onClick={() => { haptic(); speakGreek(card.word, `vocab_${card.id}`); }}
           >
             <Volume2 size={17} strokeWidth={2.3} />
@@ -104,7 +106,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           </div>
           {!revealed && (
             <div className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-              <MousePointerClick size={14} strokeWidth={2.4} /> Πάτησε για μετάφραση
+              <MousePointerClick size={14} strokeWidth={2.4} /> {t('vocab.tapToReveal')}
             </div>
           )}
         </div>
@@ -117,22 +119,22 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
-              Δύσκολο
-              <span className="gsub">10 λεπτά</span>
+              {t('grade.hard')}
+              <span className="gsub">{t('grade.hard.sub')}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
-              Καλά
-              <span className="gsub">1 ημέρα</span>
+              {t('grade.good')}
+              <span className="gsub">{t('grade.good.sub')}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
-              Το ξέρω
-              <span className="gsub">4 ημέρες</span>
+              {t('grade.easy')}
+              <span className="gsub">{t('grade.easy.sub')}</span>
             </button>
           </div>
         </div>
