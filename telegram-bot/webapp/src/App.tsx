@@ -9,8 +9,9 @@ import { Quiz } from './screens/Quiz';
 import { Flashcards } from './screens/Flashcards';
 import { Vocab } from './screens/Vocab';
 import { Stats } from './screens/Stats';
+import { Auth } from './screens/Auth';
 
-export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats';
+export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'auth';
 
 const ENTERED_KEY = 'hs_entered';
 // Inside Telegram or after first entry (or installed PWA) skip the landing page.
@@ -37,9 +38,9 @@ export function App() {
   const [navKey, setNavKey] = useState(0);
   const home = () => setView('home');
 
-  // Focus mode (quiz/flashcards/vocab): on desktop the sidebar is hidden and the
-  // content is centred full-width with a bottom action bar (Duolingo-style).
-  const focus = view === 'quiz' || view === 'flashcards' || view === 'vocab';
+  // Focus mode (quiz/flashcards/vocab/auth): on desktop the sidebar is hidden and
+  // the content is centred full-width with a bottom action bar (Duolingo-style).
+  const focus = view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'auth';
   useEffect(() => {
     document.body.classList.toggle('focus', focus);
     return () => document.body.classList.remove('focus');
@@ -72,7 +73,13 @@ export function App() {
     return (
       <>
         <div className="aurora" />
-        <Landing onStart={enter} />
+        <Landing
+          onStart={enter}
+          onLogin={() => {
+            enter();
+            setView('auth');
+          }}
+        />
       </>
     );
   }
@@ -86,6 +93,7 @@ export function App() {
         {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
         {view === 'stats' && <Stats key={navKey} onHome={home} />}
+        {view === 'auth' && <Auth key={navKey} onDone={home} />}
       </div>
 
       <button className="focus-close" aria-label={t('nav.close')} onClick={home}>

@@ -1,5 +1,6 @@
 import { tg } from './telegram';
 import { getStoredLanguage } from './i18n';
+import { getToken } from './auth';
 
 // Backend base URL — the bot's public API (Render). Set at build time.
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '').replace(/\/$/, '');
@@ -41,14 +42,31 @@ export function cacheSet<T>(key: string, value: T): void {
   }
 }
 
+/** Drop all cached dashboard data — must be called on login/logout so the new
+ * account doesn't briefly see the previous user's numbers. */
+export function clearCache(): void {
+  mem.clear();
+  try {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith('hs_cache_'))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch {
+    /* ignore */
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
   const initData = tg?.initData ?? '';
+  const webToken = getToken();
   if (initData) {
     headers['X-Telegram-Init-Data'] = initData;
+  } else if (webToken) {
+    // Signed-in web account takes precedence over the shared guest secret.
+    headers['X-Web-Token'] = webToken;
   } else {
     if (APP_SECRET) headers['X-App-Secret'] = APP_SECRET;
     if (USER_ID) headers['X-App-User-Id'] = USER_ID;
@@ -68,6 +86,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
+  register: (username: string, password: string) =>
+    request<AuthResponse>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+  login: (username: string, password: string) =>
+    request<AuthResponse>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
   me: () => request<MeResponse>('/me'),
   quiz: (topic: string, limit = 10) =>
     request<QuizResponse>(`/quiz?topic=${encodeURIComponent(topic)}&limit=${limit}`),
@@ -95,6 +123,10 @@ export const api = {
 };
 
 // ---- Shared types ----
+export interface AuthResponse {
+  token: string;
+  user: { id: number; name: string };
+}
 export interface UserStats {
   total_sessions: number;
   total_questions: number;

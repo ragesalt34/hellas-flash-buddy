@@ -33,6 +33,45 @@ const displayName = (u: WebAppUser): string | undefined =>
 // (the bot's original behaviour) unless the client asks for Russian.
 const getLang = (req: Request): ContentLang => (req.query.lang === 'ru' ? 'ru' : 'el');
 
+// ---- Web accounts (nickname + password) ----
+// Credentials live in Supabase Auth (GoTrue hashes the passwords); the nickname
+// is wrapped into a synthetic email so no new tables/DDL are needed. The rest of
+// the system keys progress by a numeric id, so we derive a stable 48-bit id from
+// the auth user's UUID. Sessions are stateless HMAC tokens signed with APP_SECRET.
+const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
+const webEmail = (username: string): string => `${username.toLowerCase()}@web.hellas-study.app`;
+const uuidToNumericId = (uuid: string): number => parseInt(uuid.replace(/-/g, '').slice(0, 12), 16);
+const authSecret = (): string => process.env.APP_SECRET || process.env.BOT_TOKEN || '';
+
+function signWebToken(id: number, username: string): string {
+  const payload = Buffer.from(
+    JSON.stringify({ id, u: username, exp: Date.now() + 90 * 24 * 3600 * 1000 })
+  ).toString('base64url');
+  const sig = crypto.createHmac('sha256', authSecret()).update(payload).digest('base64url');
+  return `${payload}.${sig}`;
+}
+
+function verifyWebToken(token: string): { id: number; u: string } | null {
+  const [payload, sig] = token.split('.');
+  if (!payload || !sig) return null;
+  const expected = crypto.createHmac('sha256', authSecret()).update(payload).digest('base64url');
+  const a = Buffer.from(sig);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+  try {
+    const p = JSON.parse(Buffer.from(payload, 'base64url').toString()) as {
+      id?: unknown;
+      u?: unknown;
+      exp?: unknown;
+    };
+    if (typeof p.id !== 'number' || typeof p.u !== 'string' || typeof p.exp !== 'number') return null;
+    if (Date.now() > p.exp) return null;
+    return { id: p.id, u: p.u };
+  } catch {
+    return null;
+  }
+}
+
 /** Wrap an async handler so thrown errors become 500s instead of crashing the process. */
 const wrap =
   (fn: (req: AuthedRequest, res: Response) => Promise<void>) =>
@@ -60,6 +99,15 @@ export function createApiApp(): express.Express {
     const initData = req.header('X-Telegram-Init-Data') ?? '';
     const token = process.env.BOT_TOKEN ?? '';
     let user = token ? validateInitData(initData, token) : null;
+
+    // Web account session (nickname+password login) — stateless HMAC token
+    if (!user) {
+      const wt = req.header('X-Web-Token') ?? '';
+      if (wt) {
+        const v = verifyWebToken(wt);
+        if (v) user = { id: v.id, first_name: v.u, username: v.u };
+      }
+    }
 
     // Local development bypass — only when explicitly enabled
     if (!user && process.env.ALLOW_DEV_AUTH === 'true') {
@@ -91,6 +139,78 @@ export function createApiApp(): express.Express {
     req.tgUser = user;
     next();
   };
+
+  // --- Public auth endpoints (no session required) ---
+  const gotrueHeaders = () => ({
+    apikey: process.env.SUPABASE_SERVICE_KEY ?? '',
+    Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY ?? ''}`,
+    'Content-Type': 'application/json',
+  });
+
+  // POST /api/auth/register { username, password }
+  app.post(
+    '/api/auth/register',
+    wrap(async (req, res) => {
+      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
+      if (
+        typeof username !== 'string' ||
+        !USERNAME_RE.test(username) ||
+        typeof password !== 'string' ||
+        password.length < 6
+      ) {
+        res.status(400).json({ error: 'invalid_input' });
+        return;
+      }
+      const r = await fetch(`${process.env.SUPABASE_URL}/auth/v1/admin/users`, {
+        method: 'POST',
+        headers: gotrueHeaders(),
+        body: JSON.stringify({
+          email: webEmail(username),
+          password,
+          email_confirm: true,
+          user_metadata: { username },
+        }),
+      });
+      const data = (await r.json().catch(() => ({}))) as { id?: string; msg?: string; message?: string };
+      if (!r.ok || !data.id) {
+        const msg = String(data.msg ?? data.message ?? '');
+        if (r.status === 422 || /already|exists/i.test(msg)) {
+          res.status(409).json({ error: 'username_taken' });
+          return;
+        }
+        console.error('auth/register error:', r.status, data);
+        res.status(500).json({ error: 'register_failed' });
+        return;
+      }
+      const id = uuidToNumericId(data.id);
+      await upsertUser(id, username, username).catch((e) => console.error('upsertUser error:', e));
+      res.json({ token: signWebToken(id, username), user: { id, name: username } });
+    })
+  );
+
+  // POST /api/auth/login { username, password }
+  app.post(
+    '/api/auth/login',
+    wrap(async (req, res) => {
+      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
+      if (typeof username !== 'string' || !USERNAME_RE.test(username) || typeof password !== 'string') {
+        res.status(401).json({ error: 'invalid_credentials' });
+        return;
+      }
+      const r = await fetch(`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: gotrueHeaders(),
+        body: JSON.stringify({ email: webEmail(username), password }),
+      });
+      const data = (await r.json().catch(() => ({}))) as { user?: { id?: string } };
+      if (!r.ok || !data.user?.id) {
+        res.status(401).json({ error: 'invalid_credentials' });
+        return;
+      }
+      const id = uuidToNumericId(data.user.id);
+      res.json({ token: signWebToken(id, username), user: { id, name: username } });
+    })
+  );
 
   const api = express.Router();
   api.use(auth);

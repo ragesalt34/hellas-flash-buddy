@@ -1,5 +1,6 @@
-import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff } from 'lucide-react';
-import { api } from '../api';
+import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff, UserRound, LogOut } from 'lucide-react';
+import { api, clearCache } from '../api';
+import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
 import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
@@ -74,6 +75,25 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             <Star size={15} color="var(--amber)" />
             {me.vocab.mastered}/{me.vocab.total}
           </span>
+          {getToken() ? (
+            <button
+              className="chip"
+              onClick={() => {
+                haptic();
+                clearToken();
+                clearCache();
+                window.location.reload();
+              }}
+            >
+              <LogOut size={14} strokeWidth={2.4} />
+              {t('auth.logout')}
+            </button>
+          ) : (
+            <button className="chip" onClick={() => nav('auth')}>
+              <UserRound size={14} strokeWidth={2.4} />
+              {t('auth.loginChip')}
+            </button>
+          )}
         </div>
       </div>
 

@@ -78,7 +78,7 @@ function DemoCard() {
   );
 }
 
-export function Landing({ onStart }: { onStart: () => void }) {
+export function Landing({ onStart, onLogin }: { onStart: () => void; onLogin: () => void }) {
   const { t } = useLanguage();
   return (
     <div className="landing">
@@ -89,7 +89,7 @@ export function Landing({ onStart }: { onStart: () => void }) {
         </div>
         <div className="lp-nav-right">
           <LanguageSwitch />
-          <button className="lp-btn ghost" onClick={onStart}>{t('landing.enter')}</button>
+          <button className="lp-btn ghost" onClick={onLogin}>{t('landing.enter')}</button>
         </div>
       </nav>
 
