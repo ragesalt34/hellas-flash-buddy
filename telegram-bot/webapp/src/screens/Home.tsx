@@ -38,6 +38,17 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   return (
     <div className="fade-in">
       <div className="hero">
+        <span className="hero-badge" aria-hidden="true">
+          {/* Greek key (meander) — square spiral motif */}
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M3 21 V3 H21 V21 H9 V9 H15 V15 H12"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="square"
+            />
+          </svg>
+        </span>
         <p className="sub">Καλώς ήρθες πίσω,</p>
         <h1>
           <span className="highlight">{me.user.name}</span>

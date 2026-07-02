@@ -181,6 +181,22 @@ svg { display: block; }
   border-radius: 10px;
   box-shadow: 4px 4px 0 0 var(--border);
 }
+/* Greek-meander "sticker" pinned to the hero's empty right corner */
+.hero-badge {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: var(--amber);
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  box-shadow: 4px 4px 0 0 var(--border);
+  transform: rotate(7deg);
+  color: var(--border);
+}
 .hero .sub {
   margin: 0;
   font-size: 15px;
