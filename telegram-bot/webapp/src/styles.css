@@ -156,40 +156,45 @@ svg { display: block; }
   box-shadow: 4px 4px 0 0 var(--border);
 }
 
-/* ============ HERO ============ */
+/* ============ HERO — white card, name on a coral highlighter chip ============ */
 .hero {
   position: relative;
   border-radius: var(--r-xl);
   padding: 28px 24px;
   overflow: hidden;
-  background: var(--marsala);
+  background: var(--surface);
   border: 3px solid var(--border);
-  color: #fff;
+  color: var(--text);
   box-shadow: var(--e2);
 }
 .hero h1 {
-  margin: 2px 0 0;
+  margin: 10px 0 0;
   font-family: 'Onest', sans-serif;
   font-size: clamp(30px, 9vw, 40px);
   font-weight: 700;
   letter-spacing: -1px;
-  line-height: 1.05;
-  color: #fff;
+  line-height: 1.15;
+  color: var(--text);
+}
+.hero h1 .highlight {
+  padding: 1px 14px;
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 0 var(--border);
 }
 .hero .sub {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--muted);
 }
 .hero-chips {
   display: flex;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 20px;
   flex-wrap: wrap;
 }
 .chip {
-  background: #fff;
+  background: var(--surface-2);
   border: 2px solid var(--border);
   border-radius: 999px;
   padding: 7px 14px;

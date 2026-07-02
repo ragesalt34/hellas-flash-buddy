@@ -39,7 +39,9 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
     <div className="fade-in">
       <div className="hero">
         <p className="sub">Καλώς ήρθες πίσω,</p>
-        <h1>{me.user.name}</h1>
+        <h1>
+          <span className="highlight">{me.user.name}</span>
+        </h1>
         <div className="hero-chips">
           {me.streak >= 2 && (
             <span className="chip">
