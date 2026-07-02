@@ -82,6 +82,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
                 haptic();
                 clearToken();
                 clearCache();
+                // Also drop the "entered" flag so logout lands on the welcome page.
+                localStorage.removeItem('hs_entered');
                 window.location.reload();
               }}
             >

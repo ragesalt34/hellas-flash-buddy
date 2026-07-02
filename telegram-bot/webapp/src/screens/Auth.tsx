@@ -10,9 +10,9 @@ const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 type Mode = 'login' | 'register';
 
 /** Nickname + password sign-in / sign-up, shown in desktop focus mode. */
-export function Auth({ onDone }: { onDone: () => void }) {
+export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void; initialMode?: Mode }) {
   const { t } = useLanguage();
-  const [mode, setMode] = useState<Mode>('register');
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState<string | null>(null);

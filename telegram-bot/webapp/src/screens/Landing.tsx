@@ -78,7 +78,15 @@ function DemoCard() {
   );
 }
 
-export function Landing({ onStart, onLogin }: { onStart: () => void; onLogin: () => void }) {
+export function Landing({
+  onStart,
+  onLogin,
+  onGuest,
+}: {
+  onStart: () => void;
+  onLogin: () => void;
+  onGuest: () => void;
+}) {
   const { t } = useLanguage();
   return (
     <div className="landing">
@@ -105,7 +113,7 @@ export function Landing({ onStart, onLogin }: { onStart: () => void; onLogin: ()
         </motion.p>
         <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
           <button className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} /></button>
-          <button className="lp-btn ghost" onClick={onStart}>{t('landing.cta.see')}</button>
+          <button className="lp-btn ghost" onClick={onGuest}>{t('landing.cta.see')}</button>
         </motion.div>
 
         <motion.div

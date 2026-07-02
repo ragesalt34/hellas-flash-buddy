@@ -34,13 +34,18 @@ export function App() {
     () => !!tg || isStandalonePWA || localStorage.getItem(ENTERED_KEY) === '1'
   );
   const [view, setView] = useState<View>('home');
+  // Pre-entry flow: landing page first, then the sign-in/sign-up screen.
+  const [gate, setGate] = useState<'landing' | 'auth'>('landing');
+  const [gateMode, setGateMode] = useState<'login' | 'register'>('register');
   // Bump key to force a screen to remount (reset its internal phase) when its tab is re-tapped.
   const [navKey, setNavKey] = useState(0);
   const home = () => setView('home');
 
   // Focus mode (quiz/flashcards/vocab/auth): on desktop the sidebar is hidden and
   // the content is centred full-width with a bottom action bar (Duolingo-style).
-  const focus = view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'auth';
+  const focus =
+    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'auth')) ||
+    (!entered && gate === 'auth');
   useEffect(() => {
     document.body.classList.toggle('focus', focus);
     return () => document.body.classList.remove('focus');
@@ -49,6 +54,11 @@ export function App() {
   const enter = () => {
     localStorage.setItem(ENTERED_KEY, '1');
     setEntered(true);
+  };
+
+  const openGateAuth = (mode: 'login' | 'register') => {
+    setGateMode(mode);
+    setGate('auth');
   };
 
   const goTab = (v: View) => {
@@ -70,16 +80,30 @@ export function App() {
   }, [view]);
 
   if (!entered) {
+    // Welcome flow: landing → sign-up/sign-in (or explicit guest entry) → app.
     return (
       <>
         <div className="aurora" />
-        <Landing
-          onStart={enter}
-          onLogin={() => {
-            enter();
-            setView('auth');
-          }}
-        />
+        {gate === 'auth' ? (
+          <>
+            <div className="app">
+              <Auth initialMode={gateMode} onDone={enter} />
+            </div>
+            <button
+              className="focus-close"
+              aria-label={t('nav.close')}
+              onClick={() => setGate('landing')}
+            >
+              <X size={22} strokeWidth={2.6} />
+            </button>
+          </>
+        ) : (
+          <Landing
+            onStart={() => openGateAuth('register')}
+            onLogin={() => openGateAuth('login')}
+            onGuest={enter}
+          />
+        )}
       </>
     );
   }
