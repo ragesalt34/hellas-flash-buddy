@@ -769,7 +769,12 @@ svg { display: block; }
     margin: 0 auto;
     /* upper-area anchor (not dead-center) with room for the fixed bottom bar */
     padding: clamp(40px, 10vh, 104px) 24px 132px;
+    display: flex;
+    flex-direction: column;
   }
+  /* terminal screens (quiz result, flashcard/vocab done) have no bottom bar —
+     centre them vertically instead of leaving a void below */
+  body.focus .app > .center-col { margin: auto 0; }
 
   .focus-close { display: none; }
   body.focus .focus-close {
