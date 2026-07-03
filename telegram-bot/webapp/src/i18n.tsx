@@ -59,6 +59,7 @@ const translations: Translations = {
   'flashcards.done': { ru: 'Сессия завершена!', el: 'Η συνεδρία ολοκληρώθηκε!' },
   'flashcards.cardsCount': { ru: 'карточек', el: 'κάρτες' },
   'flashcards.showAnswer': { ru: 'Показать ответ', el: 'Δείξε απάντηση' },
+  'flashcards.answerLabel': { ru: 'Ответ', el: 'Απάντηση' },
 
   // ---- Vocab ----
   'vocab.empty': {

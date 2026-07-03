@@ -95,8 +95,11 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
         {revealed && (
           <div className="fade-in">
-            <div className="answer" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Check size={22} strokeWidth={3} /> {card.correct_answer}
+            <div className="answer-box">
+              <span className="answer-tag">
+                <Check size={13} strokeWidth={3.2} /> {t('flashcards.answerLabel')}
+              </span>
+              <div className="answer-text">{card.correct_answer}</div>
             </div>
             {card.explanation && (
               <div className="explain">
