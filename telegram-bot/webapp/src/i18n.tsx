@@ -117,6 +117,7 @@ const translations: Translations = {
   'auth.submit.register': { ru: 'Создать аккаунт', el: 'Δημιουργία λογαριασμού' },
   'auth.guest': { ru: 'Продолжить без аккаунта', el: 'Συνέχεια χωρίς λογαριασμό' },
   'auth.logout': { ru: 'Выйти', el: 'Έξοδος' },
+  'auth.back': { ru: 'Назад', el: 'Πίσω' },
   'auth.loginChip': { ru: 'Войти', el: 'Σύνδεση' },
   'auth.error.taken': { ru: 'Этот ник уже занят', el: 'Αυτό το ψευδώνυμο χρησιμοποιείται ήδη' },
   'auth.error.invalid': { ru: 'Неверный ник или пароль', el: 'Λάθος ψευδώνυμο ή κωδικός' },

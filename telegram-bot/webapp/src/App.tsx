@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, X, type LucideIcon } from 'lucide-react';
+import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, X, ArrowLeft, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
@@ -86,15 +86,13 @@ export function App() {
         <div className="aurora" />
         {gate === 'auth' ? (
           <>
-            <div className="app">
+            <div className="app gate-app">
               <Auth initialMode={gateMode} onDone={enter} />
             </div>
-            <button
-              className="focus-close"
-              aria-label={t('nav.close')}
-              onClick={() => setGate('landing')}
-            >
-              <X size={22} strokeWidth={2.6} />
+            {/* Always-visible back to the welcome page (the desktop-only
+                focus-close X leaves mobile users with no way back). */}
+            <button className="gate-back" onClick={() => setGate('landing')}>
+              <ArrowLeft size={18} strokeWidth={2.6} /> {t('auth.back')}
             </button>
           </>
         ) : (

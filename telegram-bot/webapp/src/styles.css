@@ -580,6 +580,34 @@ svg { display: block; }
 /* Focus-mode close button — desktop-only (mobile keeps the bottom nav). */
 .focus-close { display: none; }
 
+/* Gate back button (welcome → auth). Always visible at every width, since the
+   pre-entry auth screen has neither a sidebar nor a bottom nav to escape via. */
+.gate-back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px 9px 12px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 0 var(--border);
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+}
+.gate-back:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--border); }
+.gate-back:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
+/* Keep the auth card clear of the fixed back button on mobile (desktop centres
+   the card vertically, so it never collides there). */
+.gate-app { padding-top: 76px; }
+
 /* ============ Auth (nickname + password) ============ */
 .auth-card { max-width: 440px; width: 100%; margin: 0 auto; }
 .auth-title {
