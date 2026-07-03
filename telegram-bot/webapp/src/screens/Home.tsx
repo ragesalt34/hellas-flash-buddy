@@ -91,7 +91,15 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
               {t('auth.logout')}
             </button>
           ) : (
-            <button className="chip" onClick={() => nav('auth')}>
+            <button
+              className="chip"
+              onClick={() => {
+                haptic();
+                // Guests return to the welcome page (login / register / continue).
+                localStorage.removeItem('hs_entered');
+                window.location.reload();
+              }}
+            >
               <UserRound size={14} strokeWidth={2.4} />
               {t('auth.loginChip')}
             </button>
