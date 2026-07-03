@@ -459,23 +459,25 @@ svg { display: block; }
 .option.wrong .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.dim { opacity: 0.45; }
 
-/* Flashcard answer — solid mint block (matches the quiz's correct option) */
+/* Flashcard answer — centred ink plaque with an amber tag */
 .answer-box {
   margin-top: 18px;
-  padding: 16px 18px;
-  background: var(--mint);
+  padding: 18px 20px 20px;
+  background: var(--ink);
   border: 2px solid var(--border);
   border-radius: var(--r-md);
   box-shadow: 4px 4px 0 0 var(--border);
   color: #fff;
+  text-align: center;
 }
 .answer-tag {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 11px;
+  padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
+  background: var(--amber);
+  color: var(--ink);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -484,7 +486,7 @@ svg { display: block; }
 }
 .answer-text {
   font-family: 'Onest', sans-serif;
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
   letter-spacing: -0.3px;
   line-height: 1.3;
