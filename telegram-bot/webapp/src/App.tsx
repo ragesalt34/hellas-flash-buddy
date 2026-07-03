@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { House, BookOpen, Layers, Languages, BarChart3, Sparkles, X, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { House, BookOpen, Layers, Languages, BarChart3, Landmark, X, ArrowLeft, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
@@ -125,7 +125,7 @@ export function App() {
       <nav className="bottomnav" aria-label={t('nav.aria')}>
         <div className="bottomnav-inner glass">
           <div className="nav-brand" aria-hidden="true">
-            <Sparkles size={22} color="#fff" strokeWidth={2.4} />
+            <Landmark size={22} color="#fff" strokeWidth={2.4} />
           </div>
           {NAV.map((n) => {
             const Icon = n.icon;

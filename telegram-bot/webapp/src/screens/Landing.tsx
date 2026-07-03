@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles,
+  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles, Landmark,
   MousePointerClick, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
@@ -92,7 +92,7 @@ export function Landing({
     <div className="landing">
       <nav className="lp-nav">
         <div className="lp-brand">
-          <span className="lp-logo"><Sparkles size={20} color="#fff" strokeWidth={2.4} /></span>
+          <span className="lp-logo"><Landmark size={20} color="#fff" strokeWidth={2.4} /></span>
           Hellas Study
         </div>
         <div className="lp-nav-right">
