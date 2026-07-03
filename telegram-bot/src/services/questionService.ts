@@ -43,16 +43,7 @@ export const TOPIC_LABELS_RU: Record<string, string> = {
 export const topicLabels = (lang: ContentLang): Record<string, string> =>
   lang === 'ru' ? TOPIC_LABELS_RU : TOPIC_LABELS;
 
-// --- Language helpers: pick the requested language's field, falling back to
-// the other one when it's empty (data isn't fully translated for every row). ---
-const t = (el: string | null | undefined, ru: string, lang: ContentLang): string => {
-  if (lang === 'ru') return ru && ru.trim() ? ru : el ?? '';
-  return el && el.trim() ? el : ru;
-};
-const tArr = (el: string[] | null | undefined, ru: string[], lang: ContentLang): string[] => {
-  if (lang === 'ru') return ru && ru.length > 0 ? ru : el ?? [];
-  return el && el.length > 0 ? el : ru;
-};
+const nonEmpty = (s: string | null | undefined): boolean => !!s && s.trim().length > 0;
 
 const QUESTION_COLS =
   'id, question, question_el, correct_answer, correct_answer_el, ' +
@@ -72,15 +63,25 @@ interface RawQuestion {
 }
 
 function toQuizQuestion(r: RawQuestion, lang: ContentLang = 'el'): QuizQuestion {
-  const explanation =
-    lang === 'ru'
-      ? (r.explanation?.trim() ? r.explanation : r.explanation_el)
-      : (r.explanation_el?.trim() ? r.explanation_el : r.explanation);
+  // Pick ONE language for the whole answer set (question + correct + wrongs) so
+  // options never mix alphabets — otherwise a lone Greek/Russian answer among
+  // distractors in the other language would be the obvious giveaway. Only fall
+  // back to the other language if the requested one isn't a complete set.
+  const elComplete = nonEmpty(r.question_el) && nonEmpty(r.correct_answer_el) && (r.wrong_answers_el?.length ?? 0) > 0;
+  const ruComplete = nonEmpty(r.question) && nonEmpty(r.correct_answer) && (r.wrong_answers?.length ?? 0) > 0;
+  const useRu = lang === 'ru' ? ruComplete || !elComplete : !elComplete && ruComplete;
+
+  // Explanation is non-critical (not an option) — prefer the chosen language,
+  // fall back to the other so it's shown whenever it exists.
+  const explanation = useRu
+    ? (nonEmpty(r.explanation) ? r.explanation : r.explanation_el)
+    : (nonEmpty(r.explanation_el) ? r.explanation_el : r.explanation);
+
   return {
     id: r.id,
-    question: t(r.question_el, r.question, lang),
-    correct_answer: t(r.correct_answer_el, r.correct_answer, lang),
-    wrong_answers: tArr(r.wrong_answers_el, r.wrong_answers, lang),
+    question: (useRu ? r.question : r.question_el) ?? r.question,
+    correct_answer: (useRu ? r.correct_answer : r.correct_answer_el) ?? r.correct_answer,
+    wrong_answers: (useRu ? r.wrong_answers : r.wrong_answers_el) ?? r.wrong_answers,
     explanation,
     topic: r.topic,
   };
