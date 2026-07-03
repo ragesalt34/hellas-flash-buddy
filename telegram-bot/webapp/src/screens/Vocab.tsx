@@ -14,18 +14,36 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
 
-  function load() {
+  function reset() {
     setCards(null);
     setI(0);
     setRevealed(false);
     setDone(false);
+  }
+
+  // Retry button — fresh user action, no race to guard.
+  function load() {
+    reset();
     api
       .vocab()
       .then((r) => setCards(r.cards))
       .catch(() => setCards([]));
   }
 
-  useEffect(load, []);
+  // Guarded initial load so StrictMode's double-invoke can't flash one card
+  // and then swap it for the second fetch's different one.
+  useEffect(() => {
+    let cancelled = false;
+    reset();
+    api
+      .vocab()
+      .then((r) => !cancelled && setCards(r.cards))
+      .catch(() => !cancelled && setCards([]));
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!cards) return <Loading />;
   if (cards.length === 0)

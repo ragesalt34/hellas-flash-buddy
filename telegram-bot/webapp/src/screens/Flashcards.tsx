@@ -14,19 +14,37 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
 
-  function load() {
+  function reset() {
     setCards(null);
     setI(0);
     setRevealed(false);
     setDone(false);
+  }
+
+  // Retry button — fresh user action, no race to guard.
+  function load() {
+    reset();
     api
       .flashcards()
       .then((r) => setCards(r.cards))
       .catch(() => setCards([]));
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(load, [language]);
+  // Initial (and on language change) load, guarded so React 18 StrictMode's
+  // double-invoke — or any re-run — can't flash a first random card and then
+  // swap it for a second fetch's different one.
+  useEffect(() => {
+    let cancelled = false;
+    reset();
+    api
+      .flashcards()
+      .then((r) => !cancelled && setCards(r.cards))
+      .catch(() => !cancelled && setCards([]));
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   if (!cards) return <Loading />;
   if (cards.length === 0)
