@@ -82,8 +82,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
                 haptic();
                 clearToken();
                 clearCache();
-                // Also drop the "entered" flag so logout lands on the welcome page.
-                localStorage.removeItem('hs_entered');
+                // Reloading with no token now re-derives entered=false, landing on
+                // the welcome page (see App.tsx).
                 window.location.reload();
               }}
             >
@@ -95,8 +95,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
               className="chip"
               onClick={() => {
                 haptic();
-                // Guests return to the welcome page (login / register / continue).
-                localStorage.removeItem('hs_entered');
+                // Guests have no token, so reloading re-derives entered=false and
+                // lands on the welcome page (login / register / continue).
                 window.location.reload();
               }}
             >

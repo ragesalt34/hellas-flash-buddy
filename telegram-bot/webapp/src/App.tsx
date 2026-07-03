@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { House, BookOpen, Layers, Languages, BarChart3, Landmark, X, ArrowLeft, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
+import { getToken } from './auth';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
 import { Landing } from './screens/Landing';
@@ -13,8 +14,9 @@ import { Auth } from './screens/Auth';
 
 export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'auth';
 
-const ENTERED_KEY = 'hs_entered';
-// Inside Telegram or after first entry (or installed PWA) skip the landing page.
+// Inside Telegram, an installed PWA, or with a valid signed-in session, skip
+// the landing page — everyone else always sees it first (guests included:
+// a guest's "continue without an account" only lasts the current tab session).
 const isStandalonePWA =
   typeof window !== 'undefined' &&
   (window.matchMedia?.('(display-mode: standalone)').matches ||
@@ -30,9 +32,7 @@ const NAV: { id: View; icon: LucideIcon; key: string }[] = [
 
 export function App() {
   const { t } = useLanguage();
-  const [entered, setEntered] = useState(
-    () => !!tg || isStandalonePWA || localStorage.getItem(ENTERED_KEY) === '1'
-  );
+  const [entered, setEntered] = useState(() => !!tg || isStandalonePWA || !!getToken());
   const [view, setView] = useState<View>('home');
   // Pre-entry flow: landing page first, then the sign-in/sign-up screen.
   const [gate, setGate] = useState<'landing' | 'auth'>('landing');
@@ -51,10 +51,9 @@ export function App() {
     return () => document.body.classList.remove('focus');
   }, [focus]);
 
-  const enter = () => {
-    localStorage.setItem(ENTERED_KEY, '1');
-    setEntered(true);
-  };
+  // Guest entry is intentionally in-memory only (not persisted): reloading the
+  // site drops back to the landing page unless a real session was created.
+  const enter = () => setEntered(true);
 
   const openGateAuth = (mode: 'login' | 'register') => {
     setGateMode(mode);
