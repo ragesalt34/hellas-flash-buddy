@@ -12,7 +12,7 @@ import { Vocab } from './screens/Vocab';
 import { Stats } from './screens/Stats';
 import { Auth } from './screens/Auth';
 
-export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'auth';
+export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats';
 
 // Inside Telegram, an installed PWA, or with a valid signed-in session, skip
 // the landing page — everyone else always sees it first (guests included:
@@ -41,10 +41,11 @@ export function App() {
   const [navKey, setNavKey] = useState(0);
   const home = () => setView('home');
 
-  // Focus mode (quiz/flashcards/vocab/auth): on desktop the sidebar is hidden and
-  // the content is centred full-width with a bottom action bar (Duolingo-style).
+  // Focus mode (quiz/flashcards/vocab, or the pre-entry auth gate): on desktop
+  // the sidebar is hidden and the content is centred full-width with a bottom
+  // action bar (Duolingo-style).
   const focus =
-    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'auth')) ||
+    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab')) ||
     (!entered && gate === 'auth');
   useEffect(() => {
     document.body.classList.toggle('focus', focus);
@@ -114,7 +115,6 @@ export function App() {
         {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
         {view === 'stats' && <Stats key={navKey} onHome={home} />}
-        {view === 'auth' && <Auth key={navKey} onDone={home} />}
       </div>
 
       <button className="focus-close" aria-label={t('nav.close')} onClick={home}>

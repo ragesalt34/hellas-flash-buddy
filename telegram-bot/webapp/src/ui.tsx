@@ -13,6 +13,11 @@ export function useCached<T>(key: string, fetcher: () => Promise<T>) {
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
+    // Re-sync from cache for the NEW key immediately (e.g. a language switch
+    // changes the key): without this, `data` keeps showing the previous key's
+    // value — possibly in the wrong language — until the fetch below resolves.
+    setData(cacheGet<T>(key));
+    setErr(null);
     fetcher()
       .then((v) => {
         if (!alive) return;

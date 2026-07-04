@@ -3,7 +3,12 @@ import { Flame } from 'lucide-react';
 import { haptic, notify } from '../telegram';
 import { useLanguage } from '../i18n';
 
-const SEEN_KEY = 'hellas_seen_streak';
+// Prefixed with hs_cache_ so api.ts's clearCache() sweeps it on every
+// login/logout — otherwise this "already celebrated" marker leaks across
+// accounts on a shared browser (account A reaches streak 5, then account B
+// logs in with streak 3 and silently never sees its own first celebration,
+// since 3 > 5 is false).
+const SEEN_KEY = 'hs_cache_seen_streak';
 
 /** Fires once whenever the user's streak grows past what we last celebrated (persisted in localStorage). */
 export function useStreakCelebration(streak: number): { show: boolean; dismiss: () => void } {

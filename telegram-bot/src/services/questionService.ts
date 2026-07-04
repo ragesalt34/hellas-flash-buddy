@@ -67,8 +67,11 @@ function toQuizQuestion(r: RawQuestion, lang: ContentLang = 'el'): QuizQuestion 
   // options never mix alphabets — otherwise a lone Greek/Russian answer among
   // distractors in the other language would be the obvious giveaway. Only fall
   // back to the other language if the requested one isn't a complete set.
-  const elComplete = nonEmpty(r.question_el) && nonEmpty(r.correct_answer_el) && (r.wrong_answers_el?.length ?? 0) > 0;
-  const ruComplete = nonEmpty(r.question) && nonEmpty(r.correct_answer) && (r.wrong_answers?.length ?? 0) > 0;
+  // "Complete" requires all 3 distractors (not just >=1) — a row with only a
+  // partial translation of wrong_answers would otherwise render a quiz question
+  // with fewer than 4 total options instead of falling back to the full set.
+  const elComplete = nonEmpty(r.question_el) && nonEmpty(r.correct_answer_el) && (r.wrong_answers_el?.length ?? 0) >= 3;
+  const ruComplete = nonEmpty(r.question) && nonEmpty(r.correct_answer) && (r.wrong_answers?.length ?? 0) >= 3;
   const useRu = lang === 'ru' ? ruComplete || !elComplete : !elComplete && ruComplete;
 
   // Explanation is non-critical (not an option) — prefer the chosen language,

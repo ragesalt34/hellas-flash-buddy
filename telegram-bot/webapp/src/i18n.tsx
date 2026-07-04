@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 export type Language = 'ru' | 'el';
 
@@ -222,11 +222,19 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>(getStoredLanguage);
+  const [language, setLanguageState] = useState<Language>(getStoredLanguage);
 
-  useEffect(() => {
-    localStorage.setItem(LANG_KEY, language);
-  }, [language]);
+  // Written synchronously (not in a useEffect) so it lands in localStorage
+  // *before* React commits and fires descendants' effects. api.ts's
+  // getStoredLanguage() is read from inside useCached's effect (ui.tsx), which
+  // — being a descendant — commits before this provider's own effect would
+  // (React runs effects bottom-up). A useEffect here would race: the very
+  // first request after switching language would still read the OLD value,
+  // permanently poisoning that language's cache entry with the wrong content.
+  const setLanguage = (l: Language) => {
+    localStorage.setItem(LANG_KEY, l);
+    setLanguageState(l);
+  };
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t: (key) => t(key, language) }}>
