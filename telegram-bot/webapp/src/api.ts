@@ -5,13 +5,12 @@ import { getToken } from './auth';
 // Backend base URL — the bot's public API (Render). Set at build time.
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '').replace(/\/$/, '');
 
-// Standalone website auth: shared app secret + the account's numeric id (same
-// scheme the native app uses; backend checks X-App-Secret in constant time).
-// Inside Telegram, initData takes precedence if present.
+// Anonymous guest access: a shared app secret gates the demo sandbox. The
+// server pins the guest to a fixed sandbox id and ignores any client-supplied
+// id, so this secret being public (it ships in the bundle) can't be used to
+// reach a real account. Signed-in accounts use X-Web-Token; Telegram uses
+// initData, both of which take precedence below.
 const APP_SECRET = (import.meta.env.VITE_APP_SECRET as string | undefined) ?? '';
-const USER_ID =
-  new URLSearchParams(location.search).get('devUserId') ??
-  ((import.meta.env.VITE_USER_ID as string | undefined) || '');
 
 // ---- Lightweight client cache (stale-while-revalidate) ----
 // Read-only dashboard data (me/stats/history) is cached in memory + localStorage
@@ -67,9 +66,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   } else if (webToken) {
     // Signed-in web account takes precedence over the shared guest secret.
     headers['X-Web-Token'] = webToken;
-  } else {
-    if (APP_SECRET) headers['X-App-Secret'] = APP_SECRET;
-    if (USER_ID) headers['X-App-User-Id'] = USER_ID;
+  } else if (APP_SECRET) {
+    // Guest sandbox — the server assigns the id, we only present the secret.
+    headers['X-App-Secret'] = APP_SECRET;
   }
 
   // Tag every request with the current UI language so quiz/flashcard content

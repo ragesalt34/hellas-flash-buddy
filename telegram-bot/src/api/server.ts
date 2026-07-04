@@ -40,6 +40,13 @@ const getLang = (req: Request): ContentLang => (req.query.lang === 'ru' ? 'ru' :
 // the auth user's UUID. Sessions are stateless HMAC tokens signed with APP_SECRET.
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const webEmail = (username: string): string => `${username.toLowerCase()}@web.hellas-study.app`;
+
+// Shared read/write sandbox id for anonymous guests. Negative so it can never
+// collide with a real Telegram id or a derived web-account id (both positive).
+// All guests share this one sandbox; it is assigned server-side and is NOT
+// taken from the client, so the public APP_SECRET can no longer be used to
+// impersonate an arbitrary account by passing its id.
+const GUEST_ID = Number(process.env.GUEST_USER_ID ?? -1);
 const uuidToNumericId = (uuid: string): number => parseInt(uuid.replace(/-/g, '').slice(0, 12), 16);
 const authSecret = (): string => process.env.APP_SECRET || process.env.BOT_TOKEN || '';
 
@@ -115,9 +122,12 @@ export function createApiApp(): express.Express {
       if (devId) user = { id: devId, first_name: 'Dev' };
     }
 
-    // Native app (outside Telegram, no initData) — shared-secret header instead of
-    // a guessable-id bypass. Both APP_SECRET and the user's own id are required, and
-    // the secret comparison is constant-time. Safe for a public deployment.
+    // Anonymous guest ("continue without an account"). The APP_SECRET is shipped
+    // in the public client bundle, so it is NOT a real credential — it only gates
+    // the shared demo sandbox. Crucially, the id is pinned to GUEST_ID server-side
+    // and the client-supplied X-App-User-Id is ignored, so a leaked secret can no
+    // longer be used to read or write an arbitrary account's progress. Real
+    // accounts are reachable only via a signed web token or Telegram initData.
     if (!user && process.env.APP_SECRET) {
       const secret = req.header('X-App-Secret') ?? '';
       const secretBuf = Buffer.from(secret);
@@ -125,10 +135,8 @@ export function createApiApp(): express.Express {
       const validSecret =
         secretBuf.length === expectedBuf.length && crypto.timingSafeEqual(secretBuf, expectedBuf);
       if (validSecret) {
-        const appUserId = Number(req.header('X-App-User-Id'));
-        // No first_name here so /api/me falls back to the friendly Greek default
-        // ("φίλε") instead of greeting the user as literally "App".
-        if (appUserId) user = { id: appUserId };
+        // No first_name → /api/me greets with the friendly default ("φίλε"/"друг").
+        user = { id: GUEST_ID };
       }
     }
 
