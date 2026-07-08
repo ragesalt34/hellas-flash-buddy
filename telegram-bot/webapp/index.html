@@ -23,6 +23,13 @@
       href="https://fonts.googleapis.com/css2?family=Onest:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Wake the API (Render free tier sleeps after idle) as early as possible —
+         before the JS bundle even parses — and pre-open the TLS connection. -->
+    <link rel="preconnect" href="https://hellas-flash-buddy-bot.onrender.com" crossorigin />
+    <script>
+      fetch('https://hellas-flash-buddy-bot.onrender.com/healthz').catch(function () {});
+    </script>
   </head>
   <body>
     <div id="root"></div>

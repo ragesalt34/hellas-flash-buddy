@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { House, BookOpen, Layers, Languages, BarChart3, Landmark, X, ArrowLeft, type LucideIcon } from 'lucide-react';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
-import { Landing } from './screens/Landing';
+
+// The landing page is the only user of framer-motion (~40KB gzip) and is never
+// shown to signed-in users — split it into its own chunk so the app shell
+// doesn't pay for it.
+const Landing = lazy(() => import('./screens/Landing').then((m) => ({ default: m.Landing })));
 import { Home } from './screens/Home';
 import { Quiz } from './screens/Quiz';
 import { Flashcards } from './screens/Flashcards';
@@ -96,11 +100,13 @@ export function App() {
             </button>
           </>
         ) : (
-          <Landing
-            onStart={() => openGateAuth('register')}
-            onLogin={() => openGateAuth('login')}
-            onGuest={enter}
-          />
+          <Suspense fallback={null}>
+            <Landing
+              onStart={() => openGateAuth('register')}
+              onLogin={() => openGateAuth('login')}
+              onGuest={enter}
+            />
+          </Suspense>
         )}
       </>
     );

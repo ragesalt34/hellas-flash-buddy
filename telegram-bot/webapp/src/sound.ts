@@ -46,8 +46,14 @@ function preload(name: string): void {
     });
 }
 
-// Warm the cache up front (safe while the context is still suspended on iOS).
-['tap', 'correct', 'wrong', 'complete'].forEach(preload);
+// Warm the cache after the page has finished loading (~180KB of mp3s must not
+// compete with the JS/CSS/fonts needed for first paint). Playback before the
+// preload lands falls back to the synth tones, so nothing is silent meanwhile.
+function warmSamples(): void {
+  ['tap', 'correct', 'wrong', 'complete'].forEach(preload);
+}
+if (document.readyState === 'complete') warmSamples();
+else window.addEventListener('load', warmSamples, { once: true });
 
 /** Play a preloaded sample. Returns false if none is available (→ use synth). */
 function playSample(name: string, volume = 1): boolean {

@@ -1,0 +1,10 @@
+# Hashed build assets — safe to cache forever (filename changes on rebuild)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# UI sound effects — rarely change; a week of browser cache
+/sounds/*
+  Cache-Control: public, max-age=604800
+
+/icon.png
+  Cache-Control: public, max-age=86400
