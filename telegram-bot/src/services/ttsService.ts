@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { supabase } from '../supabase';
 
 const TTS_BUCKET = 'tts-audio';
@@ -5,17 +6,32 @@ const SAFE_KEY = /^[A-Za-z0-9_-]{1,128}$/;
 
 // --- Provider selection ---
 // ElevenLabs is preferred (most natural voice); Google Cloud TTS is a fallback
-// if only its key is configured. The provider is baked into the cache filename
-// so switching providers (or voices) re-synthesizes instead of serving stale
-// audio from the other engine.
+// if only its key is configured.
 const ELEVEN_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVEN_VOICE = process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'; // default: "Rachel"
 const ELEVEN_MODEL = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
+// Higher stability = steadier delivery with fewer expressive artifacts (e.g. the
+// audible in-breath multilingual_v2 sometimes adds at the end of a phrase).
+// Tunable so it can be dialed in without a code change.
+const ELEVEN_STABILITY = Number(process.env.ELEVENLABS_STABILITY ?? 0.7);
 const GOOGLE_KEY = process.env.GOOGLE_TTS_API_KEY;
 const GOOGLE_VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Algenib';
 
 type Provider = 'el' | 'gtts';
 const provider: Provider | null = ELEVEN_KEY ? 'el' : GOOGLE_KEY ? 'gtts' : null;
+
+// Short fingerprint of the current voice/model/settings. Baked into the cache
+// filename so changing any of them auto-regenerates (old files just orphan)
+// instead of serving stale audio with the previous voice/tuning.
+const variant = crypto
+  .createHash('sha1')
+  .update(
+    provider === 'el'
+      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_STABILITY}`
+      : `gtts:${GOOGLE_VOICE}`
+  )
+  .digest('hex')
+  .slice(0, 8);
 
 async function synthesizeElevenLabs(text: string): Promise<Buffer> {
   const res = await fetch(
@@ -31,7 +47,7 @@ async function synthesizeElevenLabs(text: string): Promise<Buffer> {
         text,
         model_id: ELEVEN_MODEL,
         // Tuned for clear language-learning pronunciation (stable, natural).
-        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true },
+        voice_settings: { stability: ELEVEN_STABILITY, similarity_boost: 0.75, style: 0, use_speaker_boost: true },
       }),
     }
   );
@@ -71,7 +87,7 @@ export async function getOrSynthesizeGreekSpeech(
   if (!SAFE_KEY.test(cacheKey)) throw new Error('invalid cache key');
   if (!provider) throw new Error('no TTS provider configured (set ELEVENLABS_API_KEY or GOOGLE_TTS_API_KEY)');
 
-  const fileName = `${provider}_${cacheKey}.mp3`;
+  const fileName = `${provider}_${variant}_${cacheKey}.mp3`;
 
   const { data: existing } = await supabase.storage
     .from(TTS_BUCKET)
