@@ -1,30 +1,10 @@
 import { supabase } from '../supabase';
 import { QuizQuestion, FlashcardItem } from '../types';
-
-const TOPIC_MAP: Record<string, string> = {
-  // Russian aliases (legacy)
-  история: 'history',
-  культура: 'culture',
-  право: 'laws',
-  законы: 'laws',
-  география: 'geography',
-  // Greek aliases
-  ιστορία: 'history',
-  πολιτισμός: 'culture',
-  νομοθεσία: 'laws',
-  δίκαιο: 'laws',
-  γεωγραφία: 'geography',
-};
-
-export function parseTopic(input: string | undefined): string {
-  if (!input) return 'mixed';
-  const normalized = input.trim().toLowerCase();
-  return TOPIC_MAP[normalized] ?? 'mixed';
-}
+import { nextLevel, nextReviewAt } from '../srs';
 
 export type ContentLang = 'ru' | 'el';
 
-export const TOPIC_LABELS: Record<string, string> = {
+export const TOPIC_LABELS_EL: Record<string, string> = {
   history: 'Ιστορία',
   culture: 'Πολιτισμός',
   laws: 'Νομοθεσία',
@@ -41,170 +21,54 @@ export const TOPIC_LABELS_RU: Record<string, string> = {
 };
 
 export const topicLabels = (lang: ContentLang): Record<string, string> =>
-  lang === 'ru' ? TOPIC_LABELS_RU : TOPIC_LABELS;
+  lang === 'ru' ? TOPIC_LABELS_RU : TOPIC_LABELS_EL;
 
 const nonEmpty = (s: string | null | undefined): boolean => !!s && s.trim().length > 0;
 
 const QUESTION_COLS =
-  'id, question, question_el, correct_answer, correct_answer_el, ' +
-  'wrong_answers, wrong_answers_el, explanation, explanation_el, topic';
+  'id, topic, question_ru, question_el, correct_answer_ru, correct_answer_el, ' +
+  'wrong_answers_ru, wrong_answers_el, explanation_ru, explanation_el';
 
 interface RawQuestion {
   id: string;
-  question: string;
-  question_el: string | null;
-  correct_answer: string;
-  correct_answer_el: string | null;
-  wrong_answers: string[];
-  wrong_answers_el: string[] | null;
-  explanation: string | null;
-  explanation_el: string | null;
   topic: string | null;
+  question_ru: string | null;
+  question_el: string | null;
+  correct_answer_ru: string | null;
+  correct_answer_el: string | null;
+  wrong_answers_ru: string[] | null;
+  wrong_answers_el: string[] | null;
+  explanation_ru: string | null;
+  explanation_el: string | null;
 }
 
-function toQuizQuestion(r: RawQuestion, lang: ContentLang = 'el'): QuizQuestion {
-  // Pick ONE language for the whole answer set (question + correct + wrongs) so
-  // options never mix alphabets — otherwise a lone Greek/Russian answer among
-  // distractors in the other language would be the obvious giveaway. Only fall
-  // back to the other language if the requested one isn't a complete set.
-  // "Complete" requires all 3 distractors (not just >=1) — a row with only a
-  // partial translation of wrong_answers would otherwise render a quiz question
-  // with fewer than 4 total options instead of falling back to the full set.
-  const elComplete = nonEmpty(r.question_el) && nonEmpty(r.correct_answer_el) && (r.wrong_answers_el?.length ?? 0) >= 3;
-  const ruComplete = nonEmpty(r.question) && nonEmpty(r.correct_answer) && (r.wrong_answers?.length ?? 0) >= 3;
+function toQuizQuestion(r: RawQuestion, lang: ContentLang): QuizQuestion {
+  // Pick ONE language for the whole answer set so options never mix alphabets.
+  // Fall back to the other language only if the requested one is incomplete
+  // (needs question + correct + all distractors).
+  const elComplete =
+    nonEmpty(r.question_el) && nonEmpty(r.correct_answer_el) && (r.wrong_answers_el?.length ?? 0) >= 3;
+  const ruComplete =
+    nonEmpty(r.question_ru) && nonEmpty(r.correct_answer_ru) && (r.wrong_answers_ru?.length ?? 0) >= 3;
   const useRu = lang === 'ru' ? ruComplete || !elComplete : !elComplete && ruComplete;
 
-  // Explanation is non-critical (not an option) — prefer the chosen language,
-  // fall back to the other so it's shown whenever it exists.
   const explanation = useRu
-    ? (nonEmpty(r.explanation) ? r.explanation : r.explanation_el)
-    : (nonEmpty(r.explanation_el) ? r.explanation_el : r.explanation);
+    ? nonEmpty(r.explanation_ru)
+      ? r.explanation_ru
+      : r.explanation_el
+    : nonEmpty(r.explanation_el)
+      ? r.explanation_el
+      : r.explanation_ru;
 
   return {
     id: r.id,
-    question: (useRu ? r.question : r.question_el) ?? r.question,
-    correct_answer: (useRu ? r.correct_answer : r.correct_answer_el) ?? r.correct_answer,
-    wrong_answers: (useRu ? r.wrong_answers : r.wrong_answers_el) ?? r.wrong_answers,
-    explanation,
+    question: (useRu ? r.question_ru : r.question_el) ?? r.question_ru ?? r.question_el ?? '',
+    correct_answer:
+      (useRu ? r.correct_answer_ru : r.correct_answer_el) ?? r.correct_answer_ru ?? r.correct_answer_el ?? '',
+    wrong_answers: (useRu ? r.wrong_answers_ru : r.wrong_answers_el) ?? r.wrong_answers_ru ?? [],
+    explanation: explanation ?? null,
     topic: r.topic,
   };
-}
-
-export async function fetchQuestionsRandom(
-  topic: string,
-  limit = 10,
-  lang: ContentLang = 'el'
-): Promise<QuizQuestion[]> {
-  let query = supabase.from('questions').select(QUESTION_COLS);
-
-  if (topic !== 'mixed') {
-    query = query.eq('topic', topic);
-  }
-
-  const { data, error } = await query; // fetch all, shuffle locally for true randomness
-  if (error) throw error;
-
-  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
-  return shuffleArray(all).slice(0, limit);
-}
-
-export async function fetchDueFlashcards(
-  userId: string,
-  limit = 20,
-  lang: ContentLang = 'el'
-): Promise<FlashcardItem[]> {
-  const now = new Date().toISOString();
-
-  // 1. Due cards (already seen, review time passed)
-  const { data: progressData, error: progressError } = await supabase
-    .from('user_progress')
-    .select(
-      `question_id,
-       next_review_at,
-       questions!inner(${QUESTION_COLS})`
-    )
-    .eq('user_id', userId)
-    .or(`next_review_at.is.null,next_review_at.lte.${now}`)
-    .order('next_review_at', { ascending: true })
-    .limit(limit);
-
-  if (progressError) throw progressError;
-
-  const dueCards: FlashcardItem[] = ((progressData ?? []) as unknown[])
-    .filter((row: unknown) => (row as { questions?: unknown }).questions != null)
-    .map((row: unknown) => {
-      const r = row as {
-        question_id: string;
-        next_review_at: string | null;
-        questions: RawQuestion;
-      };
-      const q = toQuizQuestion(r.questions, lang);
-      return {
-        question_id: r.question_id,
-        question: q.question,
-        correct_answer: q.correct_answer,
-        explanation: q.explanation,
-        topic: q.topic,
-      };
-    });
-
-  // If we already have enough due cards, return them
-  if (dueCards.length >= limit) return dueCards;
-
-  // 2. Unseen cards (never rated — not in user_progress at all)
-  const seenIds = dueCards.map(c => c.question_id);
-
-  // Also fetch all seen question_ids (including not-yet-due) to exclude them
-  const { data: allProgress } = await supabase
-    .from('user_progress')
-    .select('question_id')
-    .eq('user_id', userId);
-
-  const allSeenIds = (allProgress ?? []).map((r: { question_id: string }) => r.question_id);
-  const excludeIds = [...new Set([...seenIds, ...allSeenIds])];
-
-  const { data: allQuestions, error: qError } = await supabase
-    .from('questions')
-    .select(QUESTION_COLS);
-
-  if (qError) throw qError;
-
-  const unseenCards: FlashcardItem[] = shuffleArray(
-    ((allQuestions ?? []) as unknown as RawQuestion[]).filter((q) => !excludeIds.includes(q.id))
-  )
-    .slice(0, limit - dueCards.length)
-    .map((raw) => {
-      const q = toQuizQuestion(raw, lang);
-      return {
-        question_id: q.id,
-        question: q.question,
-        correct_answer: q.correct_answer,
-        explanation: q.explanation,
-        topic: q.topic,
-      };
-    });
-
-  return [...dueCards, ...unseenCards];
-}
-
-export async function fetchRandomFlashcards(
-  limit = 20,
-  lang: ContentLang = 'el'
-): Promise<FlashcardItem[]> {
-  const { data, error } = await supabase
-    .from('questions')
-    .select(QUESTION_COLS);
-
-  if (error) throw error;
-
-  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
-  return shuffleArray(all).slice(0, limit).map((q) => ({
-    question_id: q.id,
-    question: q.question,
-    correct_answer: q.correct_answer,
-    explanation: q.explanation,
-    topic: q.topic,
-  }));
 }
 
 export function shuffleArray<T>(arr: T[]): T[] {
@@ -218,4 +82,106 @@ export function shuffleArray<T>(arr: T[]): T[] {
 
 export function buildAnswerOptions(question: QuizQuestion): string[] {
   return shuffleArray([question.correct_answer, ...question.wrong_answers]);
+}
+
+export async function fetchQuestionsRandom(
+  topic: string,
+  limit = 10,
+  lang: ContentLang = 'el'
+): Promise<QuizQuestion[]> {
+  let query = supabase.from('questions').select(QUESTION_COLS);
+  if (topic !== 'mixed') query = query.eq('topic', topic);
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
+  return shuffleArray(all).slice(0, limit);
+}
+
+const toFlashcard = (q: QuizQuestion): FlashcardItem => ({
+  question_id: q.id,
+  question: q.question,
+  correct_answer: q.correct_answer,
+  explanation: q.explanation,
+  topic: q.topic,
+});
+
+/** Due + unseen SRS flashcards for an account. */
+export async function fetchDueFlashcards(
+  accountId: string,
+  limit = 20,
+  lang: ContentLang = 'el'
+): Promise<FlashcardItem[]> {
+  const [{ data: qData, error: qErr }, { data: pData, error: pErr }] = await Promise.all([
+    supabase.from('questions').select(QUESTION_COLS),
+    supabase.from('question_progress').select('question_id, next_review_at').eq('account_id', accountId),
+  ]);
+  if (qErr) throw qErr;
+  if (pErr) throw pErr;
+
+  const now = Date.now();
+  const progress = new Map<string, number | null>();
+  for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null }[]) {
+    progress.set(p.question_id, p.next_review_at ? Date.parse(p.next_review_at) : 0);
+  }
+
+  const all = (qData ?? []) as unknown as RawQuestion[];
+  const due: RawQuestion[] = [];
+  const unseen: RawQuestion[] = [];
+  for (const q of all) {
+    if (!progress.has(q.id)) unseen.push(q);
+    else if ((progress.get(q.id) ?? 0) <= now) due.push(q);
+  }
+
+  const picked = [...due];
+  if (picked.length < limit) picked.push(...shuffleArray(unseen).slice(0, limit - picked.length));
+  return picked.slice(0, limit).map((r) => toFlashcard(toQuizQuestion(r, lang)));
+}
+
+/** Random flashcards regardless of SRS state (fallback / guests without history). */
+export async function fetchRandomFlashcards(
+  limit = 20,
+  lang: ContentLang = 'el'
+): Promise<FlashcardItem[]> {
+  const { data, error } = await supabase.from('questions').select(QUESTION_COLS);
+  if (error) throw error;
+  const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toFlashcard(toQuizQuestion(r, lang)));
+  return shuffleArray(all).slice(0, limit);
+}
+
+/** Record one SRS review for a question (flashcard grade or quiz answer). */
+export async function recordQuestionProgress(
+  accountId: string,
+  questionId: string,
+  grade: number,
+  correct: boolean
+): Promise<void> {
+  const { data } = await supabase
+    .from('question_progress')
+    .select('level, correct_count, seen_count')
+    .eq('account_id', accountId)
+    .eq('question_id', questionId)
+    .maybeSingle();
+
+  const prev = (data as { level: number; correct_count: number; seen_count: number } | null) ?? {
+    level: 0,
+    correct_count: 0,
+    seen_count: 0,
+  };
+  const level = nextLevel(prev.level, grade);
+
+  const { error } = await supabase.from('question_progress').upsert(
+    {
+      account_id: accountId,
+      question_id: questionId,
+      level,
+      correct_count: prev.correct_count + (correct ? 1 : 0),
+      seen_count: prev.seen_count + 1,
+      next_review_at: nextReviewAt(level),
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'account_id,question_id' }
+  );
+  if (error) throw error;
 }

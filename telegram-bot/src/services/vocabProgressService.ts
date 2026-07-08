@@ -1,66 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '../supabase';
+import { nextLevel, nextReviewAt } from '../srs';
 
-const PROGRESS_FILE = path.join(__dirname, '..', '..', 'vocab_progress.json');
+// Vocabulary items live in code (data/vocabulary.ts); only per-account SRS
+// progress is stored here, in the durable `vocab_progress` table.
 
-interface WordProgress {
-  level: number;       // SRS level 0–6
-  nextReview: number;  // Unix timestamp ms
-}
-
-// userId → vocabId → progress
-type ProgressStore = Record<string, Record<number, WordProgress>>;
-
-const SRS_INTERVALS_MS = [
-  1 * 60 * 1000,              // level 0 → 1 min
-  10 * 60 * 1000,             // level 1 → 10 min
-  24 * 60 * 60 * 1000,        // level 2 → 1 day
-  3 * 24 * 60 * 60 * 1000,   // level 3 → 3 days
-  7 * 24 * 60 * 60 * 1000,   // level 4 → 7 days
-  14 * 24 * 60 * 60 * 1000,  // level 5 → 14 days
-  30 * 24 * 60 * 60 * 1000,  // level 6 → 30 days
-];
-
-let store: ProgressStore = {};
-
-function load(): void {
-  try {
-    if (fs.existsSync(PROGRESS_FILE)) {
-      store = JSON.parse(fs.readFileSync(PROGRESS_FILE, 'utf-8'));
-    }
-  } catch (err) {
-    // Corrupt/partial file (e.g. process hard-killed mid-write). Preserve it for
-    // recovery instead of silently wiping every user's progress, then start fresh.
-    console.error('vocab_progress load failed — backing up corrupt file:', err);
-    try {
-      fs.renameSync(PROGRESS_FILE, `${PROGRESS_FILE}.corrupt-${Date.now()}`);
-    } catch (backupErr) {
-      console.error('vocab_progress backup failed:', backupErr);
-    }
-    store = {};
-  }
-}
-
-function save(): void {
-  // Atomic write: write to a temp file then rename, so a crash mid-write can't
-  // truncate/corrupt the live file (rename is atomic on the same filesystem).
-  const tmp = `${PROGRESS_FILE}.tmp`;
-  try {
-    fs.writeFileSync(tmp, JSON.stringify(store), 'utf-8');
-    fs.renameSync(tmp, PROGRESS_FILE);
-  } catch (err) {
-    console.error('vocab_progress save error:', err);
-    try {
-      if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
-    } catch {
-      /* ignore cleanup failure */
-    }
-  }
-}
-
-load();
-
-/** Fisher–Yates shuffle (kept local so this DB-free service has no heavy deps). */
 function shuffle<T>(arr: T[]): T[] {
   const result = [...arr];
   for (let i = result.length - 1; i > 0; i--) {
@@ -70,57 +13,76 @@ function shuffle<T>(arr: T[]): T[] {
   return result;
 }
 
-export function getDueVocabIds(userId: number, allIds: number[], limit: number): number[] {
-  const key = String(userId);
-  const progress = store[key] ?? {};
+interface Row {
+  vocab_id: number;
+  level: number;
+  next_review_at: string | null;
+}
+
+export async function getDueVocabIds(
+  accountId: string,
+  allIds: number[],
+  limit: number
+): Promise<number[]> {
+  const { data, error } = await supabase
+    .from('vocab_progress')
+    .select('vocab_id, level, next_review_at')
+    .eq('account_id', accountId);
+  if (error) throw error;
+
   const now = Date.now();
+  const seen = new Map<number, number>(); // vocab_id → next_review ms
+  for (const r of (data ?? []) as Row[]) {
+    seen.set(r.vocab_id, r.next_review_at ? Date.parse(r.next_review_at) : 0);
+  }
 
   const due: number[] = [];
   const unseen: number[] = [];
-
   for (const id of allIds) {
-    const p = progress[id];
-    if (!p) {
-      unseen.push(id);
-    } else if (p.nextReview <= now) {
-      due.push(id);
-    }
+    if (!seen.has(id)) unseen.push(id);
+    else if ((seen.get(id) ?? 0) <= now) due.push(id);
   }
 
   const result = [...due];
-  if (result.length < limit) {
-    // shuffle unseen and fill up to limit
-    const shuffled = shuffle(unseen);
-    result.push(...shuffled.slice(0, limit - result.length));
-  }
+  if (result.length < limit) result.push(...shuffle(unseen).slice(0, limit - result.length));
   return result.slice(0, limit);
 }
 
-export function gradeVocab(userId: number, vocabId: number, grade: number): void {
-  const key = String(userId);
-  if (!store[key]) store[key] = {};
+export async function gradeVocab(accountId: string, vocabId: number, grade: number): Promise<void> {
+  const { data } = await supabase
+    .from('vocab_progress')
+    .select('level')
+    .eq('account_id', accountId)
+    .eq('vocab_id', vocabId)
+    .maybeSingle();
 
-  const current = store[key][vocabId]?.level ?? 0;
-  let newLevel: number;
-  if (grade === 1) {
-    newLevel = 0;
-  } else if (grade === 3) {
-    newLevel = Math.min(current + 2, SRS_INTERVALS_MS.length - 1);
-  } else {
-    newLevel = Math.min(current + 1, SRS_INTERVALS_MS.length - 1);
-  }
-
-  store[key][vocabId] = {
-    level: newLevel,
-    nextReview: Date.now() + SRS_INTERVALS_MS[newLevel],
-  };
-  save();
+  const level = nextLevel((data as { level: number } | null)?.level ?? 0, grade);
+  const { error } = await supabase.from('vocab_progress').upsert(
+    {
+      account_id: accountId,
+      vocab_id: vocabId,
+      level,
+      next_review_at: nextReviewAt(level),
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'account_id,vocab_id' }
+  );
+  if (error) throw error;
 }
 
-export function getVocabStats(userId: number, allIds: number[]): { seen: number; mastered: number; total: number } {
-  const key = String(userId);
-  const progress = store[key] ?? {};
-  const seen = allIds.filter(id => !!progress[id]).length;
-  const mastered = allIds.filter(id => (progress[id]?.level ?? 0) >= 4).length;
+export async function getVocabStats(
+  accountId: string,
+  allIds: number[]
+): Promise<{ seen: number; mastered: number; total: number }> {
+  const { data, error } = await supabase
+    .from('vocab_progress')
+    .select('vocab_id, level')
+    .eq('account_id', accountId);
+  if (error) throw error;
+
+  const rows = (data ?? []) as { vocab_id: number; level: number }[];
+  const seenIds = new Set(rows.map((r) => r.vocab_id));
+  const seen = allIds.filter((id) => seenIds.has(id)).length;
+  const mastered = rows.filter((r) => r.level >= 4 && allIds.includes(r.vocab_id)).length;
   return { seen, mastered, total: allIds.length };
 }

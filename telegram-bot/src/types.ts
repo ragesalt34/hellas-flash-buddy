@@ -1,12 +1,10 @@
-export interface TelegramUser {
-  telegram_id: number;
-  user_id: string | null;
-  username: string | null;
+// Core domain types for the Hellas Study API (account-based, no Telegram).
+
+export interface Account {
+  id: string; // uuid
+  username: string;
   display_name: string | null;
-  remind_time: string | null;
-  remind_tz: string;
-  created_at: string;
-  updated_at: string;
+  is_guest: boolean;
 }
 
 export interface QuizQuestion {
@@ -23,20 +21,6 @@ export interface AnswerRecord {
   chosen: string;
   correct: boolean;
   correct_answer: string;
-}
-
-export interface QuizSession {
-  id: string;
-  telegram_id: number;
-  topic: string;
-  questions: QuizQuestion[];
-  current_index: number;
-  score: number;
-  answers: AnswerRecord[];
-  last_message_id: number | null;
-  current_answer_order: string[] | null;
-  started_at: string;
-  completed_at: string | null;
 }
 
 export interface FlashcardItem {

@@ -1,4 +1,3 @@
-import { tg } from './telegram';
 import { getStoredLanguage } from './i18n';
 import { getToken } from './auth';
 
@@ -59,12 +58,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  const initData = tg?.initData ?? '';
   const webToken = getToken();
-  if (initData) {
-    headers['X-Telegram-Init-Data'] = initData;
-  } else if (webToken) {
-    // Signed-in web account takes precedence over the shared guest secret.
+  if (webToken) {
+    // Signed-in web account.
     headers['X-Web-Token'] = webToken;
   } else if (APP_SECRET) {
     // Guest sandbox — the server assigns the id, we only present the secret.
@@ -124,7 +120,7 @@ export const api = {
 // ---- Shared types ----
 export interface AuthResponse {
   token: string;
-  user: { id: number; name: string };
+  user: { id: string; name: string };
 }
 export interface UserStats {
   total_sessions: number;
@@ -139,7 +135,7 @@ export interface VocabStats {
   total: number;
 }
 export interface MeResponse {
-  user: { id: number; name: string; username: string | null };
+  user: { id: string; name: string; username: string | null; is_guest: boolean };
   stats: UserStats;
   streak: number;
   vocab: VocabStats;

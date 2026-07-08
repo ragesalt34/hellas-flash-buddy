@@ -21,14 +21,14 @@ async function main() {
   // --- Questions (Greek text, keyed q_<id> — shared by Quiz + Flashcards) ---
   const { data: questions, error } = await supabase
     .from('questions')
-    .select('id, question, question_el');
+    .select('id, question_ru, question_el');
   if (error) throw error;
 
-  const qs = (questions ?? []) as { id: string; question: string; question_el: string | null }[];
+  const qs = (questions ?? []) as { id: string; question_ru: string | null; question_el: string | null }[];
   console.log(`Questions: ${qs.length}`);
   for (let i = 0; i < qs.length; i++) {
     const q = qs[i];
-    const text = q.question_el?.trim() || q.question;
+    const text = q.question_el?.trim() || q.question_ru?.trim() || '';
     if (!text) continue;
     try {
       await getOrSynthesizeGreekSpeech(text, `q_${q.id}`);
