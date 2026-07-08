@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
-import { speakGreek } from '../speech';
+import { speakGreek, textKey } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
@@ -118,7 +118,16 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="answer-tag">
                 <Check size={13} strokeWidth={3.2} /> {t('flashcards.answerLabel')}
               </span>
-              <div className="answer-text">{card.correct_answer}</div>
+              <div className="speak-row" style={{ marginBottom: 0, alignItems: 'center' }}>
+                <div className="answer-text" style={{ flex: 1 }}>{card.correct_answer}</div>
+                <button
+                  className="speak-btn"
+                  aria-label={t('common.pronounce')}
+                  onClick={() => { haptic(); speakGreek(card.correct_answer, textKey(card.correct_answer, 'a')); }}
+                >
+                  <Volume2 size={17} strokeWidth={2.3} />
+                </button>
+              </div>
             </div>
             {card.explanation && (
               <div className="explain">

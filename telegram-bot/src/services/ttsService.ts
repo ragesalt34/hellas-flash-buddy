@@ -3,42 +3,53 @@ import { supabase } from '../supabase';
 const TTS_BUCKET = 'tts-audio';
 const SAFE_KEY = /^[A-Za-z0-9_-]{1,128}$/;
 
-// Pinned Greek voice: Chirp3-HD (Google's newest, most natural). Overridable via env.
-const VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Algenib';
+// --- Provider selection ---
+// ElevenLabs is preferred (most natural voice); Google Cloud TTS is a fallback
+// if only its key is configured. The provider is baked into the cache filename
+// so switching providers (or voices) re-synthesizes instead of serving stale
+// audio from the other engine.
+const ELEVEN_KEY = process.env.ELEVENLABS_API_KEY;
+const ELEVEN_VOICE = process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'; // default: "Rachel"
+const ELEVEN_MODEL = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
+const GOOGLE_KEY = process.env.GOOGLE_TTS_API_KEY;
+const GOOGLE_VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Algenib';
 
-/** Returns a signed URL for cached/synthesized Greek speech audio. Reuses the
- * `tts-audio` bucket already provisioned for the web app's ElevenLabs TTS,
- * with a `gtts_` filename prefix so the two providers' caches never collide. */
-export async function getOrSynthesizeGreekSpeech(
-  text: string,
-  cacheKey: string
-): Promise<string> {
-  if (!SAFE_KEY.test(cacheKey)) throw new Error('invalid cache key');
+type Provider = 'el' | 'gtts';
+const provider: Provider | null = ELEVEN_KEY ? 'el' : GOOGLE_KEY ? 'gtts' : null;
 
-  const fileName = `gtts_${cacheKey}.mp3`;
-
-  const { data: existing } = await supabase.storage
-    .from(TTS_BUCKET)
-    .list('', { search: fileName });
-
-  if (existing && existing.length > 0) {
-    const { data: signed, error } = await supabase.storage
-      .from(TTS_BUCKET)
-      .createSignedUrl(fileName, 3600);
-    if (!error && signed?.signedUrl) return signed.signedUrl;
-  }
-
-  const apiKey = process.env.GOOGLE_TTS_API_KEY;
-  if (!apiKey) throw new Error('GOOGLE_TTS_API_KEY not configured');
-
+async function synthesizeElevenLabs(text: string): Promise<Buffer> {
   const res = await fetch(
-    `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
+    `https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE}?output_format=mp3_44100_128`,
+    {
+      method: 'POST',
+      headers: {
+        'xi-api-key': ELEVEN_KEY as string,
+        'Content-Type': 'application/json',
+        accept: 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text,
+        model_id: ELEVEN_MODEL,
+        // Tuned for clear language-learning pronunciation (stable, natural).
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true },
+      }),
+    }
+  );
+  if (!res.ok) {
+    throw new Error(`ElevenLabs synthesize failed: ${res.status} ${await res.text()}`);
+  }
+  return Buffer.from(await res.arrayBuffer());
+}
+
+async function synthesizeGoogle(text: string): Promise<Buffer> {
+  const res = await fetch(
+    `https://texttospeech.googleapis.com/v1/text:synthesize?key=${GOOGLE_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        input: { text: text.slice(0, 500) },
-        voice: { languageCode: 'el-GR', name: VOICE },
+        input: { text },
+        voice: { languageCode: 'el-GR', name: GOOGLE_VOICE },
         audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 },
       }),
     }
@@ -47,7 +58,36 @@ export async function getOrSynthesizeGreekSpeech(
     throw new Error(`Google TTS synthesize failed: ${res.status} ${await res.text()}`);
   }
   const json = (await res.json()) as { audioContent: string };
-  const audioBuffer = Buffer.from(json.audioContent, 'base64');
+  return Buffer.from(json.audioContent, 'base64');
+}
+
+/** Returns a signed URL for cached/synthesized Greek speech audio. Caches the
+ * mp3 in the `tts-audio` bucket under a provider-prefixed filename so repeat
+ * requests (and every user) are served from storage. */
+export async function getOrSynthesizeGreekSpeech(
+  text: string,
+  cacheKey: string
+): Promise<string> {
+  if (!SAFE_KEY.test(cacheKey)) throw new Error('invalid cache key');
+  if (!provider) throw new Error('no TTS provider configured (set ELEVENLABS_API_KEY or GOOGLE_TTS_API_KEY)');
+
+  const fileName = `${provider}_${cacheKey}.mp3`;
+
+  const { data: existing } = await supabase.storage
+    .from(TTS_BUCKET)
+    .list('', { search: fileName });
+
+  if (existing && existing.some((f) => f.name === fileName)) {
+    const { data: signed, error } = await supabase.storage
+      .from(TTS_BUCKET)
+      .createSignedUrl(fileName, 3600);
+    if (!error && signed?.signedUrl) return signed.signedUrl;
+  }
+
+  const audioBuffer =
+    provider === 'el'
+      ? await synthesizeElevenLabs(text.slice(0, 800))
+      : await synthesizeGoogle(text.slice(0, 500));
 
   const { error: uploadError } = await supabase.storage
     .from(TTS_BUCKET)

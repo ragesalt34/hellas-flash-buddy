@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
-import { speakGreek } from '../speech';
+import { speakGreek, textKey } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
@@ -245,17 +245,36 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             const showCheck = chosen && opt === q.correct_answer;
             const showX = chosen && opt === chosen && opt !== q.correct_answer;
             return (
-              <button
+              <div
                 key={i}
                 className={cls}
-                disabled={!!chosen}
+                role="button"
+                tabIndex={chosen ? -1 : 0}
+                aria-disabled={!!chosen}
                 onClick={() => choose(opt)}
+                onKeyDown={(e) => {
+                  if (!chosen && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    choose(opt);
+                  }
+                }}
               >
                 <span className="lt">{LETTERS[i] ?? i + 1}</span>
                 <span style={{ flex: 1 }}>{opt}</span>
                 {showCheck && <Check size={20} strokeWidth={3} />}
                 {showX && <X size={20} strokeWidth={3} />}
-              </button>
+                <button
+                  className="opt-speak"
+                  aria-label={t('common.pronounce')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    haptic();
+                    speakGreek(opt, textKey(opt));
+                  }}
+                >
+                  <Volume2 size={15} strokeWidth={2.3} />
+                </button>
+              </div>
             );
           })}
         </div>

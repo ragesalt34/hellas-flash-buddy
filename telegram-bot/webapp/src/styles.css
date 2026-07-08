@@ -458,6 +458,23 @@ svg { display: block; }
 .option.wrong { background: var(--bad); border-color: var(--border); color: #fff; }
 .option.wrong .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.dim { opacity: 0.45; }
+/* Per-option pronounce button */
+.opt-speak {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  border: 2px solid currentColor;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s var(--ease);
+}
+.opt-speak:hover { opacity: 1; transform: scale(1.08); }
+.opt-speak:active { transform: scale(0.94); }
 
 /* Flashcard answer — centred ink plaque with an amber tag */
 .answer-box {
