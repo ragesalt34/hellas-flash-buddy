@@ -440,7 +440,7 @@ export function createApiApp(): express.Express {
     })
   );
 
-  // POST /api/tts  { text, cacheKey } -> { audioUrl } — Greek pronunciation (Google Cloud TTS)
+  // POST /api/tts  { text, cacheKey } -> { audioUrl } — Greek pronunciation (ElevenLabs)
   api.post(
     '/tts',
     wrap(async (req, res) => {
@@ -453,8 +453,11 @@ export function createApiApp(): express.Express {
         const audioUrl = await getOrSynthesizeGreekSpeech(text, cacheKey);
         res.json({ audioUrl });
       } catch (err) {
-        console.error('tts error:', err);
-        res.status(500).json({ error: 'tts_failed' });
+        // Surface the provider's error text (e.g. "401 unauthorized", "voice
+        // not found") — it carries no secret and makes prod TTS debuggable.
+        const detail = err instanceof Error ? err.message : String(err);
+        console.error('tts error:', detail);
+        res.status(500).json({ error: 'tts_failed', detail });
       }
     })
   );
