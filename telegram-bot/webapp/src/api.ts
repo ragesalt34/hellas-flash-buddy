@@ -77,8 +77,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     // A web token the server rejects (e.g. a stale token issued by an older
     // backend, or one signed with a rotated secret) would otherwise wedge the
     // app on an error screen forever. Drop it and retry once as a guest so the
-    // user lands on the app instead of a dead end.
-    if (res.status === 401 && webToken) {
+    // user lands on the app instead of a dead end. Auth endpoints are exempt:
+    // their 401 means "wrong credentials", not "bad session".
+    if (res.status === 401 && webToken && !path.startsWith('/auth/')) {
       clearToken();
       return request<T>(path, options);
     }

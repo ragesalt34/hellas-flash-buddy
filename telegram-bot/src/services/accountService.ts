@@ -1,20 +1,29 @@
 import crypto from 'crypto';
+import { promisify } from 'util';
 import { supabase } from '../supabase';
 import { Account } from '../types';
 
 // Password hashing with Node's built-in scrypt (no external deps).
-// Stored form: "scrypt$<saltHex>$<hashHex>".
-function hashPassword(password: string): string {
+// Stored form: "scrypt$<saltHex>$<hashHex>". Async (libuv thread pool) — the
+// sync variant would freeze the whole single-threaded server for the duration
+// of every hash, turning a burst of logins into a lag spike for everyone.
+const scrypt = promisify(crypto.scrypt) as (
+  password: string,
+  salt: Buffer,
+  keylen: number
+) => Promise<Buffer>;
+
+async function hashPassword(password: string): Promise<string> {
   const salt = crypto.randomBytes(16);
-  const hash = crypto.scryptSync(password, salt, 64);
+  const hash = await scrypt(password, salt, 64);
   return `scrypt$${salt.toString('hex')}$${hash.toString('hex')}`;
 }
 
-function verifyPassword(password: string, stored: string): boolean {
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [scheme, saltHex, hashHex] = stored.split('$');
   if (scheme !== 'scrypt' || !saltHex || !hashHex) return false;
   const expected = Buffer.from(hashHex, 'hex');
-  const actual = crypto.scryptSync(password, Buffer.from(saltHex, 'hex'), expected.length);
+  const actual = await scrypt(password, Buffer.from(saltHex, 'hex'), expected.length);
   return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 }
 
@@ -32,12 +41,13 @@ export async function registerAccount(username: string, password: string): Promi
     .maybeSingle();
   if (existing) throw new UsernameTakenError();
 
+  const passwordHash = await hashPassword(password);
   const { data, error } = await supabase
     .from('accounts')
     .insert({
       username,
       username_ci: usernameCi,
-      password_hash: hashPassword(password),
+      password_hash: passwordHash,
       display_name: username,
     })
     .select(ACCOUNT_COLS)
@@ -58,7 +68,7 @@ export async function loginAccount(username: string, password: string): Promise<
     .eq('username_ci', username.toLowerCase())
     .maybeSingle();
   if (error) throw error;
-  if (!data || !verifyPassword(password, (data as { password_hash: string }).password_hash)) {
+  if (!data || !(await verifyPassword(password, (data as { password_hash: string }).password_hash))) {
     return null;
   }
   const { password_hash, ...account } = data as Account & { password_hash: string };

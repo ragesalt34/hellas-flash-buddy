@@ -49,6 +49,38 @@ interface AuthedRequest extends Request {
 const getLang = (req: Request): ContentLang => (req.query.lang === 'ru' ? 'ru' : 'el');
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
+const PASSWORD_MIN = 6;
+const PASSWORD_MAX = 128; // scrypt input cap — express.json alone would allow a 1MB "password"
+
+// ---- Tiny in-memory rate limiter for the auth endpoints ----
+// Registration/login are the only unauthenticated write paths, so they're the
+// brute-force target. Sliding window per client IP; state is per-process which
+// is fine for a single Render instance.
+const AUTH_WINDOW_MS = 10 * 60 * 1000;
+const AUTH_MAX_ATTEMPTS = 30;
+const authHits = new Map<string, number[]>();
+
+function authRateLimited(req: Request): boolean {
+  // Render terminates TLS in front of us — the client is the first entry of
+  // X-Forwarded-For (set by the platform), falling back to the socket address.
+  const fwd = req.header('x-forwarded-for');
+  const ip = (fwd ? fwd.split(',')[0].trim() : req.socket.remoteAddress) || 'unknown';
+  const now = Date.now();
+  const hits = (authHits.get(ip) ?? []).filter((t) => now - t < AUTH_WINDOW_MS);
+  hits.push(now);
+  authHits.set(ip, hits);
+  return hits.length > AUTH_MAX_ATTEMPTS;
+}
+
+// Drop stale limiter entries so the map can't grow unboundedly.
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, hits] of authHits) {
+    const live = hits.filter((t) => now - t < AUTH_WINDOW_MS);
+    if (live.length === 0) authHits.delete(ip);
+    else authHits.set(ip, live);
+  }
+}, AUTH_WINDOW_MS).unref();
 
 // Sessions are stateless HMAC tokens signed with APP_SECRET. The payload carries
 // the account's uuid, so no server-side session store is needed.
@@ -152,12 +184,17 @@ export function createApiApp(): express.Express {
   app.post(
     '/api/auth/register',
     wrap(async (req, res) => {
+      if (authRateLimited(req)) {
+        res.status(429).json({ error: 'too_many_attempts' });
+        return;
+      }
       const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
       if (
         typeof username !== 'string' ||
         !USERNAME_RE.test(username) ||
         typeof password !== 'string' ||
-        password.length < 6
+        password.length < PASSWORD_MIN ||
+        password.length > PASSWORD_MAX
       ) {
         res.status(400).json({ error: 'invalid_input' });
         return;
@@ -182,8 +219,17 @@ export function createApiApp(): express.Express {
   app.post(
     '/api/auth/login',
     wrap(async (req, res) => {
+      if (authRateLimited(req)) {
+        res.status(429).json({ error: 'too_many_attempts' });
+        return;
+      }
       const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
-      if (typeof username !== 'string' || !USERNAME_RE.test(username) || typeof password !== 'string') {
+      if (
+        typeof username !== 'string' ||
+        !USERNAME_RE.test(username) ||
+        typeof password !== 'string' ||
+        password.length > PASSWORD_MAX
+      ) {
         res.status(401).json({ error: 'invalid_credentials' });
         return;
       }
@@ -251,33 +297,53 @@ export function createApiApp(): express.Express {
     })
   );
 
-  // POST /api/quiz/complete  { topic, score, answers }
+  // POST /api/quiz/complete  { topic, answers }  (client `score` is ignored)
+  const KNOWN_TOPICS = new Set(['history', 'culture', 'laws', 'geography', 'mixed']);
   api.post(
     '/quiz/complete',
     wrap(async (req, res) => {
       const a = req.account!;
-      const { topic, score, answers } = (req.body ?? {}) as {
-        topic?: unknown;
-        score?: unknown;
-        answers?: unknown;
-      };
-      if (typeof topic !== 'string' || !Array.isArray(answers)) {
+      const { topic, answers } = (req.body ?? {}) as { topic?: unknown; answers?: unknown };
+      if (typeof topic !== 'string' || !KNOWN_TOPICS.has(topic) || !Array.isArray(answers)) {
         res.status(400).json({ error: 'bad_request' });
         return;
       }
 
-      const records = answers as AnswerRecord[];
-      await recordQuizSession(a.id, topic, Number(score) || 0, records.length, records);
+      // Sanitize: keep only well-formed answer records (never store raw client
+      // JSON in the answers column), cap the count, and derive the score
+      // server-side — the client-sent `score` is untrusted and ignored.
+      const records: AnswerRecord[] = (answers as unknown[])
+        .slice(0, 50)
+        .filter(
+          (r): r is AnswerRecord =>
+            !!r &&
+            typeof r === 'object' &&
+            typeof (r as AnswerRecord).question_id === 'string' &&
+            typeof (r as AnswerRecord).chosen === 'string' &&
+            typeof (r as AnswerRecord).correct === 'boolean' &&
+            typeof (r as AnswerRecord).correct_answer === 'string'
+        )
+        .map((r) => ({
+          question_id: r.question_id,
+          chosen: r.chosen.slice(0, 500),
+          correct: r.correct,
+          correct_answer: r.correct_answer.slice(0, 500),
+        }));
+      if (records.length === 0) {
+        res.status(400).json({ error: 'bad_request' });
+        return;
+      }
+
+      const score = records.filter((r) => r.correct).length;
+      await recordQuizSession(a.id, topic, score, records.length, records);
 
       // Update per-question SRS from each answer (best-effort).
       await Promise.all(
-        records
-          .filter((r) => r && typeof r.question_id === 'string')
-          .map((r) =>
-            recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, !!r.correct).catch((e) =>
-              console.error('recordQuestionProgress error:', e)
-            )
+        records.map((r) =>
+          recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, r.correct).catch((e) =>
+            console.error('recordQuestionProgress error:', e)
           )
+        )
       );
       res.json({ ok: true });
     })
@@ -305,12 +371,18 @@ export function createApiApp(): express.Express {
     wrap(async (req, res) => {
       const a = req.account!;
       const { questionId, grade } = (req.body ?? {}) as { questionId?: unknown; grade?: unknown };
-      if (typeof questionId !== 'string' || typeof grade !== 'number') {
+      if (
+        typeof questionId !== 'string' ||
+        typeof grade !== 'number' ||
+        !Number.isInteger(grade) ||
+        grade < 1 ||
+        grade > 3
+      ) {
         res.status(400).json({ error: 'bad_request' });
         return;
       }
-      // grade 3 = knew it (correct), 1 or 2 = didn't → count grade>=3 as correct.
-      await recordQuestionProgress(a.id, questionId, grade, grade >= 3);
+      // grade 1 = forgot, 2 = remembered, 3 = knew instantly → 2+ counts correct.
+      await recordQuestionProgress(a.id, questionId, grade, grade >= 2);
       res.json({ ok: true });
     })
   );
@@ -338,7 +410,14 @@ export function createApiApp(): express.Express {
     wrap(async (req, res) => {
       const a = req.account!;
       const { vocabId, grade } = (req.body ?? {}) as { vocabId?: unknown; grade?: unknown };
-      if (typeof vocabId !== 'number' || typeof grade !== 'number') {
+      if (
+        typeof vocabId !== 'number' ||
+        !Number.isInteger(vocabId) ||
+        typeof grade !== 'number' ||
+        !Number.isInteger(grade) ||
+        grade < 1 ||
+        grade > 3
+      ) {
         res.status(400).json({ error: 'bad_request' });
         return;
       }
@@ -407,6 +486,11 @@ export function createApiApp(): express.Express {
 }
 
 export function startApiServer(port: number): void {
+  // Refuse to boot without the token-signing secret: session tokens would be
+  // HMAC'd with an empty key (forgeable) and guest access would silently 401.
+  if (!process.env.APP_SECRET) {
+    throw new Error('APP_SECRET must be set (signs session tokens and gates guest access)');
+  }
   const app = createApiApp();
   app.listen(port, () => console.log(`Hellas Study API listening on :${port}`));
 }
