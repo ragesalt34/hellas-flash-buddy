@@ -1,5 +1,14 @@
-// Tiny synthesized UI sounds (Web Audio) — no asset files, works offline.
-// Short, soft, non-fatiguing — in the spirit of Duolingo/Drops feedback.
+// Game-feel UI sounds (Duolingo-style). Each effect plays a real audio file
+// from /sounds/ when present, and otherwise falls back to a synthesized Web
+// Audio tone so the app always has feedback even before assets are added.
+//
+// Drop-in your own (licensed / CC0) files to override any effect — no code
+// change needed:
+//   public/sounds/tap.mp3       — answer / button tap
+//   public/sounds/correct.mp3   — correct answer            (present)
+//   public/sounds/wrong.mp3     — wrong answer              (present)
+//   public/sounds/complete.mp3  — quiz / deck finished
+// Keep them short (0.1–1s) and soft — they repeat a lot.
 
 type Ctx = AudioContext;
 let ctx: Ctx | null = null;
@@ -7,7 +16,9 @@ let ctx: Ctx | null = null;
 function ac(): Ctx | null {
   try {
     if (!ctx) {
-      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AC) return null;
       ctx = new AC();
     }
@@ -18,7 +29,49 @@ function ac(): Ctx | null {
   }
 }
 
-function tone(freq: number, startAt: number, dur: number, type: OscillatorType = 'triangle', peak = 0.16): void {
+// ---- File-backed samples (preloaded, decoded once for zero-latency playback) ----
+// `undefined` = not tried yet, `null` = tried and unavailable (use synth).
+const buffers = new Map<string, AudioBuffer | null>();
+
+function preload(name: string): void {
+  const c = ac();
+  if (!c || buffers.has(name)) return;
+  buffers.set(name, null); // mark as "attempted" so we don't refetch on failure
+  fetch(`/sounds/${name}.mp3`)
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing'))))
+    .then((a) => c.decodeAudioData(a))
+    .then((b) => buffers.set(name, b))
+    .catch(() => {
+      /* no file (or undecodable) — the synth fallback covers it */
+    });
+}
+
+// Warm the cache up front (safe while the context is still suspended on iOS).
+['tap', 'correct', 'wrong', 'complete'].forEach(preload);
+
+/** Play a preloaded sample. Returns false if none is available (→ use synth). */
+function playSample(name: string, volume = 1): boolean {
+  const c = ac();
+  const buf = c ? buffers.get(name) : null;
+  if (!c || !buf) return false;
+  const src = c.createBufferSource();
+  const g = c.createGain();
+  src.buffer = buf;
+  g.gain.value = volume;
+  src.connect(g);
+  g.connect(c.destination);
+  src.start();
+  return true;
+}
+
+// ---- Synthesized fallbacks ----
+function tone(
+  freq: number,
+  startAt: number,
+  dur: number,
+  type: OscillatorType = 'triangle',
+  peak = 0.16
+): void {
   const c = ac();
   if (!c) return;
   const o = c.createOscillator();
@@ -35,55 +88,24 @@ function tone(freq: number, startAt: number, dur: number, type: OscillatorType =
   o.stop(t + dur + 0.02);
 }
 
-/** Correct answer — bundled mp3, preloaded into a buffer for zero-latency playback. */
-const CORRECT_VOL = 0.4;
-let correctBuf: AudioBuffer | null = null;
-let correctEl: HTMLAudioElement | null = null;
-
-function preloadCorrect(): void {
-  const c = ac();
-  if (!c) return;
-  fetch('/sounds/correct.mp3')
-    .then((r) => r.arrayBuffer())
-    .then((a) => c.decodeAudioData(a))
-    .then((b) => {
-      correctBuf = b;
-    })
-    .catch(() => {
-      /* will fall back to <audio> */
-    });
+/** Soft UI tick — answer/option tap, reveal, next. */
+export function playTap(): void {
+  if (playSample('tap', 0.5)) return;
+  tone(660, 0, 0.05, 'sine', 0.09);
 }
-// Decode once up front (works even while the context is suspended on iOS).
-preloadCorrect();
 
+/** Correct answer — bright ascending triad if no file. */
 export function playCorrect(): void {
-  const c = ac();
-  if (c && correctBuf) {
-    const src = c.createBufferSource();
-    const g = c.createGain();
-    src.buffer = correctBuf;
-    g.gain.value = CORRECT_VOL;
-    src.connect(g);
-    g.connect(c.destination);
-    src.start();
-    return;
-  }
-  // fallback if the buffer isn't decoded yet
-  try {
-    if (!correctEl) {
-      correctEl = new Audio('/sounds/correct.mp3');
-      correctEl.volume = CORRECT_VOL;
-    }
-    correctEl.currentTime = 0;
-    void correctEl.play();
-  } catch {
-    /* ignore */
-  }
+  if (playSample('correct', 0.4)) return;
+  tone(523, 0, 0.14, 'triangle', 0.16); // C5
+  tone(659, 0.07, 0.14, 'triangle', 0.16); // E5
+  tone(784, 0.14, 0.2, 'triangle', 0.17); // G5
 }
 
-/** Wrong answer — soft low note (gentle, never harsh). */
+/** Wrong answer — gentle low double note if no file (never harsh). */
 export function playWrong(): void {
-  tone(196, 0, 0.2, 'sine', 0.15);  // G3
+  if (playSample('wrong', 0.6)) return;
+  tone(196, 0, 0.2, 'sine', 0.15); // G3
   tone(155, 0.09, 0.24, 'sine', 0.13); // D#3
 }
 
@@ -91,4 +113,13 @@ export function playWrong(): void {
 export function playGrade(grade: number): void {
   const freq = grade >= 3 ? 587 : grade === 2 ? 440 : 330; // D5 / A4 / E4
   tone(freq, 0, 0.12, 'triangle', 0.14);
+}
+
+/** Quiz / deck finished — short celebratory fanfare if no file. */
+export function playComplete(): void {
+  if (playSample('complete', 0.5)) return;
+  tone(523, 0, 0.16, 'triangle', 0.15); // C5
+  tone(659, 0.1, 0.16, 'triangle', 0.15); // E5
+  tone(784, 0.2, 0.18, 'triangle', 0.16); // G5
+  tone(1047, 0.32, 0.32, 'triangle', 0.17); // C6
 }

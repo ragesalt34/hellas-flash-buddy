@@ -22,7 +22,7 @@ import {
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
 import { speakGreek } from '../speech';
-import { playCorrect, playWrong } from '../sound';
+import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
 
@@ -104,8 +104,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           questions: questions.map((x) => ({ id: x.id })),
         })
         .catch(() => {});
+      playComplete();
       setPhase('result');
     } else {
+      playTap();
       setIdx((i) => i + 1);
       setChosen(null);
     }

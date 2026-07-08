@@ -3,7 +3,7 @@ import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerCli
 import { api, VocabCard } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek } from '../speech';
-import { playGrade } from '../sound';
+import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 
@@ -75,11 +75,12 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   function grade(g: number) {
     haptic();
-    playGrade(g);
     api.vocabGrade(card.id, g).catch(() => {});
     if (i + 1 >= cards!.length) {
+      playComplete();
       setDone(true);
     } else {
+      playGrade(g);
       setI(i + 1);
       setRevealed(false);
     }
@@ -114,6 +115,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           onClick={() => {
             if (!revealed) {
               haptic();
+              playTap();
               setRevealed(true);
             }
           }}
