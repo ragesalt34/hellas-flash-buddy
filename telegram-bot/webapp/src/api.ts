@@ -1,5 +1,5 @@
 import { getStoredLanguage } from './i18n';
-import { getToken } from './auth';
+import { getToken, clearToken } from './auth';
 
 // Backend base URL — the bot's public API (Render). Set at build time.
 const API_BASE = ((import.meta.env.VITE_API_BASE as string | undefined) ?? '').replace(/\/$/, '');
@@ -74,6 +74,14 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
+    // A web token the server rejects (e.g. a stale token issued by an older
+    // backend, or one signed with a rotated secret) would otherwise wedge the
+    // app on an error screen forever. Drop it and retry once as a guest so the
+    // user lands on the app instead of a dead end.
+    if (res.status === 401 && webToken) {
+      clearToken();
+      return request<T>(path, options);
+    }
     const body = await res.text().catch(() => '');
     throw new Error(`API ${res.status}: ${body || res.statusText}`);
   }
