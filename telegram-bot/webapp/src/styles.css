@@ -476,15 +476,15 @@ svg { display: block; }
 .opt-speak:hover { opacity: 1; transform: scale(1.08); }
 .opt-speak:active { transform: scale(0.94); }
 
-/* Flashcard answer — centred ink plaque with an amber tag */
+/* Flashcard answer — mint "correct" plaque (matches the quiz's correct option) */
 .answer-box {
   margin-top: 18px;
   padding: 18px 20px 20px;
-  background: var(--ink);
-  border: 2px solid var(--border);
+  background: color-mix(in srgb, var(--mint) 14%, var(--surface));
+  border: 2px solid var(--mint);
   border-radius: var(--r-md);
-  box-shadow: 4px 4px 0 0 var(--border);
-  color: #fff;
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--mint) 55%, var(--border));
+  color: var(--text);
   text-align: center;
 }
 .answer-tag {
@@ -493,8 +493,8 @@ svg { display: block; }
   gap: 5px;
   padding: 4px 12px;
   border-radius: 999px;
-  background: var(--amber);
-  color: var(--ink);
+  background: var(--mint);
+  color: #fff;
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
