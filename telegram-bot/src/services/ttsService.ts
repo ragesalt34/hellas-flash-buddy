@@ -105,6 +105,15 @@ export async function getOrSynthesizeGreekSpeech(
       ? await synthesizeElevenLabs(text.slice(0, 800))
       : await synthesizeGoogle(text.slice(0, 500));
 
+  // Never cache empty/degenerate audio — e.g. eleven_v3 returns an empty body
+  // for very short inputs. Caching a 0-byte file would make that clip silent
+  // forever; throw instead so it isn't stored and can be retried.
+  if (audioBuffer.byteLength < 256) {
+    throw new Error(
+      `empty audio from ${provider} (${audioBuffer.byteLength} bytes) — the model may not support this text length`
+    );
+  }
+
   const { error: uploadError } = await supabase.storage
     .from(TTS_BUCKET)
     .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true });
