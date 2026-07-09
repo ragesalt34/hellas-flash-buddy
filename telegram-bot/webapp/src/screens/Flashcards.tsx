@@ -118,8 +118,8 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="answer-tag">
                 <Check size={13} strokeWidth={3.2} /> {t('flashcards.answerLabel')}
               </span>
-              <div className="speak-row" style={{ marginBottom: 0, alignItems: 'center' }}>
-                <div className="answer-text" style={{ flex: 1 }}>{card.correct_answer}</div>
+              <div className="speak-row" style={{ marginBottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+                <div className="answer-text">{card.correct_answer}</div>
                 <button
                   className="speak-btn"
                   aria-label={t('common.pronounce')}
