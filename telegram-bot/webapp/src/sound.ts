@@ -33,6 +33,35 @@ function ac(): Ctx | null {
 // `undefined` = not tried yet, `null` = tried and unavailable (use synth).
 const buffers = new Map<string, AudioBuffer | null>();
 
+/** Downmix to mono so a lopsided stereo asset (e.g. sound only in the right
+ * channel — some generated SFX come that way) plays equally in both ears.
+ * The mix is re-normalized to the original peak so loudness is preserved. */
+function toMono(c: Ctx, buf: AudioBuffer): AudioBuffer {
+  if (buf.numberOfChannels <= 1) return buf;
+  const len = buf.length;
+  const mono = c.createBuffer(1, len, buf.sampleRate);
+  const out = mono.getChannelData(0);
+  let inPeak = 0;
+  for (let ch = 0; ch < buf.numberOfChannels; ch++) {
+    const data = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++) {
+      out[i] += data[i] / buf.numberOfChannels;
+      const a = data[i] < 0 ? -data[i] : data[i];
+      if (a > inPeak) inPeak = a;
+    }
+  }
+  let outPeak = 0;
+  for (let i = 0; i < len; i++) {
+    const a = out[i] < 0 ? -out[i] : out[i];
+    if (a > outPeak) outPeak = a;
+  }
+  if (outPeak > 0.0001 && inPeak > outPeak) {
+    const g = Math.min(inPeak / outPeak, 2);
+    for (let i = 0; i < len; i++) out[i] *= g;
+  }
+  return mono;
+}
+
 function preload(name: string): void {
   const c = ac();
   if (!c || buffers.has(name)) return;
@@ -40,7 +69,7 @@ function preload(name: string): void {
   fetch(`/sounds/${name}.mp3`)
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing'))))
     .then((a) => c.decodeAudioData(a))
-    .then((b) => buffers.set(name, b))
+    .then((b) => buffers.set(name, toMono(c, b)))
     .catch(() => {
       /* no file (or undecodable) — the synth fallback covers it */
     });
