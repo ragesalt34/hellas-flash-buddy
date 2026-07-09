@@ -9,7 +9,14 @@ const SAFE_KEY = /^[A-Za-z0-9_-]{1,128}$/;
 // if only its key is configured.
 const ELEVEN_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVEN_VOICE = process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'; // default: "Rachel"
-const ELEVEN_MODEL = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
+// Model is chosen per text length: the expressive default (e.g. eleven_v3)
+// sounds rich on sentences/questions but returns EMPTY audio for very short
+// inputs, so short words/options fall back to a robust model that handles them.
+const ELEVEN_MODEL = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2'; // long text
+const ELEVEN_MODEL_SHORT = process.env.ELEVENLABS_MODEL_ID_SHORT || 'eleven_flash_v2_5'; // short text
+const ELEVEN_SHORT_MAXLEN = Number(process.env.ELEVENLABS_SHORT_MAXLEN ?? 24);
+const modelForText = (text: string): string =>
+  text.trim().length <= ELEVEN_SHORT_MAXLEN ? ELEVEN_MODEL_SHORT : ELEVEN_MODEL;
 // Higher stability = steadier delivery with fewer expressive artifacts (e.g. the
 // audible in-breath multilingual_v2 sometimes adds at the end of a phrase).
 // Tunable so it can be dialed in without a code change.
@@ -27,7 +34,7 @@ const variant = crypto
   .createHash('sha1')
   .update(
     provider === 'el'
-      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_STABILITY}`
+      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_MODEL_SHORT}:${ELEVEN_SHORT_MAXLEN}:${ELEVEN_STABILITY}`
       : `gtts:${GOOGLE_VOICE}`
   )
   .digest('hex')
@@ -45,7 +52,7 @@ async function synthesizeElevenLabs(text: string): Promise<Buffer> {
       },
       body: JSON.stringify({
         text,
-        model_id: ELEVEN_MODEL,
+        model_id: modelForText(text),
         // Tuned for clear language-learning pronunciation (stable, natural).
         voice_settings: { stability: ELEVEN_STABILITY, similarity_boost: 0.75, style: 0, use_speaker_boost: true },
       }),
