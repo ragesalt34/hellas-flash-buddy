@@ -13,6 +13,10 @@ export function textKey(text: string, prefix = 't'): string {
   return `${prefix}_${(h >>> 0).toString(36)}`;
 }
 
+// Playback volume for TTS — a touch softer than full so the voice sits gently
+// under the UI sound effects rather than blasting.
+const VOICE_VOLUME = 0.7;
+
 // Client-side memo: the signed URL (and the decoded audio behind it) is reused
 // on repeat plays, so tapping 🔊 twice doesn't re-hit the API or re-download
 // the mp3. Entries expire before the signed URL does (1h server-side).
@@ -26,12 +30,14 @@ export async function speakGreek(text: string, cacheKey: string): Promise<void> 
     const hit = memo.get(cacheKey);
     if (hit && Date.now() - hit.ts < URL_TTL_MS) {
       current = hit.audio;
+      current.volume = VOICE_VOLUME;
       current.currentTime = 0;
       await current.play();
       return;
     }
     const { audioUrl } = await api.tts(text, cacheKey);
     current = new Audio(audioUrl);
+    current.volume = VOICE_VOLUME;
     memo.set(cacheKey, { audio: current, ts: Date.now() });
     await current.play();
   } catch {
