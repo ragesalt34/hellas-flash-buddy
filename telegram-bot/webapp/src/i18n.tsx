@@ -185,7 +185,8 @@ const translations: Translations = {
     ru: 'Статистика по темам, история и процент успеха.',
     el: 'Στατιστικά ανά θέμα, ιστορικό και ποσοστό επιτυχίας.',
   },
-  'landing.stat.words': { ru: 'слов', el: 'λέξεις' },
+  'landing.stat.questions': { ru: 'вопросов экзамена', el: 'ερωτήσεις εξέτασης' },
+  'landing.stat.words': { ru: 'слов с озвучкой', el: 'λέξεις με προφορά' },
   'landing.stat.topics': { ru: 'темы экзамена', el: 'θέματα εξέτασης' },
   'landing.stat.srs': { ru: 'умное повторение', el: 'έξυπνη επανάληψη' },
   'landing.foot.title': {

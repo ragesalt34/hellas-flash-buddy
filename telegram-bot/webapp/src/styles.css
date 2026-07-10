@@ -1049,9 +1049,9 @@ button.chip:active { transform: scale(0.95); }
    ============================================================ */
 .landing {
   position: relative;
-  max-width: 1080px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 0 22px calc(60px + env(safe-area-inset-bottom));
+  padding: 0 22px calc(40px + env(safe-area-inset-bottom));
 }
 .lp-nav {
   display: flex;
@@ -1071,7 +1071,27 @@ button.chip:active { transform: scale(0.95); }
   display: grid; place-items: center;
   box-shadow: var(--glow-coral);
 }
-.lp-hero { text-align: center; padding: clamp(36px, 8vw, 80px) 0 clamp(28px, 5vw, 48px); }
+.lp-hero {
+  padding: clamp(30px, 6vw, 64px) 0 clamp(28px, 5vw, 48px);
+  /* subtle dot grid so the hero canvas isn't dead-white */
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 9%, transparent) 1.4px, transparent 1.4px);
+  background-size: 26px 26px;
+}
+/* Two columns on desktop: copy left, live demo right — kills the empty margins */
+.lp-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  text-align: left;
+}
+.lp-hero-copy .lp-cta { justify-content: flex-start; }
+.lp-hero-copy p { margin-left: 0; }
+@media (max-width: 900px) {
+  .lp-hero-grid { grid-template-columns: 1fr; text-align: center; }
+  .lp-hero-copy .lp-cta { justify-content: center; }
+  .lp-hero-copy p { margin: 22px auto 0; }
+}
 .lp-pill {
   display: inline-flex;
   align-items: center;
@@ -1145,6 +1165,67 @@ button.chip:active { transform: scale(0.95); }
 .lp-demo:hover { transform: translateY(-3px); box-shadow: var(--e2); }
 .lp-demo .hero-badge { top: -18px; right: -14px; width: 50px; height: 50px; }
 
+/* Floating app-UI stickers around the demo card */
+.lp-demo-wrap { position: relative; }
+.lp-float {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: 4px 4px 0 0 var(--border);
+  font-family: 'Onest', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  pointer-events: none;
+}
+.lp-float.f1 { top: 6px; left: -14px; color: var(--coral); background: color-mix(in srgb, var(--coral) 12%, #fff); }
+.lp-float.f2 { bottom: -12px; right: -8px; color: var(--good); background: color-mix(in srgb, var(--mint) 14%, #fff); }
+.lp-float.f3 { top: 46%; right: -26px; color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, #fff); }
+@media (max-width: 900px) {
+  .lp-float.f3 { display: none; }
+  .lp-float.f1 { left: 2px; }
+  .lp-float.f2 { right: 2px; }
+}
+
+/* ===== Meander marquee — black Greek-key ribbon ===== */
+.lp-marquee {
+  margin: clamp(40px, 7vw, 72px) -22px 0;
+  transform: rotate(-1.4deg);
+  background: var(--ink);
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  overflow: hidden;
+  padding: 13px 0;
+}
+.lp-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: lp-scroll 28s linear infinite;
+}
+.lp-marquee-seg { display: inline-flex; }
+.lp-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 44px;
+  color: #fff;
+  font-family: 'Onest', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+.lp-marquee-item svg { color: var(--amber); flex: none; }
+@keyframes lp-scroll {
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-marquee-track { animation: none; }
+}
+
 /* ===== How it works — numbered colour-badge steps ===== */
 .lp-steps-h {
   font-family: 'Onest', sans-serif;
@@ -1182,16 +1263,22 @@ button.chip:active { transform: scale(0.95); }
 .lp-step.s1 .num { background: var(--mint); color: #fff; }
 .lp-step.s2 .num { background: var(--amber); }
 .lp-step.s3 .num { background: var(--blue); color: #fff; }
+/* pastel colour-blocking so the row doesn't read as three white boxes */
+.lp-step.s1 { background: color-mix(in srgb, var(--mint) 9%, var(--surface)); }
+.lp-step.s2 { background: color-mix(in srgb, var(--amber) 12%, var(--surface)); }
+.lp-step.s3 { background: color-mix(in srgb, var(--blue) 9%, var(--surface)); }
 .lp-step h3 { font-family: 'Onest', sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; }
 .lp-step p { margin: 0; font-size: 15px; color: var(--muted); font-weight: 500; line-height: 1.5; }
 
-/* feature grid */
+/* feature grid — fixed 3 columns on desktop so the last row never dangles */
 .lp-features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-top: clamp(48px, 8vw, 88px);
 }
+@media (max-width: 900px) { .lp-features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .lp-features { grid-template-columns: 1fr; } }
 .lp-feature {
   border-radius: 24px;
   padding: 26px;
@@ -1212,15 +1299,22 @@ button.chip:active { transform: scale(0.95); }
 .lp-feature h3 { font-family: 'Onest', sans-serif; font-size: 19px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; }
 .lp-feature p { margin: 0; font-size: 14.5px; color: var(--muted); font-weight: 500; line-height: 1.5; }
 
+/* stats — an ink plate instead of numbers floating on white */
 .lp-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   margin-top: clamp(40px, 7vw, 72px);
   text-align: center;
+  background: var(--ink);
+  border: 3px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--e2);
+  padding: clamp(24px, 4vw, 40px) clamp(14px, 3vw, 32px);
 }
-.lp-stat .n { font-family: 'Onest', sans-serif; font-size: clamp(30px, 6vw, 46px); font-weight: 700; letter-spacing: -1px; }
-.lp-stat .l { font-size: 13px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+.lp-stat .n { font-family: 'Onest', sans-serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; letter-spacing: -1px; }
+.lp-stat .l { font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.75); margin-top: 4px; }
+@media (max-width: 700px) { .lp-stats { grid-template-columns: repeat(2, 1fr); row-gap: 24px; } }
 
 .lp-foot {
   margin-top: clamp(56px, 10vw, 100px);
@@ -1235,3 +1329,17 @@ button.chip:active { transform: scale(0.95); }
 }
 .lp-foot h2 { font-family: 'Onest', sans-serif; font-size: clamp(30px, 5.5vw, 50px); font-weight: 700; letter-spacing: -1.4px; margin: 0 0 22px; color: var(--text); }
 .lp-foot .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
+
+.lp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: clamp(36px, 6vw, 56px);
+  padding-top: 26px;
+  border-top: 2px solid var(--border);
+}
+.lp-footer .lp-logo { width: 32px; height: 32px; border-radius: 9px; }
+.lp-footer .lp-brand { font-size: 16px; }
+.lp-footer-note { font-size: 13.5px; font-weight: 600; color: var(--muted); }

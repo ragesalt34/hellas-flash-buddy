@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles, Landmark,
-  MousePointerClick, type LucideIcon,
+  MousePointerClick, Target, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -102,29 +102,80 @@ export function Landing({
       </nav>
 
       <header className="lp-hero">
-        <motion.span className="lp-pill" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <Sparkles size={15} color="var(--accent-2)" /> {t('landing.pill')} <b>{t('landing.pill.b')}</b>
-        </motion.span>
-        <motion.h1 initial="hidden" animate="show" variants={rise}>
-          {t('landing.h1.line1')}<br /><span className="highlight">{t('landing.h1.highlight')}</span>
-        </motion.h1>
-        <motion.p initial="hidden" animate="show" custom={1} variants={rise}>
-          {t('landing.sub')}
-        </motion.p>
-        <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
-          <button className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} /></button>
-          <button className="lp-btn ghost" onClick={onGuest}>{t('landing.cta.see')}</button>
-        </motion.div>
+        <div className="lp-hero-grid">
+          <div className="lp-hero-copy">
+            <motion.span className="lp-pill" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <Sparkles size={15} color="var(--accent-2)" /> {t('landing.pill')} <b>{t('landing.pill.b')}</b>
+            </motion.span>
+            <motion.h1 initial="hidden" animate="show" variants={rise}>
+              {t('landing.h1.line1')}<br /><span className="highlight">{t('landing.h1.highlight')}</span>
+            </motion.h1>
+            <motion.p initial="hidden" animate="show" custom={1} variants={rise}>
+              {t('landing.sub')}
+            </motion.p>
+            <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
+              <button className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} /></button>
+              <button className="lp-btn ghost" onClick={onGuest}>{t('landing.cta.see')}</button>
+            </motion.div>
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
-        >
-          <div className="lp-demo-label">{t('landing.demo.label')}</div>
-          <DemoCard />
-        </motion.div>
+          <motion.div
+            className="lp-demo-wrap"
+            initial={{ opacity: 0, y: 40, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
+          >
+            <div className="lp-demo-label">{t('landing.demo.label')}</div>
+            <DemoCard />
+            {/* Floating product stickers — fill the side space, echo the app UI */}
+            <motion.span
+              className="lp-float f1"
+              initial={{ opacity: 0, y: 14, rotate: -8 }}
+              animate={{ opacity: 1, y: 0, rotate: -6 }}
+              transition={{ delay: 0.55, duration: 0.5, ease: EASE }}
+              aria-hidden="true"
+            >
+              <Flame size={17} strokeWidth={2.5} /> ×7
+            </motion.span>
+            <motion.span
+              className="lp-float f2"
+              initial={{ opacity: 0, y: 14, rotate: 6 }}
+              animate={{ opacity: 1, y: 0, rotate: 4 }}
+              transition={{ delay: 0.7, duration: 0.5, ease: EASE }}
+              aria-hidden="true"
+            >
+              <Target size={17} strokeWidth={2.5} /> 87%
+            </motion.span>
+            <motion.span
+              className="lp-float f3"
+              initial={{ opacity: 0, y: 14, rotate: -5 }}
+              animate={{ opacity: 1, y: 0, rotate: -8 }}
+              transition={{ delay: 0.85, duration: 0.5, ease: EASE }}
+              aria-hidden="true"
+            >
+              <Volume2 size={17} strokeWidth={2.5} /> α β γ
+            </motion.span>
+          </motion.div>
+        </div>
       </header>
+
+      {/* Meander marquee — the Greek key ribbon */}
+      <div className="lp-marquee" aria-hidden="true">
+        <div className="lp-marquee-track">
+          {[0, 1].map((copy) => (
+            <span className="lp-marquee-seg" key={copy}>
+              {(['topic.history', 'topic.culture', 'topic.laws', 'topic.geography'] as const).map((k) => (
+                <span className="lp-marquee-item" key={k}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 21 V3 H21 V21 H9 V9 H15 V15 H12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" />
+                  </svg>
+                  {t(k).toUpperCase()}
+                </span>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
 
       <motion.h2 className="lp-steps-h" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
         {t('landing.steps.title')}
@@ -171,9 +222,10 @@ export function Landing({
       </section>
 
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
-        <div className="lp-stat"><div className="n grad-text">150+</div><div className="l">{t('landing.stat.words')}</div></div>
-        <div className="lp-stat"><div className="n grad-text">4</div><div className="l">{t('landing.stat.topics')}</div></div>
-        <div className="lp-stat"><div className="n grad-text">SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber)' }}>160+</div><div className="l">{t('landing.stat.questions')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint)' }}>150+</div><div className="l">{t('landing.stat.words')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent)' }}>4</div><div className="l">{t('landing.stat.topics')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--blue)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
       </motion.section>
 
       <motion.section
@@ -186,6 +238,14 @@ export function Landing({
         <h2>{t('landing.foot.title')}</h2>
         <button className="lp-btn primary" onClick={onStart}>{t('landing.foot.cta')} <ArrowRight size={19} strokeWidth={2.6} /></button>
       </motion.section>
+
+      <footer className="lp-footer">
+        <div className="lp-brand">
+          <span className="lp-logo"><Landmark size={18} color="#fff" strokeWidth={2.4} /></span>
+          Hellas Study
+        </div>
+        <span className="lp-footer-note">© 2026 · {t('landing.pill')}</span>
+      </footer>
     </div>
   );
 }
