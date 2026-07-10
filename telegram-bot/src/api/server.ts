@@ -32,6 +32,38 @@ import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
 
+// ---- TTS text whitelist ----
+// APP_SECRET ships in the public client bundle, so /api/tts is effectively a
+// public endpoint — without a whitelist anyone could synthesize arbitrary text
+// on our paid ElevenLabs quota. Only the app's own content (questions, answer
+// options, vocabulary) is allowed; cached in memory and refreshed periodically.
+let ttsAllowed: Set<string> | null = null;
+let ttsAllowedAt = 0;
+const TTS_ALLOWED_TTL_MS = 10 * 60 * 1000;
+
+async function isAllowedTtsText(text: string): Promise<boolean> {
+  const now = Date.now();
+  if (!ttsAllowed || now - ttsAllowedAt > TTS_ALLOWED_TTL_MS) {
+    const { data, error } = await supabase
+      .from('questions')
+      .select('question_ru, question_el, correct_answer_ru, correct_answer_el, wrong_answers_ru, wrong_answers_el');
+    if (error) throw error;
+    const s = new Set<string>();
+    for (const r of (data ?? []) as Record<string, string | string[] | null>[]) {
+      for (const v of [r.question_ru, r.question_el, r.correct_answer_ru, r.correct_answer_el]) {
+        if (typeof v === 'string' && v.trim()) s.add(v.trim());
+      }
+      for (const arr of [r.wrong_answers_ru, r.wrong_answers_el]) {
+        if (Array.isArray(arr)) for (const v of arr) if (v?.trim()) s.add(v.trim());
+      }
+    }
+    for (const v of VOCABULARY) s.add(v.word.trim());
+    ttsAllowed = s;
+    ttsAllowedAt = now;
+  }
+  return ttsAllowed.has(text.trim());
+}
+
 // The authenticated account attached to each /api request.
 interface AuthAccount {
   id: string; // uuid
@@ -54,22 +86,42 @@ const PASSWORD_MAX = 128; // scrypt input cap — express.json alone would allow
 
 // ---- Tiny in-memory rate limiter for the auth endpoints ----
 // Registration/login are the only unauthenticated write paths, so they're the
-// brute-force target. Sliding window per client IP; state is per-process which
-// is fine for a single Render instance.
+// brute-force target. Sliding window per client IP + per username; state is
+// per-process which is fine for a single Render instance.
 const AUTH_WINDOW_MS = 10 * 60 * 1000;
 const AUTH_MAX_ATTEMPTS = 30;
+const AUTH_MAX_PER_USERNAME = 15;
 const authHits = new Map<string, number[]>();
 
-function authRateLimited(req: Request): boolean {
-  // Render terminates TLS in front of us — the client is the first entry of
-  // X-Forwarded-For (set by the platform), falling back to the socket address.
+function clientIp(req: Request): string {
+  // Render's proxy APPENDS the real client address to X-Forwarded-For, so the
+  // trustworthy entry is the LAST one. The first entry is client-supplied and
+  // spoofable — keying on it would let an attacker rotate fake "IPs" freely.
   const fwd = req.header('x-forwarded-for');
-  const ip = (fwd ? fwd.split(',')[0].trim() : req.socket.remoteAddress) || 'unknown';
+  if (fwd) {
+    const parts = fwd.split(',').map((s) => s.trim()).filter(Boolean);
+    if (parts.length > 0) return parts[parts.length - 1];
+  }
+  return req.socket.remoteAddress || 'unknown';
+}
+
+function bumpHits(key: string, max: number): boolean {
   const now = Date.now();
-  const hits = (authHits.get(ip) ?? []).filter((t) => now - t < AUTH_WINDOW_MS);
+  const hits = (authHits.get(key) ?? []).filter((t) => now - t < AUTH_WINDOW_MS);
   hits.push(now);
-  authHits.set(ip, hits);
-  return hits.length > AUTH_MAX_ATTEMPTS;
+  authHits.set(key, hits);
+  return hits.length > max;
+}
+
+/** Per-IP and (when known) per-username sliding-window limit, so brute force
+ * is throttled even if the attacker rotates source addresses. */
+function authRateLimited(req: Request, username?: unknown): boolean {
+  const ipLimited = bumpHits(`ip:${clientIp(req)}`, AUTH_MAX_ATTEMPTS);
+  const nameLimited =
+    typeof username === 'string' && username
+      ? bumpHits(`u:${username.toLowerCase()}`, AUTH_MAX_PER_USERNAME)
+      : false;
+  return ipLimited || nameLimited;
 }
 
 // Drop stale limiter entries so the map can't grow unboundedly.
@@ -127,10 +179,13 @@ const wrap =
 
 export function createApiApp(): express.Express {
   const app = express();
+  app.disable('x-powered-by'); // don't advertise the stack
   // maxAge caches the CORS preflight (OPTIONS) for 24h in the browser, so
   // repeat API calls skip the extra preflight round-trip (faster navigation).
   app.use(cors({ maxAge: 86400 }));
-  app.use(express.json({ limit: '1mb' }));
+  // Largest legitimate body is a quiz-complete payload (~15KB) — 200kb leaves
+  // headroom while capping junk uploads.
+  app.use(express.json({ limit: '200kb' }));
 
   // Public health check (no auth) — used by cloud host (Render) deploy probes.
   app.get('/healthz', (_req, res) => {
@@ -184,11 +239,11 @@ export function createApiApp(): express.Express {
   app.post(
     '/api/auth/register',
     wrap(async (req, res) => {
-      if (authRateLimited(req)) {
+      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
+      if (authRateLimited(req, username)) {
         res.status(429).json({ error: 'too_many_attempts' });
         return;
       }
-      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
       if (
         typeof username !== 'string' ||
         !USERNAME_RE.test(username) ||
@@ -219,11 +274,11 @@ export function createApiApp(): express.Express {
   app.post(
     '/api/auth/login',
     wrap(async (req, res) => {
-      if (authRateLimited(req)) {
+      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
+      if (authRateLimited(req, username)) {
         res.status(429).json({ error: 'too_many_attempts' });
         return;
       }
-      const { username, password } = (req.body ?? {}) as { username?: unknown; password?: unknown };
       if (
         typeof username !== 'string' ||
         !USERNAME_RE.test(username) ||
@@ -449,6 +504,11 @@ export function createApiApp(): express.Express {
       const { text, cacheKey } = (req.body ?? {}) as { text?: unknown; cacheKey?: unknown };
       if (typeof text !== 'string' || !text.trim() || typeof cacheKey !== 'string' || !cacheKey.trim()) {
         res.status(400).json({ error: 'bad_request' });
+        return;
+      }
+      // Only the app's own content may be synthesized (quota protection).
+      if (!(await isAllowedTtsText(text))) {
+        res.status(400).json({ error: 'text_not_allowed' });
         return;
       }
       try {

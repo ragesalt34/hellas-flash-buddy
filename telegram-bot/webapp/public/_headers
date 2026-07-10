@@ -1,3 +1,10 @@
+# Baseline security headers for every page
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
 # Hashed build assets — safe to cache forever (filename changes on rebuild)
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

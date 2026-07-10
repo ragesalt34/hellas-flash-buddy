@@ -84,33 +84,61 @@ async function synthesizeGoogle(text: string): Promise<Buffer> {
   return Buffer.from(json.audioContent, 'base64');
 }
 
-/** Returns a signed URL for cached/synthesized Greek speech audio. Caches the
- * mp3 in the `tts-audio` bucket under a provider-prefixed filename so repeat
- * requests (and every user) are served from storage. */
+/** FNV-1a → base36 — server-side content hash for cache filenames. */
+function fnvKey(text: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(36);
+}
+
+async function fileExists(fileName: string): Promise<boolean> {
+  const { data } = await supabase.storage.from(TTS_BUCKET).list('', { search: fileName });
+  return !!data && data.some((f) => f.name === fileName);
+}
+
+async function signUrl(fileName: string): Promise<string | null> {
+  const { data, error } = await supabase.storage.from(TTS_BUCKET).createSignedUrl(fileName, 3600);
+  return !error && data?.signedUrl ? data.signedUrl : null;
+}
+
+/** Returns a signed URL for cached/synthesized Greek speech audio.
+ *
+ * The cache filename is CONTENT-ADDRESSED (derived server-side from the text),
+ * so the same text always maps to the same file no matter what cacheKey the
+ * client sends — a caller cycling made-up cacheKeys can't force paid
+ * re-synthesis of the same clip. The client-provided key is only used to find
+ * clips cached under the older naming scheme. */
 export async function getOrSynthesizeGreekSpeech(
   text: string,
-  cacheKey: string
+  legacyCacheKey?: string
 ): Promise<string> {
-  if (!SAFE_KEY.test(cacheKey)) throw new Error('invalid cache key');
   if (!provider) throw new Error('no TTS provider configured (set ELEVENLABS_API_KEY or GOOGLE_TTS_API_KEY)');
 
-  const fileName = `${provider}_${variant}_${cacheKey}.mp3`;
+  const trimmed = text.trim();
+  const fileName = `${provider}_${variant}_s_${fnvKey(trimmed)}.mp3`;
 
-  const { data: existing } = await supabase.storage
-    .from(TTS_BUCKET)
-    .list('', { search: fileName });
+  if (await fileExists(fileName)) {
+    const url = await signUrl(fileName);
+    if (url) return url;
+  }
 
-  if (existing && existing.some((f) => f.name === fileName)) {
-    const { data: signed, error } = await supabase.storage
-      .from(TTS_BUCKET)
-      .createSignedUrl(fileName, 3600);
-    if (!error && signed?.signedUrl) return signed.signedUrl;
+  // Older clips (pre content-addressing) were stored under the client key —
+  // serve them so the pre-generated library keeps working at zero cost.
+  if (legacyCacheKey && SAFE_KEY.test(legacyCacheKey)) {
+    const legacyName = `${provider}_${variant}_${legacyCacheKey}.mp3`;
+    if (await fileExists(legacyName)) {
+      const url = await signUrl(legacyName);
+      if (url) return url;
+    }
   }
 
   const audioBuffer =
     provider === 'el'
-      ? await synthesizeElevenLabs(text.slice(0, 800))
-      : await synthesizeGoogle(text.slice(0, 500));
+      ? await synthesizeElevenLabs(trimmed.slice(0, 800))
+      : await synthesizeGoogle(trimmed.slice(0, 500));
 
   // Never cache empty/degenerate audio — e.g. eleven_v3 returns an empty body
   // for very short inputs. Caching a 0-byte file would make that clip silent
