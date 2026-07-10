@@ -71,12 +71,11 @@ const translations: Translations = {
   'vocab.tapToReveal': { ru: 'Нажми, чтобы увидеть перевод', el: 'Πάτησε για μετάφραση' },
 
   // ---- Grade buttons (flashcards + vocab) ----
+  // Grade sub-labels (the "come back in …" interval) are computed per card
+  // level in src/srs.ts — static texts here would lie for most levels.
   'grade.hard': { ru: 'Сложно', el: 'Δύσκολο' },
   'grade.good': { ru: 'Хорошо', el: 'Καλά' },
   'grade.easy': { ru: 'Знаю', el: 'Το ξέρω' },
-  'grade.hard.sub': { ru: '10 минут', el: '10 λεπτά' },
-  'grade.good.sub': { ru: '1 день', el: '1 ημέρα' },
-  'grade.easy.sub': { ru: '4 дня', el: '4 ημέρες' },
 
   // ---- Stats ----
   'stats.summary': { ru: 'Сводка', el: 'Σύνοψη' },

@@ -19,11 +19,11 @@ interface Row {
   next_review_at: string | null;
 }
 
-export async function getDueVocabIds(
+export async function getDueVocab(
   accountId: string,
   allIds: number[],
   limit: number
-): Promise<number[]> {
+): Promise<{ id: number; level: number }[]> {
   const { data, error } = await supabase
     .from('vocab_progress')
     .select('vocab_id, level, next_review_at')
@@ -31,16 +31,20 @@ export async function getDueVocabIds(
   if (error) throw error;
 
   const now = Date.now();
-  const seen = new Map<number, number>(); // vocab_id → next_review ms
+  const seen = new Map<number, { due: number; level: number }>();
   for (const r of (data ?? []) as Row[]) {
-    seen.set(r.vocab_id, r.next_review_at ? Date.parse(r.next_review_at) : 0);
+    seen.set(r.vocab_id, {
+      due: r.next_review_at ? Date.parse(r.next_review_at) : 0,
+      level: r.level ?? 0,
+    });
   }
 
-  const due: number[] = [];
-  const unseen: number[] = [];
+  const due: { id: number; level: number }[] = [];
+  const unseen: { id: number; level: number }[] = [];
   for (const id of allIds) {
-    if (!seen.has(id)) unseen.push(id);
-    else if ((seen.get(id) ?? 0) <= now) due.push(id);
+    const s = seen.get(id);
+    if (!s) unseen.push({ id, level: 0 });
+    else if (s.due <= now) due.push({ id, level: s.level });
   }
 
   const result = [...due];

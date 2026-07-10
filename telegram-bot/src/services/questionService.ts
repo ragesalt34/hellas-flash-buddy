@@ -99,12 +99,13 @@ export async function fetchQuestionsRandom(
   return shuffleArray(all).slice(0, limit);
 }
 
-const toFlashcard = (q: QuizQuestion): FlashcardItem => ({
+const toFlashcard = (q: QuizQuestion, level = 0): FlashcardItem => ({
   question_id: q.id,
   question: q.question,
   correct_answer: q.correct_answer,
   explanation: q.explanation,
   topic: q.topic,
+  level,
 });
 
 /** Due + unseen SRS flashcards for an account. */
@@ -115,28 +116,37 @@ export async function fetchDueFlashcards(
 ): Promise<FlashcardItem[]> {
   const [{ data: qData, error: qErr }, { data: pData, error: pErr }] = await Promise.all([
     supabase.from('questions').select(QUESTION_COLS),
-    supabase.from('question_progress').select('question_id, next_review_at').eq('account_id', accountId),
+    supabase
+      .from('question_progress')
+      .select('question_id, next_review_at, level')
+      .eq('account_id', accountId),
   ]);
   if (qErr) throw qErr;
   if (pErr) throw pErr;
 
   const now = Date.now();
-  const progress = new Map<string, number | null>();
-  for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null }[]) {
-    progress.set(p.question_id, p.next_review_at ? Date.parse(p.next_review_at) : 0);
+  const progress = new Map<string, { due: number; level: number }>();
+  for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null; level: number }[]) {
+    progress.set(p.question_id, {
+      due: p.next_review_at ? Date.parse(p.next_review_at) : 0,
+      level: p.level ?? 0,
+    });
   }
 
   const all = (qData ?? []) as unknown as RawQuestion[];
   const due: RawQuestion[] = [];
   const unseen: RawQuestion[] = [];
   for (const q of all) {
-    if (!progress.has(q.id)) unseen.push(q);
-    else if ((progress.get(q.id) ?? 0) <= now) due.push(q);
+    const p = progress.get(q.id);
+    if (!p) unseen.push(q);
+    else if (p.due <= now) due.push(q);
   }
 
   const picked = [...due];
   if (picked.length < limit) picked.push(...shuffleArray(unseen).slice(0, limit - picked.length));
-  return picked.slice(0, limit).map((r) => toFlashcard(toQuizQuestion(r, lang)));
+  return picked
+    .slice(0, limit)
+    .map((r) => toFlashcard(toQuizQuestion(r, lang), progress.get(r.id)?.level ?? 0));
 }
 
 /** Random flashcards regardless of SRS state (fallback / guests without history). */

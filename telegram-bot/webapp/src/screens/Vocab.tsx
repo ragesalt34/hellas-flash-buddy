@@ -6,9 +6,10 @@ import { speakGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
+import { gradeIntervalLabel } from '../srs';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [cards, setCards] = useState<VocabCard[] | null>(null);
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -140,21 +141,21 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Frown size={22} strokeWidth={2.2} />
               </span>
               {t('grade.hard')}
-              <span className="gsub">{t('grade.hard.sub')}</span>
+              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
               {t('grade.good')}
-              <span className="gsub">{t('grade.good.sub')}</span>
+              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
               {t('grade.easy')}
-              <span className="gsub">{t('grade.easy.sub')}</span>
+              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 3, language)}</span>
             </button>
           </div>
         </div>

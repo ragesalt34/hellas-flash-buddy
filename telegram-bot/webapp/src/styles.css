@@ -439,6 +439,14 @@ svg { display: block; }
 }
 .option:hover { background: var(--surface-2); transform: translateY(-2px); box-shadow: var(--e2); }
 .option:active { transform: translateY(0); box-shadow: var(--e1); }
+/* Answered options are inert (the option is a div now, so :disabled doesn't
+   apply) — don't lift or recolor them on hover. */
+.option.correct:hover, .option.wrong:hover, .option.dim:hover {
+  transform: none;
+  box-shadow: var(--e1);
+  cursor: default;
+}
+.option.dim:hover { background: var(--surface); }
 .option .lt {
   flex: none;
   width: 38px;

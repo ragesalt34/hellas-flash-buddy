@@ -29,4 +29,6 @@ export interface FlashcardItem {
   correct_answer: string;
   explanation: string | null;
   topic: string | null;
+  /** Current SRS level (0 for unseen) — lets the client show real next-review intervals per grade. */
+  level: number;
 }

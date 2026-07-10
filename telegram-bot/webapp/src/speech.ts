@@ -10,10 +10,16 @@ import { api } from './api';
 const TARGET_PEAK = 0.5;
 const MAX_GAIN = 2; // don't over-amplify a near-silent clip (would raise noise)
 const CACHE_TTL_MS = 50 * 60 * 1000;
+// Decoded PCM is ~0.5MB per clip — cap the cache so a long session doesn't
+// hold tens of MB of audio in memory (oldest entries are evicted first).
+const CACHE_MAX = 40;
 
 let ctx: AudioContext | null = null;
 let currentSrc: AudioBufferSourceNode | null = null;
 let currentEl: HTMLAudioElement | null = null; // fallback path
+// Increments on every speak call: after the awaits, a stale call sees a newer
+// generation and bails, so a rapid double-tap can't start two overlapping clips.
+let generation = 0;
 const bufCache = new Map<string, { buf: AudioBuffer; gain: number; ts: number }>();
 
 /** Peak sample amplitude across all channels (0..1); used to normalize loudness. */
@@ -72,6 +78,7 @@ function stopCurrent(): void {
  * Fire-and-forget; failures are non-critical UX and ignored. */
 export async function speakGreek(text: string, cacheKey: string): Promise<void> {
   stopCurrent();
+  const gen = ++generation;
   const c = audioCtx();
   try {
     // Web Audio path (volume actually applies on all platforms incl. iOS).
@@ -79,11 +86,19 @@ export async function speakGreek(text: string, cacheKey: string): Promise<void> 
       let entry = bufCache.get(cacheKey);
       if (!entry || Date.now() - entry.ts > CACHE_TTL_MS) {
         const { audioUrl } = await api.tts(text, cacheKey);
-        const arr = await fetch(audioUrl).then((r) => r.arrayBuffer());
-        const buf = await c.decodeAudioData(arr);
+        const res = await fetch(audioUrl);
+        if (!res.ok) throw new Error(`audio fetch ${res.status}`);
+        const buf = await c.decodeAudioData(await res.arrayBuffer());
         entry = { buf, gain: peakGain(buf), ts: Date.now() };
+        bufCache.delete(cacheKey); // re-insert at the end (freshest position)
         bufCache.set(cacheKey, entry);
+        while (bufCache.size > CACHE_MAX) {
+          const oldest = bufCache.keys().next().value;
+          if (oldest === undefined) break;
+          bufCache.delete(oldest);
+        }
       }
+      if (gen !== generation) return; // a newer tap superseded this one mid-fetch
       const src = c.createBufferSource();
       const gain = c.createGain();
       gain.gain.value = entry.gain;
@@ -97,6 +112,7 @@ export async function speakGreek(text: string, cacheKey: string): Promise<void> 
 
     // Fallback (no Web Audio): <audio> with best-effort volume (ignored on iOS).
     const { audioUrl } = await api.tts(text, cacheKey);
+    if (gen !== generation) return;
     currentEl = new Audio(audioUrl);
     currentEl.volume = TARGET_PEAK;
     await currentEl.play();

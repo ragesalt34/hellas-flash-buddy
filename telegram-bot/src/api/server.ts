@@ -25,7 +25,7 @@ import {
   getGuestAccountId,
   UsernameTakenError,
 } from '../services/accountService';
-import { getDueVocabIds, gradeVocab, getVocabStats } from '../services/vocabProgressService';
+import { getDueVocab, gradeVocab, getVocabStats } from '../services/vocabProgressService';
 import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 import { AnswerRecord } from '../types';
@@ -392,14 +392,16 @@ export function createApiApp(): express.Express {
     '/vocab',
     wrap(async (req, res) => {
       const a = req.account!;
-      const [dueIds, stats] = await Promise.all([
-        getDueVocabIds(a.id, ALL_VOCAB_IDS, 20),
+      const [due, stats] = await Promise.all([
+        getDueVocab(a.id, ALL_VOCAB_IDS, 20),
         getVocabStats(a.id, ALL_VOCAB_IDS),
       ]);
-      const cards = dueIds
-        .map((id) => VOCAB_BY_ID.get(id))
-        .filter((v): v is NonNullable<typeof v> => Boolean(v))
-        .map((v) => ({ id: v.id, word: v.word, ru: v.ru, note: v.note ?? null, topic: v.topic }));
+      const cards = due
+        .map(({ id, level }) => {
+          const v = VOCAB_BY_ID.get(id);
+          return v ? { id: v.id, word: v.word, ru: v.ru, note: v.note ?? null, topic: v.topic, level } : null;
+        })
+        .filter((v): v is NonNullable<typeof v> => Boolean(v));
       res.json({ cards, stats });
     })
   );

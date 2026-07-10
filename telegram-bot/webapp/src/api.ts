@@ -175,6 +175,8 @@ export interface Flashcard {
   correct_answer: string;
   explanation: string | null;
   topic: string | null;
+  /** Current SRS level (0 = unseen); optional for backward compat with older API. */
+  level?: number;
 }
 export interface VocabCard {
   id: number;
@@ -182,6 +184,7 @@ export interface VocabCard {
   ru: string;
   note: string | null;
   topic: string;
+  level?: number;
 }
 export interface StatsResponse {
   stats: UserStats;
