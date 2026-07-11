@@ -1343,3 +1343,35 @@ button.chip:active { transform: scale(0.95); }
 .lp-footer .lp-logo { width: 32px; height: 32px; border-radius: 9px; }
 .lp-footer .lp-brand { font-size: 16px; }
 .lp-footer-note { font-size: 13.5px; font-weight: 600; color: var(--muted); }
+
+/* ===== Landing micro-interactions ===== */
+/* CTA arrow slides forward on hover */
+.lp-btn svg { transition: transform 0.18s var(--ease); }
+.lp-btn:hover svg { transform: translateX(4px); }
+
+/* Feature/step icons pop with a springy overshoot on card hover */
+.lp-feature .ic,
+.lp-step .num {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lp-feature:hover .ic { transform: scale(1.12) rotate(-6deg); }
+.lp-step:hover .num { transform: scale(1.12) rotate(8deg); }
+
+/* Meander sticker on the demo card twists when the card is hovered */
+.lp-demo .hero-badge { transition: transform 0.3s var(--ease); }
+.lp-demo:hover .hero-badge { transform: rotate(14deg) scale(1.07); }
+
+/* Marquee pauses on hover so the topics can be read */
+.lp-marquee:hover .lp-marquee-track { animation-play-state: paused; }
+
+/* Floating hero stickers idle-bob (the `translate` property composes with the
+   rotate that framer-motion sets via `transform`, so they don't clobber). */
+@media (prefers-reduced-motion: no-preference) {
+  .lp-float { animation: lp-bob 3.6s ease-in-out infinite; }
+  .lp-float.f2 { animation-duration: 4.4s; animation-delay: -1.6s; }
+  .lp-float.f3 { animation-duration: 3.9s; animation-delay: -2.4s; }
+  @keyframes lp-bob {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -7px; }
+  }
+}
