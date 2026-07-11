@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight, Sparkles, Landmark,
+  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
   MousePointerClick, Target, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
+import { TempleMark, LaurelSprig } from '../components/icons';
 
 const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
@@ -92,7 +93,7 @@ export function Landing({
     <div className="landing">
       <nav className="lp-nav">
         <div className="lp-brand">
-          <span className="lp-logo"><Landmark size={20} color="#fff" strokeWidth={2.4} /></span>
+          <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={22} /></span>
           Hellas Study
         </div>
         <div className="lp-nav-right">
@@ -105,7 +106,8 @@ export function Landing({
         <div className="lp-hero-grid">
           <div className="lp-hero-copy">
             <motion.span className="lp-pill" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <Sparkles size={15} color="var(--accent-2)" /> {t('landing.pill')} <b>{t('landing.pill.b')}</b>
+              <span style={{ color: 'var(--good)', display: 'inline-flex' }}><LaurelSprig size={16} /></span>
+              {t('landing.pill')} <b>{t('landing.pill.b')}</b>
             </motion.span>
             <motion.h1 initial="hidden" animate="show" variants={rise}>
               {t('landing.h1.line1')}<br /><span className="highlight">{t('landing.h1.highlight')}</span>
@@ -241,7 +243,7 @@ export function Landing({
 
       <footer className="lp-footer">
         <div className="lp-brand">
-          <span className="lp-logo"><Landmark size={18} color="#fff" strokeWidth={2.4} /></span>
+          <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={18} /></span>
           Hellas Study
         </div>
         <span className="lp-footer-note">© 2026 · {t('landing.pill')}</span>

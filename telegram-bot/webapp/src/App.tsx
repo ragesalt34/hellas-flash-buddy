@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { House, BookOpen, Layers, Languages, BarChart3, Landmark, X, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { House, BookOpen, Layers, Languages, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { TempleMark } from './components/icons';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage } from './i18n';
@@ -129,8 +130,8 @@ export function App() {
 
       <nav className="bottomnav" aria-label={t('nav.aria')}>
         <div className="bottomnav-inner glass">
-          <div className="nav-brand" aria-hidden="true">
-            <Landmark size={22} color="#fff" strokeWidth={2.4} />
+          <div className="nav-brand" aria-hidden="true" style={{ color: '#fff' }}>
+            <TempleMark size={24} />
           </div>
           {NAV.map((n) => {
             const Icon = n.icon;
