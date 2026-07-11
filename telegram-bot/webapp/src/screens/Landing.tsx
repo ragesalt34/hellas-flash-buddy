@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
-  MousePointerClick, Target, type LucideIcon,
+  MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -161,19 +161,15 @@ export function Landing({
         </div>
       </header>
 
-      {/* Meander marquee — the Greek key ribbon */}
+      {/* Topic marquee — each exam topic with its own icon (same set as the quiz screen) */}
       <div className="lp-marquee" aria-hidden="true">
         <div className="lp-marquee-track">
           {[0, 1].map((copy) => (
             <span className="lp-marquee-seg" key={copy}>
-              {(['topic.history', 'topic.culture', 'topic.laws', 'topic.geography'] as const).map((k) => (
-                <span className="lp-marquee-item" key={k}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 21 V3 H21 V21 H9 V9 H15 V15 H12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" />
-                  </svg>
-                  {t(k).toUpperCase()}
-                </span>
-              ))}
+              <span className="lp-marquee-item"><TempleMark size={19} strokeWidth={2.4} /> {t('topic.history').toUpperCase()}</span>
+              <span className="lp-marquee-item"><Drama size={19} strokeWidth={2.4} /> {t('topic.culture').toUpperCase()}</span>
+              <span className="lp-marquee-item"><Scale size={19} strokeWidth={2.4} /> {t('topic.laws').toUpperCase()}</span>
+              <span className="lp-marquee-item"><Globe2 size={19} strokeWidth={2.4} /> {t('topic.geography').toUpperCase()}</span>
             </span>
           ))}
         </div>
