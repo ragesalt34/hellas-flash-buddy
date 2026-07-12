@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
@@ -28,6 +28,47 @@ const rise = {
   hidden: { opacity: 0, y: 28 },
   show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.06, ease: EASE } }),
 };
+
+/** Number that counts up from 0 when it scrolls into view (once). */
+function CountUp({ to, suffix = '' }: { to: number; suffix?: string }) {
+  const [n, setN] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setN(to); // no animation for reduced-motion users — show the value instantly
+      return;
+    }
+    let raf = 0;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        const t0 = performance.now();
+        const dur = 1100;
+        const tick = (t: number) => {
+          const p = Math.min(1, (t - t0) / dur);
+          setN(Math.round(to * (1 - Math.pow(1 - p, 3)))); // ease-out cubic
+          if (p < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [to]);
+  return (
+    <span ref={ref}>
+      {n}
+      {suffix}
+    </span>
+  );
+}
 
 // Real vocab items from the app — the hero demo IS the product.
 const DEMO_WORDS: { word: string; ru: string }[] = [
@@ -220,9 +261,9 @@ export function Landing({
       </section>
 
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber)' }}>160+</div><div className="l">{t('landing.stat.questions')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint)' }}>150+</div><div className="l">{t('landing.stat.words')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent)' }}>4</div><div className="l">{t('landing.stat.topics')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber)' }}><CountUp to={160} suffix="+" /></div><div className="l">{t('landing.stat.questions')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint)' }}><CountUp to={150} suffix="+" /></div><div className="l">{t('landing.stat.words')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent)' }}><CountUp to={4} /></div><div className="l">{t('landing.stat.topics')}</div></div>
         <div className="lp-stat"><div className="n" style={{ color: 'var(--blue)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
       </motion.section>
 
