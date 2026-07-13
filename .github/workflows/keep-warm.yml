@@ -1,0 +1,28 @@
+name: keep-warm
+
+# Render's free tier sleeps the API after ~15 min idle, so the first request
+# after a pause waits 30-60s for a cold start (slow page load / slow sign-up).
+# Pinging /healthz on a schedule keeps the instance awake for free.
+#
+# NOTE: GitHub cron can be delayed under load and is disabled after 60 days with
+# no repo commits. For rock-solid timing, also/instead use UptimeRobot (5-min
+# HTTP monitor on the same /healthz URL) or upgrade Render to a paid instance.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # every 5 minutes
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render health check
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 \
+              https://hellas-flash-buddy-bot.onrender.com/healthz) && break
+            echo "attempt $i failed, retrying..."; sleep 10
+          done
+          echo "healthz -> $code"
+          test "$code" = "200"
