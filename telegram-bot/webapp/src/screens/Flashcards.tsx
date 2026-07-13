@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, Flashcard } from '../api';
 import { haptic } from '../telegram';
-import { speakGreek, textKey } from '../speech';
+import { speakGreek, prefetchGreek, textKey } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
@@ -14,6 +14,14 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+
+  // Warm the current card's question (and its answer once revealed) so 🔊 is instant.
+  useEffect(() => {
+    const c = cards?.[i];
+    if (!c) return;
+    prefetchGreek(c.question, `q_${c.question_id}`);
+    if (revealed) prefetchGreek(c.correct_answer, textKey(c.correct_answer, 'a'));
+  }, [cards, i, revealed]);
 
   function reset() {
     setCards(null);

@@ -74,6 +74,41 @@ function stopCurrent(): void {
   currentEl = null;
 }
 
+/** Fetch + decode a clip into the in-memory cache (no playback). Shared by
+ * speakGreek and prefetchGreek so a preloaded clip plays instantly on tap. */
+async function loadBuffer(
+  c: AudioContext,
+  text: string,
+  cacheKey: string
+): Promise<{ buf: AudioBuffer; gain: number; ts: number }> {
+  let entry = bufCache.get(cacheKey);
+  if (!entry || Date.now() - entry.ts > CACHE_TTL_MS) {
+    const { audioUrl } = await api.tts(text, cacheKey);
+    const res = await fetch(audioUrl);
+    if (!res.ok) throw new Error(`audio fetch ${res.status}`);
+    const buf = await c.decodeAudioData(await res.arrayBuffer());
+    entry = { buf, gain: peakGain(buf), ts: Date.now() };
+    bufCache.delete(cacheKey); // re-insert at the end (freshest position)
+    bufCache.set(cacheKey, entry);
+    while (bufCache.size > CACHE_MAX) {
+      const oldest = bufCache.keys().next().value;
+      if (oldest === undefined) break;
+      bufCache.delete(oldest);
+    }
+  }
+  return entry;
+}
+
+/** Warm a clip ahead of a tap (on-screen question/word/answer) so playback is
+ * instant. Fire-and-forget, coalesced by the cache; failures are ignored. */
+export function prefetchGreek(text: string, cacheKey: string): void {
+  if (!text?.trim()) return;
+  if (bufCache.has(cacheKey)) return; // already warm
+  const c = audioCtx();
+  if (!c) return;
+  loadBuffer(c, text, cacheKey).catch(() => bufCache.delete(cacheKey));
+}
+
 /** Plays Greek pronunciation for `text`, cached server-side under `cacheKey`.
  * Fire-and-forget; failures are non-critical UX and ignored. */
 export async function speakGreek(text: string, cacheKey: string): Promise<void> {
@@ -83,21 +118,7 @@ export async function speakGreek(text: string, cacheKey: string): Promise<void> 
   try {
     // Web Audio path (volume actually applies on all platforms incl. iOS).
     if (c) {
-      let entry = bufCache.get(cacheKey);
-      if (!entry || Date.now() - entry.ts > CACHE_TTL_MS) {
-        const { audioUrl } = await api.tts(text, cacheKey);
-        const res = await fetch(audioUrl);
-        if (!res.ok) throw new Error(`audio fetch ${res.status}`);
-        const buf = await c.decodeAudioData(await res.arrayBuffer());
-        entry = { buf, gain: peakGain(buf), ts: Date.now() };
-        bufCache.delete(cacheKey); // re-insert at the end (freshest position)
-        bufCache.set(cacheKey, entry);
-        while (bufCache.size > CACHE_MAX) {
-          const oldest = bufCache.keys().next().value;
-          if (oldest === undefined) break;
-          bufCache.delete(oldest);
-        }
-      }
+      const entry = await loadBuffer(c, text, cacheKey);
       if (gen !== generation) return; // a newer tap superseded this one mid-fetch
       const src = c.createBufferSource();
       const gain = c.createGain();

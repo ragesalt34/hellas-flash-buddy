@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Shuffle,
   Landmark,
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
-import { speakGreek, textKey } from '../speech';
+import { speakGreek, prefetchGreek, textKey } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
@@ -55,6 +55,15 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   const [chosen, setChosen] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AnswerRec[]>([]);
   const [score, setScore] = useState(0);
+
+  // Warm the current question + its options so tapping 🔊 is instant.
+  useEffect(() => {
+    if (phase !== 'play') return;
+    const q = questions[idx];
+    if (!q) return;
+    prefetchGreek(q.question, `q_${q.id}`);
+    q.options.forEach((opt) => prefetchGreek(opt, textKey(opt)));
+  }, [phase, idx, questions]);
 
   async function start(topicId: string) {
     haptic();

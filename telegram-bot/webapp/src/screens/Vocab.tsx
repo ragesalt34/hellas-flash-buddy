@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, VocabCard } from '../api';
 import { haptic } from '../telegram';
-import { speakGreek } from '../speech';
+import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
@@ -14,6 +14,12 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+
+  // Warm the current word's audio so tapping 🔊 is instant.
+  useEffect(() => {
+    const c = cards?.[i];
+    if (c) prefetchGreek(c.word, `vocab_${c.id}`);
+  }, [cards, i]);
 
   function reset() {
     setCards(null);
