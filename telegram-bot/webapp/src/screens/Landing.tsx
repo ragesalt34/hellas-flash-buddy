@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
   MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
@@ -78,12 +78,40 @@ const DEMO_WORDS: { word: string; ru: string }[] = [
   { word: 'το σύνταγμα', ru: 'конституция' },
 ];
 
-/** Interactive vocab card in the hero: tap to reveal, tap again for the next word. */
+/** Interactive vocab card in the hero: tap to reveal, tap again for the next
+ * word. On desktop it also tilts in 3D toward the cursor with a moving glare. */
 function DemoCard() {
   const { t } = useLanguage();
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const w = DEMO_WORDS[i % DEMO_WORDS.length];
+
+  // Cursor-follow 3D tilt (mouse only; springs keep it smooth, not twitchy).
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const spring = { stiffness: 220, damping: 18, mass: 0.4 };
+  const rotateX = useSpring(useTransform(my, [0, 1], [7, -7]), spring);
+  const rotateY = useSpring(useTransform(mx, [0, 1], [-9, 9]), spring);
+  const glare = useTransform(
+    [mx, my],
+    ([x, y]: number[]) =>
+      `radial-gradient(220px circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.5), transparent 60%)`
+  );
+
+  const reduce =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduce || e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width);
+    my.set((e.clientY - r.top) / r.height);
+  };
+  const reset = () => {
+    mx.set(0.5);
+    my.set(0.5);
+  };
 
   const tap = () => {
     if (!revealed) setRevealed(true);
@@ -94,7 +122,15 @@ function DemoCard() {
   };
 
   return (
-    <div className="card lp-demo" onClick={tap} role="button" tabIndex={0}>
+    <motion.div
+      className="card lp-demo"
+      onClick={tap}
+      role="button"
+      tabIndex={0}
+      onPointerMove={onMove}
+      onPointerLeave={reset}
+      style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+    >
       <span className="hero-badge" aria-hidden="true">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
           <path
@@ -116,7 +152,8 @@ function DemoCard() {
           </div>
         )}
       </div>
-    </div>
+      <motion.span className="lp-glare" aria-hidden="true" style={{ background: glare }} />
+    </motion.div>
   );
 }
 
