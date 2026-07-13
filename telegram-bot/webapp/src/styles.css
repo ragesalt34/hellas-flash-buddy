@@ -1416,6 +1416,100 @@ button.chip:active { transform: scale(0.95); }
 .lp-footer .lp-brand { font-size: 16px; }
 .lp-footer-note { font-size: 13.5px; font-weight: 600; color: var(--muted); }
 
+/* Asymmetry: resting rotation + straighten-on-hover are driven by framer-motion
+   (style.rotate + whileHover) because framer owns `transform` on these cards for
+   the scroll-reveal. CSS only needs to not fight it — drop transform from the
+   feature/step transitions so the framer values aren't lerped by CSS too. */
+.lp-step, .lp-feature { transition: box-shadow 0.18s var(--ease); }
+
+/* ===== Opinion pull-quote ===== */
+.lp-quote {
+  position: relative;
+  margin: clamp(56px, 10vw, 104px) auto 0;
+  max-width: 900px;
+  text-align: center;
+  padding: 0 10px;
+}
+.lp-quote-mark {
+  display: block;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(80px, 14vw, 150px);
+  line-height: 0.7;
+  color: var(--accent);
+  height: 0.5em;
+}
+.lp-quote-text {
+  white-space: pre-line;
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.12;
+  margin: 0;
+  color: var(--text);
+}
+.lp-quote-sub {
+  margin: 18px 0 0;
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ===== FAQ accordion (native <details>) ===== */
+.lp-faq { margin: clamp(56px, 10vw, 100px) auto 0; max-width: 760px; }
+.lp-faq-h {
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(26px, 4.5vw, 40px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 0 0 22px;
+}
+.lp-faq-item {
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--e1);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.lp-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(16px, 2.4vw, 19px);
+  font-weight: 700;
+  color: var(--text);
+}
+.lp-faq-item summary::-webkit-details-marker { display: none; }
+.lp-faq-plus {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--amber);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.25s var(--ease);
+}
+.lp-faq-item[open] .lp-faq-plus { transform: rotate(45deg); }
+.lp-faq-item p {
+  margin: 0;
+  padding: 0 20px 20px;
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 /* ===== Landing micro-interactions ===== */
 /* CTA arrow slides forward on hover */
 .lp-btn svg { transition: transform 0.18s var(--ease); }

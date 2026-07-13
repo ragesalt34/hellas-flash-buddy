@@ -266,6 +266,8 @@ export function Landing({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-60px' }}
+            style={{ rotate: [-1.5, 1, -0.5][i] ?? 0 }}
+            whileHover={{ rotate: 0, y: -6 }}
           >
             <span className="num">{i + 1}</span>
             <h3>{t(s.titleKey)}</h3>
@@ -286,6 +288,8 @@ export function Landing({
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: '-60px' }}
+              style={{ rotate: [1.2, -1, 0.6, -0.8, 1, -1.3][i] ?? 0 }}
+              whileHover={{ rotate: 0, y: -6 }}
             >
               <span className="ic" style={{ background: `color-mix(in srgb, ${f.color} 18%, transparent)`, color: f.color }}>
                 <Icon size={24} strokeWidth={2.3} />
@@ -297,11 +301,44 @@ export function Landing({
         })}
       </section>
 
+      {/* Opinion pull-quote — a designed pause with attitude, not a feature line */}
+      <motion.section
+        className="lp-quote"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: EASE }}
+        viewport={{ once: true, margin: '-80px' }}
+      >
+        <span className="lp-quote-mark" aria-hidden="true">“</span>
+        <p className="lp-quote-text">{t('landing.quote')}</p>
+        <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
+      </motion.section>
+
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
         <div className="lp-stat"><div className="n" style={{ color: 'var(--amber)' }}><CountUp to={160} suffix="+" /></div><div className="l">{t('landing.stat.questions')}</div></div>
         <div className="lp-stat"><div className="n" style={{ color: 'var(--mint)' }}><CountUp to={150} suffix="+" /></div><div className="l">{t('landing.stat.words')}</div></div>
         <div className="lp-stat"><div className="n" style={{ color: 'var(--accent)' }}><CountUp to={4} /></div><div className="l">{t('landing.stat.topics')}</div></div>
         <div className="lp-stat"><div className="n" style={{ color: 'var(--blue)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
+      </motion.section>
+
+      {/* FAQ — short, plain, with personality (native <details>, zero JS) */}
+      <motion.section
+        className="lp-faq"
+        variants={rise}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-60px' }}
+      >
+        <h2 className="lp-faq-h">{t('landing.faq.title')}</h2>
+        {[1, 2, 3, 4].map((n) => (
+          <details className="lp-faq-item" key={n}>
+            <summary>
+              {t(`landing.faq.q${n}`)}
+              <span className="lp-faq-plus" aria-hidden="true">+</span>
+            </summary>
+            <p>{t(`landing.faq.a${n}`)}</p>
+          </details>
+        ))}
       </motion.section>
 
       <motion.section
