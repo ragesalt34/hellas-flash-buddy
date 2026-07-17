@@ -172,7 +172,7 @@ export function Landing({
       <nav className="lp-nav">
         <div className="lp-brand">
           <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={22} /></span>
-          <span className="brand-word">Hellas Study</span>
+          Hellas Study
         </div>
         <div className="lp-nav-right">
           <LanguageSwitch />
@@ -355,7 +355,7 @@ export function Landing({
       <footer className="lp-footer">
         <div className="lp-brand">
           <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={18} /></span>
-          <span className="brand-word">Hellas Study</span>
+          Hellas Study
         </div>
         <span className="lp-footer-note">© 2026 · {t('landing.pill')}</span>
       </footer>
