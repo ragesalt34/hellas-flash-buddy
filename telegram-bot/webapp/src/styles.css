@@ -1102,6 +1102,25 @@ button.chip:active { transform: scale(0.95); }
    overlapping the brand logo in the opposite top corner). */
 .lp-nav-right .lang-switch { position: static; }
 .lp-brand { display: flex; align-items: center; gap: 11px; font-family: 'Onest', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.4px; }
+/* TikTok-caption "sticker" wordmark: white fill, coral outline ring, hard ink
+   drop-shadow, a touch of rotation. The coral ring makes the white letters
+   pop even on the white page. */
+.brand-word {
+  font-family: 'Onest', sans-serif;
+  font-weight: 800;
+  font-size: 23px;
+  letter-spacing: -0.6px;
+  color: #fff;
+  display: inline-block;
+  transform: rotate(-2deg);
+  text-shadow:
+    -1.5px -1.5px 0 var(--accent), 1.5px -1.5px 0 var(--accent),
+    -1.5px 1.5px 0 var(--accent), 1.5px 1.5px 0 var(--accent),
+    0 -1.5px 0 var(--accent), 0 1.5px 0 var(--accent),
+    -1.5px 0 0 var(--accent), 1.5px 0 0 var(--accent),
+    3px 4px 0 var(--ink);
+}
+.lp-footer .brand-word { font-size: 19px; }
 .lp-logo {
   width: 38px; height: 38px; border-radius: 11px;
   background: var(--accent);
