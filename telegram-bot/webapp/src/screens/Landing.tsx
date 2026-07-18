@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark, LaurelSprig } from '../components/icons';
+import { TempleMark } from '../components/icons';
 
 const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
@@ -183,9 +183,18 @@ export function Landing({
       <header className="lp-hero">
         <div className="lp-hero-grid">
           <div className="lp-hero-copy">
-            <motion.span className="lp-pill" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <span style={{ color: 'var(--good)', display: 'inline-flex' }}><LaurelSprig size={16} /></span>
-              {t('landing.pill')} <b>{t('landing.pill.b')}</b>
+            <motion.span
+              className="lp-pill lp-pill--sticker"
+              initial={{ opacity: 0, y: 10, rotate: 0 }}
+              animate={{ opacity: 1, y: 0, rotate: -1.5 }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="lp-pill-tag">
+                <TempleMark size={14} strokeWidth={2.6} /> ΕΛΛΑΣ
+              </span>
+              <span className="lp-pill-text">
+                {t('landing.pill')} <b>{t('landing.pill.b')}</b>
+              </span>
             </motion.span>
             <motion.h1 initial="hidden" animate="show" variants={rise}>
               {t('landing.h1.line1')}<br /><span className="highlight">{t('landing.h1.highlight')}</span>
@@ -357,7 +366,7 @@ export function Landing({
           <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={18} /></span>
           Hellas Study
         </div>
-        <span className="lp-footer-note">© 2026 · {t('landing.pill')}</span>
+        <span className="lp-footer-note">© 2026 · {t('landing.footer.tag')}</span>
       </footer>
     </div>
   );

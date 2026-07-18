@@ -125,8 +125,9 @@ const translations: Translations = {
 
   // ---- Landing ----
   'landing.enter': { ru: 'Войти', el: 'Είσοδος' },
-  'landing.pill': { ru: 'Греческое гражданство', el: 'Ελληνική ιθαγένεια' },
-  'landing.pill.b': { ru: 'без зубрёжки', el: 'χωρίς άγχος' },
+  'landing.pill': { ru: 'К греческому паспорту —', el: 'Προς το ελληνικό διαβατήριο —' },
+  'landing.pill.b': { ru: '10 минут в день', el: '10 λεπτά τη μέρα' },
+  'landing.footer.tag': { ru: 'Греческое гражданство', el: 'Ελληνική ιθαγένεια' },
   'landing.h1.line1': { ru: 'Твой путь к', el: 'Ο δρόμος σου' },
   'landing.h1.highlight': { ru: 'греческому гражданству.', el: 'προς την ιθαγένεια.' },
   'landing.sub': {
