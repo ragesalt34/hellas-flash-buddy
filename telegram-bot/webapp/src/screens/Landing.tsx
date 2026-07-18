@@ -185,12 +185,12 @@ export function Landing({
           <div className="lp-hero-copy">
             <motion.span
               className="lp-pill lp-pill--sticker"
-              initial={{ opacity: 0, y: 10, rotate: 0 }}
-              animate={{ opacity: 1, y: 0, rotate: -1.5 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               <span className="lp-pill-tag">
-                <TempleMark size={14} strokeWidth={2.6} /> ΕΛΛΑΣ
+                <TempleMark size={13} strokeWidth={2.6} /> ΕΛΛΑΣ
               </span>
               <span className="lp-pill-text">
                 {t('landing.pill')} <b>{t('landing.pill.b')}</b>
