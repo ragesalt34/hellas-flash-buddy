@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
-  MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
+  MousePointerClick, Drama, Scale, Globe2, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -216,34 +216,6 @@ export function Landing({
           >
             <div className="lp-demo-label">{t('landing.demo.label')}</div>
             <DemoCard />
-            {/* Floating product stickers — fill the side space, echo the app UI */}
-            <motion.span
-              className="lp-float f1"
-              initial={{ opacity: 0, y: 14, rotate: -8 }}
-              animate={{ opacity: 1, y: 0, rotate: -6 }}
-              transition={{ delay: 0.55, duration: 0.5, ease: EASE }}
-              aria-hidden="true"
-            >
-              <Flame size={17} strokeWidth={2.5} /> ×7
-            </motion.span>
-            <motion.span
-              className="lp-float f2"
-              initial={{ opacity: 0, y: 14, rotate: 6 }}
-              animate={{ opacity: 1, y: 0, rotate: 4 }}
-              transition={{ delay: 0.7, duration: 0.5, ease: EASE }}
-              aria-hidden="true"
-            >
-              <Target size={17} strokeWidth={2.5} /> 87%
-            </motion.span>
-            <motion.span
-              className="lp-float f3"
-              initial={{ opacity: 0, y: 14, rotate: -5 }}
-              animate={{ opacity: 1, y: 0, rotate: -8 }}
-              transition={{ delay: 0.85, duration: 0.5, ease: EASE }}
-              aria-hidden="true"
-            >
-              <Volume2 size={17} strokeWidth={2.5} /> α β γ
-            </motion.span>
           </motion.div>
         </div>
       </header>

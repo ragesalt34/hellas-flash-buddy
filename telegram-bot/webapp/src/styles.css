@@ -1251,31 +1251,8 @@ button.chip:active { transform: scale(0.95); }
 }
 .lp-demo:hover .lp-glare { opacity: 1; }
 
-/* Floating app-UI stickers around the demo card + perspective for the tilt */
+/* Demo card wrapper — perspective for the cursor tilt */
 .lp-demo-wrap { position: relative; perspective: 1100px; }
-.lp-float {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 15px;
-  border-radius: 999px;
-  background: var(--surface);
-  border: 2px solid var(--border);
-  box-shadow: 4px 4px 0 0 var(--border);
-  font-family: 'Onest', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  pointer-events: none;
-}
-.lp-float.f1 { top: 6px; left: -14px; color: var(--coral); background: color-mix(in srgb, var(--coral) 12%, #fff); }
-.lp-float.f2 { bottom: -12px; right: -8px; color: var(--good); background: color-mix(in srgb, var(--mint) 14%, #fff); }
-.lp-float.f3 { top: 46%; right: -26px; color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, #fff); }
-@media (max-width: 900px) {
-  .lp-float.f3 { display: none; }
-  .lp-float.f1 { left: 2px; }
-  .lp-float.f2 { right: 2px; }
-}
 
 /* ===== Meander marquee — black Greek-key ribbon ===== */
 .lp-marquee {
@@ -1565,15 +1542,3 @@ button.chip:active { transform: scale(0.95); }
 
 /* Marquee pauses on hover so the topics can be read */
 .lp-marquee:hover .lp-marquee-track { animation-play-state: paused; }
-
-/* Floating hero stickers idle-bob (the `translate` property composes with the
-   rotate that framer-motion sets via `transform`, so they don't clobber). */
-@media (prefers-reduced-motion: no-preference) {
-  .lp-float { animation: lp-bob 3.6s ease-in-out infinite; }
-  .lp-float.f2 { animation-duration: 4.4s; animation-delay: -1.6s; }
-  .lp-float.f3 { animation-duration: 3.9s; animation-delay: -2.4s; }
-  @keyframes lp-bob {
-    0%, 100% { translate: 0 0; }
-    50% { translate: 0 -7px; }
-  }
-}
