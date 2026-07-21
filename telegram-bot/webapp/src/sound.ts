@@ -65,11 +65,15 @@ function toMono(c: Ctx, buf: AudioBuffer): AudioBuffer {
   return mono;
 }
 
+// Bump when swapping any file in public/sounds/ — busts the CDN edge cache
+// immediately instead of waiting out its max-age (see public/_headers).
+const SOUND_VERSION = 2;
+
 function preload(name: string): void {
   const c = ac();
   if (!c || buffers.has(name)) return;
   buffers.set(name, null); // mark as "attempted" so we don't refetch on failure
-  fetch(`/sounds/${name}.mp3`)
+  fetch(`/sounds/${name}.mp3?v=${SOUND_VERSION}`)
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing'))))
     .then((a) => c.decodeAudioData(a))
     .then((b) => buffers.set(name, toMono(c, b)))

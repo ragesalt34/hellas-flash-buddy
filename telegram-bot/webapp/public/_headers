@@ -9,9 +9,12 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# UI sound effects — rarely change; a week of browser cache
+# UI sound effects — a week-long cache here meant a swapped sound file could
+# stay stale on the edge for 7 days after deploy (hit this in July 2026: a new
+# tap.mp3 didn't take effect on hellas.study while pages.dev was already
+# fresh). Short cache instead; sound.ts also cache-busts via ?v= on top of this.
 /sounds/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=300
 
 /icon.png
   Cache-Control: public, max-age=86400
