@@ -4,10 +4,13 @@
 //
 // Drop-in your own (licensed / CC0) files to override any effect — no code
 // change needed:
-//   public/sounds/tap.mp3       — answer / button tap
-//   public/sounds/correct.mp3   — correct answer            (present)
-//   public/sounds/wrong.mp3     — wrong answer              (present)
-//   public/sounds/complete.mp3  — quiz / deck finished
+//   public/sounds/tap.mp3         — answer / button tap     (present)
+//   public/sounds/correct.mp3     — correct answer          (present)
+//   public/sounds/wrong.mp3       — wrong answer             (present)
+//   public/sounds/complete.mp3    — quiz / deck finished     (present)
+//   public/sounds/grade-hard.mp3  — SRS grade: hard          (present)
+//   public/sounds/grade-good.mp3  — SRS grade: good          (present)
+//   public/sounds/grade-know.mp3  — SRS grade: know it       (present)
 // Keep them short (0.1–1s) and soft — they repeat a lot.
 
 type Ctx = AudioContext;
@@ -79,7 +82,7 @@ function preload(name: string): void {
 // compete with the JS/CSS/fonts needed for first paint). Playback before the
 // preload lands falls back to the synth tones, so nothing is silent meanwhile.
 function warmSamples(): void {
-  ['tap', 'correct', 'wrong', 'complete'].forEach(preload);
+  ['tap', 'correct', 'wrong', 'complete', 'grade-hard', 'grade-good', 'grade-know'].forEach(preload);
 }
 if (document.readyState === 'complete') warmSamples();
 else window.addEventListener('load', warmSamples, { once: true });
@@ -178,6 +181,8 @@ export function playWrong(): void {
 
 /** SRS grade tap — pitch rises with confidence (1=hard … 3=know it). */
 export function playGrade(grade: number): void {
+  const name = grade >= 3 ? 'grade-know' : grade === 2 ? 'grade-good' : 'grade-hard';
+  if (playSample(name, 0.5)) return;
   const freq = grade >= 3 ? 587 : grade === 2 ? 440 : 330; // D5 / A4 / E4
   bell(freq, 0, 0.35, 0.14);
 }
