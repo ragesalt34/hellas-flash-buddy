@@ -147,8 +147,11 @@ body {
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* `overflow-wrap` breaks a word only when it genuinely cannot fit. The old
+     `word-break: break-word` alongside it let the browser break in far more
+     places — including between a word and the full stop after it, which put a
+     lone "." on its own line inside the hero's coloured headline block. */
   overflow-wrap: break-word;
-  word-break: break-word;
 }
 
 /* ============ Background (plain white — brutalist canvas) ============ */

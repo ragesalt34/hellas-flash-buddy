@@ -506,6 +506,17 @@ export function createApiApp(): express.Express {
         res.status(400).json({ error: 'bad_request' });
         return;
       }
+      // The voice is Greek-only, so text with no Greek letters can never produce
+      // anything useful — it just bills the provider and fills the cache. This
+      // fired in production: RU mode prefetched the question + all four options
+      // (all Cyrillic) on every question, so a Greek voice was billed to read
+      // Russian. The client no longer asks (see hasGreek in webapp/src/speech.ts);
+      // this is the backstop, since the whitelist below deliberately contains the
+      // Russian columns too (EL falls back to them when a translation is missing).
+      if (!/[Ͱ-Ͽἀ-῿]/.test(text)) {
+        res.status(400).json({ error: 'not_greek' });
+        return;
+      }
       // Only the app's own content may be synthesized (quota protection).
       if (!(await isAllowedTtsText(text))) {
         res.status(400).json({ error: 'text_not_allowed' });

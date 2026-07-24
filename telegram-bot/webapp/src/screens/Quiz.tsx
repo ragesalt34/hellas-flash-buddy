@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { api, QuizQuestion } from '../api';
 import { haptic, notify } from '../telegram';
-import { speakGreek, prefetchGreek, textKey } from '../speech';
+import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
@@ -233,15 +233,19 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       <ProgressBar value={idx + (chosen ? 1 : 0)} total={questions.length} />
       <div className="spacer" />
       <div className="card">
+        {/* Pronunciation only where there is Greek to pronounce — in RU mode the
+            question and options are Russian and the voice is Greek-only. */}
         <div className="speak-row">
           <div className="qtext">{q.question}</div>
-          <button
-            className="speak-btn"
-            aria-label={t('common.pronounce')}
-            onClick={() => { haptic(); speakGreek(q.question, `q_${q.id}`); }}
-          >
-            <Volume2 size={17} strokeWidth={2.3} />
-          </button>
+          {hasGreek(q.question) && (
+            <button
+              className="speak-btn"
+              aria-label={t('common.pronounce')}
+              onClick={() => { haptic(); speakGreek(q.question, `q_${q.id}`); }}
+            >
+              <Volume2 size={17} strokeWidth={2.3} />
+            </button>
+          )}
         </div>
         <div className="options">
           {q.options.map((opt, i) => {
@@ -272,17 +276,19 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 <span style={{ flex: 1 }}>{opt}</span>
                 {showCheck && <Check size={20} strokeWidth={3} />}
                 {showX && <X size={20} strokeWidth={3} />}
-                <button
-                  className="opt-speak"
-                  aria-label={t('common.pronounce')}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    haptic();
-                    speakGreek(opt, textKey(opt));
-                  }}
-                >
-                  <Volume2 size={15} strokeWidth={2.3} />
-                </button>
+                {hasGreek(opt) && (
+                  <button
+                    className="opt-speak"
+                    aria-label={t('common.pronounce')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      haptic();
+                      speakGreek(opt, textKey(opt));
+                    }}
+                  >
+                    <Volume2 size={15} strokeWidth={2.3} />
+                  </button>
+                )}
               </div>
             );
           })}

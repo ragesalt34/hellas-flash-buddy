@@ -52,6 +52,21 @@ function audioCtx(): AudioContext | null {
   }
 }
 
+/** Does this string actually contain Greek letters?
+ *
+ * The TTS voice is Greek-only, so pronouncing text with no Greek in it is
+ * useless — and expensive. In RU mode every quiz question and all four options
+ * are Russian, yet the speak buttons rendered anyway and the prefetch fired for
+ * all five on every question: a Greek voice reading Cyrillic, billed per
+ * character at the provider and then cached forever. (EL mode can hit this too:
+ * questionService falls back to the Russian column when a question has no Greek
+ * translation.) Gate both playback and prefetch on this instead of on the UI
+ * language, so the vocabulary screen — where the word is Greek whatever the
+ * interface language — keeps working. */
+export function hasGreek(text: string): boolean {
+  return /[Ͱ-Ͽἀ-῿]/.test(text);
+}
+
 /** Stable, cache-safe key for arbitrary Greek text (answer options have no id).
  * FNV-1a → base36, prefixed. Same text always maps to the same cached audio. */
 export function textKey(text: string, prefix = 't'): string {
@@ -102,7 +117,7 @@ async function loadBuffer(
 /** Warm a clip ahead of a tap (on-screen question/word/answer) so playback is
  * instant. Fire-and-forget, coalesced by the cache; failures are ignored. */
 export function prefetchGreek(text: string, cacheKey: string): void {
-  if (!text?.trim()) return;
+  if (!text?.trim() || !hasGreek(text)) return;
   if (bufCache.has(cacheKey)) return; // already warm
   const c = audioCtx();
   if (!c) return;
@@ -112,6 +127,7 @@ export function prefetchGreek(text: string, cacheKey: string): void {
 /** Plays Greek pronunciation for `text`, cached server-side under `cacheKey`.
  * Fire-and-forget; failures are non-critical UX and ignored. */
 export async function speakGreek(text: string, cacheKey: string): Promise<void> {
+  if (!text?.trim() || !hasGreek(text)) return;
   stopCurrent();
   const gen = ++generation;
   const c = audioCtx();
