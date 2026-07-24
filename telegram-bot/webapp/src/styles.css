@@ -4,6 +4,11 @@
    big rounded corners · Rubik display + Onest body (Manrope = Greek) · chips.
    No blur / soft shadows / gradients. Class names preserved so the
    existing screens restyle automatically.
+
+   Muted-earth palette + tiered depth: the heavy border/shadow treatment is a
+   deliberate accent (a handful of elements), not the default for every card,
+   and colour is deep terracotta/ochre/olive rather than bright. A page of
+   equally loud rainbow cards reads as a generated template.
    ============================================================ */
 
 :root,
@@ -15,20 +20,32 @@
   --text: #0a0a0a;
   --muted: #6b6b6b;
 
-  /* brand + accents — bright, playful, used as solid highlighter blocks */
+  /* Brand + accents — deep, muted, earthy. Deliberately NOT bright: a page
+     carrying 9 loud saturated hues reads as a generated template, while
+     restraint reads as expensive. Same 6 colour families as before, shifted
+     to terracotta / ochre / olive / Aegean blue. Every value below is
+     contrast-checked against white text and the near-black ink plate. */
   --ink: #0a0a0a;          /* near-black — primary buttons, borders, active nav */
-  --accent: #ff4a60;       /* coral-red — primary highlight */
-  --accent-2: #e23a50;
-  --marsala: #ff4a60;
-  --violet: #7b6cf6;
-  --pink: #ff6b7a;
-  --amber: #ffc224;
-  --mint: #16b98a;
-  --blue: #2f81f7;
-  --coral: #ff6a4d;
-  --good: #14a06a;
-  --bad: #e5484d;
-  --purple: #7b6cf6;
+  --accent: #c04a3d;       /* terracotta — primary highlight (white text 4.9:1) */
+  --accent-2: #a33a30;     /* deep terracotta — bold text on white (6.6:1) */
+  --marsala: #c04a3d;
+  --violet: #645b9c;       /* dusty indigo */
+  --pink: #b06a6a;         /* dusty rose */
+  --amber: #d6a129;        /* ochre — ink text on it 8.5:1 */
+  --mint: #2f8168;         /* deep olive-green */
+  --blue: #2f5d92;         /* Aegean blue */
+  --coral: #bf5c3c;        /* burnt sienna */
+  --good: #2b7d5c;
+  --bad: #bf3f3c;
+  --purple: #645b9c;
+
+  /* Lifted tints — ONLY for use on the ink plate (.lp-stats). The muted
+     palette above is too dark on #0a0a0a: --blue there is 2.92:1, below even
+     the 3:1 large-text floor. These sit at 6.4–10.4:1. */
+  --accent-lift: #d9776a;
+  --amber-lift: #e3b64f;
+  --mint-lift: #5fa98f;
+  --blue-lift: #7ba3cf;
 
   /* flat surfaces — white panels, thick black borders do the work */
   --surface: #ffffff;
@@ -51,6 +68,12 @@
   --e-warm: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
 
+  /* Hairline border for demoted (tier-2) landing cards. When every element
+     carries the same 2px border + hard shadow nothing can lead the eye, so
+     secondary cards step down to this and drop their shadow entirely. */
+  --hair: color-mix(in srgb, var(--ink) 14%, transparent);
+  --hair-hover: color-mix(in srgb, var(--ink) 26%, transparent);
+
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -59,6 +82,21 @@
      instead of the system fallback. */
   --font-display: 'Rubik', 'Manrope', 'Onest', system-ui, sans-serif;
   --font-body: 'Onest', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Type scale — 6 steps. The landing had grown to 19 distinct font sizes
+     (14/14.5/15/15.5/16/17/18/19/20/22/25…), which is what makes a page feel
+     assembled rather than designed. */
+  --t-hero: clamp(40px, 9.5vw, 78px);
+  --t-h2: clamp(28px, 5vw, 44px);
+  --t-h3: 20px;
+  --t-lead: clamp(16px, 2.4vw, 20px);
+  --t-body: 15.5px;
+  --t-meta: 12.5px;
+
+  /* Body copy is near-black, not grey. --muted is reserved for genuinely
+     secondary meta (eyebrows, footnotes, stat labels); 18 of 54 text elements
+     were grey, including primary reading copy. */
+  --text-body: #2a2a2a;
 
   --r-xl: 32px;
   --r-lg: 26px;
@@ -135,7 +173,7 @@ button,
 
 svg { display: block; }
 
-::selection { background: rgba(255, 74, 96, 0.22); }
+::selection { background: color-mix(in srgb, var(--accent) 24%, transparent); }
 
 /* Film grain — a whisper of fractal noise over the whole page for a "printed /
    crafted" feel instead of a flat template. Plain low-opacity overlay (NO
@@ -1187,11 +1225,13 @@ button.chip:active { transform: scale(0.95); }
   color: var(--text);
 }
 .lp-pill-text b { color: var(--accent-2); }
+/* At 78px the size carries the weight on its own — 700 everywhere is why
+   nothing on the page stood out. */
 .lp-hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(40px, 9.5vw, 78px);
-  font-weight: 700;
-  letter-spacing: -1.8px;
+  font-size: var(--t-hero);
+  font-weight: 600;
+  letter-spacing: -1.2px;
   line-height: 1.05;
   margin: 0;
   color: var(--text);
@@ -1199,9 +1239,9 @@ button.chip:active { transform: scale(0.95); }
 .lp-hero p {
   max-width: 600px;
   margin: 22px auto 0;
-  font-size: clamp(16px, 2.4vw, 20px);
+  font-size: var(--t-lead);
   font-weight: 500;
-  color: var(--muted);
+  color: var(--text-body);
   line-height: 1.55;
 }
 .lp-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
@@ -1221,12 +1261,15 @@ button.chip:active { transform: scale(0.95); }
 .lp-btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--border); }
 .lp-btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--border); }
 .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
-.lp-btn.ghost { background: #fff; color: var(--text); box-shadow: var(--e-blue); }
+/* Secondary action sits a tier below the primary CTA — same border, lighter
+   shadow — so the pair has an obvious leader instead of two equal buttons. */
+.lp-btn.ghost { background: #fff; color: var(--text); box-shadow: 3px 3px 0 0 var(--border); }
+.lp-btn.ghost:hover { box-shadow: 5px 5px 0 0 var(--border); }
 
 /* hero demo — a real, tappable vocab card (the product itself as the preview) */
 .lp-demo-label {
   margin: clamp(40px, 6vw, 64px) 0 14px;
-  font-size: 12.5px;
+  font-size: var(--t-meta);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.4px;
@@ -1285,13 +1328,14 @@ button.chip:active { transform: scale(0.95); }
 
 /* ===== Meander marquee — black Greek-key ribbon ===== */
 .lp-marquee {
+  position: relative; /* containing block for the meander edge strips */
   margin: clamp(40px, 7vw, 72px) -22px 0;
   transform: rotate(-1.4deg);
   background: var(--ink);
   border-top: 2px solid var(--border);
   border-bottom: 2px solid var(--border);
   overflow: hidden;
-  padding: 13px 0;
+  padding: 18px 0;
 }
 .lp-marquee-track {
   display: inline-flex;
@@ -1311,6 +1355,18 @@ button.chip:active { transform: scale(0.95); }
   letter-spacing: 2.5px;
 }
 .lp-marquee-item svg { color: var(--amber); flex: none; }
+/* Meander strips hugging both edges of the ribbon — faint white so they read as
+   an engraved frieze border, not a second row of content. */
+.lp-marquee-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: #fff;
+  opacity: 0.22;
+  pointer-events: none;
+}
+.lp-marquee-edge.top { top: 0; }
+.lp-marquee-edge.bottom { bottom: 0; }
 @keyframes lp-scroll {
   to { transform: translateX(-50%); }
 }
@@ -1321,9 +1377,9 @@ button.chip:active { transform: scale(0.95); }
 /* ===== How it works — numbered colour-badge steps ===== */
 .lp-steps-h {
   font-family: var(--font-display);
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 700;
-  letter-spacing: -1.2px;
+  font-size: var(--t-h2);
+  font-weight: 600;
+  letter-spacing: -0.9px;
   margin: clamp(56px, 10vw, 104px) 0 26px;
   color: var(--text);
 }
@@ -1332,15 +1388,17 @@ button.chip:active { transform: scale(0.95); }
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
+/* Tier 2 — hairline, no shadow. The heavy border+shadow treatment is reserved
+   for the few elements that should lead the eye (demo card, primary CTA, stats
+   plate, footer block). */
 .lp-step {
   border-radius: 24px;
   padding: 26px;
   background: var(--surface);
-  border: 2px solid var(--border);
-  box-shadow: var(--e1);
-  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  border: 1px solid var(--hair);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
 }
-.lp-step:hover { transform: translateY(-4px); box-shadow: var(--e2); }
+.lp-step:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
 .lp-step .num {
   width: 40px; height: 40px;
   border-radius: 11px;
@@ -1359,8 +1417,8 @@ button.chip:active { transform: scale(0.95); }
 .lp-step.s1 { background: color-mix(in srgb, var(--mint) 9%, var(--surface)); }
 .lp-step.s2 { background: color-mix(in srgb, var(--amber) 12%, var(--surface)); }
 .lp-step.s3 { background: color-mix(in srgb, var(--blue) 9%, var(--surface)); }
-.lp-step h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; }
-.lp-step p { margin: 0; font-size: 15px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+.lp-step h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; }
+.lp-step p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
 
 /* feature grid — fixed 3 columns on desktop so the last row never dangles */
 .lp-features {
@@ -1375,21 +1433,20 @@ button.chip:active { transform: scale(0.95); }
   border-radius: 24px;
   padding: 26px;
   background: var(--surface);
-  border: 2px solid var(--border);
-  box-shadow: var(--e1);
+  border: 1px solid var(--hair);
   position: relative;
   overflow: hidden;
-  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
 }
-.lp-feature:hover { transform: translateY(-4px); box-shadow: var(--e2); }
+.lp-feature:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
 .lp-feature .ic {
   width: 52px; height: 52px; border-radius: 15px;
   display: grid; place-items: center;
   border: 2px solid var(--border);
   margin-bottom: 16px;
 }
-.lp-feature h3 { font-family: var(--font-display); font-size: 19px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; }
-.lp-feature p { margin: 0; font-size: 14.5px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; }
+.lp-feature p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
 
 /* stats — an ink plate with texture, cell dividers and counting numbers */
 .lp-stats {
@@ -1441,7 +1498,7 @@ button.chip:active { transform: scale(0.95); }
   position: relative;
   overflow: hidden;
 }
-.lp-foot h2 { font-family: var(--font-display); font-size: clamp(30px, 5.5vw, 50px); font-weight: 700; letter-spacing: -1.4px; margin: 0 0 22px; color: var(--text); }
+.lp-foot h2 { font-family: var(--font-display); font-size: var(--t-h2); font-weight: 600; letter-spacing: -0.9px; margin: 0 0 22px; color: var(--text); }
 .lp-foot .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
 
 .lp-footer {
@@ -1456,18 +1513,26 @@ button.chip:active { transform: scale(0.95); }
 }
 .lp-footer .lp-logo { width: 32px; height: 32px; border-radius: 9px; }
 .lp-footer .lp-brand { font-size: 16px; }
-.lp-footer-note { font-size: 13.5px; font-weight: 600; color: var(--muted); }
+.lp-footer-note { font-size: var(--t-meta); font-weight: 600; color: var(--muted); }
 
-/* Asymmetry: resting rotation + straighten-on-hover are driven by framer-motion
-   (style.rotate + whileHover) because framer owns `transform` on these cards for
-   the scroll-reveal. CSS only needs to not fight it — drop transform from the
-   feature/step transitions so the framer values aren't lerped by CSS too. */
-.lp-step, .lp-feature { transition: box-shadow 0.18s var(--ease); }
+/* framer-motion owns `transform` on these cards (scroll-reveal + hover lift), so
+   CSS must not transition transform as well or the two lerps fight. Only the
+   hairline border animates from CSS. */
+.lp-step, .lp-feature { transition: border-color 0.18s var(--ease); }
+
+/* Meander section divider — replaces "more vertical whitespace" as the only
+   thing separating sections, and puts a real Greek ornament on the page. */
+.lp-rule {
+  margin: clamp(48px, 8vw, 92px) 0 0;
+  color: var(--ink);
+  opacity: 0.5;
+}
 
 /* ===== Opinion pull-quote ===== */
 .lp-quote {
   position: relative;
-  margin: clamp(56px, 10vw, 104px) auto 0;
+  /* the meander rule above supplies most of the separation now */
+  margin: clamp(30px, 5vw, 52px) auto 0;
   max-width: 900px;
   text-align: center;
   padding: 0 10px;
@@ -1483,37 +1548,39 @@ button.chip:active { transform: scale(0.95); }
 .lp-quote-text {
   white-space: pre-line;
   font-family: var(--font-display);
-  font-size: clamp(28px, 5vw, 52px);
-  font-weight: 700;
-  letter-spacing: -1.5px;
+  font-size: var(--t-h2);
+  font-weight: 600;
+  letter-spacing: -0.9px;
   line-height: 1.12;
   margin: 0;
   color: var(--text);
 }
 .lp-quote-sub {
   margin: 18px 0 0;
-  font-size: clamp(15px, 2vw, 18px);
+  font-size: var(--t-body);
   font-weight: 600;
   color: var(--muted);
 }
 
 /* ===== FAQ accordion (native <details>) ===== */
-.lp-faq { margin: clamp(56px, 10vw, 100px) auto 0; max-width: 760px; }
+.lp-faq { margin: clamp(30px, 5vw, 52px) auto 0; max-width: 760px; }
 .lp-faq-h {
   font-family: var(--font-display);
-  font-size: clamp(26px, 4.5vw, 40px);
-  font-weight: 700;
-  letter-spacing: -1px;
+  font-size: var(--t-h2);
+  font-weight: 600;
+  letter-spacing: -0.9px;
   margin: 0 0 22px;
 }
 .lp-faq-item {
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   border-radius: var(--r-md);
   background: var(--surface);
-  box-shadow: var(--e1);
   margin-bottom: 12px;
   overflow: hidden;
+  transition: border-color 0.18s var(--ease);
 }
+.lp-faq-item:hover,
+.lp-faq-item[open] { border-color: var(--hair-hover); }
 .lp-faq-item summary {
   list-style: none;
   cursor: pointer;
@@ -1523,7 +1590,7 @@ button.chip:active { transform: scale(0.95); }
   gap: 14px;
   padding: 18px 20px;
   font-family: var(--font-display);
-  font-size: clamp(16px, 2.4vw, 19px);
+  font-size: var(--t-h3);
   font-weight: 700;
   color: var(--text);
 }
@@ -1546,10 +1613,10 @@ button.chip:active { transform: scale(0.95); }
 .lp-faq-item p {
   margin: 0;
   padding: 0 20px 20px;
-  font-size: 15.5px;
+  font-size: var(--t-body);
   font-weight: 500;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--text-body);
 }
 
 /* ===== Landing micro-interactions ===== */

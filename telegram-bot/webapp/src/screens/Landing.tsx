@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark } from '../components/icons';
+import { TempleMark, MeanderRule } from '../components/icons';
 
 const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
@@ -250,6 +250,8 @@ export function Landing({
 
       {/* Topic marquee — each exam topic with its own icon (same set as the quiz screen) */}
       <div className="lp-marquee" aria-hidden="true">
+        {/* meander strips along both edges so the ribbon isn't just a black bar */}
+        <span className="lp-marquee-edge top"><MeanderRule height={10} /></span>
         <div className="lp-marquee-track">
           {[0, 1].map((copy) => (
             <span className="lp-marquee-seg" key={copy}>
@@ -260,6 +262,7 @@ export function Landing({
             </span>
           ))}
         </div>
+        <span className="lp-marquee-edge bottom"><MeanderRule height={10} /></span>
       </div>
 
       <motion.h2 className="lp-steps-h" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
@@ -275,8 +278,7 @@ export function Landing({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-60px' }}
-            style={{ rotate: [-1.5, 1, -0.5][i] ?? 0 }}
-            whileHover={{ rotate: 0, y: -6 }}
+            whileHover={{ y: -3 }}
           >
             <span className="num">{i + 1}</span>
             <h3>{t(s.titleKey)}</h3>
@@ -297,8 +299,7 @@ export function Landing({
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: '-60px' }}
-              style={{ rotate: [1.2, -1, 0.6, -0.8, 1, -1.3][i] ?? 0 }}
-              whileHover={{ rotate: 0, y: -6 }}
+              whileHover={{ y: -3 }}
             >
               <span className="ic" style={{ background: `color-mix(in srgb, ${f.color} 18%, transparent)`, color: f.color }}>
                 <Icon size={24} strokeWidth={2.3} />
@@ -309,6 +310,10 @@ export function Landing({
           );
         })}
       </section>
+
+      <div className="lp-rule" aria-hidden="true">
+        <MeanderRule />
+      </div>
 
       {/* Opinion pull-quote — a designed pause with attitude, not a feature line */}
       <motion.section
@@ -324,11 +329,17 @@ export function Landing({
       </motion.section>
 
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber)' }}><CountUp to={160} suffix="+" /></div><div className="l">{t('landing.stat.questions')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint)' }}><CountUp to={150} suffix="+" /></div><div className="l">{t('landing.stat.words')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent)' }}><CountUp to={4} /></div><div className="l">{t('landing.stat.topics')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--blue)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
+        {/* `-lift` tints, not the base tokens: the muted palette is too dark on
+            the ink plate (base --blue lands at 2.92:1, under the 3:1 floor). */}
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber-lift)' }}><CountUp to={160} suffix="+" /></div><div className="l">{t('landing.stat.questions')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint-lift)' }}><CountUp to={150} suffix="+" /></div><div className="l">{t('landing.stat.words')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent-lift)' }}><CountUp to={4} /></div><div className="l">{t('landing.stat.topics')}</div></div>
+        <div className="lp-stat"><div className="n" style={{ color: 'var(--blue-lift)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
       </motion.section>
+
+      <div className="lp-rule" aria-hidden="true">
+        <MeanderRule />
+      </div>
 
       {/* FAQ — short, plain, with personality (native <details>, zero JS) */}
       <motion.section
