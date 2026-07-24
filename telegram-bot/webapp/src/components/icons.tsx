@@ -25,29 +25,36 @@ export function TempleMark({ size = 20, strokeWidth = 2.2 }: { size?: number; st
  * Real cultural ornament rather than another generic divider: the page's only
  * Greek reference used to be the temple icon and the word ΕΛΛΑΣ.
  *
- * Geometry is constructed on a 4px grid so the repeat is exact instead of
- * eyeballed. One tile is 24 wide × 16 tall, stroke 2, line centres on odd
- * coordinates so strokes land on whole pixels:
- *   · rails at y=1 and y=15 frame the band (they span the full tile, so
+ * Geometry is constructed on a grid so the repeat is exact instead of eyeballed.
+ * One tile is 40 wide × 24 tall, stroke 2, line centres on odd coordinates so
+ * strokes land on whole pixels:
+ *   · rails at y=1 and y=23 frame the band (they span the full tile, so
  *     consecutive tiles join seamlessly);
- *   · the key rises off the bottom rail at x=4, runs right at y=5, drops to
- *     y=11 at x=18 and returns left to x=10 — one full inward turn of the
- *     spiral, with equal 4px gaps to both rails.
+ *   · the key rises off the bottom rail at x=6, runs right at y=7, drops to
+ *     y=17 at x=30 and returns left to x=16 — one full inward turn of the
+ *     spiral, with equal 6px gaps to both rails.
  *
- * Tiling is done by the SVG <pattern> itself, so the band stretches to any
- * width. `useId` keeps the pattern id unique when several are on one page.
+ * The tile is deliberately large: an earlier 24×16 version repeated ~46 times
+ * across the page and read as a barcode rather than an ornament. Render it in a
+ * narrow centred container (see `.lp-rule`) so only a handful of keys show.
+ *
+ * `height` must stay ≥ 24 — a shorter box clips the pattern and leaves only the
+ * top rail with stubs hanging off it, which looks like film-strip perforations.
+ *
+ * Tiling is done by the SVG <pattern>, so the band stretches to any width.
+ * `useId` keeps the pattern id unique when several are on one page.
  */
-export function MeanderRule({ height = 16 }: { height?: number }) {
+export function MeanderRule({ height = 24 }: { height?: number }) {
   const id = useId();
   return (
     <svg width="100%" height={height} aria-hidden="true" focusable="false">
       <defs>
-        <pattern id={id} patternUnits="userSpaceOnUse" width="24" height="16">
+        <pattern id={id} patternUnits="userSpaceOnUse" width="40" height="24">
           <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="square">
             {/* framing rails */}
-            <path d="M0 1 H24 M0 15 H24" />
+            <path d="M0 1 H40 M0 23 H40" />
             {/* the key: up off the rail, right, down, back left */}
-            <path d="M4 15 V5 H18 V11 H10" />
+            <path d="M6 23 V7 H30 V17 H16" />
           </g>
         </pattern>
       </defs>

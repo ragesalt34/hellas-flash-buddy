@@ -1328,14 +1328,13 @@ button.chip:active { transform: scale(0.95); }
 
 /* ===== Meander marquee — black Greek-key ribbon ===== */
 .lp-marquee {
-  position: relative; /* containing block for the meander edge strips */
   margin: clamp(40px, 7vw, 72px) -22px 0;
   transform: rotate(-1.4deg);
   background: var(--ink);
   border-top: 2px solid var(--border);
   border-bottom: 2px solid var(--border);
   overflow: hidden;
-  padding: 18px 0;
+  padding: 13px 0;
 }
 .lp-marquee-track {
   display: inline-flex;
@@ -1355,18 +1354,6 @@ button.chip:active { transform: scale(0.95); }
   letter-spacing: 2.5px;
 }
 .lp-marquee-item svg { color: var(--amber); flex: none; }
-/* Meander strips hugging both edges of the ribbon — faint white so they read as
-   an engraved frieze border, not a second row of content. */
-.lp-marquee-edge {
-  position: absolute;
-  left: 0;
-  right: 0;
-  color: #fff;
-  opacity: 0.22;
-  pointer-events: none;
-}
-.lp-marquee-edge.top { top: 0; }
-.lp-marquee-edge.bottom { bottom: 0; }
 @keyframes lp-scroll {
   to { transform: translateX(-50%); }
 }
@@ -1521,11 +1508,14 @@ button.chip:active { transform: scale(0.95); }
 .lp-step, .lp-feature { transition: border-color 0.18s var(--ease); }
 
 /* Meander section divider — replaces "more vertical whitespace" as the only
-   thing separating sections, and puts a real Greek ornament on the page. */
+   thing separating sections, and puts a real Greek ornament on the page.
+   Narrow and centred on purpose: stretched full-width the repeat reads as a
+   barcode, while ~8 keys read as a deliberate ornament. */
 .lp-rule {
-  margin: clamp(48px, 8vw, 92px) 0 0;
+  margin: clamp(48px, 8vw, 92px) auto 0;
+  max-width: 360px;
   color: var(--ink);
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 /* ===== Opinion pull-quote ===== */

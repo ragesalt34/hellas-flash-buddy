@@ -250,8 +250,6 @@ export function Landing({
 
       {/* Topic marquee — each exam topic with its own icon (same set as the quiz screen) */}
       <div className="lp-marquee" aria-hidden="true">
-        {/* meander strips along both edges so the ribbon isn't just a black bar */}
-        <span className="lp-marquee-edge top"><MeanderRule height={10} /></span>
         <div className="lp-marquee-track">
           {[0, 1].map((copy) => (
             <span className="lp-marquee-seg" key={copy}>
@@ -262,7 +260,6 @@ export function Landing({
             </span>
           ))}
         </div>
-        <span className="lp-marquee-edge bottom"><MeanderRule height={10} /></span>
       </div>
 
       <motion.h2 className="lp-steps-h" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
