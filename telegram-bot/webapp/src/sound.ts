@@ -34,7 +34,34 @@ function ac(): Ctx | null {
 
 // ---- File-backed samples (preloaded, decoded once for zero-latency playback) ----
 // `undefined` = not tried yet, `null` = tried and unavailable (use synth).
-const buffers = new Map<string, AudioBuffer | null>();
+//
+// Every clip is peak-normalized to TARGET_PEAK at decode time, so all effects
+// play at the same level regardless of how loud the source file happens to be.
+// Before this, each effect had its own hand-tuned multiplier (0.4–0.6) applied on
+// top of whatever the file's own loudness was — two unrelated variables, so the
+// set never actually matched. One target instead: lower it to make everything
+// quieter together. 0.4 is 20% below the 0.5 the old multipliers averaged.
+const TARGET_PEAK = 0.4;
+const MAX_GAIN = 4; // don't over-amplify a near-silent clip (would raise its noise)
+const buffers = new Map<string, { buf: AudioBuffer; gain: number } | null>();
+
+/** Peak sample amplitude (0..1) — mono by the time this is called. */
+function peakOf(buf: AudioBuffer): number {
+  const data = buf.getChannelData(0);
+  let peak = 0;
+  for (let i = 0; i < data.length; i++) {
+    const a = data[i] < 0 ? -data[i] : data[i];
+    if (a > peak) peak = a;
+  }
+  return peak;
+}
+
+/** Gain that lands this clip's loudest sample on TARGET_PEAK. */
+function normGain(buf: AudioBuffer): number {
+  const peak = peakOf(buf);
+  if (peak <= 0.0001) return TARGET_PEAK; // silent → neutral
+  return Math.min(TARGET_PEAK / peak, MAX_GAIN);
+}
 
 /** Downmix to mono so a lopsided stereo asset (e.g. sound only in the right
  * channel — some generated SFX come that way) plays equally in both ears.
@@ -76,7 +103,10 @@ function preload(name: string): void {
   fetch(`/sounds/${name}.mp3?v=${SOUND_VERSION}`)
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing'))))
     .then((a) => c.decodeAudioData(a))
-    .then((b) => buffers.set(name, toMono(c, b)))
+    .then((b) => {
+      const buf = toMono(c, b);
+      buffers.set(name, { buf, gain: normGain(buf) });
+    })
     .catch(() => {
       /* no file (or undecodable) — the synth fallback covers it */
     });
@@ -91,15 +121,16 @@ function warmSamples(): void {
 if (document.readyState === 'complete') warmSamples();
 else window.addEventListener('load', warmSamples, { once: true });
 
-/** Play a preloaded sample. Returns false if none is available (→ use synth). */
-function playSample(name: string, volume = 1): boolean {
+/** Play a preloaded sample at the shared normalized level.
+ * Returns false if none is available (→ use synth). */
+function playSample(name: string): boolean {
   const c = ac();
-  const buf = c ? buffers.get(name) : null;
-  if (!c || !buf) return false;
+  const entry = c ? buffers.get(name) : null;
+  if (!c || !entry) return false;
   const src = c.createBufferSource();
   const g = c.createGain();
-  src.buffer = buf;
-  g.gain.value = volume;
+  src.buffer = entry.buf;
+  g.gain.value = entry.gain;
   src.connect(g);
   g.connect(c.destination);
   src.start();
@@ -107,6 +138,11 @@ function playSample(name: string, volume = 1): boolean {
 }
 
 // ---- Synthesized fallbacks ----
+// Only reached when a sound file is missing or still preloading. Their peaks are
+// scaled by the same factor the samples were quietened by, so a fallback can't
+// come out louder than the real clip it stands in for.
+const SYNTH_TRIM = 0.8;
+
 // A single oscillator with a percussive envelope.
 function tone(
   freq: number,
@@ -125,7 +161,7 @@ function tone(
   g.connect(c.destination);
   const t = c.currentTime + startAt;
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(peak, t + 0.012);
+  g.gain.linearRampToValueAtTime(peak * SYNTH_TRIM, t + 0.012);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.start(t);
   o.stop(t + dur + 0.02);
@@ -151,7 +187,7 @@ function bell(freq: number, startAt: number, dur: number, peak = 0.18): void {
     o.frequency.value = freq * mult;
     o.connect(g);
     g.connect(c.destination);
-    const p = peak * amp;
+    const p = peak * amp * SYNTH_TRIM;
     g.gain.setValueAtTime(0.0001, t);
     g.gain.linearRampToValueAtTime(p, t + 0.006);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
@@ -162,13 +198,13 @@ function bell(freq: number, startAt: number, dur: number, peak = 0.18): void {
 
 /** Soft UI tick — answer/option tap, reveal, next. */
 export function playTap(): void {
-  if (playSample('tap', 0.5)) return;
+  if (playSample('tap')) return;
   tone(660, 0, 0.05, 'sine', 0.09);
 }
 
 /** Correct answer — bright ascending bell arpeggio if no file. */
 export function playCorrect(): void {
-  if (playSample('correct', 0.4)) return;
+  if (playSample('correct')) return;
   // E5 → G#5 → B5 → E6: a rising major chord, the classic "you got it!" cue.
   bell(659, 0, 0.5, 0.16); // E5
   bell(831, 0.09, 0.5, 0.16); // G#5
@@ -178,7 +214,7 @@ export function playCorrect(): void {
 
 /** Wrong answer — gentle low double note if no file (never harsh). */
 export function playWrong(): void {
-  if (playSample('wrong', 0.6)) return;
+  if (playSample('wrong')) return;
   tone(196, 0, 0.22, 'sine', 0.16); // G3
   tone(147, 0.1, 0.3, 'sine', 0.14); // D3 — a soft downward "no"
 }
@@ -186,14 +222,14 @@ export function playWrong(): void {
 /** SRS grade tap — pitch rises with confidence (1=hard … 3=know it). */
 export function playGrade(grade: number): void {
   const name = grade >= 3 ? 'grade-know' : grade === 2 ? 'grade-good' : 'grade-hard';
-  if (playSample(name, 0.5)) return;
+  if (playSample(name)) return;
   const freq = grade >= 3 ? 587 : grade === 2 ? 440 : 330; // D5 / A4 / E4
   bell(freq, 0, 0.35, 0.14);
 }
 
 /** Quiz / deck finished — short celebratory fanfare if no file. */
 export function playComplete(): void {
-  if (playSample('complete', 0.5)) return;
+  if (playSample('complete')) return;
   // C5 → E5 → G5 → C6 rising fanfare with a bell timbre.
   bell(523, 0, 0.4, 0.15); // C5
   bell(659, 0.12, 0.4, 0.15); // E5
