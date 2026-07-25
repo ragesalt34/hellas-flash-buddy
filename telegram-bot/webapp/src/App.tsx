@@ -6,10 +6,43 @@ import { getToken } from './auth';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
 
+/** Load a code-split chunk, surviving a failed fetch instead of showing nothing.
+ *
+ * A rejected `import()` inside `lazy()` leaves the Suspense boundary empty
+ * forever — the page just stays blank, with only a console error. That is not
+ * hypothetical: it took the live site down after a deploy, when Cloudflare's
+ * edge had cached an HTML response under the chunk's URL, so every import threw
+ * "Failed to fetch dynamically imported module". A flaky mobile connection does
+ * the same thing.
+ *
+ * So: retry once after a moment, and if it still fails, reload the page once
+ * (guarded by sessionStorage, so a genuinely broken deploy can't loop) — a fresh
+ * document reliably re-resolves the chunk. */
+function lazyWithRetry<T>(load: () => Promise<T>): Promise<T> {
+  return load().catch(
+    () =>
+      new Promise<T>((resolve, reject) => {
+        setTimeout(() => {
+          load().then(resolve, (err) => {
+            const KEY = 'hs_chunk_reload';
+            if (!sessionStorage.getItem(KEY)) {
+              sessionStorage.setItem(KEY, '1');
+              location.reload();
+              return; // never settles; the reload takes over
+            }
+            reject(err);
+          });
+        }, 600);
+      })
+  );
+}
+
 // The landing page is the only user of framer-motion (~40KB gzip) and is never
 // shown to signed-in users — split it into its own chunk so the app shell
 // doesn't pay for it.
-const Landing = lazy(() => import('./screens/Landing').then((m) => ({ default: m.Landing })));
+const Landing = lazy(() =>
+  lazyWithRetry(() => import('./screens/Landing')).then((m) => ({ default: m.Landing }))
+);
 import { Home } from './screens/Home';
 import { Quiz } from './screens/Quiz';
 import { Flashcards } from './screens/Flashcards';

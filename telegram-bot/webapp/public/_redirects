@@ -1,1 +1,18 @@
-/*    /index.html   200
+# No SPA catch-all on purpose.
+#
+# This used to be `/*  /index.html  200`, which took the live site down: during a
+# deploy a request for /assets/Landing-<hash>.js arrived before that file was in
+# place, the catch-all answered with index.html — HTTP 200, Content-Type
+# text/html — and Cloudflare cached that under the asset's own URL. Because
+# /assets/* is served `immutable, max-age=31536000` (correct for content-hashed
+# files), the wrong response stayed pinned at the edge, every dynamic import
+# failed with "Failed to fetch dynamically imported module", and the page went
+# blank. `_redirects` cannot express "fall back for pages but not for /assets/*",
+# so the fallback goes away entirely.
+#
+# Nothing needs it: the app has no client-side router — App.tsx switches views in
+# React state, so the only real URL is "/". Unknown paths now get a genuine 404
+# instead of a 200 pretending to be an asset.
+#
+# If a router is ever added, do NOT just restore `/* /index.html 200` — deep
+# links would work again, and so would this outage. Exclude /assets/* first.
