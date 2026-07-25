@@ -76,21 +76,30 @@
        tier A  2px border + hard offset shadow — the ONE main action per screen,
                plus the small deliberate "stickers" (badges, floating chips) and
                overlays that must sit above content (nav pill, modal sheet).
-       tier B  2px border, no shadow — controls that carry their own colour fill
+       tier B  2px border + soft-ink shadow — controls carrying a colour fill
                (grade buttons, answered options, chips, tabs).
-       tier C  hairline, no shadow — every ordinary surface: cards, tiles,
+       tier C  hairline + soft-ink shadow — every ordinary surface: cards, tiles,
                options, inputs, panels. This is the default.
 
-     Sharp 1px precision instead of offset shadows is also where the style is
-     heading in 2026, so tier C doubles as the modernising move. */
+     Tier C first shipped with NO shadow at all, and the result was lifeless:
+     the offset shadow IS the character of this style, and removing it from every
+     surface traded "everything shouts" for "nothing is alive". So tier C keeps a
+     shadow — just a small one in translucent ink rather than a chunky black
+     slab, which preserves the 1px precision while the page still feels tactile.
+     Hovers grow the shadow (that is the satisfying part) instead of only nudging
+     a border colour nobody can see move. */
+  --e0: 2px 2px 0 0 color-mix(in srgb, var(--ink) 20%, transparent);
+  --e0-hover: 4px 4px 0 0 color-mix(in srgb, var(--ink) 30%, transparent);
   --e1: 4px 4px 0 0 var(--border);
   --e2: 8px 8px 0 0 var(--border);
   --e-blue: 6px 6px 0 0 var(--border);
   --e-warm: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
 
-  --hair: color-mix(in srgb, var(--ink) 14%, transparent);
-  --hair-hover: color-mix(in srgb, var(--ink) 26%, transparent);
+  /* 14% was too faint to read as an edge once the shadows went; 20% gives the
+     hairline actual definition without going back to a 2px black slab. */
+  --hair: color-mix(in srgb, var(--ink) 20%, transparent);
+  --hair-hover: color-mix(in srgb, var(--ink) 38%, transparent);
 
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -247,7 +256,7 @@ body::after {
   min-height: var(--app-height, 100vh);
 }
 
-/* Tier C — the default surface: flat white, hairline, no shadow. */
+/* Tier C — the default surface: flat white, hairline, small soft-ink shadow. */
 .surface,
 .card,
 .tile,
@@ -257,6 +266,7 @@ body::after {
 .spoiler {
   background: var(--surface);
   border: 1px solid var(--hair);
+  box-shadow: var(--e0);
 }
 
 /* ============ Highlighter chip (was gradient text) ============ */
@@ -282,6 +292,7 @@ body::after {
   overflow: hidden;
   background: var(--surface);
   border: 1px solid var(--hair);
+  box-shadow: var(--e0);
   color: var(--text);
 }
 .hero h1 {
@@ -367,11 +378,11 @@ body::after {
   flex-direction: column;
   gap: 10px;
   min-height: 126px;
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
   overflow: hidden;
 }
-.tile:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
-.tile:active { transform: translateY(-1px) scale(0.98); }
+.tile:hover { transform: translate(-2px, -3px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
+.tile:active { transform: translateY(-1px) scale(0.98); box-shadow: var(--e0); }
 .tile .tile-ic {
   width: 50px;
   height: 50px;
@@ -458,20 +469,21 @@ body::after {
 .btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--border); }
 .btn:disabled { opacity: 0.35; box-shadow: none; transform: none; }
 .btn-block { width: 100%; }
-/* Secondary action steps down a tier so the primary one clearly leads. */
+/* Secondary action steps down a tier so the primary one clearly leads — but it
+   still presses back, otherwise it reads as disabled. */
 .btn.secondary {
   background: #fff;
   color: var(--text);
-  box-shadow: none;
+  box-shadow: var(--e0);
   border: 1px solid var(--hair);
 }
 .btn.secondary:hover {
   background: var(--surface-2);
   border-color: var(--hair-hover);
-  box-shadow: none;
-  transform: translateY(-2px);
+  box-shadow: var(--e0-hover);
+  transform: translate(-2px, -2px);
 }
-.btn.secondary:active { transform: translateY(0); box-shadow: none; }
+.btn.secondary:active { transform: translate(0, 0); box-shadow: var(--e0); }
 .btn.good {
   background: var(--mint);
   color: #ffffff;
@@ -540,10 +552,11 @@ body::after {
   background: #fff;
   color: var(--accent);
   cursor: pointer;
-  transition: transform 0.15s var(--ease), border-color 0.15s var(--ease);
+  box-shadow: var(--e0);
+  transition: transform 0.15s var(--ease), border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-.speak-btn:hover { transform: translateY(-1px); border-color: var(--hair-hover); }
-.speak-btn:active { transform: translateY(0) scale(0.94); }
+.speak-btn:hover { transform: translate(-1px, -1px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
+.speak-btn:active { transform: translate(0, 0) scale(0.94); box-shadow: var(--e0); }
 
 /* ============ Quiz options ============ */
 .options { display: flex; flex-direction: column; gap: 12px; }
@@ -560,17 +573,17 @@ body::after {
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.15s var(--ease), background 0.15s ease, color 0.15s ease, border-color 0.15s var(--ease);
+  transition: transform 0.15s var(--ease), background 0.15s ease, color 0.15s ease, border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-.option:hover { background: var(--surface-2); transform: translateY(-2px); border-color: var(--hair-hover); }
-.option:active { transform: translateY(0); }
+.option:hover { background: var(--surface-2); transform: translate(-2px, -2px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
+.option:active { transform: translateY(0); box-shadow: var(--e0); }
 /* Answered options are inert (the option is a div now, so :disabled doesn't
    apply) — don't lift or recolor them on hover. */
 .option.correct:hover, .option.wrong:hover, .option.dim:hover {
   transform: none;
   cursor: default;
 }
-.option.dim:hover { background: var(--surface); border-color: var(--hair); }
+.option.dim:hover { background: var(--surface); border-color: var(--hair); box-shadow: var(--e0); }
 .option .lt {
   flex: none;
   width: 38px;
@@ -616,6 +629,7 @@ body::after {
   background: color-mix(in srgb, var(--mint) 8%, var(--surface));
   border: 1px solid var(--hair);
   border-radius: var(--r-md);
+  box-shadow: var(--e0);
   color: var(--text);
   text-align: center;
 }
@@ -655,8 +669,9 @@ body::after {
 
 /* ============ Grade buttons ============ */
 .grade-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 11px; }
-/* Tier B — three coloured fills side by side. A hard shadow on each made the
-   row shout; the colour is emphasis enough. */
+/* Tier A in practice — these three ARE the action on the flashcard screens, and
+   the press is the whole game feel, so they keep the chunky shadow and the
+   travel that goes with it. */
 .grade {
   border: 2px solid var(--border);
   border-radius: var(--r-md);
@@ -666,14 +681,15 @@ body::after {
   font-family: inherit;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.15s var(--ease), filter 0.15s var(--ease);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+  box-shadow: var(--e1);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
 }
-.grade:hover { transform: translateY(-3px); filter: brightness(1.06); }
-.grade:active { transform: translateY(0) scale(0.98); }
+.grade:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--border); }
+.grade:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
 .grade .e { font-size: var(--t-title); }
 .grade .gsub { font-size: var(--t-micro); font-weight: 600; opacity: 0.9; }
 .grade.g1 { background: var(--bad); }
@@ -684,7 +700,7 @@ body::after {
 .vocab-word {
   font-family: var(--font-display);
   font-size: var(--t-h2);
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   letter-spacing: -0.5px;
   line-height: 1.1;
@@ -1313,10 +1329,10 @@ button.chip:active { transform: scale(0.95); }
   background: #fff;
   color: var(--text);
   border: 1px solid var(--hair);
-  box-shadow: none;
+  box-shadow: var(--e0);
 }
-.lp-btn.ghost:hover { box-shadow: none; border-color: var(--hair-hover); transform: translateY(-2px); }
-.lp-btn.ghost:active { box-shadow: none; transform: translateY(0); }
+.lp-btn.ghost:hover { box-shadow: var(--e0-hover); border-color: var(--hair-hover); transform: translate(-2px, -2px); }
+.lp-btn.ghost:active { box-shadow: var(--e0); transform: translate(0, 0); }
 
 /* hero demo — a real, tappable vocab card (the product itself as the preview) */
 .lp-demo-label {
@@ -1439,9 +1455,10 @@ button.chip:active { transform: scale(0.95); }
   padding: 26px;
   background: var(--surface);
   border: 1px solid var(--hair);
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
+  box-shadow: var(--e0);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
-.lp-step:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
+.lp-step:hover { transform: translate(-2px, -3px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
 .lp-step .num {
   width: 40px; height: 40px;
   border-radius: var(--r-md);
@@ -1477,11 +1494,12 @@ button.chip:active { transform: scale(0.95); }
   padding: 26px;
   background: var(--surface);
   border: 1px solid var(--hair);
+  box-shadow: var(--e0);
   position: relative;
   overflow: hidden;
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
-.lp-feature:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
+.lp-feature:hover { transform: translate(-2px, -3px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
 .lp-feature .ic {
   width: 52px; height: 52px; border-radius: var(--r-md);
   display: grid; place-items: center;
@@ -1621,9 +1639,10 @@ button.chip:active { transform: scale(0.95); }
   border: 1px solid var(--hair);
   border-radius: var(--r-md);
   background: var(--surface);
+  box-shadow: var(--e0);
   margin-bottom: 12px;
   overflow: hidden;
-  transition: border-color 0.18s var(--ease);
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
 .lp-faq-item:hover,
 .lp-faq-item[open] { border-color: var(--hair-hover); }
