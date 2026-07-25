@@ -338,7 +338,8 @@ export function Landing({
         <MeanderRule />
       </div>
 
-      {/* FAQ — short, plain, with personality (native <details>, zero JS) */}
+      {/* FAQ — explains how to prepare, not just the pricing (native <details>,
+          zero JS). Keep this count in sync with the landing.faq.* keys in i18n. */}
       <motion.section
         className="lp-faq"
         variants={rise}
@@ -347,7 +348,7 @@ export function Landing({
         viewport={{ once: true, margin: '-60px' }}
       >
         <h2 className="lp-faq-h">{t('landing.faq.title')}</h2>
-        {[1, 2, 3, 4].map((n) => (
+        {[1, 2, 3, 4, 5, 6].map((n) => (
           <details className="lp-faq-item" key={n}>
             <summary>
               {t(`landing.faq.q${n}`)}
