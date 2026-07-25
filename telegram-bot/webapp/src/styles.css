@@ -1,14 +1,21 @@
 /* ============================================================
-   Hellas Study — neo-brutalist design system (paperfolio-inspired).
-   Pure white canvas · thick black borders · hard offset shadows ·
-   big rounded corners · Rubik display + Onest body (Manrope = Greek) · chips.
-   No blur / soft shadows / gradients. Class names preserved so the
-   existing screens restyle automatically.
+   Hellas Study — design system.
 
-   Muted-earth palette + tiered depth: the heavy border/shadow treatment is a
-   deliberate accent (a handful of elements), not the default for every card,
-   and colour is deep terracotta/ochre/olive rather than bright. A page of
-   equally loud rainbow cards reads as a generated template.
+   Sharp geometry, hairline precision, muted earth palette, Rubik display +
+   Onest body (Manrope covers Greek). No blur, no soft shadows, no gradients.
+   Class names are preserved so the screens restyle from here automatically.
+
+   Everything below is driven by four scales, and the point of each is that a
+   value is chosen by ROLE, never typed as a number:
+
+     depth   3 tiers  — see the comment on --e1 below. Loud is the exception.
+     type    9 steps  — --t-*   (was 33 ad-hoc font sizes)
+     radius  4 steps  — --r-*   (was 10 ad-hoc values)
+     colour  muted earth tones + separate lifted tints for the dark plate
+
+   Two values sit off the scales on purpose and say so at the point of use:
+   the .lp-quote-mark ornament, and .input's literal 16px (iOS zooms a focused
+   field whose text is smaller).
    ============================================================ */
 
 :root,
@@ -61,16 +68,27 @@
   --grad-warm: var(--amber);
   --grad-ring: var(--accent);
 
-  /* hard, offset "sticker" shadows — no blur */
+  /* ---- Depth: three tiers, and only the top one is loud ----
+     The stylesheet used to put a 2px border AND a hard offset shadow on
+     everything — 30 elements at 2px, 17 hard shadows — so nothing could lead the
+     eye and the whole thing read as a 2022 sticker template. Now:
+
+       tier A  2px border + hard offset shadow — the ONE main action per screen,
+               plus the small deliberate "stickers" (badges, floating chips) and
+               overlays that must sit above content (nav pill, modal sheet).
+       tier B  2px border, no shadow — controls that carry their own colour fill
+               (grade buttons, answered options, chips, tabs).
+       tier C  hairline, no shadow — every ordinary surface: cards, tiles,
+               options, inputs, panels. This is the default.
+
+     Sharp 1px precision instead of offset shadows is also where the style is
+     heading in 2026, so tier C doubles as the modernising move. */
   --e1: 4px 4px 0 0 var(--border);
   --e2: 8px 8px 0 0 var(--border);
   --e-blue: 6px 6px 0 0 var(--border);
   --e-warm: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
 
-  /* Hairline border for demoted (tier-2) landing cards. When every element
-     carries the same 2px border + hard shadow nothing can lead the eye, so
-     secondary cards step down to this and drop their shadow entirely. */
   --hair: color-mix(in srgb, var(--ink) 14%, transparent);
   --hair-hover: color-mix(in srgb, var(--ink) 26%, transparent);
 
@@ -83,25 +101,37 @@
   --font-display: 'Rubik', 'Manrope', 'Onest', system-ui, sans-serif;
   --font-body: 'Onest', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
-  /* Type scale — 6 steps. The landing had grown to 19 distinct font sizes
-     (14/14.5/15/15.5/16/17/18/19/20/22/25…), which is what makes a page feel
-     assembled rather than designed. */
-  --t-hero: clamp(40px, 9.5vw, 78px);
-  --t-h2: clamp(28px, 5vw, 44px);
-  --t-h3: 20px;
-  --t-lead: clamp(16px, 2.4vw, 20px);
-  --t-body: 15.5px;
-  --t-meta: 12.5px;
+  /* Type scale — 9 steps for the whole product. The stylesheet had grown to 33
+     distinct font-size declarations (11/11.5/12.5/13/14/14.5/15/16/17/19/22/
+     23/24/25/26/28/32/38…), which is what makes an interface feel assembled
+     rather than designed. Every size below is a role, not a number: pick the
+     role and the value follows.
+     One documented exception stays off the scale: the giant decorative “ ”
+     glyph in .lp-quote-mark, which is an ornament rather than text. */
+  --t-hero: clamp(40px, 9.5vw, 78px);   /* landing h1 only */
+  --t-h2: clamp(28px, 5vw, 44px);       /* section + screen headings */
+  --t-title: clamp(22px, 3.2vw, 26px);  /* question, answer, auth, result titles */
+  --t-h3: 20px;                         /* card and tile titles */
+  --t-num: clamp(30px, 5.6vw, 52px);    /* display numerals (stats plate, streak) */
+  --t-lead: clamp(16px, 2.4vw, 20px);   /* lead paragraph under a heading */
+  --t-body: 16px;                       /* reading copy and button labels */
+  --t-meta: 12.5px;                     /* labels, captions, secondary meta */
+  --t-micro: 11px;                      /* tiny uppercase tags */
 
   /* Body copy is near-black, not grey. --muted is reserved for genuinely
      secondary meta (eyebrows, footnotes, stat labels); 18 of 54 text elements
      were grey, including primary reading copy. */
   --text-body: #2a2a2a;
 
-  --r-xl: 32px;
-  --r-lg: 26px;
-  --r-md: 18px;
-  --r-sm: 12px;
+  /* Radius scale — 4 steps, down from 10 ad-hoc values (8/9/11/15/18/24/26/28/
+     30/32). Tightened deliberately: the 24–32px corners read as 2022 “sticker”
+     styling, while sharper geometry is what currently reads as engineered.
+     `50%` stays in use for genuine circles — that is a shape, not a scale step. */
+  --r-sm: 8px;    /* chips, tags, small inline blocks */
+  --r-md: 14px;   /* icon squares, options, inputs, nav buttons */
+  --r-lg: 22px;   /* cards, tiles, panels, sheets */
+  --r-full: 999px;
+  --r-xl: var(--r-lg); /* legacy alias — collapsed onto the scale */
 
   --sk1: #efefef;
   --sk2: #e0e0e0;
@@ -134,7 +164,7 @@ html { scroll-behavior: smooth; }
 ::-webkit-scrollbar-thumb {
   background: var(--ink);
   border: 3px solid var(--bg);
-  border-radius: 999px;
+  border-radius: var(--r-full);
 }
 ::-webkit-scrollbar-track { background: transparent; }
 
@@ -142,7 +172,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--t-body);
   line-height: 1.5;
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
@@ -202,7 +232,7 @@ body::after {
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
 }
 :focus:not(:focus-visible) { outline: none; }
 
@@ -217,7 +247,7 @@ body::after {
   min-height: var(--app-height, 100vh);
 }
 
-/* Flat white panels with a thick black border — the core brutalist card. */
+/* Tier C — the default surface: flat white, hairline, no shadow. */
 .surface,
 .card,
 .tile,
@@ -226,48 +256,46 @@ body::after {
 .option,
 .spoiler {
   background: var(--surface);
-  border: 2px solid var(--border);
-  box-shadow: var(--e1);
+  border: 1px solid var(--hair);
 }
 
 /* ============ Highlighter chip (was gradient text) ============ */
 .grad-text {
   color: var(--accent);
 }
+/* Tier A — a deliberate sticker: the coloured word in a headline. */
 .highlight {
   background: var(--accent);
   color: #fff;
   padding: 2px 12px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   display: inline-block;
   border: 2px solid var(--border);
-  box-shadow: 4px 4px 0 0 var(--border);
+  box-shadow: var(--e1);
 }
 
 /* ============ HERO — white card, name on a coral highlighter chip ============ */
 .hero {
   position: relative;
-  border-radius: var(--r-xl);
+  border-radius: var(--r-lg);
   padding: 28px 24px;
   overflow: hidden;
   background: var(--surface);
-  border: 3px solid var(--border);
+  border: 1px solid var(--hair);
   color: var(--text);
-  box-shadow: var(--e2);
 }
 .hero h1 {
   margin: 10px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(30px, 9vw, 40px);
-  font-weight: 700;
+  font-size: var(--t-h2);
+  font-weight: 600;
   letter-spacing: -1px;
   line-height: 1.15;
   color: var(--text);
 }
 .hero h1 .highlight {
   padding: 1px 14px;
-  border-radius: 10px;
-  box-shadow: 4px 4px 0 0 var(--border);
+  border-radius: var(--r-sm);
 }
 /* Greek-meander "sticker" pinned to the hero's empty right corner */
 .hero-badge {
@@ -280,14 +308,14 @@ body::after {
   place-items: center;
   background: var(--amber);
   border: 2px solid var(--border);
-  border-radius: 15px;
-  box-shadow: 4px 4px 0 0 var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--e1);
   transform: rotate(7deg);
   color: var(--border);
 }
 .hero .sub {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--t-body);
   font-weight: 600;
   color: var(--muted);
 }
@@ -297,12 +325,13 @@ body::after {
   margin-top: 20px;
   flex-wrap: wrap;
 }
+/* Tier B — carries its own fill, so no shadow. */
 .chip {
   background: var(--surface-2);
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-full);
   padding: 7px 14px;
-  font-size: 13px;
+  font-size: var(--t-meta);
   font-weight: 700;
   color: var(--text);
   display: inline-flex;
@@ -312,7 +341,7 @@ body::after {
 
 /* ============ Section label ============ */
 .section-label {
-  font-size: 12.5px;
+  font-size: var(--t-meta);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.4px;
@@ -338,34 +367,34 @@ body::after {
   flex-direction: column;
   gap: 10px;
   min-height: 126px;
-  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease);
   overflow: hidden;
 }
-.tile:hover { transform: translateY(-4px); box-shadow: var(--e2); }
-.tile:active { transform: translateY(-1px) scale(0.98); box-shadow: var(--e1); }
+.tile:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
+.tile:active { transform: translateY(-1px) scale(0.98); }
 .tile .tile-ic {
   width: 50px;
   height: 50px;
   display: grid;
   place-items: center;
-  border-radius: 15px;
+  border-radius: var(--r-md);
   background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: var(--accent);
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
 }
 .tile .tile-t {
   font-weight: 700;
-  font-size: 17px;
+  font-size: var(--t-h3);
   letter-spacing: -0.3px;
 }
 .tile .tile-d {
-  font-size: 13px;
+  font-size: var(--t-meta);
   color: var(--muted);
   font-weight: 500;
 }
 .tile.span2 { grid-column: span 2; }
 
-/* Featured tile — solid colour block */
+/* Featured tile — the primary action on a menu screen, so tier A. */
 .tile.feature {
   grid-column: span 2;
   flex-direction: row;
@@ -377,6 +406,7 @@ body::after {
   color: #fff;
   box-shadow: var(--e-blue);
 }
+.tile.feature:hover { border-color: var(--border); }
 .tile.feature.warm {
   background: var(--amber);
   color: #2a1e02;
@@ -405,11 +435,12 @@ body::after {
 }
 
 /* ============ Buttons ============ */
+/* Tier A — the single main action per screen keeps the full weight. */
 .btn {
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-full);
   padding: 15px 22px;
-  font-size: 16px;
+  font-size: var(--t-body);
   font-weight: 700;
   font-family: inherit;
   letter-spacing: -0.2px;
@@ -427,13 +458,20 @@ body::after {
 .btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--border); }
 .btn:disabled { opacity: 0.35; box-shadow: none; transform: none; }
 .btn-block { width: 100%; }
+/* Secondary action steps down a tier so the primary one clearly leads. */
 .btn.secondary {
   background: #fff;
   color: var(--text);
-  box-shadow: var(--e-blue);
-  border: 2px solid var(--border);
+  box-shadow: none;
+  border: 1px solid var(--hair);
 }
-.btn.secondary:hover { background: var(--surface-2); }
+.btn.secondary:hover {
+  background: var(--surface-2);
+  border-color: var(--hair-hover);
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+.btn.secondary:active { transform: translateY(0); box-shadow: none; }
 .btn.good {
   background: var(--mint);
   color: #ffffff;
@@ -442,16 +480,16 @@ body::after {
 
 /* ============ Progress bar ============ */
 .progress {
-  height: 12px;
-  border-radius: 999px;
+  height: 10px;
+  border-radius: var(--r-full);
   background: var(--surface-2);
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   overflow: hidden;
 }
 .progress > i {
   display: block;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--accent);
   transition: width 0.6s var(--ease);
 }
@@ -463,12 +501,12 @@ body::after {
   justify-content: space-between;
   margin-bottom: 16px;
 }
-.topbar .meta { font-size: 13px; font-weight: 700; color: var(--muted); }
+.topbar .meta { font-size: var(--t-meta); font-weight: 700; color: var(--muted); }
 .topbar .counter {
   font-weight: 800;
-  font-size: 14px;
+  font-size: var(--t-meta);
   padding: 5px 12px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--amber);
   border: 2px solid var(--border);
   color: var(--text);
@@ -479,7 +517,7 @@ body::after {
 .card { border-radius: var(--r-lg); padding: 22px; }
 .qtext {
   font-family: var(--font-display);
-  font-size: clamp(22px, 6.5vw, 28px);
+  font-size: var(--t-title);
   font-weight: 700;
   margin: 4px 0 20px;
   letter-spacing: -0.4px;
@@ -496,17 +534,16 @@ body::after {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   display: grid;
   place-items: center;
   background: #fff;
   color: var(--accent);
   cursor: pointer;
-  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
-  box-shadow: 3px 3px 0 0 var(--border);
+  transition: transform 0.15s var(--ease), border-color 0.15s var(--ease);
 }
-.speak-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--border); }
-.speak-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
+.speak-btn:hover { transform: translateY(-1px); border-color: var(--hair-hover); }
+.speak-btn:active { transform: translateY(0) scale(0.94); }
 
 /* ============ Quiz options ============ */
 .options { display: flex; flex-direction: column; gap: 12px; }
@@ -519,22 +556,21 @@ body::after {
   color: var(--text);
   border-radius: var(--r-md);
   padding: 16px;
-  font-size: 16px;
+  font-size: var(--t-body);
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.15s var(--ease), background 0.15s ease, color 0.15s ease, box-shadow 0.15s var(--ease);
+  transition: transform 0.15s var(--ease), background 0.15s ease, color 0.15s ease, border-color 0.15s var(--ease);
 }
-.option:hover { background: var(--surface-2); transform: translateY(-2px); box-shadow: var(--e2); }
-.option:active { transform: translateY(0); box-shadow: var(--e1); }
+.option:hover { background: var(--surface-2); transform: translateY(-2px); border-color: var(--hair-hover); }
+.option:active { transform: translateY(0); }
 /* Answered options are inert (the option is a div now, so :disabled doesn't
    apply) — don't lift or recolor them on hover. */
 .option.correct:hover, .option.wrong:hover, .option.dim:hover {
   transform: none;
-  box-shadow: var(--e1);
   cursor: default;
 }
-.option.dim:hover { background: var(--surface); }
+.option.dim:hover { background: var(--surface); border-color: var(--hair); }
 .option .lt {
   flex: none;
   width: 38px;
@@ -542,16 +578,17 @@ body::after {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 15px;
+  font-size: var(--t-body);
   font-weight: 800;
   background: var(--surface-2);
   color: var(--muted);
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   transition: all 0.18s ease;
 }
-.option.correct { background: var(--mint); border-color: var(--border); color: #fff; }
+/* Tier B — an answered option is a coloured state, so it takes a real border. */
+.option.correct { background: var(--mint); border: 2px solid var(--border); color: #fff; }
 .option.correct .lt { background: rgba(255, 255, 255, 0.3); color: #fff; border-color: #fff; }
-.option.wrong { background: var(--bad); border-color: var(--border); color: #fff; }
+.option.wrong { background: var(--bad); border: 2px solid var(--border); color: #fff; }
 .option.wrong .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.dim { opacity: 0.45; }
 /* Per-option pronounce button */
@@ -565,7 +602,7 @@ body::after {
   background: transparent;
   color: inherit;
   opacity: 0.55;
-  border: 2px solid currentColor;
+  border: 1px solid currentColor;
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.15s var(--ease);
 }
@@ -577,9 +614,8 @@ body::after {
   margin-top: 18px;
   padding: 18px 20px 20px;
   background: color-mix(in srgb, var(--mint) 8%, var(--surface));
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   border-radius: var(--r-md);
-  box-shadow: 4px 4px 0 0 var(--border);
   color: var(--text);
   text-align: center;
 }
@@ -588,10 +624,10 @@ body::after {
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--mint);
   color: #fff;
-  font-size: 11px;
+  font-size: var(--t-micro);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -599,7 +635,7 @@ body::after {
 }
 .answer-text {
   font-family: var(--font-display);
-  font-size: 23px;
+  font-size: var(--t-title);
   font-weight: 700;
   letter-spacing: -0.3px;
   line-height: 1.3;
@@ -610,8 +646,8 @@ body::after {
   padding: 14px 16px;
   border-radius: var(--r-md);
   background: var(--surface-2);
-  border: 2px solid var(--border);
-  font-size: 14.5px;
+  border: 1px solid var(--hair);
+  font-size: var(--t-body);
   color: var(--muted);
   font-weight: 500;
 }
@@ -619,26 +655,27 @@ body::after {
 
 /* ============ Grade buttons ============ */
 .grade-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 11px; }
+/* Tier B — three coloured fills side by side. A hard shadow on each made the
+   row shout; the colour is emphasis enough. */
 .grade {
   border: 2px solid var(--border);
   border-radius: var(--r-md);
   padding: 16px 6px;
-  font-size: 14.5px;
+  font-size: var(--t-body);
   font-weight: 700;
   font-family: inherit;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
-  box-shadow: 4px 4px 0 0 var(--border);
+  transition: transform 0.15s var(--ease), filter 0.15s var(--ease);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
 }
-.grade:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--border); }
-.grade:active { transform: translate(0, 0); box-shadow: 1px 1px 0 0 var(--border); }
-.grade .e { font-size: 22px; }
-.grade .gsub { font-size: 11px; font-weight: 600; opacity: 0.9; }
+.grade:hover { transform: translateY(-3px); filter: brightness(1.06); }
+.grade:active { transform: translateY(0) scale(0.98); }
+.grade .e { font-size: var(--t-title); }
+.grade .gsub { font-size: var(--t-micro); font-weight: 600; opacity: 0.9; }
 .grade.g1 { background: var(--bad); }
 .grade.g2 { background: var(--amber); color: #2a1e02; }
 .grade.g3 { background: var(--mint); color: #fff; }
@@ -646,8 +683,8 @@ body::after {
 /* ============ Vocab spoiler ============ */
 .vocab-word {
   font-family: var(--font-display);
-  font-size: clamp(30px, 9vw, 46px);
-  font-weight: 700;
+  font-size: var(--t-h2);
+  font-weight: 600;
   text-align: center;
   letter-spacing: -0.5px;
   line-height: 1.1;
@@ -659,51 +696,52 @@ body::after {
 .spoiler { text-align: center; border-radius: var(--r-md); padding: 22px 16px; cursor: pointer; }
 .spoiler .reveal { transition: filter 0.3s ease; }
 .spoiler.hidden .reveal { filter: blur(11px); }
-.spoiler .ru { font-size: 25px; font-weight: 800; color: var(--text); }
-.spoiler .note { font-size: 14.5px; color: var(--muted); margin-top: 8px; font-weight: 500; }
-.spoiler .tap { font-size: 13px; color: var(--muted); margin-top: 12px; font-weight: 600; }
+.spoiler .ru { font-size: var(--t-title); font-weight: 800; color: var(--text); }
+.spoiler .note { font-size: var(--t-body); color: var(--muted); margin-top: 8px; font-weight: 500; }
+.spoiler .tap { font-size: var(--t-meta); color: var(--muted); margin-top: 12px; font-weight: 600; }
 
 /* ============ Result + Ring ============ */
-.result { text-align: center; padding: 32px 24px; border-radius: var(--r-xl); }
+.result { text-align: center; padding: 32px 24px; border-radius: var(--r-lg); }
 .result .emoji { display: flex; justify-content: center; color: var(--accent); animation: pop 0.45s var(--spring); }
 .result .ttl {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--t-title);
   font-weight: 700;
   margin-top: 16px;
   letter-spacing: -0.4px;
 }
-.result .line { margin-top: 6px; font-size: 15px; color: var(--muted); font-weight: 500; }
+.result .line { margin-top: 6px; font-size: var(--t-body); color: var(--muted); font-weight: 500; }
 
 .ring { position: relative; display: inline-grid; place-items: center; margin: 0 auto; }
 .ring svg { display: block; }
 .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .ring-pct {
   font-family: var(--font-display);
-  font-size: 38px;
-  font-weight: 700;
+  font-size: var(--t-h2);
+  font-weight: 600;
   letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
 }
-.ring-sub { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-top: -2px; text-transform: lowercase; }
+.ring-sub { font-size: var(--t-meta); font-weight: 700; color: var(--muted); margin-top: -2px; text-transform: lowercase; }
 
 /* ============ Stats ============ */
 .stat-hero { display: flex; align-items: center; gap: 18px; }
 .stat-hero-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .mini { display: flex; align-items: baseline; justify-content: space-between; padding: 13px 15px; border-radius: var(--r-md); }
-.mini .v { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--accent-2); }
-.mini .k { font-size: 13px; color: var(--muted); font-weight: 600; }
+.mini .v { font-family: var(--font-display); font-size: var(--t-title); font-weight: 700; color: var(--accent-2); font-variant-numeric: tabular-nums; }
+.mini .k { font-size: var(--t-meta); color: var(--muted); font-weight: 600; }
 
 .bar-row { margin: 15px 0; }
 .bar-row:first-child { margin-top: 0; }
-.bar-row .lab { display: flex; justify-content: space-between; font-size: 14.5px; font-weight: 700; margin-bottom: 8px; }
+.bar-row .lab { display: flex; justify-content: space-between; font-size: var(--t-body); font-weight: 700; margin-bottom: 8px; }
 .bar-row .lab .pc { color: var(--muted); font-weight: 600; }
 
-.history-item { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: 2px solid var(--surface-2); }
+.history-item { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--hair); }
 .history-item:last-child { border-bottom: none; }
-.history-item .ic { font-size: 22px; }
+.history-item .ic { font-size: var(--t-title); }
 .history-item .grow { flex: 1; }
 .history-item .sc { font-weight: 700; }
-.history-item .dt { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.history-item .dt { font-size: var(--t-meta); color: var(--muted); font-weight: 500; }
 
 /* ============ Misc ============ */
 .spacer { height: 14px; }
@@ -728,19 +766,18 @@ body::after {
   align-items: center;
   gap: 6px;
   padding: 9px 16px 9px 12px;
-  border: 2px solid var(--border);
-  border-radius: 999px;
+  border: 1px solid var(--hair);
+  border-radius: var(--r-full);
   background: #fff;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--t-meta);
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 3px 3px 0 0 var(--border);
-  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+  transition: transform 0.14s var(--ease), border-color 0.14s var(--ease);
 }
-.gate-back:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--border); }
-.gate-back:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
+.gate-back:hover { transform: translateY(-1px); border-color: var(--hair-hover); }
+.gate-back:active { transform: translateY(0) scale(0.96); }
 /* Keep the auth card clear of the fixed back button on mobile (desktop centres
    the card vertically, so it never collides there). */
 .gate-app { padding-top: 76px; }
@@ -749,16 +786,17 @@ body::after {
 .auth-card { max-width: 440px; width: 100%; margin: 0 auto; }
 .auth-title {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: var(--t-title);
   font-weight: 700;
   letter-spacing: -0.5px;
   margin: 0 0 4px;
 }
-.auth-sub { margin: 0 0 18px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.auth-sub { margin: 0 0 18px; font-size: var(--t-meta); font-weight: 500; color: var(--muted); }
+/* Tier B — segmented control, the active half is a solid ink fill. */
 .auth-tabs {
   display: flex;
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-full);
   overflow: hidden;
   margin-bottom: 18px;
 }
@@ -768,7 +806,7 @@ body::after {
   border: none;
   background: #fff;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--t-meta);
   font-weight: 800;
   color: var(--muted);
   cursor: pointer;
@@ -780,7 +818,7 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12.5px;
+  font-size: var(--t-meta);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -789,31 +827,33 @@ body::after {
 }
 .input {
   width: 100%;
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   border-radius: var(--r-md);
   padding: 13px 15px;
   font-family: inherit;
+  /* Stays a literal 16px, off the type scale on purpose: iOS Safari zooms the
+     whole page when a focused input's text is smaller than 16px. */
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
   background: #fff;
-  transition: box-shadow 0.15s var(--ease), transform 0.15s var(--ease);
+  transition: border-color 0.15s var(--ease);
 }
 .input::placeholder { color: #b9b6b0; font-weight: 500; }
+/* Focus reads as the border going full-strength rather than the field jumping. */
 .input:focus {
   outline: none;
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 0 var(--border);
+  border: 1px solid var(--ink);
 }
-.field-hint { display: block; margin: 6px 2px 0; font-size: 12px; font-weight: 500; color: var(--muted); }
+.field-hint { display: block; margin: 6px 2px 0; font-size: var(--t-meta); font-weight: 500; color: var(--muted); }
 .auth-err {
   margin: 2px 0 14px;
   padding: 11px 14px;
-  border: 2px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--bad) 12%, #fff);
   color: var(--bad);
-  font-size: 14px;
+  font-size: var(--t-body);
   font-weight: 700;
 }
 .auth-card .btn { margin-top: 4px; }
@@ -844,7 +884,7 @@ button.chip:active { transform: scale(0.95); }
   margin: 0 auto 16px;
   border-radius: 50%;
   background: var(--surface-2);
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   color: var(--accent);
 }
 
@@ -885,9 +925,10 @@ button.chip:active { transform: scale(0.95); }
   width: 100%;
   max-width: 480px;
   background: var(--bg-2);
-  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
   padding: 44px 24px calc(28px + env(safe-area-inset-bottom));
-  border: 3px solid var(--border);
+  /* Tier A — an overlay must read as sitting above the page. */
+  border: 2px solid var(--border);
   border-bottom: none;
   box-shadow: 0 -8px 0 0 var(--border);
   animation: sheetUp 0.4s var(--spring) both;
@@ -896,7 +937,7 @@ button.chip:active { transform: scale(0.95); }
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
-.sheet-handle { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 999px; background: var(--border); }
+.sheet-handle { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: var(--r-full); background: var(--border); }
 .badge-circle {
   width: 116px;
   height: 116px;
@@ -909,20 +950,20 @@ button.chip:active { transform: scale(0.95); }
   justify-content: center;
   gap: 2px;
   margin: 0 auto 26px;
-  border: 3px solid var(--border);
+  border: 2px solid var(--border);
   box-shadow: var(--glow-coral);
   animation: pop 0.5s var(--spring) 0.1s both;
 }
-.badge-num { font-family: var(--font-display); font-size: 32px; font-weight: 700; line-height: 1; }
+.badge-num { font-family: var(--font-display); font-size: var(--t-num); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
 .sheet-headline {
   font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 700;
+  font-size: var(--t-h2);
+  font-weight: 600;
   letter-spacing: -0.6px;
   text-align: center;
   margin: 0 0 8px;
 }
-.sheet-sub { font-size: 15px; font-weight: 600; color: var(--muted); text-align: center; margin: 0 0 28px; }
+.sheet-sub { font-size: var(--t-body); font-weight: 600; color: var(--muted); text-align: center; margin: 0 0 28px; }
 
 /* ============ Bottom navigation ============ */
 .bottomnav {
@@ -933,17 +974,18 @@ button.chip:active { transform: scale(0.95); }
   padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
   pointer-events: none;
 }
+/* Tier A — floats over scrolling content, so it needs to detach from it. */
 .bottomnav-inner {
   max-width: 460px;
   margin: 0 auto;
   display: flex;
   gap: 2px;
   padding: 8px;
-  border-radius: 22px;
+  border-radius: var(--r-lg);
   pointer-events: auto;
   background: #fff;
-  border: 3px solid var(--border);
-  box-shadow: var(--e2);
+  border: 2px solid var(--border);
+  box-shadow: var(--e1);
 }
 .navbtn {
   position: relative;
@@ -958,18 +1000,18 @@ button.chip:active { transform: scale(0.95); }
   align-items: center;
   gap: 5px;
   padding: 10px 2px;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   color: var(--muted);
   transition: color 0.2s ease, transform 0.12s var(--spring);
 }
 .navbtn .nav-ic { display: grid; place-items: center; }
-.navbtn .nav-l { font-size: 11px; font-weight: 700; letter-spacing: -0.2px; }
+.navbtn .nav-l { font-size: var(--t-micro); font-weight: 700; letter-spacing: -0.2px; }
 .navbtn.active { color: #fff; }
 .navbtn.active::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background: var(--ink);
   z-index: -1;
 }
@@ -986,7 +1028,7 @@ button.chip:active { transform: scale(0.95); }
   z-index: 45;
   display: inline-flex;
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-full);
   overflow: hidden;
   background: #fff;
   box-shadow: 3px 3px 0 0 var(--border);
@@ -997,7 +1039,7 @@ button.chip:active { transform: scale(0.95); }
   padding: 7px 12px;
   font-family: inherit;
   font-weight: 800;
-  font-size: 11.5px;
+  font-size: var(--t-micro);
   letter-spacing: 0.3px;
   color: var(--muted);
   cursor: pointer;
@@ -1026,7 +1068,7 @@ button.chip:active { transform: scale(0.95); }
     margin: 0;
     gap: 6px;
     padding: 14px 10px;
-    border-radius: 22px;
+    border-radius: var(--r-lg);
   }
   .nav-brand {
     display: flex;
@@ -1035,13 +1077,13 @@ button.chip:active { transform: scale(0.95); }
     width: 44px;
     height: 44px;
     margin: 4px auto 12px;
-    border-radius: 13px;
+    border-radius: var(--r-md);
     background: var(--accent);
     border: 2px solid var(--border);
     box-shadow: var(--glow-coral);
   }
-  .navbtn { padding: 13px 4px; border-radius: 14px; }
-  .navbtn .nav-l { font-size: 11.5px; }
+  .navbtn { padding: 13px 4px; border-radius: var(--r-md); }
+  .navbtn .nav-l { font-size: var(--t-micro); }
 
   /* On desktop the switch sits at the bottom of the sidebar instead of
      floating fixed over the mobile top-left corner. Scoped to the sidebar
@@ -1091,7 +1133,7 @@ button.chip:active { transform: scale(0.95); }
     z-index: 60;
     width: 46px;
     height: 46px;
-    border-radius: 13px;
+    border-radius: var(--r-md);
     background: var(--surface);
     border: 2px solid var(--border);
     box-shadow: var(--e1);
@@ -1112,7 +1154,7 @@ button.chip:active { transform: scale(0.95); }
     margin-top: 0;
     padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
     background: var(--surface);
-    border-top: 2px solid var(--border);
+    border-top: 1px solid var(--hair);
     display: flex;
     justify-content: center;
   }
@@ -1151,9 +1193,9 @@ button.chip:active { transform: scale(0.95); }
 /* Inline in the landing nav row instead of a fixed corner pill (avoids
    overlapping the brand logo in the opposite top corner). */
 .lp-nav-right .lang-switch { position: static; }
-.lp-brand { display: flex; align-items: center; gap: 11px; font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.4px; }
+.lp-brand { display: flex; align-items: center; gap: 11px; font-family: var(--font-display); font-weight: 700; font-size: var(--t-h3); letter-spacing: -0.4px; }
 .lp-logo {
-  width: 38px; height: 38px; border-radius: 11px;
+  width: 38px; height: 38px; border-radius: var(--r-md);
   background: var(--accent);
   border: 2px solid var(--border);
   display: grid; place-items: center;
@@ -1185,10 +1227,10 @@ button.chip:active { transform: scale(0.95); }
   align-items: center;
   gap: 7px;
   padding: 7px 15px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: #fff;
   border: 2px solid var(--border);
-  font-size: 13px;
+  font-size: var(--t-meta);
   font-weight: 700;
   color: var(--muted);
   margin-bottom: 26px;
@@ -1209,11 +1251,11 @@ button.chip:active { transform: scale(0.95); }
   align-items: center;
   gap: 6px;
   padding: 6px 11px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--ink);
   color: #fff;
   font-family: var(--font-display);
-  font-size: 10.5px;
+  font-size: var(--t-micro);
   font-weight: 800;
   letter-spacing: 1.6px;
   line-height: 1;
@@ -1223,7 +1265,7 @@ button.chip:active { transform: scale(0.95); }
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 13.5px;
+  font-size: var(--t-meta);
   font-weight: 700;
   color: var(--text);
 }
@@ -1250,10 +1292,10 @@ button.chip:active { transform: scale(0.95); }
 .lp-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
 .lp-btn {
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-full);
   padding: 15px 28px;
   font-family: inherit;
-  font-size: 17px;
+  font-size: var(--t-body);
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
@@ -1266,8 +1308,15 @@ button.chip:active { transform: scale(0.95); }
 .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
 /* Secondary action sits a tier below the primary CTA — same border, lighter
    shadow — so the pair has an obvious leader instead of two equal buttons. */
-.lp-btn.ghost { background: #fff; color: var(--text); box-shadow: 3px 3px 0 0 var(--border); }
-.lp-btn.ghost:hover { box-shadow: 5px 5px 0 0 var(--border); }
+/* Secondary CTA drops to a hairline so the primary one is unmistakably first. */
+.lp-btn.ghost {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--hair);
+  box-shadow: none;
+}
+.lp-btn.ghost:hover { box-shadow: none; border-color: var(--hair-hover); transform: translateY(-2px); }
+.lp-btn.ghost:active { box-shadow: none; transform: translateY(0); }
 
 /* hero demo — a real, tappable vocab card (the product itself as the preview) */
 .lp-demo-label {
@@ -1279,6 +1328,8 @@ button.chip:active { transform: scale(0.95); }
   color: var(--muted);
   text-align: center;
 }
+/* Tier A — this is the hero's product preview and the page's focal point, so it
+   keeps the full border + shadow that ordinary cards gave up. */
 .lp-demo {
   position: relative;
   margin: 0 auto;
@@ -1286,6 +1337,8 @@ button.chip:active { transform: scale(0.95); }
   text-align: left;
   cursor: pointer;
   user-select: none;
+  border: 2px solid var(--border);
+  box-shadow: var(--e1);
   transition: box-shadow 0.18s var(--ease); /* transform is owned by framer tilt */
   will-change: transform;
 }
@@ -1311,12 +1364,12 @@ button.chip:active { transform: scale(0.95); }
   align-items: center;
   gap: 6px;
   padding: 9px 15px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--surface);
   border: 2px solid var(--border);
   box-shadow: 4px 4px 0 0 var(--border);
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--t-meta);
   font-weight: 800;
   pointer-events: none;
 }
@@ -1352,7 +1405,7 @@ button.chip:active { transform: scale(0.95); }
   margin-right: 44px;
   color: #fff;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--t-meta);
   font-weight: 700;
   letter-spacing: 2.5px;
 }
@@ -1382,7 +1435,7 @@ button.chip:active { transform: scale(0.95); }
    for the few elements that should lead the eye (demo card, primary CTA, stats
    plate, footer block). */
 .lp-step {
-  border-radius: 24px;
+  border-radius: var(--r-lg);
   padding: 26px;
   background: var(--surface);
   border: 1px solid var(--hair);
@@ -1391,11 +1444,11 @@ button.chip:active { transform: scale(0.95); }
 .lp-step:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
 .lp-step .num {
   width: 40px; height: 40px;
-  border-radius: 11px;
+  border-radius: var(--r-md);
   display: grid; place-items: center;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 19px;
+  font-size: var(--t-h3);
   color: var(--text);
   border: 2px solid var(--border);
   margin-bottom: 18px;
@@ -1420,7 +1473,7 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 900px) { .lp-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .lp-features { grid-template-columns: 1fr; } }
 .lp-feature {
-  border-radius: 24px;
+  border-radius: var(--r-lg);
   padding: 26px;
   background: var(--surface);
   border: 1px solid var(--hair);
@@ -1430,9 +1483,9 @@ button.chip:active { transform: scale(0.95); }
 }
 .lp-feature:hover { transform: translateY(-3px); border-color: var(--hair-hover); }
 .lp-feature .ic {
-  width: 52px; height: 52px; border-radius: 15px;
+  width: 52px; height: 52px; border-radius: var(--r-md);
   display: grid; place-items: center;
-  border: 2px solid var(--border);
+  border: 1px solid var(--hair);
   margin-bottom: 16px;
 }
 .lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; }
@@ -1448,8 +1501,8 @@ button.chip:active { transform: scale(0.95); }
   /* faint dot grid so the plate isn't a flat black void */
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1.4px, transparent 1.4px);
   background-size: 22px 22px;
-  border: 3px solid var(--border);
-  border-radius: 28px;
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow: var(--e2);
   padding: clamp(26px, 4vw, 44px) clamp(10px, 2vw, 24px);
 }
@@ -1463,7 +1516,7 @@ button.chip:active { transform: scale(0.95); }
   font-variant-numeric: tabular-nums; /* digits don't jitter while counting up */
 }
 .lp-stat .l {
-  font-size: 11.5px;
+  font-size: var(--t-micro);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.3px;
@@ -1471,7 +1524,7 @@ button.chip:active { transform: scale(0.95); }
   margin-top: 7px;
 }
 @media (min-width: 701px) {
-  .lp-stat + .lp-stat { border-left: 2px solid rgba(255, 255, 255, 0.12); }
+  .lp-stat + .lp-stat { border-left: 1px solid rgba(255, 255, 255, 0.16); }
 }
 @media (max-width: 700px) {
   .lp-stats { grid-template-columns: repeat(2, 1fr); row-gap: 26px; }
@@ -1480,10 +1533,10 @@ button.chip:active { transform: scale(0.95); }
 .lp-foot {
   margin-top: clamp(56px, 10vw, 100px);
   text-align: center;
-  border-radius: 30px;
+  border-radius: var(--r-lg);
   padding: clamp(40px, 7vw, 68px) 24px;
   background: var(--amber);
-  border: 3px solid var(--border);
+  border: 2px solid var(--border);
   box-shadow: var(--e2);
   position: relative;
   overflow: hidden;
@@ -1499,10 +1552,10 @@ button.chip:active { transform: scale(0.95); }
   flex-wrap: wrap;
   margin-top: clamp(36px, 6vw, 56px);
   padding-top: 26px;
-  border-top: 2px solid var(--border);
+  border-top: 1px solid var(--hair);
 }
-.lp-footer .lp-logo { width: 32px; height: 32px; border-radius: 9px; }
-.lp-footer .lp-brand { font-size: 16px; }
+.lp-footer .lp-logo { width: 32px; height: 32px; border-radius: var(--r-sm); }
+.lp-footer .lp-brand { font-size: var(--t-body); }
 .lp-footer-note { font-size: var(--t-meta); font-weight: 600; color: var(--muted); }
 
 /* framer-motion owns `transform` on these cards (scroll-reveal + hover lift), so
@@ -1595,9 +1648,9 @@ button.chip:active { transform: scale(0.95); }
   display: grid;
   place-items: center;
   border: 2px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background: var(--amber);
-  font-size: 20px;
+  font-size: var(--t-h3);
   font-weight: 800;
   line-height: 1;
   transition: transform 0.25s var(--ease);
