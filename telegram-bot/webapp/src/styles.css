@@ -1080,7 +1080,9 @@ button.chip:active { transform: scale(0.95); }
   z-index: 45;
   display: inline-flex;
   border: 2px solid var(--border);
-  border-radius: var(--r-full);
+  /* Matches the buttons it sits beside in the landing nav — a pill next to an
+     8px button reads as an oversight, not a choice. */
+  border-radius: var(--r-btn);
   overflow: hidden;
   background: #fff;
   box-shadow: 3px 3px 0 0 var(--border);
