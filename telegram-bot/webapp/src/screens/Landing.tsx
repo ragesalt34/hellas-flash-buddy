@@ -8,13 +8,19 @@ import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { TempleMark, MeanderRule } from '../components/icons';
 
-const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
+// Now that these are solid colour blocks with text ON the fill, each hue has to
+// carry readable body copy. Checked against white: accent 4.9, violet 6.0,
+// mint 4.7, blue 6.8, coral 4.4. Two failed and were changed rather than
+// tinted down: ochre gives white only 2.3, so it takes ink text instead
+// (`light`), and dusty rose gave 4.1 — under the 4.5 floor for body size — so
+// the slot went to the Aegean blue that was otherwise unused in this grid.
+const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string; light?: boolean }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
   { icon: Layers, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
   { icon: Languages, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
-  { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },
+  { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text', light: true },
   { icon: Flame, color: 'var(--coral)', titleKey: 'landing.feature.streak.title', textKey: 'landing.feature.streak.text' },
-  { icon: BarChart3, color: 'var(--pink)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
+  { icon: BarChart3, color: 'var(--blue)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
 ];
 
 const STEPS: { titleKey: string; textKey: string }[] = [
@@ -290,15 +296,18 @@ export function Landing({
           return (
             <motion.div
               key={f.titleKey}
-              className="lp-feature"
+              className={`lp-feature${f.light ? ' is-light' : ''}`}
+              /* The card's own hue drives its fill; the shadow stays one shared
+                 colour for the whole set (see .lp-feature in styles.css). */
+              style={{ ['--c' as string]: f.color, rotate: [-1.2, 1, -0.8, 1.2, -1, 0.8][i] ?? 0 }}
               variants={rise}
               custom={i % 3}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: '-60px' }}
-              whileHover={{ y: -3 }}
+              whileHover={{ y: -4, rotate: 0 }}
             >
-              <span className="ic" style={{ background: `color-mix(in srgb, ${f.color} 18%, transparent)`, color: f.color }}>
+              <span className="ic">
                 <Icon size={24} strokeWidth={2.3} />
               </span>
               <h3>{t(f.titleKey)}</h3>

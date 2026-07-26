@@ -1524,30 +1524,55 @@ button.chip:active { transform: scale(0.95); }
 .lp-features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  /* wider than the other grids: these cards are tilted, so their corners eat
+     into the gap and 16px let neighbours almost touch */
+  gap: 24px;
   margin-top: clamp(48px, 8vw, 88px);
 }
 @media (max-width: 900px) { .lp-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .lp-features { grid-template-columns: 1fr; } }
+/* Solid colour-block cards, after the szigetfestival.com ticket grid.
+   The trick that keeps six hues from looking like a random template is that the
+   FILL varies per card while the SHADOW is one shared colour for the whole set
+   — that single repeated note is what reads as a deliberate system. Ink is the
+   unifier here rather than their magenta, because unlike a two-colour festival
+   palette ours has six earthy tones and any coloured unifier would collide with
+   one of them. Card hue arrives as --c from the component.
+   The slight alternating tilt comes back here too: it looked sloppy on hairline
+   cards, but on solid blocks it reads as stacked printed cards, which is
+   precisely why it works on the reference. */
 .lp-feature {
-  border-radius: var(--r-lg);
+  border-radius: var(--r-btn);
   padding: 26px;
-  background: var(--surface);
-  border: 1px solid var(--hair);
-  box-shadow: var(--e0);
+  background: var(--c, var(--accent));
+  border: 2px solid var(--border);
+  box-shadow: 8px 8px 0 0 var(--ink);
+  color: #fff;
   position: relative;
   overflow: hidden;
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
-.lp-feature:hover { transform: translate(-2px, -3px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
+.lp-feature:hover { box-shadow: 11px 11px 0 0 var(--ink); }
 .lp-feature .ic {
   width: 52px; height: 52px; border-radius: var(--r-md);
   display: grid; place-items: center;
-  border: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.22);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: #fff;
   margin-bottom: 16px;
 }
-.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; }
-.lp-feature p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
+.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; color: #fff; }
+.lp-feature p { margin: 0; font-size: var(--t-body); color: rgba(255, 255, 255, 0.92); font-weight: 500; line-height: 1.55; }
+/* Light fill (ochre): white copy sits at 2.3:1 on it, so this card flips to ink
+   — the same thing the reference does on its yellow cards. */
+.lp-feature.is-light { color: var(--ink); }
+.lp-feature.is-light h3 { color: var(--ink); }
+.lp-feature.is-light p { color: rgba(10, 10, 10, 0.78); }
+.lp-feature.is-light .ic {
+  background: rgba(10, 10, 10, 0.14);
+  border-color: rgba(10, 10, 10, 0.7);
+  color: var(--ink);
+}
 
 /* stats — an ink plate with texture, cell dividers and counting numbers */
 .lp-stats {
