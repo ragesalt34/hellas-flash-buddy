@@ -22,8 +22,13 @@
 [data-scheme='light'] {
   color-scheme: light;
 
-  --bg: #ffffff;
-  --bg-2: #ffffff;
+  /* Warm sand ground, white cards. Pure white on pure white gave the cards
+     nothing to sit on — they read as holes in the page rather than objects.
+     Kept far subtler than the festival reference that prompted it (that page is
+     a saturated peach): this is a study app people stare at daily, so the tint
+     only has to be enough for a white card to lift off it. */
+  --bg: #f7f3ea;
+  --bg-2: #f7f3ea;
   --text: #0a0a0a;
   --muted: #6b6b6b;
 
@@ -54,13 +59,14 @@
   --mint-lift: #5fa98f;
   --blue-lift: #7ba3cf;
 
-  /* flat surfaces — white panels, thick black borders do the work */
+  /* Cards stay pure white so they lift off the sand ground; the inset tone is
+     warmed to match it, otherwise grey insets look dirty against the page. */
   --surface: #ffffff;
-  --surface-2: #f5f5f5;
+  --surface-2: #efe9dc;
   --border: #0a0a0a;
   --border-strong: #0a0a0a;
   --top-edge: transparent;
-  --ring-track: #ececec;
+  --ring-track: #e5ddcd;
 
   /* kept for JSX/inline refs — flat solid colours, not gradients */
   --grad-brand: var(--accent);
@@ -95,6 +101,22 @@
   --e-blue: 6px 6px 0 0 var(--border);
   --e-warm: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
+
+  /* ---- Coloured shadows (tier A accents) ----
+     Borrowed from szigetfestival.com, where the whole page comes alive because
+     an element's shadow is thrown in a SATURATED colour rather than black — a
+     yellow button casts magenta, and the border and label share that magenta.
+     Adapted rather than copied: their scheme is two loud hues on peach, ours has
+     six muted ones, so the shadow takes the element's OWN accent while the
+     border stays ink for legibility. The 4px/5px offset is theirs too — very
+     slightly more vertical than horizontal, which reads as weight rather than a
+     mechanical 45°. Only elements that already carry a colour fill get these;
+     plain white surfaces keep the quiet --e0. */
+  --ec-accent: 4px 5px 0 0 var(--accent);
+  --ec-amber: 4px 5px 0 0 var(--amber);
+  --ec-mint: 4px 5px 0 0 var(--mint);
+  --ec-bad: 4px 5px 0 0 var(--bad);
+  --ec-accent-lg: 7px 8px 0 0 var(--accent);
 
   /* 14% was too faint to read as an edge once the shadows went; 20% gives the
      hairline actual definition without going back to a 2px black slab. */
@@ -141,9 +163,15 @@
   --r-lg: 22px;   /* cards, tiles, panels, sheets */
   --r-full: 999px;
   --r-xl: var(--r-lg); /* legacy alias — collapsed onto the scale */
+  /* Buttons and chips step off the pill and go nearly rectangular. The contrast
+     between sharp controls and soft cards is itself the effect — one radius on
+     everything is what made it look generic. Circles (speak button, option
+     letters, streak badge) and the progress bar stay round: those are shapes,
+     not scale steps. */
+  --r-btn: 8px;
 
-  --sk1: #efefef;
-  --sk2: #e0e0e0;
+  --sk1: #eee8db;
+  --sk2: #ddd4c2;
 
   --tg-text: var(--text);
   --tg-hint: var(--muted);
@@ -340,7 +368,7 @@ body::after {
 .chip {
   background: var(--surface-2);
   border: 2px solid var(--border);
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   padding: 7px 14px;
   font-size: var(--t-meta);
   font-weight: 700;
@@ -415,13 +443,13 @@ body::after {
   background: var(--marsala);
   border: 2px solid var(--border);
   color: #fff;
-  box-shadow: var(--e-blue);
+  box-shadow: var(--ec-amber);
 }
 .tile.feature:hover { border-color: var(--border); }
 .tile.feature.warm {
   background: var(--amber);
   color: #2a1e02;
-  box-shadow: var(--e-warm);
+  box-shadow: var(--ec-accent);
 }
 .tile.feature .tile-ic {
   width: 54px;
@@ -449,7 +477,7 @@ body::after {
 /* Tier A — the single main action per screen keeps the full weight. */
 .btn {
   border: 2px solid var(--border);
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   padding: 15px 22px;
   font-size: var(--t-body);
   font-weight: 700;
@@ -459,14 +487,14 @@ body::after {
   transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
   color: #fff;
   background: var(--ink);
-  box-shadow: var(--e-blue);
+  box-shadow: var(--ec-accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
-.btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--border); }
-.btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--border); }
+.btn:hover { transform: translate(-2px, -3px); box-shadow: var(--ec-accent-lg); }
+.btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 0 var(--accent); }
 .btn:disabled { opacity: 0.35; box-shadow: none; transform: none; }
 .btn-block { width: 100%; }
 /* Secondary action steps down a tier so the primary one clearly leads — but it
@@ -487,8 +515,10 @@ body::after {
 .btn.good {
   background: var(--mint);
   color: #ffffff;
-  box-shadow: var(--e-blue);
+  box-shadow: var(--ec-mint);
 }
+.btn.good:hover { box-shadow: 7px 8px 0 0 var(--mint); }
+.btn.good:active { box-shadow: 2px 2px 0 0 var(--mint); }
 
 /* ============ Progress bar ============ */
 .progress {
@@ -518,7 +548,7 @@ body::after {
   font-weight: 800;
   font-size: var(--t-meta);
   padding: 5px 12px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   background: var(--amber);
   border: 2px solid var(--border);
   color: var(--text);
@@ -638,7 +668,7 @@ body::after {
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   background: var(--mint);
   color: #fff;
   font-size: var(--t-micro);
@@ -692,9 +722,15 @@ body::after {
 .grade:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 0 var(--border); }
 .grade .e { font-size: var(--t-title); }
 .grade .gsub { font-size: var(--t-micro); font-weight: 600; opacity: 0.9; }
-.grade.g1 { background: var(--bad); }
-.grade.g2 { background: var(--amber); color: #2a1e02; }
-.grade.g3 { background: var(--mint); color: #fff; }
+.grade.g1 { background: var(--bad); box-shadow: var(--ec-bad); }
+.grade.g1:hover { box-shadow: 7px 8px 0 0 var(--bad); }
+.grade.g1:active { box-shadow: 1px 1px 0 0 var(--bad); }
+.grade.g2 { background: var(--amber); color: #2a1e02; box-shadow: var(--ec-amber); }
+.grade.g2:hover { box-shadow: 7px 8px 0 0 var(--amber); }
+.grade.g2:active { box-shadow: 1px 1px 0 0 var(--amber); }
+.grade.g3 { background: var(--mint); color: #fff; box-shadow: var(--ec-mint); }
+.grade.g3:hover { box-shadow: 7px 8px 0 0 var(--mint); }
+.grade.g3:active { box-shadow: 1px 1px 0 0 var(--mint); }
 
 /* ============ Vocab spoiler ============ */
 .vocab-word {
@@ -1308,7 +1344,7 @@ button.chip:active { transform: scale(0.95); }
 .lp-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
 .lp-btn {
   border: 2px solid var(--border);
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   padding: 15px 28px;
   font-family: inherit;
   font-size: var(--t-body);
@@ -1319,9 +1355,11 @@ button.chip:active { transform: scale(0.95); }
   gap: 9px;
   transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-.lp-btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--border); }
-.lp-btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 0 var(--border); }
-.lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
+.lp-btn:hover { transform: translate(-2px, -3px); box-shadow: 7px 8px 0 0 var(--border); }
+.lp-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 0 var(--border); }
+.lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--ec-accent); }
+.lp-btn.primary:hover { box-shadow: var(--ec-accent-lg); }
+.lp-btn.primary:active { box-shadow: 2px 2px 0 0 var(--accent); }
 /* Secondary action sits a tier below the primary CTA — same border, lighter
    shadow — so the pair has an obvious leader instead of two equal buttons. */
 /* Secondary CTA drops to a hairline so the primary one is unmistakably first. */
@@ -1521,7 +1559,7 @@ button.chip:active { transform: scale(0.95); }
   background-size: 22px 22px;
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
-  box-shadow: var(--e2);
+  box-shadow: var(--ec-accent-lg);
   padding: clamp(26px, 4vw, 44px) clamp(10px, 2vw, 24px);
 }
 .lp-stat { padding: 2px 12px; }
@@ -1555,12 +1593,12 @@ button.chip:active { transform: scale(0.95); }
   padding: clamp(40px, 7vw, 68px) 24px;
   background: var(--amber);
   border: 2px solid var(--border);
-  box-shadow: var(--e2);
+  box-shadow: var(--ec-accent-lg);
   position: relative;
   overflow: hidden;
 }
 .lp-foot h2 { font-family: var(--font-display); font-size: var(--t-h2); font-weight: 600; letter-spacing: -0.9px; margin: 0 0 22px; color: var(--text); }
-.lp-foot .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--e-blue); }
+.lp-foot .lp-btn.primary { background: var(--ink); color: #fff; box-shadow: var(--ec-accent); }
 
 .lp-footer {
   display: flex;
