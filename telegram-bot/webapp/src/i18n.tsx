@@ -141,6 +141,7 @@ const translations: Translations = {
     el: 'Δοκίμασέ το τώρα — πάτησε την κάρτα',
   },
   'landing.steps.title': { ru: 'Как это работает', el: 'Πώς λειτουργεί' },
+  'landing.features.title': { ru: 'Что внутри', el: 'Τι περιλαμβάνει' },
   'landing.step1.title': { ru: 'Выбери способ', el: 'Διάλεξε τρόπο' },
   'landing.step1.text': {
     ru: 'Тесты, карточки или словарь — начни с чего хочешь, без регистрации.',

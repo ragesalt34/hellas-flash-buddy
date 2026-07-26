@@ -290,6 +290,19 @@ export function Landing({
         ))}
       </section>
 
+      {/* Full-bleed dark band. The colour-block cards need it: saturated fills on
+          a light ground read as clip-art, which is exactly what the first
+          attempt looked like. */}
+      <div className="lp-band">
+      <motion.h2
+        className="lp-band-h"
+        variants={rise}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-60px' }}
+      >
+        {t('landing.features.title')}
+      </motion.h2>
       <section className="lp-features">
         {FEATURES.map((f, i) => {
           const Icon = f.icon;
@@ -298,8 +311,10 @@ export function Landing({
               key={f.titleKey}
               className={`lp-feature${f.light ? ' is-light' : ''}`}
               /* The card's own hue drives its fill; the shadow stays one shared
-                 colour for the whole set (see .lp-feature in styles.css). */
-              style={{ ['--c' as string]: f.color, rotate: [-1.2, 1, -0.8, 1.2, -1, 0.8][i] ?? 0 }}
+                 colour for the whole set (see .lp-feature in styles.css).
+                 A visible tilt reads as a deliberate stack — at 1° it just
+                 looked like the grid was crooked. */
+              style={{ ['--c' as string]: f.color, rotate: [-3, 2.5, -2, 3, -2.5, 2][i] ?? 0 }}
               variants={rise}
               custom={i % 3}
               initial="hidden"
@@ -316,6 +331,7 @@ export function Landing({
           );
         })}
       </section>
+      </div>
 
       <div className="lp-rule" aria-hidden="true">
         <MeanderRule />

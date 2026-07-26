@@ -117,6 +117,8 @@
   --ec-mint: 4px 5px 0 0 var(--mint);
   --ec-bad: 4px 5px 0 0 var(--bad);
   --ec-accent-lg: 7px 8px 0 0 var(--accent);
+  /* Deep wine — the one note under every colour-block card. Not a card fill. */
+  --shadow-unify: #8c2f4c;
 
   /* 14% was too faint to read as an edge once the shadows went; 20% gives the
      hairline actual definition without going back to a 2px black slab. */
@@ -1521,13 +1523,49 @@ button.chip:active { transform: scale(0.95); }
 .lp-step p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
 
 /* feature grid — fixed 3 columns on desktop so the last row never dangles */
+/* Full-bleed dark band behind the colour-block cards.
+   The first pass put saturated fills straight onto the sand ground with a black
+   shadow, and it looked like clip-art: on the reference those same blocks sit on
+   a deep teal, and their shadow is magenta — a colour from the palette, never
+   black. Both halves are needed; the cards alone are only half the recipe.
+   Rays are a repeating-conic-gradient rather than an image asset, so the band
+   costs nothing to ship. */
+.lp-band {
+  margin: clamp(48px, 8vw, 88px) calc(50% - 50vw) 0;
+  padding: clamp(44px, 6vw, 76px) max(22px, calc(50vw - 548px));
+  background-color: #123a44;
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 40%,
+    rgba(255, 255, 255, 0.035) 0deg 7deg,
+    transparent 7deg 14deg
+  );
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  overflow: hidden;
+}
+
+/* Section heading sits inside the dark band, in the brightest palette tone —
+   the reference does the same and it is what stops the block reading as a
+   loose pile of cards. */
+.lp-band-h {
+  font-family: var(--font-display);
+  font-size: var(--t-h2);
+  font-weight: 600;
+  letter-spacing: -1.1px;
+  text-align: center;
+  color: var(--amber);
+  margin: 0 auto clamp(30px, 4vw, 46px);
+  max-width: 1096px;
+}
+
 .lp-features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   /* wider than the other grids: these cards are tilted, so their corners eat
      into the gap and 16px let neighbours almost touch */
-  gap: 24px;
-  margin-top: clamp(48px, 8vw, 88px);
+  gap: clamp(24px, 3vw, 34px);
+  max-width: 1096px;
+  margin: 0 auto;
 }
 @media (max-width: 900px) { .lp-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .lp-features { grid-template-columns: 1fr; } }
@@ -1543,25 +1581,29 @@ button.chip:active { transform: scale(0.95); }
    precisely why it works on the reference. */
 .lp-feature {
   border-radius: var(--r-btn);
-  padding: 26px;
+  padding: 30px 28px 32px;
   background: var(--c, var(--accent));
   border: 2px solid var(--border);
-  box-shadow: 8px 8px 0 0 var(--ink);
+  /* One shared note under all six fills — never black, and deliberately a
+     colour that is NOT one of the card fills, so no card loses its shadow and
+     none gets a different one. (The reference does the same: its magenta is not
+     any ticket's colour.) */
+  box-shadow: 9px 9px 0 0 var(--shadow-unify);
   color: #fff;
   position: relative;
   overflow: hidden;
   transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
-.lp-feature:hover { box-shadow: 11px 11px 0 0 var(--ink); }
+.lp-feature:hover { box-shadow: 13px 13px 0 0 var(--shadow-unify); }
 .lp-feature .ic {
-  width: 52px; height: 52px; border-radius: var(--r-md);
+  width: 58px; height: 58px; border-radius: var(--r-md);
   display: grid; place-items: center;
   background: rgba(255, 255, 255, 0.22);
   border: 2px solid rgba(255, 255, 255, 0.85);
   color: #fff;
   margin-bottom: 16px;
 }
-.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; color: #fff; }
+.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-title); font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; color: #fff; }
 .lp-feature p { margin: 0; font-size: var(--t-body); color: rgba(255, 255, 255, 0.92); font-weight: 500; line-height: 1.55; }
 /* Light fill (ochre): white copy sits at 2.3:1 on it, so this card flips to ink
    — the same thing the reference does on its yellow cards. */
