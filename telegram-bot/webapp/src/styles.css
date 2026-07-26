@@ -1531,16 +1531,36 @@ button.chip:active { transform: scale(0.95); }
    Rays are a repeating-conic-gradient rather than an image asset, so the band
    costs nothing to ship. */
 .lp-band {
+  --fade: clamp(60px, 9vw, 130px); /* length of the dissolve at each edge */
   margin: clamp(48px, 8vw, 88px) calc(50% - 50vw) 0;
-  padding: clamp(44px, 6vw, 76px) max(22px, calc(50vw - 548px));
+  /* Pad past the faded zone as well, otherwise the heading and the top row of
+     cards sit in the half-transparent part. */
+  padding: calc(clamp(40px, 5vw, 64px) + var(--fade)) max(22px, calc(50vw - 548px));
   background-color: #123a44;
   background-image: repeating-conic-gradient(
     from 0deg at 50% 40%,
     rgba(255, 255, 255, 0.035) 0deg 7deg,
     transparent 7deg 14deg
   );
-  border-top: 2px solid var(--border);
-  border-bottom: 2px solid var(--border);
+  /* No hard edge at either end: the band dissolves into the sand instead of
+     starting with a horizontal seam. Two straight rules — or an angled cut —
+     both read as a slab dropped onto the page, because unlike the reference
+     (whose whole page is dark) this one has to hand back to a light section.
+     The mask fades the fill AND the rays together, so nothing shows a border. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade),
+    #000 calc(100% - var(--fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade),
+    #000 calc(100% - var(--fade)),
+    transparent 100%
+  );
   overflow: hidden;
 }
 
