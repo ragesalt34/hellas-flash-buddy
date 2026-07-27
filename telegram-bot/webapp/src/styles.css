@@ -169,6 +169,11 @@
      not scale steps. */
   --r-btn: 8px;
 
+  /* Hairline as tokens, so a theme can flip every ordinary border at once
+     (the brut theme turns all of them into 2px ink). */
+  --bd-w: 1px;
+  --bd-c: var(--hair);
+
   --sk1: #eee8db;
   --sk2: #ddd4c2;
 
@@ -177,6 +182,122 @@
   --tg-secondary-bg: var(--surface-2);
   --tg-section-bg: var(--surface);
   --surface-border: var(--border);
+}
+
+/* ============================================================
+   THEME: brut — the second look the user can pick (src/theme.ts).
+   Neo-brutalist: paper ground, 2px ink borders, hard offset shadows,
+   near-square corners, lime + terracotta, Inter for everything.
+
+   Implemented as token overrides rather than a parallel stylesheet: every
+   surface in this file already reads its colour, radius, border and shadow
+   from a custom property, so one block re-skins the whole app and the two
+   themes cannot drift apart.
+   ============================================================ */
+[data-theme='brut'] {
+  --bg: #f4f2ee;
+  --bg-2: #f4f2ee;
+  --surface: #ffffff;
+  --surface-2: #f0eee9;
+  --text: #111110;
+  --text-body: #1c1b19;
+  --muted: #6f6b64;
+
+  --ink: #111110;
+  --border: #111110;
+  --border-strong: #111110;
+
+  --accent: #e0523d;
+  --accent-2: #c33f2c;
+  --marsala: #e0523d;
+  --coral: #e0523d;
+  /* Lime replaces ochre as the secondary — it is the reference's second voice
+     and carries ink text at 15:1. */
+  --amber: #d9f21f;
+  --mint: #d9f21f;
+  --good: #2f8168;
+  /* Darker than --accent on purpose: white 16px body text sits at 3.9:1 on
+     the accent, under the 4.5 floor. Large surfaces keep the brighter tone. */
+  --bad: #b23a26;
+  --violet: #111110;
+  --blue: #111110;
+  --pink: #e0523d;
+  --purple: #111110;
+
+  /* Every ordinary border becomes a 2px ink rule. */
+  --bd-w: 2px;
+  --bd-c: var(--border);
+  --hair: var(--border);
+  --hair-hover: var(--border);
+
+  /* Hard offset shadows, no blur, always ink. */
+  --e0: 6px 6px 0 0 var(--border);
+  --e0-hover: 9px 9px 0 0 var(--border);
+  --e1: 6px 6px 0 0 var(--border);
+  --e2: 9px 9px 0 0 var(--border);
+  --e-blue: 6px 6px 0 0 var(--border);
+  --glow-coral: 6px 6px 0 0 var(--border);
+  --ec-accent: 6px 6px 0 0 var(--border);
+  --ec-amber: 6px 6px 0 0 var(--border);
+  --ec-mint: 6px 6px 0 0 var(--border);
+  --ec-bad: 6px 6px 0 0 var(--border);
+  --ec-accent-lg: 9px 9px 0 0 var(--border);
+
+  /* Corners go nearly square. --r-full stays: circles and the progress bar are
+     shapes, not scale steps. */
+  --r-sm: 2px;
+  --r-md: 2px;
+  --r-lg: 2px;
+  --r-btn: 2px;
+
+  --ring-track: #e4e0d8;
+  --sk1: #eceae4;
+  --sk2: #dcd8cf;
+
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* The landing was signed off in the soft look and is a separate surface from
+   the app, so the theme must not reach it. Custom properties inherit, so
+   restating the soft values on .landing walls it off from the block above. */
+[data-theme='brut'] .landing {
+  --bg: #f7f3ea;
+  --surface: #ffffff;
+  --surface-2: #efe9dc;
+  --text: #0a0a0a;
+  --text-body: #2a2a2a;
+  --muted: #6b6b6b;
+  --ink: #0a0a0a;
+  --border: #0a0a0a;
+  --accent: #c04a3d;
+  --accent-2: #a33a30;
+  --marsala: #c04a3d;
+  --coral: #bf5c3c;
+  --amber: #d6a129;
+  --mint: #2f8168;
+  --good: #2b7d5c;
+  --bad: #bf3f3c;
+  --violet: #645b9c;
+  --blue: #2f5d92;
+  --pink: #b06a6a;
+  --purple: #645b9c;
+  --bd-w: 1px;
+  --hair: color-mix(in srgb, var(--ink) 20%, transparent);
+  --hair-hover: color-mix(in srgb, var(--ink) 38%, transparent);
+  --bd-c: var(--hair);
+  --e0: 2px 2px 0 0 color-mix(in srgb, var(--ink) 20%, transparent);
+  --e0-hover: 4px 4px 0 0 color-mix(in srgb, var(--ink) 30%, transparent);
+  --e1: 4px 4px 0 0 var(--border);
+  --e2: 8px 8px 0 0 var(--border);
+  --ec-accent: 4px 5px 0 0 var(--accent);
+  --ec-accent-lg: 7px 8px 0 0 var(--accent);
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-btn: 8px;
+  --font-display: 'Rubik', 'Manrope', 'Onest', system-ui, sans-serif;
+  --font-body: 'Onest', 'Manrope', -apple-system, system-ui, sans-serif;
 }
 
 * {
@@ -292,7 +413,7 @@ body::after {
 .option,
 .spoiler {
   background: var(--surface);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   box-shadow: var(--e0);
 }
 
@@ -318,7 +439,7 @@ body::after {
   padding: 28px 24px;
   overflow: hidden;
   background: var(--surface);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   box-shadow: var(--e0);
   color: var(--text);
 }
@@ -418,7 +539,7 @@ body::after {
   border-radius: var(--r-md);
   background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: var(--accent);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
 }
 .tile .tile-t {
   font-weight: 700;
@@ -505,7 +626,7 @@ body::after {
   background: #fff;
   color: var(--text);
   box-shadow: var(--e0);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
 }
 .btn.secondary:hover {
   background: var(--surface-2);
@@ -527,7 +648,7 @@ body::after {
   height: 10px;
   border-radius: var(--r-full);
   background: var(--surface-2);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   overflow: hidden;
 }
 .progress > i {
@@ -578,7 +699,7 @@ body::after {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   display: grid;
   place-items: center;
   background: #fff;
@@ -627,7 +748,7 @@ body::after {
   font-weight: 800;
   background: var(--surface-2);
   color: var(--muted);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   transition: all 0.18s ease;
 }
 /* Tier B — an answered option is a coloured state, so it takes a real border. */
@@ -659,7 +780,7 @@ body::after {
   margin-top: 18px;
   padding: 18px 20px 20px;
   background: color-mix(in srgb, var(--mint) 8%, var(--surface));
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   border-radius: var(--r-md);
   box-shadow: var(--e0);
   color: var(--text);
@@ -692,7 +813,7 @@ body::after {
   padding: 14px 16px;
   border-radius: var(--r-md);
   background: var(--surface-2);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   font-size: var(--t-body);
   color: var(--muted);
   font-weight: 500;
@@ -790,7 +911,7 @@ body::after {
 .bar-row .lab { display: flex; justify-content: space-between; font-size: var(--t-body); font-weight: 700; margin-bottom: 8px; }
 .bar-row .lab .pc { color: var(--muted); font-weight: 600; }
 
-.history-item { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--hair); }
+.history-item { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: var(--bd-w) solid var(--bd-c); }
 .history-item:last-child { border-bottom: none; }
 .history-item .ic { font-size: var(--t-title); }
 .history-item .grow { flex: 1; }
@@ -820,7 +941,7 @@ body::after {
   align-items: center;
   gap: 6px;
   padding: 9px 16px 9px 12px;
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   border-radius: var(--r-full);
   background: #fff;
   color: var(--text);
@@ -881,7 +1002,7 @@ body::after {
 }
 .input {
   width: 100%;
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   border-radius: var(--r-md);
   padding: 13px 15px;
   font-family: inherit;
@@ -938,7 +1059,7 @@ button.chip:active { transform: scale(0.95); }
   margin: 0 auto 16px;
   border-radius: 50%;
   background: var(--surface-2);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   color: var(--accent);
 }
 
@@ -1210,7 +1331,7 @@ button.chip:active { transform: scale(0.95); }
     margin-top: 0;
     padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
     background: var(--surface);
-    border-top: 1px solid var(--hair);
+    border-top: var(--bd-w) solid var(--bd-c);
     display: flex;
     justify-content: center;
   }
@@ -1370,7 +1491,7 @@ button.chip:active { transform: scale(0.95); }
 .lp-btn.ghost {
   background: #fff;
   color: var(--text);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   box-shadow: var(--e0);
 }
 .lp-btn.ghost:hover { box-shadow: var(--e0-hover); border-color: var(--hair-hover); transform: translate(-2px, -2px); }
@@ -1496,7 +1617,7 @@ button.chip:active { transform: scale(0.95); }
   border-radius: var(--r-lg);
   padding: 26px;
   background: var(--surface);
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   box-shadow: var(--e0);
   transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
@@ -1545,7 +1666,7 @@ button.chip:active { transform: scale(0.95); }
   border-radius: var(--r-lg);
   padding: 26px;
   background: color-mix(in srgb, var(--c, var(--accent)) 9%, var(--surface));
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   box-shadow: var(--e0);
   position: relative;
   overflow: hidden;
@@ -1623,7 +1744,7 @@ button.chip:active { transform: scale(0.95); }
   flex-wrap: wrap;
   margin-top: clamp(36px, 6vw, 56px);
   padding-top: 26px;
-  border-top: 1px solid var(--hair);
+  border-top: var(--bd-w) solid var(--bd-c);
 }
 .lp-footer .lp-logo { width: 32px; height: 32px; border-radius: var(--r-sm); }
 .lp-footer .lp-brand { font-size: var(--t-body); }
@@ -1689,7 +1810,7 @@ button.chip:active { transform: scale(0.95); }
   margin: 0 0 22px;
 }
 .lp-faq-item {
-  border: 1px solid var(--hair);
+  border: var(--bd-w) solid var(--bd-c);
   border-radius: var(--r-md);
   background: var(--surface);
   box-shadow: var(--e0);
@@ -1767,4 +1888,268 @@ button.chip:active { transform: scale(0.95); }
     0%, 100% { translate: 0 0; }
     50% { translate: 0 -7px; }
   }
+}
+
+/* ============================================================
+   THEME brut — structural rules
+   Only what token overrides cannot express: the sidebar changes shape, the
+   tiles become rows, and a few controls that were pills go square.
+   ============================================================ */
+
+/* --- Sidebar becomes a bordered card with edge-to-edge active rows --- */
+@media (min-width: 900px) {
+  [data-theme='brut'] .bottomnav-inner {
+    padding: 0;
+    border-width: 2px;
+    border-radius: var(--r-lg);
+    box-shadow: none;
+    overflow: hidden;
+    gap: 0;
+  }
+  [data-theme='brut'] .nav-brand {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 18px 0;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: var(--ink);
+  }
+  /* Active item spans the full width of the rail, as in the reference — the
+     rounded inset pill is what made it read as a phone tab bar. */
+  [data-theme='brut'] .navbtn {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 13px 18px;
+    border-radius: 0;
+  }
+  [data-theme='brut'] .navbtn .nav-l { font-size: 14px; letter-spacing: 0; }
+  [data-theme='brut'] .navbtn.active { color: #fff; }
+  [data-theme='brut'] .navbtn.active::before {
+    border-radius: 0;
+    background: var(--accent);
+  }
+  [data-theme='brut'] .bottomnav-inner .lang-switch,
+  [data-theme='brut'] .bottomnav-inner .theme-switch {
+    margin: 0;
+    border-top: 2px solid var(--border);
+    border-radius: 0;
+  }
+}
+
+/* --- Learning tiles read as full-width rows with a lime icon block --- */
+[data-theme='brut'] .tile .tile-ic {
+  background: var(--amber);
+  border-width: 2px;
+  color: var(--ink);
+}
+[data-theme='brut'] .tile.feature .tile-ic {
+  background: transparent;
+  border-color: var(--border);
+  color: #fff;
+}
+[data-theme='brut'] .tile.feature.warm .tile-ic { color: var(--ink); }
+[data-theme='brut'] .tile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 9px 9px 0 0 var(--border);
+}
+[data-theme='brut'] .tile:active {
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0 0 var(--border);
+}
+
+/* --- Controls that were pills go square, to match the borders --- */
+[data-theme='brut'] .chip,
+[data-theme='brut'] .lang-switch,
+[data-theme='brut'] .theme-switch,
+[data-theme='brut'] .auth-tabs,
+[data-theme='brut'] .topbar .counter,
+[data-theme='brut'] .answer-tag,
+[data-theme='brut'] .gate-back { border-radius: var(--r-btn); }
+[data-theme='brut'] .progress,
+[data-theme='brut'] .progress > i { border-radius: 0; }
+[data-theme='brut'] .progress { border-width: 2px; height: 14px; }
+
+/* Circles stay circles: the pronounce button, option letters and the streak
+   badge are shapes, and squaring them would just look broken. */
+
+/* --- Type: Inter is a UI face, so the display sizes want less negative
+   tracking than Rubik did, and headings sit better a notch heavier. --- */
+[data-theme='brut'] .hero h1,
+[data-theme='brut'] .qtext,
+[data-theme='brut'] .vocab-word,
+[data-theme='brut'] .result .ttl,
+[data-theme='brut'] .auth-title,
+[data-theme='brut'] .sheet-headline {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+[data-theme='brut'] .section-label { letter-spacing: 0.09em; }
+
+/* --- The theme switch itself (both themes) --- */
+.theme-switch {
+  display: inline-flex;
+  border: var(--bd-w) solid var(--bd-c);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  background: var(--surface);
+}
+.theme-switch button {
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  padding: 7px 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.theme-switch button.active { background: var(--ink); color: #fff; }
+@media (min-width: 900px) {
+  .bottomnav-inner .theme-switch {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+  }
+}
+
+/* Row-shaped nav items need a wider rail than the icon-over-label stack the
+   soft theme uses — at 112px the labels "Карточки" and "Прогресс" were clipped.
+   The content column has to move with it or it slides under the sidebar. */
+@media (min-width: 900px) {
+  [data-theme='brut'] .bottomnav { width: 236px; padding: 22px 0 22px 22px; }
+  [data-theme='brut'] .bottomnav-inner { width: 196px; }
+  [data-theme='brut'] .app { margin-left: max(258px, calc((100vw - 720px) / 2)); }
+  [data-theme='brut'] .navbtn .nav-l { white-space: nowrap; }
+}
+@media (min-width: 1200px) {
+  [data-theme='brut'] .app { margin-left: max(258px, calc((100vw - 820px) / 2)); }
+}
+/* The tilted amber sticker belongs to the soft look; brut has no tilts. */
+[data-theme='brut'] .hero-badge { transform: none; background: var(--amber); }
+
+/* ---- brut: bringing the app screens up to the approved mock (_home2.html) ----
+   All CSS: the markup in Home.tsx already has the right structure (the feature
+   and stats tiles span two columns, the two middle ones sit side by side, and
+   arrows are present on exactly the rows the mock shows them on). */
+
+/* The name is plain heavy type here, not the soft theme's coloured chip. */
+[data-theme='brut'] .highlight {
+  background: transparent;
+  color: var(--ink);
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Small tiles become rows. `.tile-ic`, `.tile-t` and `.tile-d` are three
+   siblings with no wrapper, so flex-row would string them out on one line —
+   a two-column grid puts the icon beside a stacked title/description instead,
+   with no change to the JSX. */
+[data-theme='brut'] .tile:not(.feature):not(.span2) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 18px;
+  row-gap: 2px;
+  min-height: 0;
+  padding: 20px 22px;
+}
+[data-theme='brut'] .tile:not(.feature):not(.span2) .tile-ic {
+  grid-row: 1 / span 2;
+  width: 54px;
+  height: 54px;
+}
+[data-theme='brut'] .tile:not(.feature):not(.span2) .tile-ic svg { width: 24px; height: 24px; }
+[data-theme='brut'] .tile:not(.feature):not(.span2) .tile-t {
+  grid-column: 2;
+  align-self: end;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+[data-theme='brut'] .tile:not(.feature):not(.span2) .tile-d {
+  grid-column: 2;
+  align-self: start;
+}
+
+/* Hero chips: squared off, 2px rule, roomier — as in the mock. */
+[data-theme='brut'] .chip {
+  border-width: 2px;
+  padding: 10px 16px;
+  font-size: 14px;
+  background: var(--surface);
+}
+
+/* Ionic capital over a lime block, drawn rather than photographed. Both are
+   pseudo-elements so Home.tsx stays untouched; they sit behind the copy and
+   disappear once the hero is too narrow to hold them. */
+[data-theme='brut'] .hero { overflow: hidden; }
+[data-theme='brut'] .hero > * { position: relative; z-index: 1; }
+[data-theme='brut'] .hero::before {
+  content: '';
+  position: absolute;
+  right: 132px;
+  top: 34px;
+  width: 132px;
+  height: 132px;
+  background: var(--amber);
+  z-index: 0;
+}
+[data-theme='brut'] .hero::after {
+  content: '';
+  position: absolute;
+  right: 26px;
+  top: -18px;
+  width: 210px;
+  height: 260px;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: top right;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 300' fill='none' stroke='%232b2b2b' stroke-width='2.1'%3E%3Crect x='26' y='8' width='188' height='16' fill='%23fff'/%3E%3Crect x='34' y='24' width='172' height='12' fill='%23fdfdfd'/%3E%3Cpath d='M40 36h160v14H40z' fill='%23fff'/%3E%3Cpath d='M36 50h168c-6 10-14 16-24 18H60c-10-2-18-8-24-18z' fill='%23fafafa'/%3E%3Ccircle cx='66' cy='86' r='30' fill='%23fff'/%3E%3Ccircle cx='66' cy='86' r='21' fill='%23f7f7f7'/%3E%3Ccircle cx='66' cy='86' r='12' fill='%23fff'/%3E%3Ccircle cx='66' cy='86' r='5' fill='%23e9e9e9'/%3E%3Ccircle cx='174' cy='86' r='30' fill='%23fff'/%3E%3Ccircle cx='174' cy='86' r='21' fill='%23f7f7f7'/%3E%3Ccircle cx='174' cy='86' r='12' fill='%23fff'/%3E%3Ccircle cx='174' cy='86' r='5' fill='%23e9e9e9'/%3E%3Cpath d='M96 68h48c4 12 4 26 0 38H96c-4-12-4-26 0-38z' fill='%23fff'/%3E%3Cpath d='M104 74c8 4 24 4 32 0M104 82c8 4 24 4 32 0M104 90c8 4 24 4 32 0M104 98c8 4 24 4 32 0'/%3E%3Cpath d='M78 118h84l-6 14H84z' fill='%23fbfbfb'/%3E%3Cpath d='M86 132h68v168H86z' fill='%23fff'/%3E%3Cpath d='M96 132v168M110 132v168M124 132v168M138 132v168M148 132v168'/%3E%3C/svg%3E");
+}
+/* The hero badge is the brand meander; with the capital present it would be
+   two ornaments fighting, so it steps aside in this theme. */
+[data-theme='brut'] .hero-badge { display: none; }
+@media (max-width: 1150px) {
+  [data-theme='brut'] .hero::before,
+  [data-theme='brut'] .hero::after { display: none; }
+  [data-theme='brut'] .hero-badge { display: grid; }
+}
+
+/* Lime is a light fill — anything sitting on it takes ink text. White on lime
+   measured 1.26:1, i.e. invisible: it hit the correct-answer option, the
+   "Ответ" tag, the "Знаю" grade button and the .good button. */
+[data-theme='brut'] .option.correct,
+[data-theme='brut'] .grade.g3,
+[data-theme='brut'] .btn.good,
+[data-theme='brut'] .answer-tag {
+  color: var(--ink);
+}
+[data-theme='brut'] .option.correct .lt {
+  background: rgba(17, 17, 16, 0.16);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Mobile: the nav is a bottom bar, and the theme switch was landing inside it
+   as a sixth flex item — that squeezed the five nav buttons down to 44px. It
+   goes fixed alongside the language pill instead, matching how .lang-switch
+   already escapes the bar. */
+@media (max-width: 899px) {
+  .theme-switch {
+    position: fixed;
+    top: 14px;
+    left: 105px;
+    z-index: 45;
+    box-shadow: 3px 3px 0 0 var(--border);
+  }
+  [data-theme='brut'] .theme-switch { box-shadow: 4px 4px 0 0 var(--border); }
 }

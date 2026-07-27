@@ -5,6 +5,7 @@ import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
+import { ThemeSwitch } from './components/ThemeSwitch';
 
 /** Load a code-split chunk, surviving a failed fetch instead of showing nothing.
  *
@@ -184,6 +185,7 @@ export function App() {
             );
           })}
           <LanguageSwitch />
+          <ThemeSwitch />
         </div>
       </nav>
     </>

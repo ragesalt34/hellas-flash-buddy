@@ -15,6 +15,11 @@ const translations: Translations = {
   'nav.close': { ru: 'Закрыть', el: 'Κλείσιμο' },
   'nav.menu': { ru: 'Меню', el: 'Μενού' },
 
+  // ---- Theme (visual style, not light/dark — see src/theme.ts) ----
+  'theme.aria': { ru: 'Оформление', el: 'Εμφάνιση' },
+  'theme.soft': { ru: 'Мягкое оформление', el: 'Απαλή εμφάνιση' },
+  'theme.brut': { ru: 'Контрастное оформление', el: 'Έντονη εμφάνιση' },
+
   // ---- Common ----
   'common.error': { ru: 'Ошибка соединения.', el: 'Σφάλμα σύνδεσης.' },
   'common.pronounce': { ru: 'Произношение', el: 'Προφορά' },
