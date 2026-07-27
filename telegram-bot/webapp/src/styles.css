@@ -99,7 +99,6 @@
   --e1: 4px 4px 0 0 var(--border);
   --e2: 8px 8px 0 0 var(--border);
   --e-blue: 6px 6px 0 0 var(--border);
-  --e-warm: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
 
   /* ---- Coloured shadows (tier A accents) ----
@@ -465,8 +464,11 @@ body::after {
 }
 .tile.feature .tile-d { color: rgba(255, 255, 255, 0.9); }
 .tile.feature.warm .tile-d { color: rgba(42, 30, 2, 0.75); }
-.tile.feature .grow { flex: 1; }
-.tile.feature .arrow { display: grid; place-items: center; }
+/* Not scoped to .feature: the Stats tile is a plain .tile.span2 laid out in a
+   row, and without flex:1 on .grow its arrow sat glued to the text instead of
+   at the far edge like every other row tile. */
+.tile .grow { flex: 1; }
+.tile .arrow { display: grid; place-items: center; }
 
 .stagger > * {
   opacity: 0;

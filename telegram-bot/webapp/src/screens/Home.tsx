@@ -1,4 +1,4 @@
-import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff, UserRound, LogOut } from 'lucide-react';
+import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -9,21 +9,25 @@ import type { View } from '../App';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
-  const { data: me, err } = useCached(`me:${language}`, api.me);
+  const { data: me, err, reload } = useCached(`me:${language}`, api.me);
 
   const { show: showStreak, dismiss: dismissStreak } = useStreakCelebration(me?.streak ?? 0);
 
+  // The raw message ("API 401: {\"error\":\"unauthorized\"}") used to be printed
+  // here — a developer string in the user's face, and with no way out of the
+  // screen. useCached logs the detail to the console instead; this offers a
+  // retry, which matters because the most common cause is the API host waking
+  // from sleep and succeeding on the second try.
   if (err)
     return (
       <div className="empty fade-in">
         <div className="e">
           <WifiOff size={52} strokeWidth={1.8} />
         </div>
-        <p>
-          {t('common.error')}
-          <br />
-          <span className="muted">{err}</span>
-        </p>
+        <p>{t('common.error')}</p>
+        <button className="btn" onClick={() => { haptic(); reload(); }}>
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
+        </button>
       </div>
     );
   if (!me) return <Loading />;

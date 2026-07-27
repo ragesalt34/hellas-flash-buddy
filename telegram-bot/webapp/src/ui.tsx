@@ -11,6 +11,9 @@ import { useLanguage } from './i18n';
 export function useCached<T>(key: string, fetcher: () => Promise<T>) {
   const [data, setData] = useState<T | undefined>(() => cacheGet<T>(key));
   const [err, setErr] = useState<string | null>(null);
+  // Bumped by reload() to re-run the effect — lets an error state offer a retry
+  // instead of dead-ending the user on a screen they cannot leave.
+  const [nonce, setNonce] = useState(0);
   useEffect(() => {
     let alive = true;
     // Re-sync from cache for the NEW key immediately (e.g. a language switch
@@ -27,14 +30,18 @@ export function useCached<T>(key: string, fetcher: () => Promise<T>) {
       })
       .catch((e) => {
         if (!alive) return;
+        // The raw message is "API 401: {...}" — useful in the console, never in
+        // the interface. Screens show a translated line; this keeps the detail
+        // reachable for debugging without putting it in front of the user.
+        console.error(`useCached(${key}) failed:`, e);
         if (cacheGet<T>(key) === undefined) setErr(e?.message ?? String(e));
       });
     return () => {
       alive = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-  return { data, err };
+  }, [key, nonce]);
+  return { data, err, reload: () => setNonce((n) => n + 1) };
 }
 
 export function Skeleton({ h, w, r, style }: { h: number; w?: string; r?: number; style?: React.CSSProperties }) {
