@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
+import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, Eye, Check, Frown, Smile, Target, Volume2 } from 'lucide-react';
 import { api, VocabCard } from '../api';
 import { haptic } from '../telegram';
-import { speakGreek, prefetchGreek } from '../speech';
+import { speakGreek, prefetchGreek, hasGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
@@ -106,16 +106,22 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <div className="card">
+      {/* Topic → word → reveal. The word is the hero of this screen and is sized
+          like one; the topic tag above it stops the card opening on a lone word
+          floating in white space. */}
+      <div className="card vocab-card">
+        <span className="vocab-topic">{t(`topic.${card.topic}`)}</span>
         <div className="speak-row center">
           <div className="vocab-word">{card.word}</div>
-          <button
-            className="speak-btn"
-            aria-label={t('common.pronounce')}
-            onClick={() => { haptic(); speakGreek(card.word, `vocab_${card.id}`); }}
-          >
-            <Volume2 size={17} strokeWidth={2.3} />
-          </button>
+          {hasGreek(card.word) && (
+            <button
+              className="speak-btn"
+              aria-label={t('common.pronounce')}
+              onClick={() => { haptic(); speakGreek(card.word, `vocab_${card.id}`); }}
+            >
+              <Volume2 size={17} strokeWidth={2.3} />
+            </button>
+          )}
         </div>
         <div
           className={`spoiler${revealed ? '' : ' hidden'}`}
@@ -127,13 +133,21 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             }
           }}
         >
-          <div className="reveal">
-            <div className="ru">{card.ru}</div>
-            {card.note && <div className="note">{card.note}</div>}
-          </div>
-          {!revealed && (
-            <div className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-              <MousePointerClick size={14} strokeWidth={2.4} /> {t('vocab.tapToReveal')}
+          {revealed ? (
+            /* Same shape as the flashcard answer — tag, then the payload. */
+            <div className="reveal">
+              <span className="answer-tag">
+                <Check size={13} strokeWidth={3.2} /> {t('vocab.translationLabel')}
+              </span>
+              <div className="ru">{card.ru}</div>
+              {card.note && <div className="note">{card.note}</div>}
+            </div>
+          ) : (
+            /* Blurring the real text used to leave a grey smudge that read as a
+               rendering fault. An explicit prompt is clearer and cannot be
+               squinted at to cheat the recall. */
+            <div className="tap">
+              <Eye size={17} strokeWidth={2.2} /> {t('vocab.tapToReveal')}
             </div>
           )}
         </div>

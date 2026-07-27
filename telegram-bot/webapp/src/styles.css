@@ -732,25 +732,67 @@ body::after {
 .grade.g3:hover { box-shadow: 7px 8px 0 0 var(--mint); }
 .grade.g3:active { box-shadow: 1px 1px 0 0 var(--mint); }
 
-/* ============ Vocab spoiler ============ */
+/* ============ Vocab card ============
+   Was a large white box with a modest centred word and a grey blur under it —
+   no composition, just content adrift. Now it reads top to bottom: what kind of
+   word this is, the word itself at hero size, then the reveal. */
+.vocab-card { padding: 20px 22px 22px; }
+.vocab-topic {
+  display: block;
+  text-align: center;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--muted);
+}
 .vocab-word {
   font-family: var(--font-display);
-  font-size: var(--t-h2);
+  /* The Greek word is the whole point of this screen, so it takes the hero step
+     rather than a section-heading one. `anywhere` keeps the long compounds
+     (μεταρρύθμιση, Εμφύλιος πόλεμος) inside the card. */
+  font-size: var(--t-hero);
   font-weight: 700;
   text-align: center;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  margin: 14px 0 22px;
+  letter-spacing: -1.4px;
+  line-height: 1.02;
+  margin: 10px 0 4px;
   color: var(--text);
   max-width: 100%;
   overflow-wrap: anywhere;
 }
-.spoiler { text-align: center; border-radius: var(--r-md); padding: 22px 16px; cursor: pointer; }
-.spoiler .reveal { transition: filter 0.3s ease; }
-.spoiler.hidden .reveal { filter: blur(11px); }
+
+/* Reveal panel. Hidden state is an explicit invitation, not blurred text: the
+   blur left a grey smudge that looked like a rendering fault, and squinting at
+   it defeated the recall anyway. Both states share a min-height so revealing
+   does not make the card jump. */
+.spoiler {
+  text-align: center;
+  border-radius: var(--r-md);
+  padding: 22px 16px;
+  cursor: pointer;
+  min-height: 132px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--mint) 7%, var(--surface));
+}
+.spoiler.hidden {
+  background: var(--surface-2);
+  border-style: dashed;
+  border-color: var(--hair-hover);
+}
+.spoiler.hidden:hover { background: color-mix(in srgb, var(--ink) 6%, var(--surface-2)); }
 .spoiler .ru { font-size: var(--t-title); font-weight: 800; color: var(--text); }
 .spoiler .note { font-size: var(--t-body); color: var(--muted); margin-top: 8px; font-weight: 500; }
-.spoiler .tap { font-size: var(--t-meta); color: var(--muted); margin-top: 12px; font-weight: 600; }
+.spoiler .tap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--t-body);
+  color: var(--muted);
+  font-weight: 600;
+}
+.spoiler .reveal .answer-tag { margin-bottom: 12px; }
 
 /* ============ Result + Ring ============ */
 .result { text-align: center; padding: 32px 24px; border-radius: var(--r-lg); }
