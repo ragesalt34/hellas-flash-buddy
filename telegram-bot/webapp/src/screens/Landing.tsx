@@ -8,17 +8,15 @@ import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { TempleMark, MeanderRule } from '../components/icons';
 
-// Now that these are solid colour blocks with text ON the fill, each hue has to
-// carry readable body copy. Checked against white: accent 4.9, violet 6.0,
-// mint 4.7, blue 6.8, coral 4.4. Two failed and were changed rather than
-// tinted down: ochre gives white only 2.3, so it takes ink text instead
-// (`light`), and dusty rose gave 4.1 — under the 4.5 floor for body size — so
-// the slot went to the Aegean blue that was otherwise unused in this grid.
-const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string; light?: boolean }[] = [
+// Each card's hue only tints its background and colours its icon, so all six
+// keep ink text and no contrast juggling is needed. (Aegean blue took the slot
+// that used to be dusty rose — it reads more distinctly next to the two warm
+// reds, and it was otherwise unused in this grid.)
+const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
   { icon: Layers, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
   { icon: Languages, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
-  { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text', light: true },
+  { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },
   { icon: Flame, color: 'var(--coral)', titleKey: 'landing.feature.streak.title', textKey: 'landing.feature.streak.text' },
   { icon: BarChart3, color: 'var(--blue)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
 ];
@@ -290,12 +288,8 @@ export function Landing({
         ))}
       </section>
 
-      {/* Full-bleed dark band. The colour-block cards need it: saturated fills on
-          a light ground read as clip-art, which is exactly what the first
-          attempt looked like. */}
-      <div className="lp-band">
       <motion.h2
-        className="lp-band-h"
+        className="lp-steps-h"
         variants={rise}
         initial="hidden"
         whileInView="show"
@@ -309,18 +303,17 @@ export function Landing({
           return (
             <motion.div
               key={f.titleKey}
-              className={`lp-feature${f.light ? ' is-light' : ''}`}
-              /* The card's own hue drives its fill; the shadow stays one shared
-                 colour for the whole set (see .lp-feature in styles.css).
-                 A visible tilt reads as a deliberate stack — at 1° it just
-                 looked like the grid was crooked. */
-              style={{ ['--c' as string]: f.color, rotate: [-3, 2.5, -2, 3, -2.5, 2][i] ?? 0 }}
+              className="lp-feature"
+              /* --c tints the card and colours its icon. Solid fills needed a
+                 dark ground to work; on the sand they read as clip-art, so the
+                 hue stays a wash and the tilt is gone with them. */
+              style={{ ['--c' as string]: f.color }}
               variants={rise}
               custom={i % 3}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: '-60px' }}
-              whileHover={{ y: -4, rotate: 0 }}
+              whileHover={{ y: -3 }}
             >
               <span className="ic">
                 <Icon size={24} strokeWidth={2.3} />
@@ -331,7 +324,6 @@ export function Landing({
           );
         })}
       </section>
-      </div>
 
       <div className="lp-rule" aria-hidden="true">
         <MeanderRule />

@@ -117,8 +117,6 @@
   --ec-mint: 4px 5px 0 0 var(--mint);
   --ec-bad: 4px 5px 0 0 var(--bad);
   --ec-accent-lg: 7px 8px 0 0 var(--accent);
-  /* Deep wine — the one note under every colour-block card. Not a card fill. */
-  --shadow-unify: #8c2f4c;
 
   /* 14% was too faint to read as an edge once the shadows went; 20% gives the
      hairline actual definition without going back to a 2px black slab. */
@@ -1523,119 +1521,45 @@ button.chip:active { transform: scale(0.95); }
 .lp-step p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
 
 /* feature grid — fixed 3 columns on desktop so the last row never dangles */
-/* Full-bleed dark band behind the colour-block cards.
-   The first pass put saturated fills straight onto the sand ground with a black
-   shadow, and it looked like clip-art: on the reference those same blocks sit on
-   a deep teal, and their shadow is magenta — a colour from the palette, never
-   black. Both halves are needed; the cards alone are only half the recipe.
-   Rays are a repeating-conic-gradient rather than an image asset, so the band
-   costs nothing to ship. */
-.lp-band {
-  --fade: clamp(60px, 9vw, 130px); /* length of the dissolve at each edge */
-  margin: clamp(48px, 8vw, 88px) calc(50% - 50vw) 0;
-  /* Pad past the faded zone as well, otherwise the heading and the top row of
-     cards sit in the half-transparent part. */
-  padding: calc(clamp(40px, 5vw, 64px) + var(--fade)) max(22px, calc(50vw - 548px));
-  background-color: #123a44;
-  background-image: repeating-conic-gradient(
-    from 0deg at 50% 40%,
-    rgba(255, 255, 255, 0.035) 0deg 7deg,
-    transparent 7deg 14deg
-  );
-  /* No hard edge at either end: the band dissolves into the sand instead of
-     starting with a horizontal seam. Two straight rules — or an angled cut —
-     both read as a slab dropped onto the page, because unlike the reference
-     (whose whole page is dark) this one has to hand back to a light section.
-     The mask fades the fill AND the rays together, so nothing shows a border. */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 var(--fade),
-    #000 calc(100% - var(--fade)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 var(--fade),
-    #000 calc(100% - var(--fade)),
-    transparent 100%
-  );
-  overflow: hidden;
-}
-
-/* Section heading sits inside the dark band, in the brightest palette tone —
-   the reference does the same and it is what stops the block reading as a
-   loose pile of cards. */
-.lp-band-h {
-  font-family: var(--font-display);
-  font-size: var(--t-h2);
-  font-weight: 600;
-  letter-spacing: -1.1px;
-  text-align: center;
-  color: var(--amber);
-  margin: 0 auto clamp(30px, 4vw, 46px);
-  max-width: 1096px;
-}
-
 .lp-features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* wider than the other grids: these cards are tilted, so their corners eat
-     into the gap and 16px let neighbours almost touch */
-  gap: clamp(24px, 3vw, 34px);
-  max-width: 1096px;
-  margin: 0 auto;
+  gap: 16px;
+  margin-top: clamp(20px, 3vw, 30px);
 }
 @media (max-width: 900px) { .lp-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .lp-features { grid-template-columns: 1fr; } }
-/* Solid colour-block cards, after the szigetfestival.com ticket grid.
-   The trick that keeps six hues from looking like a random template is that the
-   FILL varies per card while the SHADOW is one shared colour for the whole set
-   — that single repeated note is what reads as a deliberate system. Ink is the
-   unifier here rather than their magenta, because unlike a two-colour festival
-   palette ours has six earthy tones and any coloured unifier would collide with
-   one of them. Card hue arrives as --c from the component.
-   The slight alternating tilt comes back here too: it looked sloppy on hairline
-   cards, but on solid blocks it reads as stacked printed cards, which is
-   precisely why it works on the reference. */
+
+/* Tinted cards, not solid colour blocks.
+   Solid fills were tried after the szigetfestival.com ticket grid and needed a
+   dark full-bleed band under them to work — saturated blocks on the sand ground
+   read as clip-art. The band went (it dominated the page and the sunburst was a
+   festival device this product has no business borrowing), so the fills come
+   down with it: the hue now only washes the card and colours the icon. That
+   keeps the six-colour set without any of it shouting, and every card can hold
+   plain ink text with no per-hue contrast juggling.
+   Hue arrives as --c from the component. */
 .lp-feature {
-  border-radius: var(--r-btn);
-  padding: 30px 28px 32px;
-  background: var(--c, var(--accent));
-  border: 2px solid var(--border);
-  /* One shared note under all six fills — never black, and deliberately a
-     colour that is NOT one of the card fills, so no card loses its shadow and
-     none gets a different one. (The reference does the same: its magenta is not
-     any ticket's colour.) */
-  box-shadow: 9px 9px 0 0 var(--shadow-unify);
-  color: #fff;
+  border-radius: var(--r-lg);
+  padding: 26px;
+  background: color-mix(in srgb, var(--c, var(--accent)) 9%, var(--surface));
+  border: 1px solid var(--hair);
+  box-shadow: var(--e0);
   position: relative;
   overflow: hidden;
-  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
-.lp-feature:hover { box-shadow: 13px 13px 0 0 var(--shadow-unify); }
+.lp-feature:hover { transform: translate(-2px, -3px); border-color: var(--hair-hover); box-shadow: var(--e0-hover); }
 .lp-feature .ic {
-  width: 58px; height: 58px; border-radius: var(--r-md);
+  width: 52px; height: 52px; border-radius: var(--r-md);
   display: grid; place-items: center;
-  background: rgba(255, 255, 255, 0.22);
-  border: 2px solid rgba(255, 255, 255, 0.85);
-  color: #fff;
+  background: color-mix(in srgb, var(--c, var(--accent)) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c, var(--accent)) 45%, transparent);
+  color: var(--c, var(--accent));
   margin-bottom: 16px;
 }
-.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-title); font-weight: 700; margin: 0 0 8px; letter-spacing: -0.4px; color: #fff; }
-.lp-feature p { margin: 0; font-size: var(--t-body); color: rgba(255, 255, 255, 0.92); font-weight: 500; line-height: 1.55; }
-/* Light fill (ochre): white copy sits at 2.3:1 on it, so this card flips to ink
-   — the same thing the reference does on its yellow cards. */
-.lp-feature.is-light { color: var(--ink); }
-.lp-feature.is-light h3 { color: var(--ink); }
-.lp-feature.is-light p { color: rgba(10, 10, 10, 0.78); }
-.lp-feature.is-light .ic {
-  background: rgba(10, 10, 10, 0.14);
-  border-color: rgba(10, 10, 10, 0.7);
-  color: var(--ink);
-}
-
+.lp-feature h3 { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; margin: 0 0 6px; letter-spacing: -0.3px; color: var(--text); }
+.lp-feature p { margin: 0; font-size: var(--t-body); color: var(--text-body); font-weight: 500; line-height: 1.55; }
 /* stats — an ink plate with texture, cell dividers and counting numbers */
 .lp-stats {
   display: grid;
