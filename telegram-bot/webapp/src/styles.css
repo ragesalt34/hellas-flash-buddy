@@ -2153,3 +2153,13 @@ button.chip:active { transform: scale(0.95); }
   }
   [data-theme='brut'] .theme-switch { box-shadow: 4px 4px 0 0 var(--border); }
 }
+
+/* Three grades need three distinguishable buttons. In this theme both --amber
+   and --mint resolve to lime, which left «Хорошо» and «Знаю» with an identical
+   fill — the choice became unreadable at a glance. The palette here is only
+   terracotta / lime / ink / paper, so the middle grade takes the paper state:
+   terracotta → paper → lime reads as a scale, and all three stay on-palette. */
+[data-theme='brut'] .grade.g2 {
+  background: var(--surface);
+  color: var(--ink);
+}
