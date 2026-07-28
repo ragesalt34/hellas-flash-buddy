@@ -2088,37 +2088,56 @@ button.chip:active { transform: scale(0.95); }
    pseudo-elements so Home.tsx stays untouched; they sit behind the copy and
    disappear once the hero is too narrow to hold them. */
 [data-theme='brut'] .hero { overflow: hidden; }
-[data-theme='brut'] .hero > * { position: relative; z-index: 1; }
+/* Raise the copy above the ornament — but NOT the badge: it is absolutely
+   positioned, and forcing position:relative on it dropped it back into the flow,
+   where it landed on top of the greeting. */
+[data-theme='brut'] .hero > *:not(.hero-badge) { position: relative; z-index: 1; }
+[data-theme='brut'] .hero-badge { z-index: 2; }
 [data-theme='brut'] .hero::before {
   content: '';
   position: absolute;
-  right: 132px;
-  top: 34px;
-  width: 132px;
-  height: 132px;
+  /* Sits low-left of the capital so it reads as a deliberate block behind it.
+     Higher up it showed through the transparent notch under the volute, where a
+     stray lime sliver looked like an artefact rather than a composition. */
+  right: 148px;
+  top: 84px;
+  width: 116px;
+  height: 116px;
   background: var(--amber);
   z-index: 0;
 }
 [data-theme='brut'] .hero::after {
   content: '';
   position: absolute;
-  right: 26px;
-  top: -18px;
-  width: 210px;
-  height: 260px;
+  right: 18px;
+  top: -14px;
+  width: 232px;
+  height: 262px;
   z-index: 0;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: top right;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 300' fill='none' stroke='%232b2b2b' stroke-width='2.1'%3E%3Crect x='26' y='8' width='188' height='16' fill='%23fff'/%3E%3Crect x='34' y='24' width='172' height='12' fill='%23fdfdfd'/%3E%3Cpath d='M40 36h160v14H40z' fill='%23fff'/%3E%3Cpath d='M36 50h168c-6 10-14 16-24 18H60c-10-2-18-8-24-18z' fill='%23fafafa'/%3E%3Ccircle cx='66' cy='86' r='30' fill='%23fff'/%3E%3Ccircle cx='66' cy='86' r='21' fill='%23f7f7f7'/%3E%3Ccircle cx='66' cy='86' r='12' fill='%23fff'/%3E%3Ccircle cx='66' cy='86' r='5' fill='%23e9e9e9'/%3E%3Ccircle cx='174' cy='86' r='30' fill='%23fff'/%3E%3Ccircle cx='174' cy='86' r='21' fill='%23f7f7f7'/%3E%3Ccircle cx='174' cy='86' r='12' fill='%23fff'/%3E%3Ccircle cx='174' cy='86' r='5' fill='%23e9e9e9'/%3E%3Cpath d='M96 68h48c4 12 4 26 0 38H96c-4-12-4-26 0-38z' fill='%23fff'/%3E%3Cpath d='M104 74c8 4 24 4 32 0M104 82c8 4 24 4 32 0M104 90c8 4 24 4 32 0M104 98c8 4 24 4 32 0'/%3E%3Cpath d='M78 118h84l-6 14H84z' fill='%23fbfbfb'/%3E%3Cpath d='M86 132h68v168H86z' fill='%23fff'/%3E%3Cpath d='M96 132v168M110 132v168M124 132v168M138 132v168M148 132v168'/%3E%3C/svg%3E");
+  /* Photographic cut-out supplied by the user, replacing the vector capital I
+     had drawn as a stand-in. Prepared from a 1531x1027 RGB source: the white
+     background had no alpha channel, so it was keyed out with a flood fill from
+     the frame edges (threshold 28 — high enough to clear the soft gradient,
+     low enough that no marble was eaten, verified against nine probe points on
+     the volutes, abacus, egg-and-dart band and shaft). Then cropped to the
+     subject, converted to grey+alpha and re-encoded as WebP: 1.8 MB PNG became
+     87 KB. If WebP ever fails to load, the decoration simply does not appear —
+     nothing else depends on it. */
+  background-image: url('/column.webp');
 }
 /* The hero badge is the brand meander; with the capital present it would be
    two ornaments fighting, so it steps aside in this theme. */
-[data-theme='brut'] .hero-badge { display: none; }
-@media (max-width: 1150px) {
+@media (min-width: 900px) { [data-theme='brut'] .hero-badge { display: none; } }
+/* Tied to the same 900px breakpoint where the sidebar appears and .app widens
+   to 720px: above it there is ample room for a 232px ornament, below it the
+   column is ~444px and the capital would crowd the greeting. 1150px was too
+   cautious and hid it on layouts that fit it fine. */
+@media (max-width: 899px) {
   [data-theme='brut'] .hero::before,
   [data-theme='brut'] .hero::after { display: none; }
-  [data-theme='brut'] .hero-badge { display: grid; }
 }
 
 /* Lime is a light fill — anything sitting on it takes ink text. White on lime
