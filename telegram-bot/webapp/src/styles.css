@@ -2171,6 +2171,14 @@ button.chip:active { transform: scale(0.95); }
    terracotta / lime / ink / paper, so the middle grade takes the paper state:
    terracotta → paper → lime reads as a scale, and all three stay on-palette. */
 [data-theme='brut'] .grade.g2 {
-  background: var(--surface);
+  /* Amber, not paper. White read as an empty card rather than the middle step of
+     a scale — it was indistinguishable from an ordinary surface.
+     Derived rather than picked: terracotta sits at hue 9 and lime at 67, so the
+     midpoint of that warm arc is 38 — this is 39. Its luminance (0.44) also
+     lands between theirs (0.13 and 0.78), so the three buttons step evenly in
+     BOTH hue and lightness. That second part matters: a scale that ramps in
+     lightness still reads in greyscale, i.e. for colour-blind users. It is also
+     the traffic-light convention, where the middle step is always yellow. */
+  background: #e8a52a;
   color: var(--ink);
 }
