@@ -174,6 +174,12 @@
   --bd-w: 1px;
   --bd-c: var(--hair);
 
+  /* Two places where --muted / --bad land on a tinted panel and fall just under
+     4.5:1 for body text (measured 4.41 and 4.43). Separate tokens rather than
+     darkening --muted globally, which would touch every caption in the app. */
+  --muted-2: #646464;
+  --bad-text: #b23a34;
+
   --sk1: #eee8db;
   --sk2: #ddd4c2;
 
@@ -250,6 +256,9 @@
   --r-lg: 2px;
   --r-btn: 2px;
 
+  --muted-2: #5d594f;
+  --bad-text: var(--bad);
+
   --ring-track: #e4e0d8;
   --sk1: #eceae4;
   --sk2: #dcd8cf;
@@ -283,6 +292,8 @@
   --pink: #b06a6a;
   --purple: #645b9c;
   --bd-w: 1px;
+  --muted-2: #646464;
+  --bad-text: #b23a34;
   --hair: color-mix(in srgb, var(--ink) 20%, transparent);
   --hair-hover: color-mix(in srgb, var(--ink) 38%, transparent);
   --bd-c: var(--hair);
@@ -815,7 +826,7 @@ body::after {
   background: var(--surface-2);
   border: var(--bd-w) solid var(--bd-c);
   font-size: var(--t-body);
-  color: var(--muted);
+  color: var(--muted-2);
   font-weight: 500;
 }
 .explain b { color: var(--accent-2); }
@@ -1027,7 +1038,7 @@ body::after {
   border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--bad) 12%, #fff);
-  color: var(--bad);
+  color: var(--bad-text);
   font-size: var(--t-body);
   font-weight: 700;
 }
