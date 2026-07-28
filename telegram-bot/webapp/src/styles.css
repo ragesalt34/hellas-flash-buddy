@@ -42,7 +42,6 @@
   --accent-2: #a33a30;     /* deep terracotta — bold text on white (6.6:1) */
   --marsala: #c04a3d;
   --violet: #645b9c;       /* dusty indigo */
-  --pink: #b06a6a;         /* dusty rose */
   --amber: #d6a129;        /* ochre — ink text on it 8.5:1 */
   --mint: #2f8168;         /* deep olive-green */
   --blue: #2f5d92;         /* Aegean blue */
@@ -64,15 +63,9 @@
   --surface: #ffffff;
   --surface-2: #efe9dc;
   --border: #0a0a0a;
-  --border-strong: #0a0a0a;
-  --top-edge: transparent;
   --ring-track: #e5ddcd;
 
   /* kept for JSX/inline refs — flat solid colours, not gradients */
-  --grad-brand: var(--accent);
-  --grad-primary: var(--ink);
-  --grad-warm: var(--amber);
-  --grad-ring: var(--accent);
 
   /* ---- Depth: three tiers, and only the top one is loud ----
      The stylesheet used to put a 2px border AND a hard offset shadow on
@@ -98,7 +91,6 @@
   --e0-hover: 4px 4px 0 0 color-mix(in srgb, var(--ink) 30%, transparent);
   --e1: 4px 4px 0 0 var(--border);
   --e2: 8px 8px 0 0 var(--border);
-  --e-blue: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
 
   /* ---- Coloured shadows (tier A accents) ----
@@ -161,7 +153,6 @@
   --r-md: 14px;   /* icon squares, options, inputs, nav buttons */
   --r-lg: 22px;   /* cards, tiles, panels, sheets */
   --r-full: 999px;
-  --r-xl: var(--r-lg); /* legacy alias — collapsed onto the scale */
   /* Buttons and chips step off the pill and go nearly rectangular. The contrast
      between sharp controls and soft cards is itself the effect — one radius on
      everything is what made it look generic. Circles (speak button, option
@@ -174,14 +165,15 @@
   --bd-w: 1px;
   --bd-c: var(--hair);
 
+  /* Text colours that land on a tinted panel and miss 4.5:1 by a hair (measured
+     4.41 and 4.43). Separate tokens rather than darkening --muted / --bad
+     globally, which would touch every caption and every error accent. */
+  --muted-2: #646464;
+  --bad-text: #b23a34;
+
   --sk1: #eee8db;
   --sk2: #ddd4c2;
 
-  --tg-text: var(--text);
-  --tg-hint: var(--muted);
-  --tg-secondary-bg: var(--surface-2);
-  --tg-section-bg: var(--surface);
-  --surface-border: var(--border);
 }
 
 /* ============================================================
@@ -205,7 +197,6 @@
 
   --ink: #111110;
   --border: #111110;
-  --border-strong: #111110;
 
   --accent: #e0523d;
   --accent-2: #c33f2c;
@@ -221,7 +212,6 @@
   --bad: #b23a26;
   --violet: #111110;
   --blue: #111110;
-  --pink: #e0523d;
   --purple: #111110;
 
   /* Every ordinary border becomes a 2px ink rule. */
@@ -235,7 +225,6 @@
   --e0-hover: 9px 9px 0 0 var(--border);
   --e1: 6px 6px 0 0 var(--border);
   --e2: 9px 9px 0 0 var(--border);
-  --e-blue: 6px 6px 0 0 var(--border);
   --glow-coral: 6px 6px 0 0 var(--border);
   --ec-accent: 6px 6px 0 0 var(--border);
   --ec-amber: 6px 6px 0 0 var(--border);
@@ -249,6 +238,9 @@
   --r-md: 2px;
   --r-lg: 2px;
   --r-btn: 2px;
+
+  --muted-2: #5d594f;
+  --bad-text: var(--bad);
 
   --ring-track: #e4e0d8;
   --sk1: #eceae4;
@@ -280,9 +272,10 @@
   --bad: #bf3f3c;
   --violet: #645b9c;
   --blue: #2f5d92;
-  --pink: #b06a6a;
   --purple: #645b9c;
   --bd-w: 1px;
+  --muted-2: #646464;
+  --bad-text: #b23a34;
   --hair: color-mix(in srgb, var(--ink) 20%, transparent);
   --hair-hover: color-mix(in srgb, var(--ink) 38%, transparent);
   --bd-c: var(--hair);
@@ -747,13 +740,17 @@ body::after {
   font-size: var(--t-body);
   font-weight: 800;
   background: var(--surface-2);
-  color: var(--muted);
+  color: var(--muted-2);
   border: var(--bd-w) solid var(--bd-c);
   transition: all 0.18s ease;
 }
 /* Tier B — an answered option is a coloured state, so it takes a real border. */
 .option.correct { background: var(--mint); border: 2px solid var(--border); color: #fff; }
-.option.correct .lt { background: rgba(255, 255, 255, 0.3); color: #fff; border-color: #fff; }
+/* The circle was a 30% white wash over the green fill, which left the white
+   letter at 2.76:1 — the least readable thing in the app, and on the correct
+   answer of all places. A dark wash instead, exactly as the wrong state already
+   does, so white reads cleanly on both. */
+.option.correct .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.wrong { background: var(--bad); border: 2px solid var(--border); color: #fff; }
 .option.wrong .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.dim { opacity: 0.45; }
@@ -815,7 +812,7 @@ body::after {
   background: var(--surface-2);
   border: var(--bd-w) solid var(--bd-c);
   font-size: var(--t-body);
-  color: var(--muted);
+  color: var(--muted-2);
   font-weight: 500;
 }
 .explain b { color: var(--accent-2); }
@@ -1027,7 +1024,7 @@ body::after {
   border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--bad) 12%, #fff);
-  color: var(--bad);
+  color: var(--bad-text);
   font-size: var(--t-body);
   font-weight: 700;
 }
