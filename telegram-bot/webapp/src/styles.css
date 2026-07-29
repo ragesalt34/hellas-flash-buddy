@@ -165,11 +165,12 @@
   --bd-w: 1px;
   --bd-c: var(--hair);
 
-  /* Text colours that land on a tinted panel and miss 4.5:1 by a hair (measured
-     4.41 and 4.43). Separate tokens rather than darkening --muted / --bad
-     globally, which would touch every caption and every error accent. */
-  --muted-2: #646464;
-  --bad-text: #b23a34;
+  /* Text on a tinted panel: the explanation block and the auth error. In the
+     round theme these deliberately equal their base colours — darkening them
+     lifted two spots from 4.41/4.43 to 4.5:1, but the round theme is signed off
+     as-is and is not to be touched, so the a11y nudge lives in brut only. */
+  --muted-2: var(--muted);
+  --bad-text: var(--bad);
 
   --sk1: #eee8db;
   --sk2: #ddd4c2;
@@ -278,8 +279,8 @@
   --blue: #2f5d92;
   --purple: #645b9c;
   --bd-w: 1px;
-  --muted-2: #646464;
-  --bad-text: #b23a34;
+  --muted-2: var(--muted);
+  --bad-text: var(--bad);
   --hair: color-mix(in srgb, var(--ink) 20%, transparent);
   --hair-hover: color-mix(in srgb, var(--ink) 38%, transparent);
   --bd-c: var(--hair);
@@ -750,11 +751,10 @@ body::after {
 }
 /* Tier B — an answered option is a coloured state, so it takes a real border. */
 .option.correct { background: var(--mint); border: 2px solid var(--border); color: #fff; }
-/* The circle was a 30% white wash over the green fill, which left the white
-   letter at 2.76:1 — the least readable thing in the app, and on the correct
-   answer of all places. A dark wash instead, exactly as the wrong state already
-   does, so white reads cleanly on both. */
-.option.correct .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
+/* A 30% white wash over the green fill. It leaves the white letter at 2.76:1,
+   but the round theme is signed off as-is: the dark-wash version lives under
+   [data-theme='brut'] instead, so only the square theme gets the readable one. */
+.option.correct .lt { background: rgba(255, 255, 255, 0.3); color: #fff; border-color: #fff; }
 .option.wrong { background: var(--bad); border: 2px solid var(--border); color: #fff; }
 .option.wrong .lt { background: rgba(0, 0, 0, 0.22); color: #fff; border-color: #fff; }
 .option.dim { opacity: 0.45; }
