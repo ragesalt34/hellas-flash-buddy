@@ -164,7 +164,10 @@ export function App() {
 
       <nav className="bottomnav" aria-label={t('nav.aria')}>
         <div className="bottomnav-inner glass">
-          <div className="nav-brand" aria-hidden="true" style={{ color: '#fff' }}>
+          {/* Colour lives in CSS, not inline: the mark is white on the round
+              theme's coral badge, but the square theme draws the block as bare
+              paper, where white-on-white made the logo vanish. */}
+          <div className="nav-brand" aria-hidden="true">
             <TempleMark size={24} />
           </div>
           {NAV.map((n) => {

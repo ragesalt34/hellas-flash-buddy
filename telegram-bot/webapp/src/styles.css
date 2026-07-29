@@ -1262,6 +1262,7 @@ button.chip:active { transform: scale(0.95); }
     background: var(--accent);
     border: 2px solid var(--border);
     box-shadow: var(--glow-coral);
+    color: #fff; /* was inline in App.tsx — see the brut override below */
   }
   .navbtn { padding: 13px 4px; border-radius: var(--r-md); }
   .navbtn .nav-l { font-size: var(--t-micro); }
@@ -1902,19 +1903,26 @@ button.chip:active { transform: scale(0.95); }
 
 /* --- Sidebar becomes a bordered card with edge-to-edge active rows --- */
 @media (min-width: 900px) {
+  /* Full height, not a content-tall card floating at the vertical centre: the
+     reference is a column that runs the whole window. `stretch` overrides the
+     `center` the soft rail uses. */
+  [data-theme='brut'] .bottomnav { align-items: stretch; }
   [data-theme='brut'] .bottomnav-inner {
     padding: 0;
     border-width: 2px;
     border-radius: var(--r-lg);
     box-shadow: none;
     overflow: hidden;
-    gap: 0;
+    gap: 10px;
+    position: relative; /* anchor for the divider above the bottom group */
   }
+  /* Logo block: left-aligned under a full-width rule, not a centred badge. */
   [data-theme='brut'] .nav-brand {
     width: 100%;
     height: auto;
     margin: 0;
-    padding: 18px 0;
+    padding: 20px 22px;
+    justify-content: flex-start;
     border: none;
     border-bottom: 2px solid var(--border);
     border-radius: 0;
@@ -1923,26 +1931,86 @@ button.chip:active { transform: scale(0.95); }
     color: var(--ink);
   }
   /* Active item spans the full width of the rail, as in the reference — the
-     rounded inset pill is what made it read as a phone tab bar. */
+     rounded inset pill is what made it read as a phone tab bar. Rows are ~60px
+     so the column breathes the way the reference does, and `flex: none` keeps
+     them at that height now that the card is full-height (the base rule's
+     `flex: 1` would otherwise stretch five buttons over the whole window). */
   [data-theme='brut'] .navbtn {
+    flex: none;
     flex-direction: row;
     justify-content: flex-start;
-    gap: 14px;
-    padding: 13px 18px;
+    gap: 16px;
+    padding: 19px 22px;
     border-radius: 0;
+    /* Every label is ink, not grey: the reference sets the whole column in black
+       and lets the terracotta band alone mark the current page. */
+    color: var(--ink);
   }
-  [data-theme='brut'] .navbtn .nav-l { font-size: 14px; letter-spacing: 0; }
-  [data-theme='brut'] .navbtn.active { color: #fff; }
+  [data-theme='brut'] .navbtn .nav-l { font-size: 14px; font-weight: 500; letter-spacing: 0; }
+  /* Ink on terracotta, not white: the reference sets the active label in black,
+     and it measures better too (7.1:1 against 3.9:1). */
+  [data-theme='brut'] .navbtn.active { color: var(--ink); }
   [data-theme='brut'] .navbtn.active::before {
     border-radius: 0;
     background: var(--accent);
   }
-  [data-theme='brut'] .bottomnav-inner .lang-switch,
-  [data-theme='brut'] .bottomnav-inner .theme-switch {
-    margin: 0;
-    border-top: 2px solid var(--border);
+
+  /* Bottom group: pushed to the foot of the column, under a full-width rule.
+     `margin-top: auto` on the first of the two carries both down. */
+  [data-theme='brut'] .bottomnav-inner .lang-switch {
+    margin: auto 22px 0;
+    /* Relative so the divider below can be anchored to it — but that also makes
+       the mobile pill's `top`/`left: 14px` apply again, which shoved the control
+       14px off centre. Clear both. */
+    position: relative;
+    top: auto;
+    left: auto;
+    flex-direction: row;
+    width: auto;
+    border: 2px solid var(--border);
     border-radius: 0;
   }
+  [data-theme='brut'] .bottomnav-inner .lang-switch::before {
+    content: '';
+    position: absolute;
+    /* Negative insets reach past the control to the card's own edges — the rule
+       is full-width while the control itself stays inset, as in the reference. */
+    left: -22px;
+    right: -22px;
+    top: -12px;
+    height: 2px;
+    background: var(--border);
+  }
+  [data-theme='brut'] .bottomnav-inner .lang-switch button { flex: 1; padding: 7px 4px; }
+  /* Theme picker reads as the reference's bare icon row rather than a second
+     bordered segment: no frame, active in ink, inactive muted. It stays a pair
+     because it has state to show — a single icon could not say which look is on. */
+  [data-theme='brut'] .bottomnav-inner .theme-switch {
+    margin: 12px 22px 18px;
+    /* Shrink to the two icons instead of inheriting the language pill's full
+       width, which pushed the row 20px past the card's right border. */
+    align-self: flex-start;
+    width: auto;
+    gap: 10px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  [data-theme='brut'] .bottomnav-inner .theme-switch button {
+    width: 34px;
+    height: 34px;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
+  }
+  [data-theme='brut'] .bottomnav-inner .theme-switch button.active {
+    background: transparent;
+    color: var(--ink);
+  }
+  /* The glyphs ship at 15px for the mobile pill; the reference's footer icons
+     are nav-sized, so scale the SVG here rather than in the component. */
+  [data-theme='brut'] .bottomnav-inner .theme-switch svg { width: 20px; height: 20px; }
 }
 
 /* --- Learning tiles read as full-width rows with a lime icon block --- */
