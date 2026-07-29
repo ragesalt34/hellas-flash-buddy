@@ -254,6 +254,10 @@
    the app, so the theme must not reach it. Custom properties inherit, so
    restating the soft values on .landing walls it off from the block above. */
 [data-theme='brut'] .landing {
+  /* Paint the ground here too: body sits ABOVE .landing in the tree, so
+     re-declaring --bg inside this block cannot repaint it, and the landing was
+     ending up on the brut paper instead of its own sand. */
+  background: #f7f3ea;
   --bg: #f7f3ea;
   --surface: #ffffff;
   --surface-2: #efe9dc;
@@ -765,7 +769,7 @@ body::after {
   background: transparent;
   color: inherit;
   opacity: 0.55;
-  border: 1px solid currentColor;
+  border: var(--bd-w) solid currentColor;
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.15s var(--ease);
 }
@@ -1015,13 +1019,16 @@ body::after {
 /* Focus reads as the border going full-strength rather than the field jumping. */
 .input:focus {
   outline: none;
-  border: 1px solid var(--ink);
+  /* Tokenised width, not a literal 1px: the resting .input border is
+     var(--bd-w), so a hard 1px made the focus ring THINNER than the unfocused
+     field in brut — backwards, and it shifted the text by a pixel. */
+  border: var(--bd-w) solid var(--ink);
 }
 .field-hint { display: block; margin: 6px 2px 0; font-size: var(--t-meta); font-weight: 500; color: var(--muted); }
 .auth-err {
   margin: 2px 0 14px;
   padding: 11px 14px;
-  border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
+  border: var(--bd-w) solid color-mix(in srgb, var(--bad) 45%, transparent);
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--bad) 12%, #fff);
   color: var(--bad-text);
@@ -2187,3 +2194,11 @@ button.chip:active { transform: scale(0.95); }
   background: #e8a52a;
   color: var(--ink);
 }
+
+/* Empty-state plate: square in brut. 50% is hardcoded rather than tokenised
+   because a circle is the right shape in soft, but at 92px it was the one large
+   round object in a theme where every other panel has a 2px border and a 2px
+   radius — it read as a stray artefact rather than a deliberate shape. Small
+   round controls (.speak-btn, .opt-speak) are left alone: at ~28px they read as
+   controls, and the approved mockup draws them round too. */
+[data-theme='brut'] .empty .e { border-radius: var(--r-sm); }
