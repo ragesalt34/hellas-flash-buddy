@@ -1237,54 +1237,86 @@ button.chip:active { transform: scale(0.95); }
     bottom: 0;
     left: 0;
     right: auto;
-    width: 150px;
+    /* 22 (left inset) + 140 (card) + 16 (slack) */
+    width: 178px;
     padding: 22px 0 22px 22px;
     display: flex;
     align-items: center;
   }
+  /* Proportions come from the approved mockup, keyed to the 140px card:
+     brand 0.57 of the width, nav row 0.66, radius 0.21. Hairline edge and a
+     soft ambient shadow instead of the hard offset — in the mockup the rail
+     floats above the page rather than being stamped onto it. */
   .bottomnav-inner {
     flex-direction: column;
-    width: 112px;
+    width: 140px;
     max-width: none;
     margin: 0;
-    gap: 6px;
-    padding: 14px 10px;
-    border-radius: var(--r-lg);
+    gap: 2px;
+    padding: 18px;
+    border-radius: 30px;
+    border: 1px solid var(--hair);
+    box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--ink) 26%, transparent);
+    position: relative; /* anchor for the divider above the bottom group */
   }
   .nav-brand {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    margin: 4px auto 12px;
-    border-radius: var(--r-md);
+    width: 80px;
+    height: 80px;
+    margin: 2px auto 14px;
+    border-radius: 20px;
     background: var(--accent);
-    border: 2px solid var(--border);
-    box-shadow: var(--glow-coral);
+    border: none;
+    box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--accent) 70%, transparent);
     color: #fff; /* was inline in App.tsx — see the brut override below */
   }
-  .navbtn { padding: 13px 4px; border-radius: var(--r-md); }
-  .navbtn .nav-l { font-size: var(--t-micro); }
+  /* The mark ships at 24px for the mobile bar; the mockup's tile carries a
+     much larger glyph. Scoped away from brut, whose brand block is small. */
+  :not([data-theme='brut']) .nav-brand svg { width: 38px; height: 38px; }
+  /* 23px of padding puts the row at the mockup's 93px; gap 2 keeps the pitch
+     equal to the row so the active plate reads as one continuous step. */
+  .navbtn { padding: 23px 4px; gap: 7px; border-radius: 18px; }
+  .navbtn.active::before { border-radius: 18px; }
+  .navbtn .nav-l { font-size: 13px; font-weight: 600; letter-spacing: 0; }
 
   /* On desktop the switch sits at the bottom of the sidebar instead of
      floating fixed over the mobile top-left corner. Scoped to the sidebar
      instance only — the Landing page's switch stays a fixed top-left pill
      at every width since Landing has no sidebar. */
   .bottomnav-inner .lang-switch {
-    position: static;
+    /* relative (not static) so the divider below can hang off it — which also
+       revives the mobile pill's top/left:14px, hence the explicit resets. */
+    position: relative;
+    top: auto;
+    left: auto;
     flex-direction: column;
     width: 100%;
-    margin-top: 8px;
+    margin-top: 22px;
+    border-radius: 14px;
+    border-color: var(--hair);
     box-shadow: none;
   }
-  .bottomnav-inner .lang-switch button { padding: 8px 4px; }
+  /* Hairline separating the nav from the language + theme group, inset to the
+     control's own width exactly as the mockup draws it. */
+  .bottomnav-inner .lang-switch::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -11px;
+    height: 1px;
+    background: var(--hair);
+  }
+  .bottomnav-inner .lang-switch button { padding: 9px 4px; font-size: 12px; }
 
   /* Menu screens (home/stats): content column offset past the sidebar,
      top-aligned and scrollable */
   .app {
     max-width: 720px;
-    margin: 0 0 0 max(172px, calc((100vw - 720px) / 2));
+    /* Follows the wider rail (178 + 22 inset) so the content cannot slide under it. */
+    margin: 0 0 0 max(200px, calc((100vw - 720px) / 2));
     padding: 24px 24px 40px;
   }
   .tile { min-height: 138px; }
@@ -1347,7 +1379,7 @@ button.chip:active { transform: scale(0.95); }
 @media (min-width: 1200px) {
   .app {
     max-width: 820px;
-    margin-left: max(172px, calc((100vw - 820px) / 2));
+    margin-left: max(200px, calc((100vw - 820px) / 2));
   }
   body.focus .app {
     max-width: 680px;
@@ -2002,6 +2034,8 @@ button.chip:active { transform: scale(0.95); }
     height: 34px;
     border-radius: 0;
     background: transparent;
+    /* The round theme gives these buttons a hairline frame; brut's are bare. */
+    border: none;
     color: var(--muted);
   }
   [data-theme='brut'] .bottomnav-inner .theme-switch button.active {
@@ -2082,11 +2116,32 @@ button.chip:active { transform: scale(0.95); }
 }
 .theme-switch button.active { background: var(--ink); color: #fff; }
 @media (min-width: 900px) {
+  /* Two separate rounded squares, not one split pill: the container drops its
+     own frame (and its overflow clip, which would shave the buttons' corners)
+     and each button carries the chrome. */
   .bottomnav-inner .theme-switch {
     width: 100%;
     justify-content: center;
-    margin-top: 6px;
+    gap: 8px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
   }
+  .bottomnav-inner .theme-switch button {
+    width: 48px; /* 48 + 8 + 48 = the card's 104px inner width */
+    height: 48px;
+    padding: 0;
+    border-radius: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--hair);
+  }
+  .bottomnav-inner .theme-switch button.active {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .bottomnav-inner .theme-switch svg { width: 20px; height: 20px; }
 }
 
 /* Row-shaped nav items need a wider rail than the icon-over-label stack the
