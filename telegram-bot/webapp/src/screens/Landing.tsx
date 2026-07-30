@@ -161,6 +161,22 @@ function DemoCard() {
   );
 }
 
+/** Brand lockup — the mark plus the two-tone wordmark, used in the nav and the
+ *  footer. One component so the two never drift apart; `size` is the mark's,
+ *  the wordmark scales from CSS. */
+function Brand({ size }: { size: number }) {
+  return (
+    <div className="lp-brand">
+      <span className="lp-logo">
+        <TempleMark size={size} />
+      </span>
+      <span className="lp-word">
+        Hellas <em>Study</em>
+      </span>
+    </div>
+  );
+}
+
 export function Landing({
   onStart,
   onLogin,
@@ -174,10 +190,7 @@ export function Landing({
   return (
     <div className="landing">
       <nav className="lp-nav">
-        <div className="lp-brand">
-          <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={22} /></span>
-          Hellas Study
-        </div>
+        <Brand size={22} />
         <div className="lp-nav-right">
           <LanguageSwitch />
           <button className="lp-btn ghost" onClick={onLogin}>{t('landing.enter')}</button>
@@ -388,10 +401,7 @@ export function Landing({
       </motion.section>
 
       <footer className="lp-footer">
-        <div className="lp-brand">
-          <span className="lp-logo" style={{ color: '#fff' }}><TempleMark size={18} /></span>
-          Hellas Study
-        </div>
+        <Brand size={18} />
         <span className="lp-footer-note">© 2026 · {t('landing.footer.tag')}</span>
       </footer>
     </div>
