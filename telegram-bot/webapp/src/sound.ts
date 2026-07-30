@@ -40,9 +40,15 @@ function ac(): Ctx | null {
 // Before this, each effect had its own hand-tuned multiplier (0.4–0.6) applied on
 // top of whatever the file's own loudness was — two unrelated variables, so the
 // set never actually matched. One target instead: lower it to make everything
-// quieter together. 0.4 is 20% below the 0.5 the old multipliers averaged.
-const TARGET_PEAK = 0.4;
-const MAX_GAIN = 4; // don't over-amplify a near-silent clip (would raise its noise)
+// quieter together. 0.25 puts every effect ~4 dB below the previous 0.4.
+const TARGET_PEAK = 0.25;
+// Amplification is capped hard, because normalising UP is what made the quiet
+// clips sound dirty: grade-hard peaks at 0.148 and was being multiplied by 2.7
+// (+8.6 dB), which lifted its low-level rattle right into audibility, and
+// grade-know by 1.74 (+4.8 dB). Measured envelopes show their noise floors are
+// fine (−82…−86 dBFS) — the boost was the problem, not the source. 1.5 keeps the
+// set within ~1 dB of each other while never raising a clip's own floor much.
+const MAX_GAIN = 1.5;
 const buffers = new Map<string, { buf: AudioBuffer; gain: number } | null>();
 
 /** Peak sample amplitude (0..1) — mono by the time this is called. */
@@ -92,6 +98,45 @@ function toMono(c: Ctx, buf: AudioBuffer): AudioBuffer {
   return mono;
 }
 
+/** Cut the inaudible tail and fade the edges.
+ *
+ * The generated clips carry a long reverb decay: the three grade sounds run a
+ * full 2s, of which the last ~1s sits below −50 dBFS. Alone that is inaudible,
+ * but the grade buttons get tapped in quick succession, so the tails stack and
+ * smear into a wash — which is most of what reads as "extra noise" on every
+ * sound. Trimming keeps the musical decay and drops only the part that
+ * contributes nothing but accumulation.
+ *
+ * Both edges get a fade: 40ms out so the cut cannot click, 3ms in because some
+ * of the clips start on a non-zero sample. */
+const TAIL_FLOOR = 0.0032; // ≈ −50 dBFS
+function trimTail(c: Ctx, buf: AudioBuffer): AudioBuffer {
+  const d = buf.getChannelData(0);
+  const sr = buf.sampleRate;
+  const win = Math.max(1, Math.round(sr * 0.02));
+  let end = d.length;
+  for (let i = d.length - win; i >= 0; i -= win) {
+    let s = 0;
+    for (let j = i; j < i + win; j++) s += d[j] * d[j];
+    if (Math.sqrt(s / win) > TAIL_FLOOR) {
+      end = Math.min(d.length, i + win);
+      break;
+    }
+  }
+  const fade = Math.round(sr * 0.04);
+  const len = Math.max(win, Math.min(d.length, end + fade));
+  const out = c.createBuffer(1, len, sr);
+  const o = out.getChannelData(0);
+  o.set(d.subarray(0, len));
+  for (let i = 0; i < fade && i < len; i++) {
+    // raised cosine — no click, and no audible level step either
+    o[len - fade + i] *= 0.5 * (1 + Math.cos((Math.PI * i) / fade));
+  }
+  const fin = Math.round(sr * 0.003);
+  for (let i = 0; i < fin && i < len; i++) o[i] *= i / fin;
+  return out;
+}
+
 // Bump when swapping any file in public/sounds/ — busts the CDN edge cache
 // immediately instead of waiting out its max-age (see public/_headers).
 const SOUND_VERSION = 2;
@@ -104,7 +149,9 @@ function preload(name: string): void {
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing'))))
     .then((a) => c.decodeAudioData(a))
     .then((b) => {
-      const buf = toMono(c, b);
+      // mono → trim → measure: trimming never touches the loudest part, so the
+      // gain is still computed against the real peak.
+      const buf = trimTail(c, toMono(c, b));
       buffers.set(name, { buf, gain: normGain(buf) });
     })
     .catch(() => {
@@ -121,12 +168,42 @@ function warmSamples(): void {
 if (document.readyState === 'complete') warmSamples();
 else window.addEventListener('load', warmSamples, { once: true });
 
+// The instance currently sounding for each effect, so a retrigger can retire it.
+const active = new Map<string, { src: AudioBufferSourceNode; g: GainNode }>();
+
+/** Effects that must never sound together. The three grades are one control —
+ * you answer a card once — so tapping "hard" then "good" should replace, not
+ * layer. Everything else only cancels itself. */
+function voiceOf(name: string): string {
+  return name.startsWith('grade-') ? 'grade' : name;
+}
+
 /** Play a preloaded sample at the shared normalized level.
  * Returns false if none is available (→ use synth). */
 function playSample(name: string): boolean {
   const c = ac();
   const entry = c ? buffers.get(name) : null;
   if (!c || !entry) return false;
+
+  // Retire the previous instance of THIS effect first. Tapping a grade three
+  // times in a second used to leave three decays running on top of each other,
+  // and the pile-up is what sounds like noise rather than any one clip being
+  // dirty. Ramped down over 30ms instead of stopped dead, so the handover is
+  // inaudible rather than a click.
+  const voice = voiceOf(name);
+  const prev = active.get(voice);
+  if (prev) {
+    const t = c.currentTime;
+    try {
+      prev.g.gain.cancelScheduledValues(t);
+      prev.g.gain.setValueAtTime(prev.g.gain.value, t);
+      prev.g.gain.linearRampToValueAtTime(0.0001, t + 0.03);
+      prev.src.stop(t + 0.04);
+    } catch {
+      /* already ended — nothing to retire */
+    }
+  }
+
   const src = c.createBufferSource();
   const g = c.createGain();
   src.buffer = entry.buf;
@@ -134,6 +211,10 @@ function playSample(name: string): boolean {
   src.connect(g);
   g.connect(c.destination);
   src.start();
+  active.set(voice, { src, g });
+  src.onended = () => {
+    if (active.get(voice)?.src === src) active.delete(voice);
+  };
   return true;
 }
 
@@ -141,7 +222,8 @@ function playSample(name: string): boolean {
 // Only reached when a sound file is missing or still preloading. Their peaks are
 // scaled by the same factor the samples were quietened by, so a fallback can't
 // come out louder than the real clip it stands in for.
-const SYNTH_TRIM = 0.8;
+// Scaled with TARGET_PEAK: 0.8 matched the old 0.4 target, so 0.25 needs 0.5.
+const SYNTH_TRIM = 0.5;
 
 // A single oscillator with a percussive envelope.
 function tone(
