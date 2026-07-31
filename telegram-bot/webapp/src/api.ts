@@ -89,6 +89,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/** Send an SRS grade so a failure cannot pass unnoticed.
+ *
+ * A grade IS the user's progress: the previous `.catch(() => {})` at both call
+ * sites meant a review could vanish with no retry and no trace — the one thing
+ * spaced repetition cannot afford. One retry covers the common causes (the API
+ * host waking from sleep, a dropped request); anything past that is logged so it
+ * is at least diagnosable. A full offline queue would be the next step up.
+ */
+export function persistGrade(send: () => Promise<unknown>): void {
+  void send().catch(() =>
+    new Promise((r) => setTimeout(r, 1200))
+      .then(send)
+      .catch((e) => console.error('SRS grade was not saved:', e))
+  );
+}
+
 export const api = {
   register: (username: string, password: string) =>
     request<AuthResponse>('/auth/register', {

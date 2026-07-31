@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
-import { api, VocabCard } from '../api';
+import { api, VocabCard, persistGrade } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
@@ -82,7 +82,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   function grade(g: number) {
     haptic();
-    api.vocabGrade(card.id, g).catch(() => {});
+    persistGrade(() => api.vocabGrade(card.id, g));
     if (i + 1 >= cards!.length) {
       playComplete();
       setDone(true);

@@ -7,9 +7,12 @@ export const MAX_LEVEL = 6;
 
 /** Next SRS level from the current level and a 1–3 grade (must match the server). */
 export function nextLevel(current: number, grade: number): number {
+  // Clamped from below too, exactly as on the server — a stray negative level
+  // would otherwise index past the start of the label list.
+  const from = Number.isFinite(current) ? Math.max(0, Math.trunc(current)) : 0;
   if (grade <= 1) return 0;
-  if (grade >= 3) return Math.min(current + 2, MAX_LEVEL);
-  return Math.min(current + 1, MAX_LEVEL);
+  if (grade >= 3) return Math.min(from + 2, MAX_LEVEL);
+  return Math.min(from + 1, MAX_LEVEL);
 }
 
 // Interval labels per level: 1min, 10min, 1d, 3d, 7d, 14d, 30d.

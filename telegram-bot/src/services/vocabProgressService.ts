@@ -33,21 +33,28 @@ export async function getDueVocab(
   const now = Date.now();
   const seen = new Map<number, { due: number; level: number }>();
   for (const r of (data ?? []) as Row[]) {
+    // NaN from an unparseable timestamp fails `<= now`, which would retire the
+    // word for good. Treat it as due now.
+    const parsed = r.next_review_at ? Date.parse(r.next_review_at) : 0;
     seen.set(r.vocab_id, {
-      due: r.next_review_at ? Date.parse(r.next_review_at) : 0,
+      due: Number.isNaN(parsed) ? 0 : parsed,
       level: r.level ?? 0,
     });
   }
 
-  const due: { id: number; level: number }[] = [];
+  const due: { id: number; level: number; due: number }[] = [];
   const unseen: { id: number; level: number }[] = [];
   for (const id of allIds) {
     const s = seen.get(id);
     if (!s) unseen.push({ id, level: 0 });
-    else if (s.due <= now) due.push({ id, level: s.level });
+    else if (s.due <= now) due.push({ id, level: s.level, due: s.due });
   }
 
-  const result = [...due];
+  // Most overdue first — otherwise the slice below took an arbitrary subset
+  // whenever more words were due than the limit allows.
+  due.sort((a, b) => a.due - b.due);
+
+  const result: { id: number; level: number }[] = due.map(({ id, level }) => ({ id, level }));
   if (result.length < limit) result.push(...shuffle(unseen).slice(0, limit - result.length));
   return result.slice(0, limit);
 }

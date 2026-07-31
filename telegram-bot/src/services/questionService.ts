@@ -127,8 +127,11 @@ export async function fetchDueFlashcards(
   const now = Date.now();
   const progress = new Map<string, { due: number; level: number }>();
   for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null; level: number }[]) {
+    // An unparseable timestamp yields NaN, and `NaN <= now` is false — the card
+    // would silently never come up again. Treat it as due now instead.
+    const parsed = p.next_review_at ? Date.parse(p.next_review_at) : 0;
     progress.set(p.question_id, {
-      due: p.next_review_at ? Date.parse(p.next_review_at) : 0,
+      due: Number.isNaN(parsed) ? 0 : parsed,
       level: p.level ?? 0,
     });
   }
@@ -141,6 +144,11 @@ export async function fetchDueFlashcards(
     if (!p) unseen.push(q);
     else if (p.due <= now) due.push(q);
   }
+
+  // Most overdue first. Without this the order was whatever the table returned,
+  // so when more cards are due than fit in `limit` the subset was arbitrary and
+  // a card overdue by a month could keep losing to one overdue by a minute.
+  due.sort((a, b) => (progress.get(a.id)?.due ?? 0) - (progress.get(b.id)?.due ?? 0));
 
   const picked = [...due];
   if (picked.length < limit) picked.push(...shuffleArray(unseen).slice(0, limit - picked.length));

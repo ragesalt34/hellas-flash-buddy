@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
-import { api, Flashcard } from '../api';
+import { api, Flashcard, persistGrade } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
@@ -85,7 +85,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   function grade(g: number) {
     haptic();
-    api.flashcardGrade(card.question_id, g).catch(() => {});
+    persistGrade(() => api.flashcardGrade(card.question_id, g));
     if (i + 1 >= cards!.length) {
       playComplete();
       setDone(true);

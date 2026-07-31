@@ -13,11 +13,17 @@ export const SRS_INTERVALS_MS = [
 
 export const MAX_LEVEL = SRS_INTERVALS_MS.length - 1;
 
-/** Next SRS level from the current level and a 1–3 grade. */
+/** Next SRS level from the current level and a 1–3 grade.
+ *
+ * `current` is clamped from below as well as above: it comes out of the
+ * database, and a negative value there used to pass straight through
+ * (-3 + 1 = -2), which indexes SRS_INTERVALS_MS as undefined and makes
+ * nextReviewAt throw on `new Date(NaN).toISOString()`. */
 export function nextLevel(current: number, grade: number): number {
+  const from = Number.isFinite(current) ? Math.max(0, Math.trunc(current)) : 0;
   if (grade <= 1) return 0;
-  if (grade >= 3) return Math.min(current + 2, MAX_LEVEL);
-  return Math.min(current + 1, MAX_LEVEL);
+  if (grade >= 3) return Math.min(from + 2, MAX_LEVEL);
+  return Math.min(from + 1, MAX_LEVEL);
 }
 
 /** ISO timestamp when a card at `level` should next surface. */
