@@ -50,6 +50,14 @@
   --bad: #bf3f3c;
   --purple: #645b9c;
 
+  /* Topic-tile colours get their own tokens: the two themes need different
+     values, and the tiles apply the colour inline, so a theme's CSS rule cannot
+     override it. Here they point at exactly what the topics already used, which
+     keeps the round theme byte-identical. */
+  --topic-culture: var(--purple);
+  --topic-laws: var(--coral);
+  --topic-geo: var(--mint);
+
   /* Lifted tints — ONLY for use on the ink plate (.lp-stats). The muted
      palette above is too dark on #0a0a0a: --blue there is 2.92:1, below even
      the 3:1 large-text floor. These sit at 6.4–10.4:1. */
@@ -198,7 +206,10 @@
   --bg: #f4f2ee;
   --bg-2: #f4f2ee;
   --surface: #ffffff;
-  --surface-2: #f0eee9;
+  /* Was #f0eee9 — ΔE00 1.0 from the page, so every secondary surface (option
+     hover, answer box, explanation, empty plate, skeleton) was invisible as a
+     surface and read only through its border. 4.4 now, ink still 14.6:1. */
+  --surface-2: #e6e2d8;
   --text: #111110;
   --text-body: #1c1b19;
   --muted: #6f6b64;
@@ -207,7 +218,10 @@
   --border: #111110;
 
   --accent: #e0523d;
-  --accent-2: #c33f2c;
+  /* Ink, not a second red. This token paints the accuracy figure and the bold
+     runs inside an explanation; at #c33f2c it sat ΔE00 3.9 from --bad, i.e. the
+     same colour to the eye, so an achievement was tinted like an error. */
+  --accent-2: var(--ink);
   --marsala: #e0523d;
   --coral: #e0523d;
   /* Lime replaces ochre as the secondary — it is the reference's second voice
@@ -221,6 +235,16 @@
   --violet: #111110;
   --blue: #111110;
   --purple: #111110;
+
+  /* Five topics used to render in three colours: --accent and --coral are both
+     terracotta here (history = laws exactly), and --purple collapsed to ink.
+     These four are mutually distinguishable — the closest pair is ΔE00 21.2 —
+     and every one clears 3:1 against the white card, which the raw palette
+     could not: as an icon stroke lime measures 1.26 and lime-amber 2.13, so
+     both had to be taken down into their darker shades. */
+  --topic-culture: #2f8168; /* тил — 4.71:1 */
+  --topic-laws: #b06a12;    /* тёмная охра — 3.72:1 */
+  --topic-geo: #6f7d00;     /* тёмный лайм — 4.56:1 */
 
   /* Every ordinary border becomes a 2px ink rule. */
   --bd-w: 2px;
