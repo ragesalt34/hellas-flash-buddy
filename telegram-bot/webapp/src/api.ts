@@ -53,6 +53,15 @@ export function clearCache(): void {
   }
 }
 
+/** The browser's IANA time zone, or '' when the runtime will not say. */
+function deviceTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  } catch {
+    return '';
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -66,6 +75,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     // Guest sandbox — the server assigns the id, we only present the secret.
     headers['X-App-Secret'] = APP_SECRET;
   }
+
+  // The account's own time zone, so the day-streak counts the user's calendar
+  // days and not UTC's. Sent as an IANA name rather than an offset: the offset
+  // that applies today is not the one that applied a month ago, and the streak
+  // looks backwards through history.
+  const tz = deviceTimeZone();
+  if (tz) headers['X-Time-Zone'] = tz;
 
   // Tag every request with the current UI language so quiz/flashcard content
   // and topic labels come back in the right language (server defaults to 'el').
@@ -89,19 +105,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-/** Send an SRS grade so a failure cannot pass unnoticed.
+/** Send a write that must not be lost silently.
  *
- * A grade IS the user's progress: the previous `.catch(() => {})` at both call
- * sites meant a review could vanish with no retry and no trace — the one thing
- * spaced repetition cannot afford. One retry covers the common causes (the API
+ * Progress IS the user's work: a bare `.catch(() => {})` meant a graded card or a
+ * finished quiz could vanish with no retry and no trace — the one thing spaced
+ * repetition cannot afford. One retry covers the common causes (the API
  * host waking from sleep, a dropped request); anything past that is logged so it
  * is at least diagnosable. A full offline queue would be the next step up.
  */
-export function persistGrade(send: () => Promise<unknown>): void {
+export function persistWrite(send: () => Promise<unknown>, what = 'write'): void {
   void send().catch(() =>
     new Promise((r) => setTimeout(r, 1200))
       .then(send)
-      .catch((e) => console.error('SRS grade was not saved:', e))
+      .catch((e) => console.error(`${what} was not saved:`, e))
   );
 }
 

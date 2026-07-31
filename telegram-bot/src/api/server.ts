@@ -17,6 +17,7 @@ import {
   recordQuizSession,
   getUserStats,
   getUserStreak,
+  isValidTimeZone,
   getHistory,
 } from '../services/sessionService';
 import {
@@ -79,6 +80,15 @@ interface AuthedRequest extends Request {
 // Content language for quiz/flashcard/topic-label text — defaults to Greek
 // unless the client asks for Russian (?lang=ru).
 const getLang = (req: Request): ContentLang => (req.query.lang === 'ru' ? 'ru' : 'el');
+
+/** The account's IANA time zone from the client, validated before use.
+ *
+ * An unvalidated value would reach Intl.DateTimeFormat and throw a RangeError,
+ * turning a header a caller controls into a 500. Falls back to UTC. */
+const getTz = (req: Request): string => {
+  const raw = req.get('X-Time-Zone');
+  return typeof raw === 'string' && raw.length <= 64 && isValidTimeZone(raw) ? raw : 'UTC';
+};
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const PASSWORD_MIN = 6;
@@ -310,7 +320,7 @@ export function createApiApp(): express.Express {
       const a = req.account!;
       const [stats, streak, vocab] = await Promise.all([
         getUserStats(a.id),
-        getUserStreak(a.id).catch(() => 0),
+        getUserStreak(a.id, getTz(req)).catch(() => 0),
         getVocabStats(a.id, ALL_VOCAB_IDS),
       ]);
       const lang = getLang(req);
@@ -490,7 +500,7 @@ export function createApiApp(): express.Express {
       const a = req.account!;
       const [stats, streak, vocab] = await Promise.all([
         getUserStats(a.id),
-        getUserStreak(a.id).catch(() => 0),
+        getUserStreak(a.id, getTz(req)).catch(() => 0),
         getVocabStats(a.id, ALL_VOCAB_IDS),
       ]);
       res.json({ stats, streak, vocab, topicLabels: topicLabels(getLang(req)) });

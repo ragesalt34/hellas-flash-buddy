@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Shuffle,
   Landmark,
@@ -19,7 +19,7 @@ import {
   Volume2,
   type LucideIcon,
 } from 'lucide-react';
-import { api, QuizQuestion } from '../api';
+import { api, QuizQuestion, persistWrite } from '../api';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
@@ -54,6 +54,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   const [idx, setIdx] = useState(0);
   const [chosen, setChosen] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AnswerRec[]>([]);
+  // One-shot guard for submitting the finished session. A ref, not state: it has
+  // to settle synchronously within the same frame, and it must be declared with
+  // the other hooks — the phase branches below return early.
+  const submitted = useRef(false);
   const [score, setScore] = useState(0);
 
   // Warm the current question + its options so tapping 🔊 is instant.
@@ -105,14 +109,22 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   function next() {
     haptic();
     if (idx + 1 >= questions.length) {
-      api
-        .quizComplete({
-          topic,
-          score,
-          answers,
-          questions: questions.map((x) => ({ id: x.id })),
-        })
-        .catch(() => {});
+      // Two taps landing in the same frame would both see the old `idx` and
+      // submit the session twice: two rows in the history, the score counted
+      // twice, and every question's SRS level advanced twice. A ref settles it
+      // synchronously, unlike state, which only updates on the next render.
+      if (submitted.current) return;
+      submitted.current = true;
+      persistWrite(
+        () =>
+          api.quizComplete({
+            topic,
+            score,
+            answers,
+            questions: questions.map((x) => ({ id: x.id })),
+          }),
+        'quiz session'
+      );
       playComplete();
       setPhase('result');
     } else {

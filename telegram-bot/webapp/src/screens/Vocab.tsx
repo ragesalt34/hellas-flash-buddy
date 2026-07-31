@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
-import { api, VocabCard, persistGrade } from '../api';
+import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
@@ -14,6 +14,9 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  // See Flashcards: same double-tap guard, and it must sit with the other hooks
+  // rather than after the early returns further down.
+  const gradedRef = useRef<string | null>(null);
 
   // Warm the current word's audio so tapping 🔊 is instant.
   useEffect(() => {
@@ -52,6 +55,11 @@ export function Vocab({ onHome }: { onHome: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
+  useEffect(() => {
+    gradedRef.current = null;
+  }, [cards]);
+
   if (!cards) return <Loading />;
   if (cards.length === 0)
     return <Empty icon={CheckCircle2} text={t('vocab.empty')} onHome={onHome} />;
@@ -81,8 +89,10 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   const card = cards[i];
 
   function grade(g: number) {
+    if (gradedRef.current === String(card.id)) return;
+    gradedRef.current = String(card.id);
     haptic();
-    persistGrade(() => api.vocabGrade(card.id, g));
+    persistWrite(() => api.vocabGrade(card.id, g), 'vocab grade');
     if (i + 1 >= cards!.length) {
       playComplete();
       setDone(true);

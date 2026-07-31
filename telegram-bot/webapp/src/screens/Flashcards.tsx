@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
-import { api, Flashcard, persistGrade } from '../api';
+import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
@@ -14,6 +14,11 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  // Guards a double tap: both taps see the same card (i only changes on the next
+  // render), so without this one card took two grades — level +2 and seen_count
+  // +2 for a single answer. Declared with the other hooks, above the early
+  // returns below: a hook after a conditional return breaks React's hook order.
+  const gradedRef = useRef<string | null>(null);
 
   // Warm the current card's question (and its answer once revealed) so 🔊 is instant.
   useEffect(() => {
@@ -55,6 +60,13 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 
+
+  // A fresh deck may open on a card that was graded in the previous run — clear
+  // the guard so its grade is not swallowed.
+  useEffect(() => {
+    gradedRef.current = null;
+  }, [cards]);
+
   if (!cards) return <Loading />;
   if (cards.length === 0)
     return <Empty icon={CheckCircle2} text={t('flashcards.empty')} onHome={onHome} />;
@@ -84,8 +96,10 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const card = cards[i];
 
   function grade(g: number) {
+    if (gradedRef.current === card.question_id) return;
+    gradedRef.current = card.question_id;
     haptic();
-    persistGrade(() => api.flashcardGrade(card.question_id, g));
+    persistWrite(() => api.flashcardGrade(card.question_id, g), 'flashcard grade');
     if (i + 1 >= cards!.length) {
       playComplete();
       setDone(true);

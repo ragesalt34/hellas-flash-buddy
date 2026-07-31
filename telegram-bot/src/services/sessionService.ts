@@ -62,9 +62,51 @@ export async function getUserStats(accountId: string): Promise<UserStats> {
   return stats;
 }
 
-/** Consecutive-day streak (today or yesterday inclusive) from completed sessions. */
-export async function getUserStreak(accountId: string): Promise<number> {
-  const cutoff = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+/** A calendar day key (YYYY-MM-DD) for an instant, as seen in `tz`.
+ *
+ * Built from formatToParts rather than a locale string so the order of the
+ * fields cannot depend on the locale. */
+export function dayKeyIn(date: Date, tz: string): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+/** The calendar day before a YYYY-MM-DD key.
+ *
+ * Arithmetic on the date itself, not on an instant: stepping back 24h in real
+ * time skips or repeats a day when the clocks change, because a local day can
+ * be 23 or 25 hours long. A pure calendar step has no such problem. */
+export function prevDayKey(key: string): string {
+  const [y, m, d] = key.split('-').map(Number);
+  const t = Date.UTC(y, m - 1, d) - 24 * 60 * 60 * 1000;
+  return new Date(t).toISOString().slice(0, 10);
+}
+
+/** True if `tz` is a zone this runtime knows. */
+export function isValidTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Consecutive-day streak (today or yesterday inclusive) from completed sessions.
+ *
+ * Days are the account's own calendar days: `tz` comes from the browser. On UTC
+ * the boundary was wrong for everyone east or west of it — studying at 01:00
+ * local in Greece counted towards the previous day, so a streak could break or
+ * extend for no reason the user could see. */
+export async function getUserStreak(accountId: string, tz = 'UTC'): Promise<number> {
+  const zone = isValidTimeZone(tz) ? tz : 'UTC';
+  const cutoff = new Date(Date.now() - 62 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('quiz_sessions')
     .select('completed_at')
@@ -74,15 +116,29 @@ export async function getUserStreak(accountId: string): Promise<number> {
   if (error || !data || data.length === 0) return 0;
 
   const activeDays = new Set(
-    (data as { completed_at: string }[]).map((r) => r.completed_at.slice(0, 10))
+    (data as { completed_at: string }[])
+      .map((r) => {
+        const t = Date.parse(r.completed_at);
+        return Number.isNaN(t) ? null : dayKeyIn(new Date(t), zone);
+      })
+      .filter((k): k is string => k !== null)
   );
-  const today = new Date();
+
+  return streakFromDays(activeDays, zone);
+}
+
+/** Length of the run of active days ending today or yesterday.
+ *
+ * Split out from the query so it can be exercised directly — the whole point of
+ * the streak is the day boundary, and that is not something to verify by eye.
+ * `now` is injectable for the same reason. */
+export function streakFromDays(activeDays: Set<string>, tz: string, now = new Date()): number {
+  let key = dayKeyIn(now, isValidTimeZone(tz) ? tz : 'UTC');
   let streak = 0;
   for (let i = 0; i < 60; i++) {
-    const key = new Date(today.getTime() - i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     if (activeDays.has(key)) streak++;
-    else if (i === 0) continue; // no activity today — streak may still stand from yesterday
-    else break;
+    else if (i > 0) break; // a gap ends the run; an empty today does not
+    key = prevDayKey(key);
   }
   return streak;
 }
