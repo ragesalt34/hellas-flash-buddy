@@ -73,7 +73,7 @@ export async function gradeVocab(accountId: string, vocabId: number, grade: numb
       account_id: accountId,
       vocab_id: vocabId,
       level,
-      next_review_at: nextReviewAt(level),
+      next_review_at: nextReviewAt(level, grade),
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'account_id,vocab_id' }

@@ -196,7 +196,9 @@ export async function recordQuestionProgress(
       level,
       correct_count: prev.correct_count + (correct ? 1 : 0),
       seen_count: prev.seen_count + 1,
-      next_review_at: nextReviewAt(level),
+      // grade matters, not just the level: a lapse comes back in ten minutes
+      // even when the level it fell to would say days.
+      next_review_at: nextReviewAt(level, grade),
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'account_id,question_id' }
