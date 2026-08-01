@@ -98,7 +98,30 @@ export function isValidTimeZone(tz: string): boolean {
   }
 }
 
-/** Consecutive-day streak (today or yesterday inclusive) from completed sessions.
+/** Mark today as a study day for this account.
+ *
+ * The day is resolved in the user's own zone at write time and stored as a plain
+ * date, so reading the streak later needs no timezone maths at all.
+ *
+ * Why a table and not `updated_at` on the progress rows: those hold only the
+ * LAST review of each card, so a day whose cards were reviewed again later
+ * leaves no trace, and the streak would break for days the user did study. */
+export async function recordStudyDay(accountId: string, tz = 'UTC'): Promise<void> {
+  const zone = isValidTimeZone(tz) ? tz : 'UTC';
+  const { error } = await supabase
+    .from('study_days')
+    .upsert({ account_id: accountId, day: dayKeyIn(new Date(), zone) }, { onConflict: 'account_id,day' });
+  if (error) throw error;
+}
+
+/** Consecutive-day streak (today or yesterday inclusive).
+ *
+ * Counts ANY study — quiz, flashcards or vocabulary. It used to read only
+ * `quiz_sessions`, so someone who did cards and words every day but never
+ * finished a quiz had a streak of zero, which flatly contradicts the promise on
+ * the landing page. The activity log is the source of truth; if it has not been
+ * created yet the old quiz-only path still answers, so deploying this before
+ * running the SQL degrades instead of breaking.
  *
  * Days are the account's own calendar days: `tz` comes from the browser. On UTC
  * the boundary was wrong for everyone east or west of it — studying at 01:00
@@ -106,6 +129,30 @@ export function isValidTimeZone(tz: string): boolean {
  * extend for no reason the user could see. */
 export async function getUserStreak(accountId: string, tz = 'UTC'): Promise<number> {
   const zone = isValidTimeZone(tz) ? tz : 'UTC';
+  const since = prevNDays(dayKeyIn(new Date(), zone), 62);
+  const { data, error } = await supabase
+    .from('study_days')
+    .select('day')
+    .eq('account_id', accountId)
+    .gte('day', since);
+  if (!error && data) {
+    const days = new Set(
+      (data as { day: string }[]).map((r) => String(r.day).slice(0, 10))
+    );
+    return streakFromDays(days, zone);
+  }
+  return streakFromQuizSessions(accountId, zone);
+}
+
+/** `key` moved back `n` calendar days. */
+function prevNDays(key: string, n: number): string {
+  let k = key;
+  for (let i = 0; i < n; i++) k = prevDayKey(k);
+  return k;
+}
+
+/** The pre-activity-log streak: quiz sessions only. Kept as the fallback. */
+async function streakFromQuizSessions(accountId: string, zone: string): Promise<number> {
   const cutoff = new Date(Date.now() - 62 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('quiz_sessions')

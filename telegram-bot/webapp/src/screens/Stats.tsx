@@ -13,7 +13,10 @@ export function Stats({ onHome }: { onHome: () => void }) {
   if (!data) return <Loading />;
 
   const { stats, streak, vocab, topicLabels } = data;
-  if (stats.total_sessions === 0)
+  // "Nothing here yet" only when there is genuinely nothing. Gating on quizzes
+  // alone hid a filled-in vocabulary section from anyone who had studied words
+  // but never finished a quiz.
+  if (stats.total_sessions === 0 && vocab.seen === 0)
     return <Empty icon={BarChart3} text={t('stats.empty')} onHome={onHome} />;
 
   const acc =
@@ -33,12 +36,17 @@ export function Stats({ onHome }: { onHome: () => void }) {
     <div className="fade-in">
       <div className="section-label">{t('stats.summary')}</div>
       <div className="card stat-hero">
-        <Ring pct={acc} size={108} stroke={11}>
-          <div className="ring-pct" style={{ fontSize: 24 }}>
-            {acc}%
-          </div>
-          <div className="ring-sub">{t('stats.accuracy')}</div>
-        </Ring>
+        {/* Only when there are quizzes to be accurate about: with none, the ring
+            drew a 0% that reads as "you failed everything" rather than
+            "not measured yet". */}
+        {stats.total_sessions > 0 && (
+          <Ring pct={acc} size={108} stroke={11}>
+            <div className="ring-pct" style={{ fontSize: 24 }}>
+              {acc}%
+            </div>
+            <div className="ring-sub">{t('stats.accuracy')}</div>
+          </Ring>
+        )}
         <div className="stat-hero-side">
           <div className="mini">
             <span className="k">{t('stats.quiz')}</span>
@@ -53,23 +61,27 @@ export function Stats({ onHome }: { onHome: () => void }) {
         </div>
       </div>
 
-      <div className="section-label">{t('stats.byTopic')}</div>
-      <div className="card">
-        {topics.map(([topic, d]) => {
-          const pct = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
-          return (
-            <div className="bar-row" key={topic}>
-              <div className="lab">
-                <span>{topicLabels[topic] ?? topic}</span>
-                <span className="pc">
-                  {d.correct}/{d.total} · {pct}%
-                </span>
-              </div>
-              <ProgressBar value={d.correct} total={d.total} />
-            </div>
-          );
-        })}
-      </div>
+      {topics.length > 0 && (
+        <>
+          <div className="section-label">{t('stats.byTopic')}</div>
+          <div className="card">
+            {topics.map(([topic, d]) => {
+              const pct = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
+              return (
+                <div className="bar-row" key={topic}>
+                  <div className="lab">
+                    <span>{topicLabels[topic] ?? topic}</span>
+                    <span className="pc">
+                      {d.correct}/{d.total} · {pct}%
+                    </span>
+                  </div>
+                  <ProgressBar value={d.correct} total={d.total} />
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       <div className="section-label">{t('stats.vocabSection')}</div>
       <div className="card">

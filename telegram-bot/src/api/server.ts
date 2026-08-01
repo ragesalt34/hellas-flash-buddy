@@ -18,6 +18,7 @@ import {
   getUserStats,
   getUserStreak,
   isValidTimeZone,
+  recordStudyDay,
   getHistory,
 } from '../services/sessionService';
 import {
@@ -410,6 +411,9 @@ export function createApiApp(): express.Express {
           )
         )
       );
+      // Any study counts towards the day streak, not just quizzes.
+      // Best-effort: a missing activity log must not fail the action itself.
+      await recordStudyDay(a.id, getTz(req)).catch(() => {});
       res.json({ ok: true });
     })
   );
@@ -448,6 +452,9 @@ export function createApiApp(): express.Express {
       }
       // grade 1 = forgot, 2 = remembered, 3 = knew instantly → 2+ counts correct.
       await recordQuestionProgress(a.id, questionId, grade, grade >= 2);
+      // Any study counts towards the day streak, not just quizzes.
+      // Best-effort: a missing activity log must not fail the action itself.
+      await recordStudyDay(a.id, getTz(req)).catch(() => {});
       res.json({ ok: true });
     })
   );
@@ -489,6 +496,9 @@ export function createApiApp(): express.Express {
         return;
       }
       await gradeVocab(a.id, vocabId, grade);
+      // Any study counts towards the day streak, not just quizzes.
+      // Best-effort: a missing activity log must not fail the action itself.
+      await recordStudyDay(a.id, getTz(req)).catch(() => {});
       res.json({ ok: true, stats: await getVocabStats(a.id, ALL_VOCAB_IDS) });
     })
   );
