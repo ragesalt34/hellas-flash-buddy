@@ -84,6 +84,42 @@ export function buildAnswerOptions(question: QuizQuestion): string[] {
   return shuffleArray([question.correct_answer, ...question.wrong_answers]);
 }
 
+/** Even coverage across topics, for the "all topics" mode.
+ *
+ * The pool is lopsided — 108 history questions against 16–22 for each of the
+ * other three — so drawing uniformly gave a 10-question mixed quiz an average of
+ * 6.6 history and 1.0 geography. The interview treats the four areas as equals,
+ * so practice for it should too.
+ *
+ * Round-robin rather than fixed shares: it hands each topic one slot per pass,
+ * and a topic that runs out simply stops taking its turn, so the short topics
+ * cannot starve the quiz of length. The result is shuffled because otherwise the
+ * questions would arrive in a repeating topic order. */
+function pickBalanced(all: QuizQuestion[], limit: number): QuizQuestion[] {
+  const byTopic = new Map<string, QuizQuestion[]>();
+  for (const q of all) {
+    const key = q.topic ?? 'unknown';
+    const arr = byTopic.get(key);
+    if (arr) arr.push(q);
+    else byTopic.set(key, [q]);
+  }
+  const groups = [...byTopic.values()].map((g) => shuffleArray(g));
+  const picked: QuizQuestion[] = [];
+  let tookOne = true;
+  while (picked.length < limit && tookOne) {
+    tookOne = false;
+    for (const g of groups) {
+      if (picked.length >= limit) break;
+      const q = g.pop();
+      if (q) {
+        picked.push(q);
+        tookOne = true;
+      }
+    }
+  }
+  return shuffleArray(picked);
+}
+
 export async function fetchQuestionsRandom(
   topic: string,
   limit = 10,
@@ -96,7 +132,8 @@ export async function fetchQuestionsRandom(
   if (error) throw error;
 
   const all = ((data ?? []) as unknown as RawQuestion[]).map((r) => toQuizQuestion(r, lang));
-  return shuffleArray(all).slice(0, limit);
+  // A single-topic quiz is already one topic — only "all topics" needs balancing.
+  return topic === 'mixed' ? pickBalanced(all, limit) : shuffleArray(all).slice(0, limit);
 }
 
 const toFlashcard = (q: QuizQuestion, level = 0): FlashcardItem => ({
