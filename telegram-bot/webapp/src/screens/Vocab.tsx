@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2 } from 'lucide-react';
+import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
@@ -14,6 +14,10 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  // Distinguishes "loaded, nothing due" from "the request failed". Without it a
+  // dropped connection rendered the cheerful empty state — the app told the user
+  // they were done for today, which is both false and a dead end.
+  const [failed, setFailed] = useState(false);
   // See Flashcards: same double-tap guard, and it must sit with the other hooks
   // rather than after the early returns further down.
   const gradedRef = useRef<string | null>(null);
@@ -26,6 +30,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   function reset() {
     setCards(null);
+    setFailed(false);
     setI(0);
     setRevealed(false);
     setDone(false);
@@ -37,7 +42,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
     api
       .vocab()
       .then((r) => setCards(r.cards))
-      .catch(() => setCards([]));
+      .catch(() => setFailed(true));
   }
 
   // Guarded initial load so StrictMode's double-invoke can't flash one card
@@ -48,7 +53,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
     api
       .vocab()
       .then((r) => !cancelled && setCards(r.cards))
-      .catch(() => !cancelled && setCards([]));
+      .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
     };
@@ -60,6 +65,18 @@ export function Vocab({ onHome }: { onHome: () => void }) {
     gradedRef.current = null;
   }, [cards]);
 
+  if (failed)
+    return (
+      <div className="empty fade-in">
+        <div className="e">
+          <WifiOff size={52} strokeWidth={1.8} />
+        </div>
+        <p>{t('common.error')}</p>
+        <button className="btn" onClick={() => { haptic(); load(); }}>
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
+        </button>
+      </div>
+    );
   if (!cards) return <Loading />;
   if (cards.length === 0)
     return <Empty icon={CheckCircle2} text={t('vocab.empty')} onHome={onHome} />;

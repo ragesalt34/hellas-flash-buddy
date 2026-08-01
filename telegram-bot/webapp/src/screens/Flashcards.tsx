@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2 } from 'lucide-react';
+import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
@@ -14,6 +14,10 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  // Distinguishes "loaded, nothing due" from "the request failed". Without it a
+  // dropped connection rendered the cheerful empty state — the app told the user
+  // they were done for today, which is both false and a dead end.
+  const [failed, setFailed] = useState(false);
   // Guards a double tap: both taps see the same card (i only changes on the next
   // render), so without this one card took two grades — level +2 and seen_count
   // +2 for a single answer. Declared with the other hooks, above the early
@@ -30,6 +34,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   function reset() {
     setCards(null);
+    setFailed(false);
     setI(0);
     setRevealed(false);
     setDone(false);
@@ -41,7 +46,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     api
       .flashcards()
       .then((r) => setCards(r.cards))
-      .catch(() => setCards([]));
+      .catch(() => setFailed(true));
   }
 
   // Initial (and on language change) load, guarded so React 18 StrictMode's
@@ -53,7 +58,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     api
       .flashcards()
       .then((r) => !cancelled && setCards(r.cards))
-      .catch(() => !cancelled && setCards([]));
+      .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
     };
@@ -67,6 +72,18 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     gradedRef.current = null;
   }, [cards]);
 
+  if (failed)
+    return (
+      <div className="empty fade-in">
+        <div className="e">
+          <WifiOff size={52} strokeWidth={1.8} />
+        </div>
+        <p>{t('common.error')}</p>
+        <button className="btn" onClick={() => { haptic(); load(); }}>
+          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
+        </button>
+      </div>
+    );
   if (!cards) return <Loading />;
   if (cards.length === 0)
     return <Empty icon={CheckCircle2} text={t('flashcards.empty')} onHome={onHome} />;
