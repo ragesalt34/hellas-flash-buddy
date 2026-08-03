@@ -93,7 +93,11 @@ export function selectionChanged(): void {
 
 export function initTelegram(): void {
   if (!tg) {
-    document.documentElement.style.setProperty('--app-height', '100vh');
+    // Deliberately leaves --app-height unset so the stylesheet's own fallback
+    // applies. It used to be pinned to the literal string '100vh', which is the
+    // one value iOS Safari gets wrong: 100vh counts the area behind the address
+    // bar, so the page ran taller than the screen and the bottom bar sat below
+    // the fold. The CSS falls back to 100dvh instead.
     return;
   }
   tg.ready();
