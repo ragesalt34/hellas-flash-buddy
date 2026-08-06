@@ -1,28 +1,56 @@
 name: keep-warm
 
-# Render's free tier sleeps the API after ~15 min idle, so the first request
-# after a pause waits 30-60s for a cold start (slow page load / slow sign-up).
-# Pinging /healthz on a schedule keeps the instance awake for free.
+# Держит бесплатный инстанс Render в тонусе: он засыпает после ~15 минут
+# простоя, и первый запрос после паузы ждёт холодного старта 30-60 секунд.
 #
-# NOTE: GitHub cron can be delayed under load and is disabled after 60 days with
-# no repo commits. For rock-solid timing, also/instead use UptimeRobot (5-min
-# HTTP monitor on the same /healthz URL) or upgrade Render to a paid instance.
+# ЧЕСТНО О ВОЗМОЖНОСТЯХ ЭТОГО ФАЙЛА.
+# GitHub не обещает пунктуальности для schedule и под нагрузкой просто
+# выбрасывает запуски. Замер по истории этого репозитория: при cron «каждые
+# 5 минут» реальные промежутки между прогонами составляли 1.5-3 часа, то есть
+# доезжало меньше 5% запусков. При пороге сна в 15 минут этого не хватает —
+# инстанс всё равно спит почти всё время.
+#
+# ПОЭТОМУ ОСНОВНОЙ СПОСОБ — ВНЕШНИЙ МОНИТОР. UptimeRobot (бесплатно, проверка
+# раз в 5 минут) или Better Stack: HTTP-монитор на тот же /healthz. Внешний
+# сервис действительно ходит по расписанию, а не «когда получится».
+# Этот workflow остаётся подстраховкой и ручной кнопкой.
+#
+# Что изменено против первой версии:
+#  - интервал 10 минут вместо 5 и со смещением на :03, а не в ноль. Круглые
+#    значения и особенно «каждые 5 минут» — самые загруженные слоты у GitHub,
+#    с них запуски снимают в первую очередь.
+#  - холодный старт больше не роняет прогон: 120 секунд на попытку вместо 90 и
+#    пауза между попытками подлиннее. Именно на таймауте по холодному инстансу
+#    приходили письма о падении.
+#  - concurrency, чтобы отложенные запуски не копились друг на друге.
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # every 5 minutes
-  workflow_dispatch: {} # allow manual runs from the Actions tab
+    - cron: '3,13,23,33,43,53 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: keep-warm
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
-      - name: Ping Render health check
+      - name: Пинг проверки здоровья Render
         run: |
+          url=https://hellas-flash-buddy-bot.onrender.com/healthz
+          code=000
           for i in 1 2 3; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 \
-              https://hellas-flash-buddy-bot.onrender.com/healthz) && break
-            echo "attempt $i failed, retrying..."; sleep 10
+            # Холодный старт занимает до минуты, поэтому лимит щедрый.
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 120 "$url" || echo 000)
+            echo "попытка $i → $code"
+            [ "$code" = "200" ] && break
+            sleep 20
           done
-          echo "healthz -> $code"
-          test "$code" = "200"
+          if [ "$code" != "200" ]; then
+            echo "::warning::/healthz ответил $code после трёх попыток"
+            exit 1
+          fi
+          echo "инстанс отвечает"
