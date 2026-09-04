@@ -1660,7 +1660,12 @@ button.chip:active { transform: scale(0.95); }
 .lp-float.f3 { top: 46%; right: -26px; color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, #fff); }
 @media (max-width: 900px) {
   .lp-float.f3 { display: none; }
-  .lp-float.f1 { left: 2px; }
+  /* На узком экране подпись «попробуй прямо сейчас» встаёт НАД карточкой и
+     отодвигает её вниз, а f1 был приколот к верху обёртки — и ложился прямо на
+     первое слово подписи (замер: перекрытие 76x7). Переносим его к нижнему углу
+     карточки, симметрично f2: обе плашки садятся на нижнюю кромку, наезжать
+     больше не на что, и это не зависит от того, во сколько строк легла подпись. */
+  .lp-float.f1 { left: 2px; top: auto; bottom: -12px; }
   .lp-float.f2 { right: 2px; }
 }
 
