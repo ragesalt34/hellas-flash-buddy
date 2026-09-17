@@ -1,9 +1,12 @@
 // Spaced-repetition scheduling — shared by flashcard (question) and vocab progress.
-// Levels 0..6; grade 1 = hard (reset), 2 = good (+1), 3 = easy (+2).
+// Levels 0..6; grade 1 = hard (−2, back in 10 min), 2 = good (+1), 3 = easy (+2).
 
 export const SRS_INTERVALS_MS = [
   1 * 60 * 1000, // 0 → 1 min
-  10 * 60 * 1000, // 1 → 10 min
+  // 1 → 1 hour. Was 10 min, which collided with RELEARN_MS: on a new card
+  // «Сложно» and «Хорошо» both came back in ten minutes, so the choice did
+  // nothing. An hour keeps the step short enough to reinforce the same day.
+  60 * 60 * 1000, // 1 → 1 hour
   24 * 60 * 60 * 1000, // 2 → 1 day
   3 * 24 * 60 * 60 * 1000, // 3 → 3 days
   7 * 24 * 60 * 60 * 1000, // 4 → 7 days

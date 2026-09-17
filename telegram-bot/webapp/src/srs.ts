@@ -20,14 +20,15 @@ export function nextLevel(current: number, grade: number): number {
   return Math.min(from + 1, MAX_LEVEL);
 }
 
-// Interval labels per level: 1min, 10min, 1d, 3d, 7d, 14d, 30d.
+// Interval labels per level: 1min, 1h, 1d, 3d, 7d, 14d, 30d (must match the server).
 const LABELS: Record<Language, string[]> = {
-  ru: ['1 мин', '10 мин', '1 день', '3 дня', '7 дней', '14 дней', '30 дней'],
-  el: ['1 λεπτό', '10 λεπτά', '1 ημέρα', '3 ημέρες', '7 ημέρες', '14 ημέρες', '30 ημέρες'],
+  ru: ['1 мин', '1 час', '1 день', '3 дня', '7 дней', '14 дней', '30 дней'],
+  el: ['1 λεπτό', '1 ώρα', '1 ημέρα', '3 ημέρες', '7 ημέρες', '14 ημέρες', '30 ημέρες'],
 };
 
-// The relearning step a lapse is re-shown at — index 1 in the list above.
-const RELEARN_LABEL_INDEX = 1;
+// The relearning step a lapse is re-shown at. Its own label now: it used to
+// borrow index 1, which was also 10 min — until that step became an hour.
+const RELEARN_LABEL: Record<Language, string> = { ru: '10 мин', el: '10 λεπτά' };
 
 /** Label of the interval a card at `level` graded `grade` will come back in.
  *
@@ -35,7 +36,7 @@ const RELEARN_LABEL_INDEX = 1;
  * returns in ten minutes, so "Сложно" always reads 10 мин. Reading it off
  * nextLevel would promise days on a mature card — the button would be lying. */
 export function gradeIntervalLabel(level: number, grade: number, lang: Language): string {
-  if (grade <= 1) return LABELS[lang][RELEARN_LABEL_INDEX];
+  if (grade <= 1) return RELEARN_LABEL[lang];
   const l = Math.max(0, Math.min(nextLevel(level ?? 0, grade), MAX_LEVEL));
   return LABELS[lang][l];
 }
