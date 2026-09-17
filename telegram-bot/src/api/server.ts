@@ -11,6 +11,8 @@ import {
   buildAnswerOptions,
   topicLabels,
   recordQuestionProgress,
+  fetchCorrectAnswers,
+  isQuestionId,
   type ContentLang,
 } from '../services/questionService';
 import {
@@ -340,12 +342,22 @@ export function createApiApp(): express.Express {
     })
   );
 
+  const KNOWN_TOPICS = new Set(['history', 'culture', 'laws', 'geography', 'mixed']);
+
   // GET /api/quiz?topic=mixed&limit=10&lang=ru|el
   api.get(
     '/quiz',
     wrap(async (req, res) => {
       const topic = String(req.query.topic ?? 'mixed');
-      const limit = Math.min(30, Math.max(1, Number(req.query.limit ?? 10)));
+      // An unknown topic used to come back as 200 with an empty list, and a
+      // non-numeric limit as NaN — which slices to nothing. Both gave the
+      // client an empty quiz instead of an error.
+      if (!KNOWN_TOPICS.has(topic)) {
+        res.status(400).json({ error: 'bad_topic' });
+        return;
+      }
+      const rawLimit = Number.parseInt(String(req.query.limit ?? '10'), 10);
+      const limit = Math.min(30, Math.max(1, Number.isFinite(rawLimit) ? rawLimit : 10));
       const lang = getLang(req);
       const questions = await fetchQuestionsRandom(topic, limit, lang);
       res.json({
@@ -364,7 +376,6 @@ export function createApiApp(): express.Express {
   );
 
   // POST /api/quiz/complete  { topic, answers }  (client `score` is ignored)
-  const KNOWN_TOPICS = new Set(['history', 'culture', 'laws', 'geography', 'mixed']);
   api.post(
     '/quiz/complete',
     wrap(async (req, res) => {
@@ -395,6 +406,33 @@ export function createApiApp(): express.Express {
           correct: r.correct,
           correct_answer: r.correct_answer.slice(0, 500),
         }));
+
+      // Correctness is decided here, not taken from the client. It used to be the
+      // client's `correct` flag verbatim, so a request could mark a wrong answer
+      // right: the score went up and the question's SRS level was raised for
+      // something the user got wrong. The chosen option is compared with the
+      // stored answer in both languages (the quiz may be served in either).
+      // Unknown or repeated ids are dropped rather than trusted.
+      const truth = await fetchCorrectAnswers(records.map((r) => r.question_id));
+      const norm = (x: string | null | undefined) => (x ?? '').trim().toLowerCase();
+      const seen = new Set<string>();
+      const verified: AnswerRecord[] = [];
+      for (const r of records) {
+        const t = truth.get(r.question_id);
+        if (!t || seen.has(r.question_id)) continue;
+        seen.add(r.question_id);
+        const pick = norm(r.chosen);
+        const correct = pick !== '' && (pick === norm(t.ru) || pick === norm(t.el));
+        const greek = /[Ͱ-Ͽἀ-῿]/.test(r.chosen);
+        verified.push({
+          question_id: r.question_id,
+          chosen: r.chosen,
+          correct,
+          correct_answer: ((greek ? t.el : t.ru) ?? t.ru ?? t.el ?? '').slice(0, 500),
+        });
+      }
+      records.length = 0;
+      records.push(...verified);
       if (records.length === 0) {
         res.status(400).json({ error: 'bad_request' });
         return;
@@ -450,6 +488,12 @@ export function createApiApp(): express.Express {
         res.status(400).json({ error: 'bad_request' });
         return;
       }
+      // A malformed id reached Postgres as a uuid cast and came back as a 500;
+      // a well-formed but unknown one would write progress for nothing.
+      if (!isQuestionId(questionId) || !(await fetchCorrectAnswers([questionId])).has(questionId)) {
+        res.status(400).json({ error: 'unknown_question' });
+        return;
+      }
       // grade 1 = forgot, 2 = remembered, 3 = knew instantly → 2+ counts correct.
       await recordQuestionProgress(a.id, questionId, grade, grade >= 2);
       // Any study counts towards the day streak, not just quizzes.
@@ -493,6 +537,12 @@ export function createApiApp(): express.Express {
         grade > 3
       ) {
         res.status(400).json({ error: 'bad_request' });
+        return;
+      }
+      // Words live in code, so an id outside the list is not a word at all. It was
+      // accepted and wrote a progress row for a vocabulary item that does not exist.
+      if (!VOCAB_BY_ID.has(vocabId)) {
+        res.status(400).json({ error: 'unknown_word' });
         return;
       }
       await gradeVocab(a.id, vocabId, grade);

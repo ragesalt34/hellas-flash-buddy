@@ -242,3 +242,28 @@ export async function recordQuestionProgress(
   );
   if (error) throw error;
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** True if `id` could be a question id at all. Checked before any query: a
+ * malformed value reaches Postgres as a uuid cast and comes back as a 500. */
+export const isQuestionId = (id: unknown): id is string => typeof id === 'string' && UUID_RE.test(id);
+
+/** The correct answer of each question, in both languages, for the ids given.
+ * Unknown ids are simply absent from the map. */
+export async function fetchCorrectAnswers(
+  ids: string[]
+): Promise<Map<string, { ru: string | null; el: string | null }>> {
+  const valid = [...new Set(ids.filter(isQuestionId))];
+  const out = new Map<string, { ru: string | null; el: string | null }>();
+  if (valid.length === 0) return out;
+  const { data, error } = await supabase
+    .from('questions')
+    .select('id, correct_answer_ru, correct_answer_el')
+    .in('id', valid);
+  if (error) throw error;
+  for (const r of (data ?? []) as { id: string; correct_answer_ru: string | null; correct_answer_el: string | null }[]) {
+    out.set(r.id, { ru: r.correct_answer_ru, el: r.correct_answer_el });
+  }
+  return out;
+}
