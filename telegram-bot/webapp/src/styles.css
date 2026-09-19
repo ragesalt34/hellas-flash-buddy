@@ -2920,3 +2920,338 @@ button.chip:active { transform: scale(0.95); }
   .lp-learn .lp-step::after,
   .lp-learn .lp-feature::after { transition: none; }
 }
+
+/* ============================================================
+   FLASHCARDS — round theme redesign (warm, pastel, hand-made).
+
+   Everything is scoped to [data-theme='soft'] .fc-screen, so the quiz and
+   vocab screens and the square theme keep their own look. Ornaments carry
+   .hs-deco, which the square theme hides. Logic is untouched: only classes
+   and decorative elements were added to the component.
+   ============================================================ */
+[data-theme='soft'] .fc-screen {
+  --fc-cream: #fffcf6;
+  --fc-line: rgba(92, 60, 30, 0.09);
+  --fc-shadow: 0 1px 0 rgba(92, 60, 30, 0.05), 0 22px 44px -26px rgba(120, 72, 30, 0.45);
+  --fc-coral: #cb4540;
+  --fc-coral-deep: #a3342e;
+  --fc-ink: #1f2430;
+  --fc-body: #4a3f37;
+  position: relative;
+}
+[data-theme='soft'] body:has(.fc-screen) { background: #faf6ed; }
+
+/* ---- Page ornaments ---- */
+[data-theme='soft'] .fc-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+[data-theme='soft'] .fc-decor .blob { position: absolute; border-radius: 50%; }
+[data-theme='soft'] .fc-decor .b-tl { width: 240px; height: 220px; left: -110px; top: -100px; background: #f9ddd6; opacity: 0.8; }
+[data-theme='soft'] .fc-decor .b-tr { width: 280px; height: 260px; right: -120px; top: -110px; background: #fbe3b5; opacity: 0.75; }
+[data-theme='soft'] .fc-decor .b-bl { width: 340px; height: 230px; left: -130px; bottom: -120px; background: #f9ddd6; opacity: 0.7; }
+[data-theme='soft'] .fc-decor .b-br { width: 220px; height: 300px; right: -110px; bottom: -110px; background: #e6def5; opacity: 0.85; }
+[data-theme='soft'] .fc-decor .doodle { position: absolute; }
+[data-theme='soft'] .fc-decor .d-tl { color: #b5655a; left: 84px; top: 22px; transform: scaleX(-1) rotate(-10deg); }
+[data-theme='soft'] .fc-decor .d-swirl { color: #eeaa55; right: 90px; top: 80px; }
+[data-theme='soft'] .fc-decor .d-heart { color: #f0b76b; left: 80px; bottom: 120px; transform: rotate(-12deg); }
+[data-theme='soft'] .fc-decor .d-br { color: #9b88d8; right: 60px; bottom: 150px; transform: rotate(10deg); }
+
+/* ---- Close button (desktop focus mode): a soft round puck ---- */
+[data-theme='soft'] body:has(.fc-screen) .focus-close {
+  width: 56px;
+  height: 56px;
+  top: 24px;
+  left: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--fc-line, rgba(92, 60, 30, 0.09));
+  background: #fffcf6;
+  color: #2a2420;
+  box-shadow: 0 10px 24px -14px rgba(120, 72, 30, 0.5);
+}
+[data-theme='soft'] body:has(.fc-screen) .focus-close:hover {
+  transform: translateY(-2px) rotate(90deg);
+  box-shadow: 0 14px 28px -14px rgba(120, 72, 30, 0.55);
+}
+[data-theme='soft'] body:has(.fc-screen) .focus-close:active {
+  transform: scale(0.94);
+  box-shadow: 0 6px 16px -12px rgba(120, 72, 30, 0.5);
+}
+
+/* ---- Top bar ---- */
+[data-theme='soft'] .fc-screen .topbar { margin-bottom: 14px; }
+[data-theme='soft'] .fc-screen .topbar .meta {
+  gap: 12px !important;
+  font-size: 17px;
+  font-weight: 600;
+  color: #2d2621;
+}
+[data-theme='soft'] .fc-screen .fc-meta-ic {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fbe0da;
+  color: var(--fc-coral-deep);
+  box-shadow: 0 4px 10px -6px rgba(200, 70, 63, 0.6);
+}
+[data-theme='soft'] .fc-screen .fc-meta-ic svg { width: 18px; height: 18px; }
+[data-theme='soft'] .fc-screen .topbar .counter {
+  border: 0;
+  border-radius: 12px;
+  padding: 7px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  background: #fcd98b;
+  color: #3b2a10;
+  box-shadow: 0 3px 0 rgba(200, 140, 30, 0.25);
+}
+[data-theme='soft'] .fc-screen .progress {
+  height: 12px;
+  border: 0;
+  background: #efe8dc;
+}
+[data-theme='soft'] .fc-screen .progress > i {
+  /* A card's width of progress even on card 1, so the bar never reads empty. */
+  min-width: 12px;
+  background: #ee7b73;
+}
+
+/* ---- The card ---- */
+[data-theme='soft'] .fc-screen .fc-stage { position: relative; }
+[data-theme='soft'] .fc-screen .fc-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--fc-cream);
+  border: 1px solid var(--fc-line);
+  border-radius: 34px;
+  box-shadow: var(--fc-shadow);
+  padding: 44px 40px;
+  min-height: clamp(240px, 38vh, 380px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fc-in 0.45s var(--ease) both;
+}
+[data-theme='soft'] .fc-screen .fc-card.is-revealed { justify-content: flex-start; animation: none; }
+@keyframes fc-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+[data-theme='soft'] .fc-screen .fc-card .speak-row {
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 0;
+}
+[data-theme='soft'] .fc-screen .fc-card .speak-row .qtext {
+  flex: 0 1 auto;
+  text-align: center;
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  color: var(--fc-ink);
+  max-width: 24ch;
+  overflow-wrap: break-word;
+}
+/* Corner shapes, clipped by the card's radius. */
+[data-theme='soft'] .fc-screen .fc-blob {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+[data-theme='soft'] .fc-screen .fc-blob.tr {
+  width: 150px; height: 130px; right: -40px; top: -40px;
+  border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%;
+  background: #e3dbf4;
+}
+[data-theme='soft'] .fc-screen .fc-blob.bl {
+  width: 200px; height: 140px; left: -50px; bottom: -60px;
+  border-radius: 55% 45% 50% 50% / 60% 55% 45% 40%;
+  background: #dcefe2;
+}
+[data-theme='soft'] .fc-screen .fc-card-spark {
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  color: #f2b43c;
+  transform: rotate(-10deg);
+  pointer-events: none;
+}
+[data-theme='soft'] .fc-screen .speak-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: #fbe0da;
+  color: var(--fc-coral-deep);
+  box-shadow: 0 4px 10px -6px rgba(200, 70, 63, 0.6);
+}
+[data-theme='soft'] .fc-screen .speak-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 14px -8px rgba(200, 70, 63, 0.6); }
+[data-theme='soft'] .fc-screen .speak-btn:active { transform: scale(0.94); }
+
+/* Temple sketch outside the card, only where there is room for it. */
+[data-theme='soft'] .fc-screen .fc-illus {
+  display: none;
+  position: absolute;
+  right: -150px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-6deg);
+  color: #e5a53a;
+  pointer-events: none;
+}
+[data-theme='soft'] .fc-screen .fc-illus .fc-illus-spark {
+  position: absolute;
+  right: -26px;
+  top: -18px;
+  color: #8a4a3e;
+  transform: scaleX(-1);
+}
+
+/* ---- Answer ---- */
+[data-theme='soft'] .fc-screen .answer-box {
+  margin-top: 26px;
+  border: 0;
+  border-radius: 24px;
+  background: #e9f4ec;
+  box-shadow: none;
+  padding: 20px 22px 22px;
+}
+[data-theme='soft'] .fc-screen .answer-tag {
+  border-radius: 999px;
+  background: #4f9272;
+  padding: 5px 14px;
+}
+[data-theme='soft'] .fc-screen .answer-text { color: var(--fc-ink); }
+[data-theme='soft'] .fc-screen .explain {
+  border: 0;
+  border-radius: 20px;
+  background: #fdf1dc;
+  color: var(--fc-body);
+  line-height: 1.55;
+}
+
+/* ---- Actions ---- */
+[data-theme='soft'] .fc-screen .actionbar {
+  background: transparent;
+  border-top: 0;
+}
+[data-theme='soft'] .fc-screen .fc-reveal {
+  position: relative;
+  border: 0;
+  border-radius: 999px;
+  padding: 18px 28px;
+  min-height: 60px;
+  font-size: 18px;
+  font-weight: 600;
+  background: var(--fc-coral);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--fc-coral-deep), 0 16px 30px -16px rgba(200, 70, 63, 0.75);
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease), background 0.18s var(--ease);
+}
+[data-theme='soft'] .fc-screen .fc-reveal:hover {
+  transform: translateY(-2px);
+  background: #c23e39;
+  box-shadow: 0 7px 0 var(--fc-coral-deep), 0 20px 34px -16px rgba(200, 70, 63, 0.8);
+}
+[data-theme='soft'] .fc-screen .fc-reveal:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--fc-coral-deep), 0 8px 18px -12px rgba(200, 70, 63, 0.7);
+}
+[data-theme='soft'] .fc-screen .fc-reveal svg { transition: transform 0.25s var(--spring); }
+[data-theme='soft'] .fc-screen .fc-reveal:hover svg { transform: scale(1.15); }
+/* Little shine strokes either side of the button, on wide screens. */
+[data-theme='soft'] .fc-screen .fc-reveal::before,
+[data-theme='soft'] .fc-screen .fc-reveal::after {
+  content: '';
+  display: none;
+  position: absolute;
+  top: 50%;
+  width: 34px;
+  height: 44px;
+  margin-top: -22px;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='44' viewBox='0 0 34 44' fill='none' stroke='%23ee7b73' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M26 8 L14 15 M28 22 L12 22 M26 36 L14 29'/%3E%3C/svg%3E") no-repeat center;
+}
+[data-theme='soft'] .fc-screen .fc-reveal::before { left: -52px; }
+[data-theme='soft'] .fc-screen .fc-reveal::after { right: -52px; transform: scaleX(-1); }
+
+/* Grade buttons: pastel pills, same shape language as the reveal button.
+   Hard is coral, good is yellow, easy is mint, as before. */
+[data-theme='soft'] .fc-screen .grade-row { gap: 12px; }
+[data-theme='soft'] .fc-screen .grade {
+  border: 0;
+  border-radius: 24px;
+  padding: 14px 8px 12px;
+  min-height: 60px;
+  font-size: 17px;
+  font-weight: 600;
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+[data-theme='soft'] .fc-screen .grade .gsub { font-size: 13px; font-weight: 600; opacity: 1; }
+[data-theme='soft'] .fc-screen .grade.g1 { background: #fbe0da; color: #9f322b; box-shadow: 0 4px 0 #f0b8ae; }
+[data-theme='soft'] .fc-screen .grade.g2 { background: #fdeabf; color: #5a3d06; box-shadow: 0 4px 0 #efcd7d; }
+[data-theme='soft'] .fc-screen .grade.g3 { background: #d9eee0; color: #245e45; box-shadow: 0 4px 0 #a9d4b8; }
+[data-theme='soft'] .fc-screen .grade:hover { transform: translateY(-2px); }
+[data-theme='soft'] .fc-screen .grade.g1:hover { box-shadow: 0 6px 0 #f0b8ae; }
+[data-theme='soft'] .fc-screen .grade.g2:hover { box-shadow: 0 6px 0 #efcd7d; }
+[data-theme='soft'] .fc-screen .grade.g3:hover { box-shadow: 0 6px 0 #a9d4b8; }
+[data-theme='soft'] .fc-screen .grade:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08); }
+
+/* ---- Done state ---- */
+[data-theme='soft'] .fc-screen .result {
+  background: var(--fc-cream);
+  border: 1px solid var(--fc-line);
+  border-radius: 34px;
+  box-shadow: var(--fc-shadow);
+}
+[data-theme='soft'] .fc-screen .result .emoji { color: #e5a53a; }
+[data-theme='soft'] .fc-screen.center-col > .btn {
+  border: 0;
+  border-radius: 999px;
+  min-height: 56px;
+  background: var(--fc-coral);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--fc-coral-deep);
+}
+[data-theme='soft'] .fc-screen.center-col > .btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--fc-coral-deep); }
+[data-theme='soft'] .fc-screen.center-col > .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--fc-coral-deep); }
+[data-theme='soft'] .fc-screen.center-col > .btn.secondary {
+  background: var(--fc-cream);
+  color: #2d2621;
+  border: 1px solid var(--fc-line);
+  box-shadow: 0 4px 0 #eadfce;
+}
+
+/* ---- Breakpoints ---- */
+@media (min-width: 900px) {
+  /* Desktop focus mode puts the action in a full-width bar; here it floats. */
+  [data-theme='soft'] .fc-screen .actionbar { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+  [data-theme='soft'] .fc-screen .fc-reveal::before,
+  [data-theme='soft'] .fc-screen .fc-reveal::after { display: block; }
+}
+@media (min-width: 1180px) {
+  [data-theme='soft'] .fc-screen .fc-illus { display: block; }
+}
+@media (max-width: 1099px) {
+  [data-theme='soft'] .fc-decor .doodle { display: none; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .fc-decor .blob { opacity: 0.5; }
+  [data-theme='soft'] .fc-screen .fc-card { padding: 36px 22px; border-radius: 28px; min-height: 220px; }
+  [data-theme='soft'] .fc-screen .fc-card-spark { top: 16px; left: 16px; width: 30px; height: 30px; }
+  [data-theme='soft'] .fc-screen .grade { border-radius: 20px; font-size: 15px; }
+  [data-theme='soft'] .fc-screen .grade .gsub { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .fc-screen .fc-card { animation: none; }
+  [data-theme='soft'] .fc-screen .fc-reveal,
+  [data-theme='soft'] .fc-screen .grade { transition: none; }
+  [data-theme='soft'] body:has(.fc-screen) .focus-close:hover { transform: none; }
+}

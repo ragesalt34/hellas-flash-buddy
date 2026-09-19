@@ -7,6 +7,29 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
+import { Sparks, TempleMark } from '../components/icons';
+
+/* Round-theme ornaments for this screen: pastel blobs in the corners and a few
+   hand-drawn doodles, fixed behind everything. Decorative only — aria-hidden,
+   and the square theme hides every .hs-deco element. */
+function FcDecor() {
+  return (
+    <div className="hs-deco fc-decor" aria-hidden="true">
+      <span className="blob b-tl" />
+      <span className="blob b-tr" />
+      <span className="blob b-bl" />
+      <span className="blob b-br" />
+      <Sparks className="doodle d-tl" size={40} />
+      <svg className="doodle d-swirl" width="60" height="50" viewBox="0 0 60 50" fill="none">
+        <path d="M6 44 C6 30 14 20 24 22 C32 24 28 34 22 30 C16 26 26 10 40 10 C48 10 52 6 56 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+      <svg className="doodle d-heart" width="46" height="44" viewBox="0 0 46 44" fill="none">
+        <path d="M23 39 C10 30 4 22 5 14 C6 7 13 4 18 7 C21 9 22 12 23 14 C24 11 27 7 31 6 C37 5 42 10 41 17 C40 25 32 32 23 39 Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+      </svg>
+      <Sparks className="doodle d-br" size={40} />
+    </div>
+  );
+}
 
 export function Flashcards({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
@@ -90,7 +113,8 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   if (done) {
     return (
-      <div className="fade-in center-col">
+      <div className="fade-in center-col fc-screen">
+        <FcDecor />
         <div className="result">
           <div className="emoji">
             <PartyPopper size={56} strokeWidth={1.8} />
@@ -128,10 +152,14 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   }
 
   return (
-    <div className="fade-in" key={i}>
+    <div className="fade-in fc-screen" key={i}>
+      <FcDecor />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Layers size={14} strokeWidth={2.6} /> {t('nav.flashcards')}
+          <span className="fc-meta-ic">
+            <Layers size={14} strokeWidth={2.6} />
+          </span>{' '}
+          {t('nav.flashcards')}
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
@@ -140,7 +168,16 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <div className="card">
+      <div className="fc-stage">
+      {/* Temple sketch beside the card on wide screens — decoration only. */}
+      <span className="hs-deco fc-illus" aria-hidden="true">
+        <TempleMark size={78} strokeWidth={1.8} />
+        <Sparks className="fc-illus-spark" size={34} />
+      </span>
+      <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>
+        <span className="hs-deco fc-blob tr" aria-hidden="true" />
+        <span className="hs-deco fc-blob bl" aria-hidden="true" />
+        <Sparks className="hs-deco fc-card-spark" size={40} />
         {/* Pronunciation only where there is Greek to pronounce (see hasGreek). */}
         <div className="speak-row">
           <div className="qtext">{card.question}</div>
@@ -187,6 +224,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           </div>
         )}
       </div>
+      </div>
 
       <div className="actionbar">
         {revealed ? (
@@ -214,7 +252,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
             </button>
           </div>
         ) : (
-          <button className="btn btn-block" onClick={() => { haptic(); playTap(); setRevealed(true); }}>
+          <button className="btn btn-block fc-reveal" onClick={() => { haptic(); playTap(); setRevealed(true); }}>
             <Eye size={20} strokeWidth={2.4} /> {t('flashcards.showAnswer')}
           </button>
         )}
