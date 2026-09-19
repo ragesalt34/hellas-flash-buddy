@@ -53,6 +53,41 @@
       })();
     </script>
 
+    <!-- Self-heal a poisoned asset cache. During a Cloudflare Pages deploy a
+         request for a not-yet-published /assets/* file could be answered with
+         index.html (HTTP 200, text/html). /assets/* is served immutable for a
+         year, so the browser kept that HTML under the asset's URL and the site
+         stayed blank — no CSS, no JS — even after the deploy finished. When an
+         asset fails to load, re-fetch every asset of this page with
+         cache: 'reload' (which overwrites the browser's cached copy) and reload
+         once. Registered before the bundle's own tags so it sees their errors. -->
+    <script>
+      (function () {
+        var KEY = 'hs_asset_heal';
+        window.addEventListener('error', function (e) {
+          var el = e.target;
+          if (!el || (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK')) return;
+          var url = el.src || el.href || '';
+          if (url.indexOf('/assets/') === -1) return;
+          try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (_) { return; }
+          var urls = [];
+          document.querySelectorAll('script[src*="/assets/"],link[href*="/assets/"]').forEach(function (n) {
+            urls.push(n.src || n.href);
+          });
+          Promise.all(urls.map(function (u) {
+            return fetch(u, { cache: 'reload' }).catch(function () {});
+          })).then(function () { location.reload(); });
+        }, true);
+        // Clear the one-shot guard once the page has loaded fine, so a later
+        // deploy in the same tab can heal again.
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            try { if (document.getElementById('root').children.length) sessionStorage.removeItem(KEY); } catch (_) {}
+          }, 3000);
+        });
+      })();
+    </script>
+
     <!-- Wake the API (Render free tier sleeps after idle) as early as possible —
          before the JS bundle even parses — and pre-open the TLS connection. -->
     <link rel="preconnect" href="https://hellas-flash-buddy-bot.onrender.com" crossorigin />
