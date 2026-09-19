@@ -2473,3 +2473,283 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 599px) {
   .lp-quote-text { white-space: normal; text-wrap: balance; }
 }
+
+/* ============================================================
+   HOME — round theme redesign (warm, friendly, hand-made).
+
+   Scoped to [data-theme='soft'] .home so nothing else moves: the landing, the
+   other screens and the square theme keep their own look. The decorative
+   elements (.hs-deco) are ornaments only; the square theme hides them.
+   ============================================================ */
+[data-theme='brut'] .hs-deco { display: none !important; }
+
+[data-theme='soft'] .home {
+  --h-cream: #fffcf6;
+  --h-line: rgba(92, 60, 30, 0.09);
+  --h-shadow: 0 1px 0 rgba(92, 60, 30, 0.06), 0 12px 28px -18px rgba(120, 72, 30, 0.35);
+  --h-shadow-hover: 0 1px 0 rgba(92, 60, 30, 0.06), 0 18px 34px -18px rgba(120, 72, 30, 0.45);
+  /* Coral for the CTA and the name plaque. Slightly brighter than --accent but
+     still 4.6:1 with white text, so the 17px description stays legible. */
+  --h-coral: #c9443b;
+  --h-coral-deep: #a5352e;
+  --h-ink: #4d3a2c;
+  --h-muted: #685749;
+  position: relative;
+}
+
+/* ---- Page ornaments ---- */
+[data-theme='soft'] .home-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+[data-theme='soft'] .home-decor .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+[data-theme='soft'] .home-decor .b-tl { width: 260px; height: 220px; left: -120px; top: -110px; background: #f6d3ac; opacity: 0.75; }
+[data-theme='soft'] .home-decor .b-tr { width: 300px; height: 240px; right: -130px; top: -120px; background: #f7cf9f; opacity: 0.7; }
+[data-theme='soft'] .home-decor .b-bl { width: 280px; height: 200px; left: -110px; bottom: -120px; background: #f5d6b3; opacity: 0.7; }
+[data-theme='soft'] .home-decor .b-br { width: 260px; height: 300px; right: -140px; bottom: -90px; background: #f6cfa6; opacity: 0.7; }
+[data-theme='soft'] .home-decor .doodle { position: absolute; }
+[data-theme='soft'] .home-decor .d-heart { color: #f0b76b; left: 250px; bottom: 150px; transform: rotate(-10deg); }
+[data-theme='soft'] .home-decor .d-squiggle { color: #e79a5b; left: 205px; bottom: 100px; }
+[data-theme='soft'] .home-decor .d-swirl { color: #e79a5b; right: 90px; bottom: 60px; }
+
+/* ---- Profile card ---- */
+[data-theme='soft'] .home .hero {
+  overflow: visible;
+  background: var(--h-cream);
+  border: 1px solid var(--h-line);
+  border-radius: 30px;
+  box-shadow: var(--h-shadow);
+  padding: 30px 30px 26px;
+}
+[data-theme='soft'] .home .hero .sub {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--h-ink);
+}
+[data-theme='soft'] .home .hero h1 {
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+  /* Keep clear of the badge in the corner: a long username wraps instead of
+     running underneath it. */
+  max-width: calc(100% - 110px);
+}
+/* The name on a brush-stroke plaque: uneven corners and a slight tilt read as
+   painted by hand rather than a UI badge. */
+[data-theme='soft'] .home .hero h1 .highlight {
+  font-family: 'Pangolin', var(--font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 5.4vw, 52px);
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  padding: 6px 30px 8px;
+  background: var(--h-coral);
+  border: 0;
+  border-radius: 34px 46px 38px 52px / 30px 38px 34px 42px;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.1), 0 6px 14px -8px rgba(165, 53, 46, 0.7);
+  transform: rotate(-1.6deg);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+[data-theme='soft'] .home .hero-badge {
+  top: 26px;
+  right: 28px;
+  width: 62px;
+  height: 62px;
+  background: #f6b92d;
+  border: 2.5px solid #2c1f14;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 #e08e1d;
+  color: #2c1f14;
+  transform: rotate(6deg);
+}
+[data-theme='soft'] .home .hs-deco.spark-badge,
+[data-theme='soft'] .home .hs-deco.spark-name {
+  position: absolute;
+  color: var(--h-ink);
+  pointer-events: none;
+}
+[data-theme='soft'] .home .spark-name { right: -52px; top: -10px; transform: rotate(10deg); }
+[data-theme='soft'] .home .spark-badge { right: -30px; top: 30px; transform: scaleX(-1) rotate(-20deg); }
+
+[data-theme='soft'] .home .hero-chips { gap: 10px; margin-top: 22px; }
+[data-theme='soft'] .home .chip {
+  background: #f8f1e6;
+  border: 1px solid var(--h-line);
+  border-radius: 14px;
+  padding: 9px 16px;
+  min-height: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--h-ink);
+  box-shadow: 0 2px 0 rgba(92, 60, 30, 0.08);
+  gap: 8px;
+}
+[data-theme='soft'] .home .chip svg { width: 18px; height: 18px; }
+[data-theme='soft'] .home .chip.chip-acc { background: #e4f0e6; }
+[data-theme='soft'] .home button.chip {
+  cursor: pointer;
+  transition: transform 0.16s var(--ease), box-shadow 0.16s var(--ease), background 0.16s var(--ease);
+}
+[data-theme='soft'] .home button.chip:hover { transform: translateY(-2px); background: #f3e9da; box-shadow: 0 4px 0 rgba(92, 60, 30, 0.1); }
+[data-theme='soft'] .home button.chip:active { transform: translateY(0); box-shadow: 0 1px 0 rgba(92, 60, 30, 0.1); }
+
+/* ---- Section label ---- */
+[data-theme='soft'] .home .section-label {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #775c4a;
+  margin: 34px 6px 14px;
+}
+
+/* ---- Tiles ---- */
+[data-theme='soft'] .home .tiles { gap: 16px; }
+[data-theme='soft'] .home .tile {
+  background: var(--h-cream);
+  border: 1px solid var(--h-line);
+  border-radius: 28px;
+  box-shadow: var(--h-shadow);
+  padding: 20px 24px 22px;
+  gap: 6px;
+  isolation: isolate;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+[data-theme='soft'] .home .tile:hover { transform: translateY(-3px); border-color: var(--h-line); box-shadow: var(--h-shadow-hover); }
+[data-theme='soft'] .home .tile:active { transform: translateY(0) scale(0.985); box-shadow: var(--h-shadow); }
+[data-theme='soft'] .home .tile .tile-ic {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  border: 0;
+  margin-bottom: 8px;
+}
+[data-theme='soft'] .home .tile .tile-ic svg { width: 30px; height: 30px; }
+[data-theme='soft'] .home .tile .tile-t {
+  font-size: clamp(21px, 2.4vw, 27px);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #221812;
+}
+[data-theme='soft'] .home .tile .tile-d {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--h-muted);
+}
+/* Soft pastel wash in a corner of each card — its own colour per card. */
+[data-theme='soft'] .home .tile::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+}
+[data-theme='soft'] .home .tile .tile-go {
+  position: absolute;
+  right: 24px;
+  bottom: 30px;
+  color: var(--h-ink);
+  transition: transform 0.2s var(--ease);
+}
+[data-theme='soft'] .home .tile:hover .tile-go,
+[data-theme='soft'] .home .tile:hover .arrow { transform: translateX(4px); }
+[data-theme='soft'] .home .tile .arrow { transition: transform 0.2s var(--ease); }
+
+/* Flashcards — pink */
+[data-theme='soft'] .home .t-cards .tile-ic { background: #fbdcd6; color: var(--h-coral); }
+[data-theme='soft'] .home .t-cards::after {
+  width: 150px; height: 90px; left: -40px; bottom: -50px;
+  background: #ebdff3;
+  box-shadow: 380px -10px 0 -18px #fbe0da;
+}
+/* Vocabulary — yellow */
+[data-theme='soft'] .home .t-vocab .tile-ic { background: #fcd98b; color: #4a3413; }
+[data-theme='soft'] .home .t-vocab::after {
+  width: 170px; height: 200px; right: -80px; bottom: -110px;
+  background: #fbe7cf;
+}
+/* Statistics — lavender */
+[data-theme='soft'] .home .t-stats { padding: 20px 24px; }
+[data-theme='soft'] .home .t-stats .tile-ic { background: #e6def5; color: #6f5aa8; margin-bottom: 0; }
+[data-theme='soft'] .home .t-stats .tile-ic svg { width: 32px; height: 32px; }
+[data-theme='soft'] .home .t-stats .arrow { color: var(--h-ink) !important; }
+[data-theme='soft'] .home .t-stats::after {
+  width: 220px; height: 170px; right: -40px; bottom: -110px;
+  background: #e9e1f6;
+}
+
+/* Test — the main action: solid coral, pressed-in bottom edge. */
+[data-theme='soft'] .home .tile.feature {
+  background: var(--h-coral);
+  color: #fff;
+  border: 1px solid var(--h-coral-deep);
+  border-radius: 28px;
+  padding: 22px 30px;
+  gap: 20px;
+  box-shadow: 0 5px 0 var(--h-coral-deep), 0 16px 28px -16px rgba(165, 53, 46, 0.8);
+}
+[data-theme='soft'] .home .tile.feature:hover {
+  box-shadow: 0 7px 0 var(--h-coral-deep), 0 20px 32px -16px rgba(165, 53, 46, 0.85);
+}
+[data-theme='soft'] .home .tile.feature:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--h-coral-deep), 0 8px 18px -12px rgba(165, 53, 46, 0.8);
+}
+[data-theme='soft'] .home .tile.feature .tile-ic {
+  margin: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+[data-theme='soft'] .home .tile.feature .tile-ic svg { width: 32px; height: 32px; }
+[data-theme='soft'] .home .tile.feature .tile-t { color: #fff; font-size: clamp(22px, 2.6vw, 29px); }
+[data-theme='soft'] .home .tile.feature .tile-d { color: rgba(255, 255, 255, 0.95); }
+[data-theme='soft'] .home .tile.feature .arrow svg { width: 30px; height: 30px; }
+/* A lighter sweep across the right half — a flat shape, not a colour ramp. */
+[data-theme='soft'] .home .tile.feature::after {
+  width: 520px; height: 260px; right: -170px; top: -150px;
+  background: rgba(255, 255, 255, 0.07);
+}
+[data-theme='soft'] .home .spark-cta {
+  color: rgba(255, 255, 255, 0.9);
+  margin-right: -14px;
+  transform: scaleX(-1) rotate(-14deg) scale(0.8);
+  flex: none;
+}
+
+/* ---- Phones ---- */
+@media (max-width: 899px) {
+  [data-theme='soft'] .home-decor .doodle { display: none; }
+  [data-theme='soft'] .home-decor .blob { opacity: 0.45; }
+  [data-theme='soft'] .home .hero { padding: 24px 20px 20px; border-radius: 26px; }
+  [data-theme='soft'] .home .hero-badge { top: 18px; right: 18px; width: 50px; height: 50px; border-radius: 15px; }
+  [data-theme='soft'] .home .hero-badge svg { width: 24px; height: 24px; }
+  [data-theme='soft'] .home .spark-badge,
+  [data-theme='soft'] .home .spark-name { display: none; }
+  [data-theme='soft'] .home .hero h1 { max-width: calc(100% - 60px); }
+  [data-theme='soft'] .home .hero h1 .highlight { padding: 4px 20px 6px; }
+  [data-theme='soft'] .home .chip { padding: 8px 12px; font-size: 14px; }
+  [data-theme='soft'] .home .tiles { gap: 12px; }
+  [data-theme='soft'] .home .tile { padding: 16px 16px 18px; border-radius: 24px; }
+  [data-theme='soft'] .home .tile .tile-ic { width: 52px; height: 52px; border-radius: 15px; }
+  [data-theme='soft'] .home .tile .tile-ic svg { width: 26px; height: 26px; }
+  [data-theme='soft'] .home .tile .tile-d { font-size: 14px; }
+  [data-theme='soft'] .home .tile .tile-go { right: 16px; top: 22px; bottom: auto; }
+  [data-theme='soft'] .home .tile.feature { padding: 18px 20px; gap: 14px; }
+  [data-theme='soft'] .home .spark-cta { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .home .tile,
+  [data-theme='soft'] .home .tile .tile-go,
+  [data-theme='soft'] .home .tile .arrow,
+  [data-theme='soft'] .home button.chip { transition: none; }
+  [data-theme='soft'] .home .tile:hover,
+  [data-theme='soft'] .home button.chip:hover { transform: none; }
+}

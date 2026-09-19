@@ -7,6 +7,49 @@ import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 
+/* Decoration for the round theme's home screen: three short strokes fanning out
+   from a point, like a hand-drawn "shine". Purely visual — aria-hidden, and the
+   square theme hides every .hs-deco element. */
+function Sparks({ className }: { className: string }) {
+  return (
+    <svg className={`hs-deco ${className}`} width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      <path d="M8 30 L19 24 M12 15 L21 20 M22 6 L24 16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* Page-level ornaments: soft pastel blobs in the corners and a few doodles.
+   Fixed behind the content, never interactive. */
+function HomeDecor() {
+  return (
+    <div className="hs-deco home-decor" aria-hidden="true">
+      <span className="blob b-tl" />
+      <span className="blob b-tr" />
+      <span className="blob b-bl" />
+      <span className="blob b-br" />
+      <svg className="doodle d-heart" width="46" height="44" viewBox="0 0 46 44" fill="none">
+        <path
+          d="M23 39 C10 30 4 22 5 14 C6 7 13 4 18 7 C21 9 22 12 23 14 C24 11 27 7 31 6 C37 5 42 10 41 17 C40 25 32 32 23 39 Z"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <svg className="doodle d-squiggle" width="30" height="34" viewBox="0 0 30 34" fill="none">
+        <path d="M5 4 C14 6 6 14 14 17 C22 20 13 26 24 30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+      <svg className="doodle d-swirl" width="72" height="44" viewBox="0 0 72 44" fill="none">
+        <path
+          d="M4 40 C8 22 20 14 30 20 C38 25 30 34 25 28 C20 21 34 8 48 10 C58 12 62 6 68 4"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
   const { data: me, err, reload } = useCached(`me:${language}`, api.me);
@@ -43,8 +86,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   };
 
   return (
-    <div className="fade-in">
+    <div className="home fade-in">
+      <HomeDecor />
       <div className="hero">
+        <Sparks className="spark-badge" />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
@@ -59,6 +104,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         <p className="sub">{t('home.welcome')}</p>
         <h1>
           <span className="highlight">{me.user.name}</span>
+          <Sparks className="spark-name" />
         </h1>
         <div className="hero-chips">
           {me.streak >= 2 && (
@@ -67,7 +113,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
               {me.streak} {t(me.streak === 1 ? 'home.streakDay' : 'home.streakDays')}
             </span>
           )}
-          <span className="chip">
+          <span className="chip chip-acc">
             <Target size={15} color="var(--mint)" />
             {acc}%
           </span>
@@ -127,28 +173,35 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.quiz.desc')}</span>
           </span>
+          <Sparks className="spark-cta" />
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
           </span>
         </button>
 
-        <button className="tile" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
+        <button className="tile t-cards" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
           <span className="tile-ic">
             <Layers size={24} strokeWidth={2.2} />
           </span>
           <span className="tile-t">{t('nav.flashcards')}</span>
           <span className="tile-d">{t('home.flashcards.desc')}</span>
+          <span className="hs-deco tile-go" aria-hidden="true">
+            <ArrowRight size={22} strokeWidth={2.4} />
+          </span>
         </button>
-        <button className="tile" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
+        <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="tile-ic">
             <Languages size={24} strokeWidth={2.2} />
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>
+          <span className="hs-deco tile-go" aria-hidden="true">
+            <ArrowRight size={22} strokeWidth={2.4} />
+          </span>
         </button>
 
         <button
-          className="tile span2"
+          className="tile span2 t-stats"
           style={{ animationDelay: '180ms', flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 'auto' }}
           onClick={() => nav('stats')}
         >
