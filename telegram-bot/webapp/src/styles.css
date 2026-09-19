@@ -2753,3 +2753,170 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home .tile:hover,
   [data-theme='soft'] .home button.chip:hover { transform: none; }
 }
+
+/* ============================================================
+   LANDING — "How it works" + "What's inside", warm pastel redesign.
+
+   Same hand-made language as the round home screen: cream cards in pastel
+   tints, a soft blob in one corner, a hand-drawn shine, round number badges,
+   headings in a friendly marker face with a brush underline. The landing is
+   walled off from the theme switch (see [data-theme='brut'] .landing), so this
+   reads the same in both themes. Corner blobs live inside each card (clipped
+   by its radius) rather than behind the section, where the column edge cut
+   them off in a hard vertical line.
+   ============================================================ */
+.lp-learn {
+  --l-line: rgba(92, 60, 30, 0.1);
+  --l-shadow: 0 1px 0 rgba(92, 60, 30, 0.05), 0 14px 30px -20px rgba(120, 72, 30, 0.4);
+  --l-shadow-hover: 0 1px 0 rgba(92, 60, 30, 0.05), 0 20px 36px -20px rgba(120, 72, 30, 0.5);
+  --l-body: #4a3f37;
+}
+
+/* ---- Headings ---- */
+.lp-fun-h {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Balsamiq Sans', var(--font-display);
+  font-weight: 700;
+  font-size: clamp(32px, 5vw, 48px);
+  letter-spacing: 0;
+  color: #1f1712;
+}
+/* Tilt lives on the text, not the h2: framer-motion owns the h2's transform
+   for its entrance and would wipe a rotate set there. */
+.lp-fun-t { position: relative; display: inline-block; transform: rotate(-1.5deg); }
+/* Brush underline under the heading's first half. */
+.lp-fun-t::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  bottom: -8px;
+  width: 58%;
+  height: 7px;
+  border-radius: 999px;
+  background: #ee8a78;
+  opacity: 0.85;
+  transform: rotate(-1.5deg);
+}
+.lp-spark { flex: none; pointer-events: none; }
+.lp-fun-h .lp-spark.lead { transform: scaleX(-1) rotate(-30deg); align-self: flex-end; margin-bottom: -4px; }
+.lp-fun-h .lp-spark.tail { transform: rotate(-60deg); align-self: flex-start; margin-top: -26px; }
+.h-steps .lp-spark { color: #f2b43c; }
+.h-features .lp-spark { color: #9b88d8; }
+
+/* ---- Shared card chrome ---- */
+.lp-learn .lp-step,
+.lp-learn .lp-feature {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 28px;
+  border: 1px solid var(--l-line);
+  box-shadow: var(--l-shadow);
+  padding: 28px 28px 30px;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.lp-learn .lp-step:hover,
+.lp-learn .lp-feature:hover {
+  transform: translateY(-3px);
+  border-color: var(--l-line);
+  box-shadow: var(--l-shadow-hover);
+}
+/* A soft blob in the bottom-right corner, in the card's own hue. */
+.lp-learn .lp-step::after,
+.lp-learn .lp-feature::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -46px;
+  bottom: -64px;
+  width: 170px;
+  height: 130px;
+  border-radius: 58% 42% 50% 50% / 60% 55% 45% 40%;
+  background: var(--blob);
+  pointer-events: none;
+  transition: transform 0.35s var(--ease);
+}
+.lp-learn .lp-step:hover::after,
+.lp-learn .lp-feature:hover::after { transform: translate(-6px, -4px) rotate(-6deg); }
+.lp-learn .lp-spark.corner {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  color: var(--spark);
+  transform: scaleX(-1) rotate(-8deg);
+}
+.lp-learn .lp-step h3,
+.lp-learn .lp-feature h3 {
+  font-size: clamp(19px, 2vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #1c1511;
+}
+.lp-learn .lp-step p,
+.lp-learn .lp-feature p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--l-body);
+  max-width: 34ch;
+}
+
+/* ---- How it works ---- */
+.lp-learn .lp-steps { gap: 20px; }
+.lp-learn .lp-step .num {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 0;
+  font-size: 26px;
+  margin-bottom: 20px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+}
+.lp-learn .lp-step h3 { margin-bottom: 10px; }
+.lp-learn .lp-step.s1 { background: #eef5ed; --blob: #d4e9d9; --spark: #4f9272; }
+.lp-learn .lp-step.s1 .num { background: #4f9272; color: #fff; }
+.lp-learn .lp-step.s2 { background: #fdf4e3; --blob: #fbe3ae; --spark: #e2a432; }
+/* Ink, not white: white on this yellow is 2.2:1. */
+.lp-learn .lp-step.s2 .num { background: #f0b541; color: #3b2a10; }
+.lp-learn .lp-step.s3 { background: #f4f0fa; --blob: #e3dbf4; --spark: #8f7fd0; }
+.lp-learn .lp-step.s3 .num { background: #8f7fd0; color: #fff; }
+
+/* ---- What's inside ---- */
+.lp-learn .lp-features { gap: 20px; }
+.lp-learn .lp-feature {
+  background: color-mix(in srgb, var(--c, var(--accent)) 8%, #fffcf6);
+  --blob: color-mix(in srgb, var(--c, var(--accent)) 16%, #fffcf6);
+  --spark: color-mix(in srgb, var(--c, var(--accent)) 80%, #fff);
+}
+.lp-learn .lp-feature .ic {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  border: 0;
+  background: color-mix(in srgb, var(--c, var(--accent)) 18%, #fff);
+  margin-bottom: 18px;
+}
+.lp-learn .lp-feature .ic svg { width: 28px; height: 28px; }
+.lp-learn .lp-feature h3 { margin-bottom: 8px; }
+
+/* ---- Tablet / phone ---- */
+@media (max-width: 900px) {
+  .lp-learn .lp-steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .lp-fun-h { font-size: 32px; }
+  .lp-fun-h .lp-spark.lead { display: none; }
+  .lp-learn .lp-step,
+  .lp-learn .lp-feature { padding: 22px 22px 24px; border-radius: 24px; }
+  .lp-learn .lp-step .num { width: 48px; height: 48px; font-size: 22px; margin-bottom: 16px; }
+  .lp-learn .lp-feature .ic { width: 52px; height: 52px; border-radius: 15px; margin-bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-learn .lp-step,
+  .lp-learn .lp-feature,
+  .lp-learn .lp-step::after,
+  .lp-learn .lp-feature::after { transition: none; }
+}

@@ -78,3 +78,13 @@ export function LaurelSprig({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
+
+/** Three short strokes fanning out from a point — a hand-drawn "shine" used as
+ * decoration. Always aria-hidden; the caller positions and colours it. */
+export function Sparks({ className, size = 44 }: { className?: string; size?: number }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      <path d="M8 30 L19 24 M12 15 L21 20 M22 6 L24 16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}

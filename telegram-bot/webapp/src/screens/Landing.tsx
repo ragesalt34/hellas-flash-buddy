@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark, MeanderRule } from '../components/icons';
+import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -279,8 +279,13 @@ export function Landing({
         </div>
       </div>
 
-      <motion.h2 className="lp-steps-h" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
-        {t('landing.steps.title')}
+      {/* Both sections sit in one wrapper so the pastel blobs behind them can
+          bleed to the edges without widening the page. */}
+      <div className="lp-learn">
+      <motion.h2 className="lp-steps-h lp-fun-h h-steps" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
+        <Sparks className="lp-spark lead" size={30} />
+        <span className="lp-fun-t">{t('landing.steps.title')}</span>
+        <Sparks className="lp-spark tail" />
       </motion.h2>
       <section className="lp-steps">
         {STEPS.map((s, i) => (
@@ -294,6 +299,7 @@ export function Landing({
             viewport={{ once: true, margin: '-60px' }}
             whileHover={{ y: -3 }}
           >
+            <Sparks className="lp-spark corner" size={36} />
             <span className="num">{i + 1}</span>
             <h3>{t(s.titleKey)}</h3>
             <p>{t(s.textKey)}</p>
@@ -302,13 +308,15 @@ export function Landing({
       </section>
 
       <motion.h2
-        className="lp-steps-h"
+        className="lp-steps-h lp-fun-h h-features"
         variants={rise}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-60px' }}
       >
-        {t('landing.features.title')}
+        <Sparks className="lp-spark lead" size={30} />
+        <span className="lp-fun-t">{t('landing.features.title')}</span>
+        <Sparks className="lp-spark tail" />
       </motion.h2>
       <section className="lp-features">
         {FEATURES.map((f, i) => {
@@ -328,6 +336,7 @@ export function Landing({
               viewport={{ once: true, margin: '-60px' }}
               whileHover={{ y: -3 }}
             >
+              <Sparks className="lp-spark corner" size={36} />
               <span className="ic">
                 <Icon size={24} strokeWidth={2.3} />
               </span>
@@ -337,6 +346,7 @@ export function Landing({
           );
         })}
       </section>
+      </div>
 
       <div className="lp-rule" aria-hidden="true">
         <MeanderRule />

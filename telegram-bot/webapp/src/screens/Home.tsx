@@ -6,17 +6,7 @@ import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-
-/* Decoration for the round theme's home screen: three short strokes fanning out
-   from a point, like a hand-drawn "shine". Purely visual — aria-hidden, and the
-   square theme hides every .hs-deco element. */
-function Sparks({ className }: { className: string }) {
-  return (
-    <svg className={`hs-deco ${className}`} width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
-      <path d="M8 30 L19 24 M12 15 L21 20 M22 6 L24 16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
-  );
-}
+import { Sparks } from '../components/icons';
 
 /* Page-level ornaments: soft pastel blobs in the corners and a few doodles.
    Fixed behind the content, never interactive. */
@@ -89,7 +79,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
     <div className="home fade-in">
       <HomeDecor />
       <div className="hero">
-        <Sparks className="spark-badge" />
+        <Sparks className="hs-deco spark-badge" />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
@@ -104,7 +94,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         <p className="sub">{t('home.welcome')}</p>
         <h1>
           <span className="highlight">{me.user.name}</span>
-          <Sparks className="spark-name" />
+          <Sparks className="hs-deco spark-name" />
         </h1>
         <div className="hero-chips">
           {me.streak >= 2 && (
@@ -173,7 +163,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.quiz.desc')}</span>
           </span>
-          <Sparks className="spark-cta" />
+          <Sparks className="hs-deco spark-cta" />
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
           </span>
