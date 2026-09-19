@@ -3038,7 +3038,21 @@ button.chip:active { transform: scale(0.95); }
   justify-content: center;
   animation: fc-in 0.45s var(--ease) both;
 }
-[data-theme='soft'] .fc-screen .fc-card.is-revealed { justify-content: flex-start; animation: none; }
+/* Revealing the answer turns the card over. The card is one element whose
+   content grows, not a fixed-height two-faced box, so it swings in from edge-on
+   (-90deg) already showing its back — the answer — instead of animating both
+   halves. Purely visual: revealing is still the same single state change. */
+[data-theme='soft'] .fc-screen .fc-card.is-revealed {
+  justify-content: flex-start;
+  animation: fc-flip 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+@keyframes fc-flip {
+  0% { transform: perspective(1400px) rotateY(-90deg) scale(0.97); }
+  60% { transform: perspective(1400px) rotateY(8deg) scale(1.01); }
+  100% { transform: perspective(1400px) rotateY(0) scale(1); }
+}
 @keyframes fc-in {
   from { opacity: 0; transform: translateY(14px) scale(0.985); }
   to { opacity: 1; transform: none; }
@@ -3250,7 +3264,8 @@ button.chip:active { transform: scale(0.95); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-theme='soft'] .fc-screen .fc-card { animation: none; }
+  [data-theme='soft'] .fc-screen .fc-card,
+  [data-theme='soft'] .fc-screen .fc-card.is-revealed { animation: none; }
   [data-theme='soft'] .fc-screen .fc-reveal,
   [data-theme='soft'] .fc-screen .grade { transition: none; }
   [data-theme='soft'] body:has(.fc-screen) .focus-close:hover { transform: none; }
