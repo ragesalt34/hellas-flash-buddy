@@ -2514,10 +2514,18 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='soft'] .home-decor .b-tr { width: 300px; height: 240px; right: -130px; top: -120px; background: #f7cf9f; opacity: 0.7; }
 [data-theme='soft'] .home-decor .b-bl { width: 280px; height: 200px; left: -110px; bottom: -120px; background: #f5d6b3; opacity: 0.7; }
 [data-theme='soft'] .home-decor .b-br { width: 260px; height: 300px; right: -140px; bottom: -90px; background: #f6cfa6; opacity: 0.7; }
-[data-theme='soft'] .home-decor .doodle { position: absolute; }
-[data-theme='soft'] .home-decor .d-heart { color: #f0b76b; left: 250px; bottom: 150px; transform: rotate(-10deg); }
-[data-theme='soft'] .home-decor .d-squiggle { color: #e79a5b; left: 205px; bottom: 100px; }
-[data-theme='soft'] .home-decor .d-swirl { color: #e79a5b; right: 90px; bottom: 60px; }
+[data-theme='soft'] .home-decor .doodle { position: absolute; opacity: 0.55; }
+/* Classical line drawings in the page margins. Terracotta, gold and olive —
+   the palette of the pottery and of the landscape it comes from. */
+[data-theme='soft'] .home-decor .d-column-l { color: #d9a441; left: 190px; top: 150px; transform: rotate(-3deg); }
+[data-theme='soft'] .home-decor .d-column-r { color: #d9a441; right: 150px; top: 96px; transform: rotate(4deg); opacity: 0.4; }
+[data-theme='soft'] .home-decor .d-temple { color: #d98e6a; right: 40px; bottom: 30px; opacity: 0.5; }
+[data-theme='soft'] .home-decor .d-amphora { color: #c1704f; left: 226px; bottom: 120px; transform: rotate(-6deg); }
+[data-theme='soft'] .home-decor .d-bust { color: #b5875c; right: 210px; bottom: 210px; transform: rotate(3deg); opacity: 0.42; }
+[data-theme='soft'] .home-decor .d-olive-1 { color: #7d8f5f; left: 250px; top: 60px; transform: rotate(-18deg); }
+[data-theme='soft'] .home-decor .d-olive-2 { color: #7d8f5f; right: 90px; top: 250px; transform: scaleX(-1) rotate(-10deg); }
+[data-theme='soft'] .home-decor .d-olive-3 { color: #8a9a68; left: 180px; bottom: 60px; transform: rotate(14deg); }
+[data-theme='soft'] .home-decor .d-olive-4 { color: #8a9a68; right: 250px; top: 30px; transform: scaleX(-1) rotate(16deg); }
 
 /* ---- Profile card ---- */
 [data-theme='soft'] .home .hero {
@@ -2578,6 +2586,16 @@ button.chip:active { transform: scale(0.95); }
 }
 [data-theme='soft'] .home .spark-name { right: -52px; top: -10px; transform: rotate(10deg); }
 [data-theme='soft'] .home .spark-badge { right: -30px; top: 30px; transform: scaleX(-1) rotate(-20deg); }
+/* Olive sprig tucked beside the meander sticker in the card's free corner. */
+[data-theme='soft'] .home .hero-olive {
+  position: absolute;
+  right: 100px;
+  top: 18px;
+  color: #8a9a68;
+  opacity: 0.5;
+  transform: scaleX(-1) rotate(-12deg);
+  pointer-events: none;
+}
 
 [data-theme='soft'] .home .hero-chips { gap: 10px; margin-top: 22px; }
 [data-theme='soft'] .home .chip {
@@ -2651,6 +2669,31 @@ button.chip:active { transform: scale(0.95); }
   pointer-events: none;
   border-radius: 50%;
 }
+/* Olive sprig watermark in every tile, plus a column on the main action — the
+   motif repeats across the row instead of sitting in one corner of the page.
+   Deliberately low contrast: ornament behind text, never competing with it. */
+[data-theme='soft'] .home .tile .tile-olive {
+  position: absolute;
+  right: 12px;
+  top: 14px;
+  color: var(--olive-ink, #7d8f5f);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: transform 0.35s var(--ease);
+}
+[data-theme='soft'] .home .tile:hover .tile-olive { transform: rotate(-8deg) scale(1.06); }
+[data-theme='soft'] .home .tile.feature .tile-olive { right: 150px; top: 0; color: #fff; opacity: 0.3; }
+[data-theme='soft'] .home .tile.feature .tile-column {
+  position: absolute;
+  right: 78px;
+  top: -16px;
+  color: #fff;
+  opacity: 0.26;
+  pointer-events: none;
+}
+[data-theme='soft'] .home .t-cards .tile-olive { --olive-ink: #b76f76; }
+[data-theme='soft'] .home .t-vocab .tile-olive { --olive-ink: #b5811f; }
+[data-theme='soft'] .home .t-stats .tile-olive { right: 76px; top: 18px; --olive-ink: #7a6cb8; }
 [data-theme='soft'] .home .tile .tile-go {
   position: absolute;
   right: 24px;
@@ -2725,7 +2768,16 @@ button.chip:active { transform: scale(0.95); }
 
 /* ---- Phones ---- */
 @media (max-width: 899px) {
+  /* Phones keep the Greek motif, just a quieter version of it: the wide-screen
+     column/bust/amphora row would sit under the cards, so only the temple and
+     two sprigs stay, pushed into the corners the content does not reach. */
   [data-theme='soft'] .home-decor .doodle { display: none; }
+  [data-theme='soft'] .home-decor .d-temple,
+  [data-theme='soft'] .home-decor .d-olive-1,
+  [data-theme='soft'] .home-decor .d-olive-3 { display: block; opacity: 0.3; }
+  [data-theme='soft'] .home-decor .d-temple { right: -26px; bottom: 4px; width: 150px; }
+  [data-theme='soft'] .home-decor .d-olive-1 { left: -14px; top: 30px; }
+  [data-theme='soft'] .home-decor .d-olive-3 { left: -10px; bottom: 96px; }
   [data-theme='soft'] .home-decor .blob { opacity: 0.45; }
   [data-theme='soft'] .home .hero { padding: 24px 20px 20px; border-radius: 26px; }
   [data-theme='soft'] .home .hero-badge { top: 18px; right: 18px; width: 50px; height: 50px; border-radius: 15px; }
@@ -2741,12 +2793,22 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home .tile .tile-ic svg { width: 26px; height: 26px; }
   [data-theme='soft'] .home .tile .tile-d { font-size: 14px; }
   [data-theme='soft'] .home .tile .tile-go { right: 16px; top: 22px; bottom: auto; }
+  /* The arrow takes the top-right corner on phones, so the sprig moves down
+     out of its way rather than overlapping it. */
+  [data-theme='soft'] .home .tile .tile-olive { right: auto; left: 10px; top: auto; bottom: 8px; opacity: 0.3; }
+  /* The stats tile is a row — its icon sits bottom-left, where the sprig would
+     land — so there it moves to the free strip before the arrow. */
+  [data-theme='soft'] .home .t-stats .tile-olive { left: auto; right: 52px; bottom: 2px; }
+  [data-theme='soft'] .home .tile.feature .tile-olive,
+  [data-theme='soft'] .home .tile.feature .tile-column { display: none; }
+  [data-theme='soft'] .home .hero-olive { display: none; }
   [data-theme='soft'] .home .tile.feature { padding: 18px 20px; gap: 14px; }
   [data-theme='soft'] .home .spark-cta { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   [data-theme='soft'] .home .tile,
+  [data-theme='soft'] .home .tile .tile-olive,
   [data-theme='soft'] .home .tile .tile-go,
   [data-theme='soft'] .home .tile .arrow,
   [data-theme='soft'] .home button.chip { transition: none; }

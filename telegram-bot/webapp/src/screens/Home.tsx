@@ -6,10 +6,12 @@ import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-import { Sparks } from '../components/icons';
+import { Sparks, OliveSprig, ColumnSketch, TempleScene, AmphoraSketch, BustSketch } from '../components/icons';
 
-/* Page-level ornaments: soft pastel blobs in the corners and a few doodles.
-   Fixed behind the content, never interactive. */
+/* Page-level ornaments: pastel corner washes plus a set of classical line
+   drawings — olive sprigs, a column, an amphora, a bust and a temple on its
+   hill — so the empty margins carry the Greek theme instead of generic
+   doodles. Fixed behind the content, never interactive. */
 function HomeDecor() {
   return (
     <div className="hs-deco home-decor" aria-hidden="true">
@@ -17,25 +19,15 @@ function HomeDecor() {
       <span className="blob b-tr" />
       <span className="blob b-bl" />
       <span className="blob b-br" />
-      <svg className="doodle d-heart" width="46" height="44" viewBox="0 0 46 44" fill="none">
-        <path
-          d="M23 39 C10 30 4 22 5 14 C6 7 13 4 18 7 C21 9 22 12 23 14 C24 11 27 7 31 6 C37 5 42 10 41 17 C40 25 32 32 23 39 Z"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <svg className="doodle d-squiggle" width="30" height="34" viewBox="0 0 30 34" fill="none">
-        <path d="M5 4 C14 6 6 14 14 17 C22 20 13 26 24 30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      </svg>
-      <svg className="doodle d-swirl" width="72" height="44" viewBox="0 0 72 44" fill="none">
-        <path
-          d="M4 40 C8 22 20 14 30 20 C38 25 30 34 25 28 C20 21 34 8 48 10 C58 12 62 6 68 4"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-      </svg>
+      <ColumnSketch className="doodle d-column-l" size={54} />
+      <ColumnSketch className="doodle d-column-r" size={44} />
+      <TempleScene className="doodle d-temple" size={168} />
+      <AmphoraSketch className="doodle d-amphora" size={48} />
+      <BustSketch className="doodle d-bust" size={62} />
+      <OliveSprig className="doodle d-olive-1" size={56} />
+      <OliveSprig className="doodle d-olive-2" size={44} />
+      <OliveSprig className="doodle d-olive-3" size={64} />
+      <OliveSprig className="doodle d-olive-4" size={50} />
     </div>
   );
 }
@@ -80,6 +72,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
       <HomeDecor />
       <div className="hero">
         <Sparks className="hs-deco spark-badge" />
+        <OliveSprig className="hs-deco hero-olive" size={62} />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
@@ -163,6 +156,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.quiz.desc')}</span>
           </span>
+          <OliveSprig className="hs-deco tile-olive" size={74} />
+          <ColumnSketch className="hs-deco tile-column" size={40} />
           <Sparks className="hs-deco spark-cta" />
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
@@ -175,6 +170,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="tile-t">{t('nav.flashcards')}</span>
           <span className="tile-d">{t('home.flashcards.desc')}</span>
+          <OliveSprig className="hs-deco tile-olive" size={62} />
           <span className="hs-deco tile-go" aria-hidden="true">
             <ArrowRight size={22} strokeWidth={2.4} />
           </span>
@@ -185,6 +181,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>
+          <OliveSprig className="hs-deco tile-olive" size={62} />
           <span className="hs-deco tile-go" aria-hidden="true">
             <ArrowRight size={22} strokeWidth={2.4} />
           </span>
@@ -204,6 +201,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.stats.desc')}</span>
           </span>
+          <OliveSprig className="hs-deco tile-olive" size={62} />
           <span className="arrow" style={{ color: 'var(--muted)' }}>
             <ArrowRight size={20} strokeWidth={2.4} />
           </span>
