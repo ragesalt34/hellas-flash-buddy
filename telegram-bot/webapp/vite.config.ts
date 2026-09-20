@@ -18,9 +18,11 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss',
-    },
+    // Hot reload talks to the page's own origin by default. Only when the dev
+    // server is fronted by an HTTPS tunnel does it have to be told the public
+    // port — hardcoding it made a plain http://localhost:5173 session retry
+    // wss://localhost:443 forever and fill the console with connection errors.
+    // Set VITE_TUNNEL=1 alongside cloudflared.
+    hmr: process.env.VITE_TUNNEL ? { clientPort: 443, protocol: 'wss' as const } : undefined,
   },
 });
