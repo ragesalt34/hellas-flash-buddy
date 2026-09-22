@@ -193,3 +193,22 @@ export function BustSketch({ className, size = 60 }: { className?: string; size?
     </svg>
   );
 }
+
+/** Meander corner — a short run of the Greek key turning a corner, for the
+ * corners of a card. Drawn for the top-left; mirror it with CSS for the rest. */
+export function MeanderCorner({ className, size = 64 }: { className?: string; size?: number }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <g stroke="currentColor" strokeWidth="2" strokeLinecap="square" fill="none">
+        {/* two keys along the top edge */}
+        <path d="M6 6 H58" />
+        <path d="M10 22 V12 H22 V18 H16" />
+        <path d="M28 22 V12 H40 V18 H34" />
+        {/* two keys down the side */}
+        <path d="M6 6 V58" />
+        <path d="M22 28 H12 V40 H18 V34" />
+        <path d="M22 46 H12 V58" />
+      </g>
+    </svg>
+  );
+}

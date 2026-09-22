@@ -3542,3 +3542,144 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .fc-screen .grade { transition: none; }
   [data-theme='soft'] body:has(.fc-screen) .focus-close:hover { transform: none; }
 }
+
+/* ============================================================
+   VOCABULARY — round theme, light classical accent.
+
+   Modern minimal card first, antiquity second: ornaments sit at the screen
+   edges and in two corners of the card, thin and pastel, and the middle stays
+   clean for the word. Everything is scoped to [data-theme='soft'] .vc-screen;
+   ornaments carry .hs-deco (hidden by the square theme). Logic untouched —
+   the component only gained wrapper classes and decorative elements.
+   ============================================================ */
+[data-theme='soft'] .vc-screen {
+  --vc-bg: #faf7ef;
+  --vc-cream: #fffdf8;
+  --vc-terra: #d95b4a;
+  --vc-gold: #e8b84a;
+  --vc-olive: #78947a;
+  --vc-blue: #7895b8;
+  --vc-lav: #ddd8ef;
+  position: relative;
+}
+[data-theme='soft'] body:has(.vc-screen) { background: var(--vc-bg, #faf7ef); }
+[data-theme='soft'] body:has(.vc-screen) .aurora { background: #faf7ef; }
+
+/* ---- Edge ornaments ---- */
+[data-theme='soft'] .vc-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+[data-theme='soft'] .vc-decor .blob { position: absolute; border-radius: 50%; }
+[data-theme='soft'] .vc-decor .b-tl { width: 300px; height: 260px; left: -150px; top: -120px; background: #f6ddd6; opacity: 0.55; }
+[data-theme='soft'] .vc-decor .b-bl { width: 260px; height: 220px; left: -130px; bottom: -110px; background: #dfe6f1; opacity: 0.7; }
+[data-theme='soft'] .vc-decor .b-br { width: 240px; height: 260px; right: -120px; bottom: -130px; background: var(--vc-lav); opacity: 0.6; }
+[data-theme='soft'] .vc-decor .orn { position: absolute; }
+[data-theme='soft'] .vc-decor .o-column { left: 34px; top: 96px; width: 66px; height: 158px; color: #d9b98c; opacity: 0.5; }
+[data-theme='soft'] .vc-decor .o-olive-tl { left: 104px; top: 110px; color: var(--vc-olive); opacity: 0.5; transform: rotate(-24deg); }
+[data-theme='soft'] .vc-decor .o-temple { right: 36px; top: 40px; color: #d69a78; opacity: 0.38; }
+[data-theme='soft'] .vc-decor .o-amphora { left: 60px; bottom: 90px; color: #c7765c; opacity: 0.45; transform: rotate(-6deg); }
+[data-theme='soft'] .vc-decor .o-olive-br { right: 70px; bottom: 70px; color: var(--vc-olive); opacity: 0.45; transform: scaleX(-1) rotate(-10deg); }
+[data-theme='soft'] .vc-decor .o-meander { right: 170px; bottom: 34px; width: 200px; color: var(--vc-gold); opacity: 0.4; }
+
+/* ---- Heading ---- */
+[data-theme='soft'] .vc-screen .topbar { margin-bottom: 14px; }
+[data-theme='soft'] .vc-screen .topbar .meta { gap: 10px !important; font-size: 17px; font-weight: 600; color: #2d2621; }
+[data-theme='soft'] .vc-screen .vc-meta-ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fbe3dc;
+  color: #b8483a;
+}
+[data-theme='soft'] .vc-screen .vc-meta-ic svg { width: 17px; height: 17px; }
+[data-theme='soft'] .vc-screen .vc-meta-olive { color: var(--vc-olive); opacity: 0.7; transform: rotate(-20deg); margin-left: -2px; }
+[data-theme='soft'] .vc-screen .topbar .counter { background: #f6dd9f; color: #3b2a10; box-shadow: 0 3px 0 rgba(232, 184, 74, 0.35); }
+
+/* ---- Progress: cream track, terracotta fill ---- */
+[data-theme='soft'] .vc-screen .progress { height: 10px; background: #efe9dc; }
+[data-theme='soft'] .vc-screen .progress > i { background: var(--vc-terra); min-width: 10px; }
+
+/* ---- Card ---- */
+[data-theme='soft'] .vc-screen .vc-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--vc-cream);
+  border: 1px solid rgba(92, 60, 30, 0.09);
+  border-radius: 34px;
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.05), 0 24px 46px -28px rgba(120, 72, 30, 0.45);
+  padding: 48px 40px 36px;
+}
+[data-theme='soft'] .vc-screen .vc-corner {
+  position: absolute;
+  z-index: -1;
+  top: 16px;
+  left: 16px;
+  color: var(--vc-blue);
+  opacity: 0.38;
+  pointer-events: none;
+}
+[data-theme='soft'] .vc-screen .vc-corner-olive {
+  position: absolute;
+  z-index: -1;
+  top: 12px;
+  right: 14px;
+  color: var(--vc-olive);
+  opacity: 0.55;
+  transform: scaleX(-1) rotate(8deg);
+  pointer-events: none;
+}
+[data-theme='soft'] .vc-screen .vocab-word {
+  color: #26304a;
+  font-size: clamp(36px, 5.4vw, 54px);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+[data-theme='soft'] .vc-screen .speak-row.center { margin: 6px 0 30px; gap: 16px; }
+[data-theme='soft'] .vc-screen .speak-btn {
+  width: 48px;
+  height: 48px;
+  background: #fbe3dc;
+  color: #b8483a;
+  border: 1px solid rgba(217, 91, 74, 0.2);
+}
+[data-theme='soft'] .vc-screen .spoiler {
+  background: #faf5ea;
+  border: 1px solid rgba(92, 60, 30, 0.08);
+  border-radius: 24px;
+  padding: 30px 20px 26px;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+[data-theme='soft'] .vc-screen .spoiler.hidden { cursor: pointer; }
+[data-theme='soft'] .vc-screen .spoiler.hidden:hover { background: #f7efe1; border-color: rgba(217, 91, 74, 0.25); }
+[data-theme='soft'] .vc-screen .spoiler .ru { color: #26304a; }
+[data-theme='soft'] .vc-screen .spoiler .note { color: #5b4d42; }
+[data-theme='soft'] .vc-screen .spoiler .tap { color: #6b5a4c; }
+
+/* ---- Breakpoints ---- */
+@media (max-width: 1199px) {
+  [data-theme='soft'] .vc-decor .o-column,
+  [data-theme='soft'] .vc-decor .o-olive-tl,
+  [data-theme='soft'] .vc-decor .o-meander { display: none; }
+  [data-theme='soft'] .vc-decor .o-temple { width: 160px; right: 16px; top: 70px; opacity: 0.3; }
+}
+@media (max-width: 899px) {
+  /* Phones: the margins are too narrow for figures beside the card, so only
+     the soft washes and two small sprigs stay. */
+  [data-theme='soft'] .vc-decor .o-temple,
+  [data-theme='soft'] .vc-decor .o-amphora { display: none; }
+  [data-theme='soft'] .vc-decor .o-olive-br { right: -8px; bottom: 120px; width: 54px; opacity: 0.35; }
+  [data-theme='soft'] .vc-screen .vc-card { padding: 38px 20px 22px; border-radius: 28px; }
+  [data-theme='soft'] .vc-screen .vc-corner { width: 44px; height: 44px; top: 12px; left: 12px; }
+  [data-theme='soft'] .vc-screen .vc-corner-olive { width: 40px; height: 40px; }
+  [data-theme='soft'] .vc-screen .speak-row.center { margin-bottom: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .vc-screen .spoiler { transition: none; }
+}

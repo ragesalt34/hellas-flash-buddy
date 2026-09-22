@@ -7,6 +7,29 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
+import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule } from '../components/icons';
+
+/* Round-theme ornaments for the vocabulary screen: a light classical accent
+   spread along the edges — one element per corner, never clustered — so the
+   centre stays clean for the word. Decorative only (aria-hidden, .hs-deco is
+   hidden by the square theme); phones keep only what fits the margins. */
+function VocabDecor() {
+  return (
+    <div className="hs-deco vc-decor" aria-hidden="true">
+      <span className="blob b-tl" />
+      <span className="blob b-bl" />
+      <span className="blob b-br" />
+      <ColumnSketch className="orn o-column" size={58} />
+      <OliveSprig className="orn o-olive-tl" size={64} />
+      <TempleScene className="orn o-temple" size={210} />
+      <AmphoraSketch className="orn o-amphora" size={46} />
+      <OliveSprig className="orn o-olive-br" size={70} />
+      <span className="orn o-meander">
+        <MeanderRule height={24} />
+      </span>
+    </div>
+  );
+}
 
 export function Vocab({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
@@ -83,7 +106,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   if (done) {
     return (
-      <div className="fade-in center-col">
+      <div className="fade-in center-col vc-screen">
+        <VocabDecor />
         <div className="result">
           <div className="emoji">
             <PartyPopper size={56} strokeWidth={1.8} />
@@ -121,10 +145,15 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   }
 
   return (
-    <div className="fade-in" key={i}>
+    <div className="fade-in vc-screen" key={i}>
+      <VocabDecor />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Languages size={14} strokeWidth={2.6} /> {t('nav.vocab')}
+          <span className="vc-meta-ic">
+            <Languages size={14} strokeWidth={2.6} />
+          </span>{' '}
+          {t('nav.vocab')}
+          <OliveSprig className="hs-deco vc-meta-olive" size={22} />
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
@@ -133,7 +162,9 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <div className="card">
+      <div className="card vc-card">
+        <MeanderCorner className="hs-deco vc-corner tl" size={58} />
+        <OliveSprig className="hs-deco vc-corner-olive" size={54} />
         <div className="speak-row center">
           <div className="vocab-word">{card.word}</div>
           <button
