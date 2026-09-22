@@ -626,9 +626,13 @@ body::after {
 .tile .grow { flex: 1; }
 .tile .arrow { display: grid; place-items: center; }
 
+/* `backwards`, not `forwards`: a forwards fill keeps the last keyframe —
+   transform: translateY(0) — applied for good, and an animation outranks
+   every normal rule, so the tiles' hover lift never moved them. Backwards
+   holds the first frame through each tile's delay (it stays hidden until its
+   turn) and then lets go, handing opacity and transform back to the CSS. */
 .stagger > * {
-  opacity: 0;
-  animation: fadeUp 0.55s var(--ease) forwards;
+  animation: fadeUp 0.55s var(--ease) backwards;
 }
 
 /* ============ Buttons ============ */
@@ -3817,3 +3821,171 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .vc-screen .speak-row.center { margin: 10px 0 36px; }
   [data-theme='soft'] .vc-screen .spoiler { padding: 34px 24px 30px; }
 }
+
+/* ============================================================
+   QUIZ TOPIC PICKER — round theme, light classical accent.
+
+   80% modern menu, 20% antiquity: one faint ornament per screen edge and at
+   most two small ones in the corners of each tile. Scoped to
+   [data-theme='soft'] .tp-screen; ornaments carry .hs-deco (hidden by the
+   square theme). Only classes and decorative elements were added to Quiz.tsx.
+   ============================================================ */
+[data-theme='soft'] .tp-screen {
+  --tp-text: #242424;
+  --tp-muted: #70695f;
+  --tp-olive: #879d78;
+  position: relative;
+}
+[data-theme='soft'] body:has(.tp-screen) .aurora { background: #f7f3e8; }
+
+/* ---- Edge ornaments ---- */
+[data-theme='soft'] .tp-decor { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+[data-theme='soft'] .tp-decor .blob { position: absolute; border-radius: 50%; }
+[data-theme='soft'] .tp-decor .b-tl { width: 320px; height: 280px; left: -160px; top: -140px; background: #f6d9c8; opacity: 0.45; }
+[data-theme='soft'] .tp-decor .b-tr { width: 260px; height: 240px; right: -130px; top: 30%; background: #efe6d4; opacity: 0.6; }
+[data-theme='soft'] .tp-decor .b-bl { width: 360px; height: 260px; left: -150px; bottom: -130px; background: #f6d9c8; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .b-br { width: 300px; height: 300px; right: -150px; bottom: -150px; background: #dfe6f1; opacity: 0.6; }
+[data-theme='soft'] .tp-decor .orn { position: absolute; }
+[data-theme='soft'] .tp-decor .o-column { left: 24px; top: 110px; width: 70px; height: 168px; color: #d8bd92; opacity: 0.45; }
+[data-theme='soft'] .tp-decor .o-olive-tl { left: 100px; top: 40px; color: var(--tp-olive); opacity: 0.45; transform: rotate(-28deg); }
+[data-theme='soft'] .tp-decor .o-key-tr { right: 36px; top: 34px; width: 150px; color: #d8b67c; opacity: 0.35; }
+[data-theme='soft'] .tp-decor .o-temple { right: 30px; top: 36%; color: #cfa58a; opacity: 0.32; }
+[data-theme='soft'] .tp-decor .o-amphora { left: 44px; bottom: 110px; color: #c9785e; opacity: 0.4; transform: rotate(-5deg); }
+[data-theme='soft'] .tp-decor .o-olive-bl { left: 98px; bottom: 96px; color: var(--tp-olive); opacity: 0.42; }
+[data-theme='soft'] .tp-decor .o-olive-br { right: 50px; bottom: 60px; color: var(--tp-olive); opacity: 0.4; transform: scaleX(-1) rotate(-14deg); }
+[data-theme='soft'] .tp-decor .o-key-bl { left: 30px; bottom: 26px; width: 120px; color: #d8b67c; opacity: 0.3; }
+[data-theme='soft'] .tp-decor .o-diamond { width: 13px; height: 13px; border: 1.6px solid #d9a441; transform: rotate(45deg); opacity: 0.35; }
+[data-theme='soft'] .tp-decor .d1 { left: 190px; top: 210px; }
+[data-theme='soft'] .tp-decor .d2 { right: 70px; top: 62%; }
+
+/* ---- Heading ---- */
+[data-theme='soft'] .tp-screen .section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #7a6656;
+  margin: 8px 6px 16px;
+}
+[data-theme='soft'] .tp-screen .tp-label-olive { color: var(--tp-olive); opacity: 0.75; transform: rotate(-24deg); }
+
+/* ---- Tiles, shared ---- */
+[data-theme='soft'] .tp-screen .tiles { gap: 16px; }
+[data-theme='soft'] .tp-screen .tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+[data-theme='soft'] .tp-screen .tile:hover { transform: translateY(-3px); }
+[data-theme='soft'] .tp-screen .tile:active { transform: translateY(0); }
+[data-theme='soft'] .tp-screen .tp-o { position: absolute; z-index: -1; pointer-events: none; opacity: 0.35; }
+[data-theme='soft'] .tp-screen .tp-o.tl { top: 12px; left: 12px; }
+[data-theme='soft'] .tp-screen .tp-o.tr { top: 12px; right: 12px; }
+[data-theme='soft'] .tp-screen .tp-o.bl { bottom: 12px; left: 12px; }
+[data-theme='soft'] .tp-screen .tp-o.br { bottom: 12px; right: 12px; }
+/* MeanderCorner is drawn for the top-left; mirror it into the other corners. */
+[data-theme='soft'] .tp-screen .tp-o.key.tr { transform: scaleX(-1); }
+[data-theme='soft'] .tp-screen .tp-o.key.bl { transform: scaleY(-1); }
+[data-theme='soft'] .tp-screen .tp-o.key.br { transform: scale(-1, -1); }
+[data-theme='soft'] .tp-screen .tp-o.olive.br { transform: scaleX(-1) rotate(-10deg); }
+[data-theme='soft'] .tp-screen .tp-o.olive.tr { transform: scaleX(-1) rotate(20deg); }
+[data-theme='soft'] .tp-screen .tp-o.olive.bl { transform: rotate(-12deg); }
+[data-theme='soft'] .tp-screen .tp-o.temple.br { bottom: 6px; right: 6px; opacity: 0.3; }
+
+/* ---- All topics: the main action ---- */
+[data-theme='soft'] .tp-screen .tile.feature.warm {
+  min-height: 104px;
+  padding: 20px 26px 20px 22px;
+  gap: 18px;
+  background: #f6d27a;
+  border: 1px solid #ebbd55;
+  color: #3b2a10;
+  box-shadow: 0 5px 0 #e0b04a, 0 18px 30px -20px rgba(170, 110, 20, 0.65);
+}
+[data-theme='soft'] .tp-screen .tile.feature.warm:hover {
+  background: #f8d98a;
+  box-shadow: 0 7px 0 #e0b04a, 0 22px 34px -20px rgba(170, 110, 20, 0.7);
+}
+[data-theme='soft'] .tp-screen .tile.feature.warm:active { transform: translateY(3px); box-shadow: 0 2px 0 #e0b04a; }
+[data-theme='soft'] .tp-screen .tile.feature.warm .tile-ic {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff6de;
+  color: #5a3d06;
+  box-shadow: 0 4px 10px -6px rgba(150, 100, 20, 0.5);
+}
+[data-theme='soft'] .tp-screen .tile.feature.warm .tile-t { font-size: 22px; font-weight: 700; color: #2c2210; }
+[data-theme='soft'] .tp-screen .tile.feature.warm .tile-d { font-size: 14px; font-weight: 500; color: #5a4520; }
+[data-theme='soft'] .tp-screen .t-mixed .tp-o { color: #9a6f1c; opacity: 0.4; }
+[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive { color: #6f8a5c; opacity: 0.45; }
+[data-theme='soft'] .tp-screen .tile.feature.warm .arrow { color: #3b2a10; }
+
+/* ---- Four topic tiles ---- */
+[data-theme='soft'] .tp-screen .tp-tile {
+  min-height: 158px;
+  padding: 22px 24px;
+  gap: 14px;
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 14px 28px -22px rgba(120, 72, 30, 0.45);
+}
+[data-theme='soft'] .tp-screen .tp-tile:hover { box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 20px 34px -20px rgba(120, 72, 30, 0.55); }
+[data-theme='soft'] .tp-screen .tp-tile .tile-ic { width: 60px; height: 60px; border-radius: 50%; }
+[data-theme='soft'] .tp-screen .tp-tile .tile-ic svg { width: 26px; height: 26px; }
+[data-theme='soft'] .tp-screen .tp-tile .tile-t { font-size: 19px; font-weight: 700; color: var(--tp-text); }
+/* The icon colours arrive inline from the component (other themes use them);
+   the round theme swaps in its own pastel containers per topic. */
+[data-theme='soft'] .tp-screen .t-history { background: #fdf2ed; border-color: #f4d3c9; }
+[data-theme='soft'] .tp-screen .t-history .tile-ic { background: #f9d6cd !important; color: #c04f40 !important; }
+[data-theme='soft'] .tp-screen .t-history .tp-o { color: #d98b7c; }
+[data-theme='soft'] .tp-screen .t-culture { background: #f7f5fb; border-color: #e2def2; }
+[data-theme='soft'] .tp-screen .t-culture .tile-ic { background: #e3dff4 !important; color: #6b5fa8 !important; }
+[data-theme='soft'] .tp-screen .t-culture .tp-o { color: #9d92cc; }
+[data-theme='soft'] .tp-screen .t-culture .tp-o.olive { color: var(--tp-olive); }
+[data-theme='soft'] .tp-screen .t-laws { background: #fdf6e6; border-color: #f2e0b2; }
+[data-theme='soft'] .tp-screen .t-laws .tile-ic { background: #f8e3a6 !important; color: #946511 !important; }
+[data-theme='soft'] .tp-screen .t-laws .tp-o { color: #c9a14e; }
+[data-theme='soft'] .tp-screen .t-laws .tp-o.olive { color: var(--tp-olive); }
+[data-theme='soft'] .tp-screen .t-geography { background: #f1f7f2; border-color: #cfe5d7; }
+[data-theme='soft'] .tp-screen .t-geography .tile-ic { background: #d4e9de !important; color: #2f7a5c !important; }
+[data-theme='soft'] .tp-screen .t-geography .tp-o { color: #7fae94; }
+
+/* ---- Breakpoints ---- */
+@media (max-width: 1199px) {
+  [data-theme='soft'] .tp-decor .o-column,
+  [data-theme='soft'] .tp-decor .o-olive-tl,
+  [data-theme='soft'] .tp-decor .o-key-bl,
+  [data-theme='soft'] .tp-decor .d1 { display: none; }
+  [data-theme='soft'] .tp-decor .o-temple { width: 150px; opacity: 0.26; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .tp-decor .orn { display: none; }
+  [data-theme='soft'] .tp-decor .o-olive-br { display: block; right: -6px; bottom: 120px; width: 60px; opacity: 0.3; }
+  [data-theme='soft'] .tp-screen .tp-tile { min-height: 136px; padding: 18px; }
+  [data-theme='soft'] .tp-screen .tile.feature.warm { min-height: 92px; padding: 16px 18px; }
+}
+@media (max-width: 560px) {
+  [data-theme='soft'] .tp-screen .tiles { grid-template-columns: 1fr; gap: 12px; }
+  [data-theme='soft'] .tp-screen .tp-tile { min-height: 0; flex-direction: row; align-items: center; padding: 16px 18px; }
+  [data-theme='soft'] .tp-screen .tp-tile .tile-ic { width: 52px; height: 52px; }
+  [data-theme='soft'] .tp-screen .tp-o.temple { width: 70px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .tp-screen .tile { transition: none; }
+  [data-theme='soft'] .tp-screen .tile:hover { transform: none; }
+}
+/* The sprig in the "all topics" corner sat under the arrow; it moves left of
+   it. The right-hand wash read as a solid disc at 0.6. */
+[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive.br { right: 64px; bottom: 4px; }
+[data-theme='soft'] .tp-decor .b-tr { opacity: 0.35; }
+[data-theme='soft'] .tp-screen .t-mixed .tp-o.key.tr { top: 8px; right: 12px; }
+[data-theme='soft'] .tp-screen .tp-o.temple.br { bottom: 4px; right: 4px; }
+/* On the shorter phone tile the corner key would touch the arrow. */
+@media (max-width: 899px) { [data-theme='soft'] .tp-screen .t-mixed .tp-o.key { display: none; } }
+/* "All topics" spans two columns; in the one-column phone grid that span
+   silently created a second, implicit column and the topic tiles ended up
+   side by side at uneven widths. */
+@media (max-width: 560px) { [data-theme='soft'] .tp-screen .tile.feature { grid-column: auto; } }

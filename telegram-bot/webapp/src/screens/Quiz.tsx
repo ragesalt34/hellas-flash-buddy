@@ -25,6 +25,75 @@ import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
+import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule } from '../components/icons';
+
+/* Round-theme ornaments for the topic picker: one classical element per
+   screen edge, faint and pastel, so the centre stays a clean menu. Decorative
+   only — aria-hidden, and .hs-deco is hidden by the square theme. */
+function TopicDecor() {
+  return (
+    <div className="hs-deco tp-decor" aria-hidden="true">
+      <span className="blob b-tl" />
+      <span className="blob b-tr" />
+      <span className="blob b-bl" />
+      <span className="blob b-br" />
+      <ColumnSketch className="orn o-column" size={60} />
+      <OliveSprig className="orn o-olive-tl" size={70} />
+      <span className="orn o-key-tr"><MeanderRule height={24} /></span>
+      <TempleScene className="orn o-temple" size={200} />
+      <AmphoraSketch className="orn o-amphora" size={50} />
+      <OliveSprig className="orn o-olive-bl" size={56} />
+      <OliveSprig className="orn o-olive-br" size={80} />
+      <span className="orn o-key-bl"><MeanderRule height={24} /></span>
+      <span className="orn o-diamond d1" />
+      <span className="orn o-diamond d2" />
+    </div>
+  );
+}
+
+/* Small ornaments inside each topic tile — two per tile at most, in the
+   corners, so the icon and the name stay the only things that read. */
+function TileOrnaments({ id }: { id: string }) {
+  switch (id) {
+    case 'mixed':
+      return (
+        <>
+          <MeanderCorner className="hs-deco tp-o key tr" size={28} />
+          <OliveSprig className="hs-deco tp-o olive br" size={46} />
+        </>
+      );
+    case 'history':
+      return (
+        <>
+          <MeanderCorner className="hs-deco tp-o key tr" size={30} />
+          <ColumnSketch className="hs-deco tp-o column br" size={30} />
+        </>
+      );
+    case 'culture':
+      return (
+        <>
+          <OliveSprig className="hs-deco tp-o olive tr" size={40} />
+          <MeanderCorner className="hs-deco tp-o key br" size={30} />
+        </>
+      );
+    case 'laws':
+      return (
+        <>
+          <OliveSprig className="hs-deco tp-o olive tr" size={40} />
+          <MeanderCorner className="hs-deco tp-o key br" size={30} />
+        </>
+      );
+    case 'geography':
+      return (
+        <>
+          <MeanderCorner className="hs-deco tp-o key tr" size={30} />
+          <TempleScene className="hs-deco tp-o temple br" size={72} />
+        </>
+      );
+    default:
+      return null;
+  }
+}
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
@@ -137,18 +206,23 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   // ---- Topic selection ----
   if (phase === 'topic') {
     return (
-      <div className="fade-in">
-        <div className="section-label">{t('quiz.chooseTopic')}</div>
+      <div className="fade-in tp-screen">
+        <TopicDecor />
+        <div className="section-label">
+          {t('quiz.chooseTopic')}
+          <OliveSprig className="hs-deco tp-label-olive" size={22} />
+        </div>
         <div className="tiles stagger">
           {TOPICS.map((topicDef, i) => {
             const Icon = topicDef.icon;
             return topicDef.span ? (
               <button
                 key={topicDef.id}
-                className="tile feature warm"
+                className="tile feature warm t-mixed"
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(topicDef.id)}
               >
+                <TileOrnaments id={topicDef.id} />
                 <span className="tile-ic">
                   <Icon size={26} strokeWidth={2.2} />
                 </span>
@@ -165,10 +239,11 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             ) : (
               <button
                 key={topicDef.id}
-                className="tile"
+                className={`tile tp-tile t-${topicDef.id}`}
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(topicDef.id)}
               >
+                <TileOrnaments id={topicDef.id} />
                 <span className="tile-ic" style={{ background: `color-mix(in srgb, ${topicDef.color} 18%, transparent)`, color: topicDef.color }}>
                   <Icon size={24} strokeWidth={2.2} />
                 </span>
