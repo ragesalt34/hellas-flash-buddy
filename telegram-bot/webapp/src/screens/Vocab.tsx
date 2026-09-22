@@ -7,7 +7,7 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule } from '../components/icons';
+import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule, TempleMark } from '../components/icons';
 
 /* Round-theme ornaments for the vocabulary screen: a light classical accent
    spread along the edges — one element per corner, never clustered — so the
@@ -27,6 +27,12 @@ function VocabDecor() {
       <span className="orn o-meander">
         <MeanderRule height={24} />
       </span>
+      <span className="orn o-key-tr">
+        <MeanderRule height={24} />
+      </span>
+      <span className="orn o-diamond d1" />
+      <span className="orn o-diamond d2" />
+      <span className="orn o-diamond d3" />
     </div>
   );
 }
@@ -185,6 +191,9 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             }
           }}
         >
+          <span className="hs-deco vc-panel-temple" aria-hidden="true">
+            <TempleMark size={26} strokeWidth={1.6} />
+          </span>
           <div className="reveal">
             <div className="ru">{card.ru}</div>
             {card.note && <div className="note">{card.note}</div>}
@@ -201,6 +210,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <div className="actionbar">
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
+              <MeanderCorner className="hs-deco gr-key" size={30} />
+              <OliveSprig className="hs-deco gr-olive" size={30} />
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
@@ -208,6 +219,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
+              <MeanderCorner className="hs-deco gr-key" size={30} />
+              <OliveSprig className="hs-deco gr-olive" size={30} />
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
@@ -215,6 +228,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
+              <MeanderCorner className="hs-deco gr-key" size={30} />
+              <OliveSprig className="hs-deco gr-olive" size={30} />
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>

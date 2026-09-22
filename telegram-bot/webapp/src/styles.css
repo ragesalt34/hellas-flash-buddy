@@ -3683,3 +3683,127 @@ button.chip:active { transform: scale(0.95); }
 @media (prefers-reduced-motion: reduce) {
   [data-theme='soft'] .vc-screen .spoiler { transition: none; }
 }
+
+/* ---- Vocabulary, pass 2: answer panel, SRS cards, calmer header ---- */
+[data-theme='soft'] .vc-screen { --vc-text: #202124; --vc-muted: #6f6a62; --vc-word: #26334f; }
+[data-theme='soft'] body:has(.vc-screen) .aurora { background: #f7f3ea; }
+[data-theme='soft'] .vc-screen .topbar .meta { color: var(--vc-text); }
+[data-theme='soft'] .vc-screen .topbar .counter { background: #f6d98c; box-shadow: none; border: 1px solid rgba(200, 150, 40, 0.25); }
+[data-theme='soft'] .vc-screen .progress { height: 7px; background: #eee6d6; }
+[data-theme='soft'] .vc-screen .progress > i { background: #e98a78; min-width: 7px; }
+[data-theme='soft'] .vc-screen .vocab-word { color: var(--vc-word); }
+[data-theme='soft'] .vc-screen .vc-card { box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 18px 40px -30px rgba(120, 72, 30, 0.4); }
+
+/* Answer panel: its own inset surface inside the card. */
+[data-theme='soft'] .vc-screen .spoiler {
+  position: relative;
+  background: #f8f1e5;
+  border: 1px solid #e9dcc8;
+  border-radius: 20px;
+}
+[data-theme='soft'] .vc-screen .spoiler.hidden:hover { background: #f5ecdd; border-color: #e3cfb4; }
+[data-theme='soft'] .vc-screen .spoiler .ru { color: var(--vc-word); font-weight: 700; }
+[data-theme='soft'] .vc-screen .spoiler .note { color: #4f4a43; font-size: 16px; line-height: 1.5; }
+[data-theme='soft'] .vc-screen .spoiler .tap { color: var(--vc-muted); }
+[data-theme='soft'] .vc-screen .vc-panel-temple {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  color: #d4a55a;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* SRS buttons as three pastel cards with a whisper of ornament in two corners. */
+[data-theme='soft'] .vc-screen .grade-row { gap: 16px; }
+[data-theme='soft'] .vc-screen .grade {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 112px;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 24px;
+  font-size: 18px;
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 12px 24px -18px rgba(120, 72, 30, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+[data-theme='soft'] .vc-screen .grade .e svg { width: 30px; height: 30px; }
+[data-theme='soft'] .vc-screen .grade .gsub { font-size: 14px; }
+[data-theme='soft'] .vc-screen .grade.g1 { background: #f9d8d2; border: 1px solid #efbdb3; color: #9f322b; }
+[data-theme='soft'] .vc-screen .grade.g2 { background: #f8e2aa; border: 1px solid #ebcb7c; color: #5a3d06; }
+[data-theme='soft'] .vc-screen .grade.g3 { background: #d5ebdd; border: 1px solid #a9d4b8; color: #245e45; }
+[data-theme='soft'] .vc-screen .grade.g1,
+[data-theme='soft'] .vc-screen .grade.g2,
+[data-theme='soft'] .vc-screen .grade.g3 { box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 12px 24px -18px rgba(120, 72, 30, 0.5); }
+[data-theme='soft'] .vc-screen .grade:hover,
+[data-theme='soft'] .vc-screen .grade.g1:hover,
+[data-theme='soft'] .vc-screen .grade.g2:hover,
+[data-theme='soft'] .vc-screen .grade.g3:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 18px 30px -18px rgba(120, 72, 30, 0.6);
+}
+[data-theme='soft'] .vc-screen .grade:active,
+[data-theme='soft'] .vc-screen .grade.g1:active,
+[data-theme='soft'] .vc-screen .grade.g2:active,
+[data-theme='soft'] .vc-screen .grade.g3:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 6px 14px -12px rgba(120, 72, 30, 0.5);
+}
+[data-theme='soft'] .vc-screen .grade .gr-key,
+[data-theme='soft'] .vc-screen .grade .gr-olive {
+  position: absolute;
+  z-index: -1;
+  opacity: 0.35;
+  pointer-events: none;
+}
+[data-theme='soft'] .vc-screen .grade .gr-key { top: 10px; right: 10px; transform: scaleX(-1); }
+[data-theme='soft'] .vc-screen .grade .gr-olive { bottom: 8px; left: 8px; transform: rotate(-8deg); }
+
+/* Desktop focus mode pins the action to a bar at the bottom of the window,
+   which left the grades far below a short card. Here they sit under it. */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus .vc-screen .actionbar {
+    position: static;
+    padding: 30px 0 0;
+    background: none;
+  }
+  [data-theme='soft'] body.focus .vc-screen .actionbar > * { max-width: none; }
+}
+
+/* A little more classical texture at the edges: a greek key in the top-right
+   and three small diamonds, all faint. */
+[data-theme='soft'] .vc-decor .o-key-tr { right: 24px; top: 20px; width: 150px; color: #d6b27a; opacity: 0.3; }
+[data-theme='soft'] .vc-decor .o-diamond {
+  width: 14px;
+  height: 14px;
+  border: 1.6px solid #d9a441;
+  transform: rotate(45deg);
+  opacity: 0.35;
+}
+[data-theme='soft'] .vc-decor .d1 { left: 120px; top: 330px; }
+[data-theme='soft'] .vc-decor .d2 { right: 50px; top: 470px; }
+[data-theme='soft'] .vc-decor .d3 { right: 200px; bottom: 170px; }
+[data-theme='soft'] .vc-decor .o-temple { top: 60px; }
+
+@media (max-width: 1199px) {
+  [data-theme='soft'] .vc-decor .o-key-tr,
+  [data-theme='soft'] .vc-decor .d1,
+  [data-theme='soft'] .vc-decor .d3 { display: none; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .vc-decor .o-diamond { display: none; }
+  [data-theme='soft'] .vc-screen .grade-row { gap: 10px; }
+  [data-theme='soft'] .vc-screen .grade { min-height: 92px; font-size: 15px; border-radius: 20px; }
+  [data-theme='soft'] .vc-screen .grade .e svg { width: 24px; height: 24px; }
+  [data-theme='soft'] .vc-screen .grade .gsub { font-size: 12px; }
+  [data-theme='soft'] .vc-screen .grade .gr-olive { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .vc-screen .grade { transition: none; }
+  [data-theme='soft'] .vc-screen .grade:hover { transform: none; }
+}
+/* Rubik has no Greek, so a word like «25η Μαρτίου» set its digits in Rubik
+   and its letters in the Manrope fallback — two weights in one word. The
+   Greek word takes Manrope outright, which covers both. */
+[data-theme='soft'] .vc-screen .vocab-word { font-family: 'Manrope', var(--font-display); font-weight: 700; }
