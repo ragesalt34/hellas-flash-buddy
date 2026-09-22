@@ -1,4 +1,4 @@
-import { Flame, Target, BookOpen, Star, Layers, BookA, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
+import { Flame, Target, Star, Layers, BookA, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -6,7 +6,7 @@ import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-import { Sparks, OliveSprig, ColumnSketch, TempleScene, AmphoraSketch, BustSketch } from '../components/icons';
+import { QuizIcon, Sparks, OliveSprig, ColumnSketch, TempleScene, AmphoraSketch, BustSketch } from '../components/icons';
 
 /* Page-level ornaments: pastel corner washes plus a set of classical line
    drawings — olive sprigs, a column, an amphora, a bust and a temple on its
@@ -101,7 +101,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             {acc}%
           </span>
           <span className="chip">
-            <BookOpen size={15} color="var(--accent)" />
+            <QuizIcon size={15} color="var(--accent)" />
             {me.stats.total_sessions}
           </span>
           <span className="chip">
@@ -148,7 +148,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('quiz')}
         >
           <span className="tile-ic">
-            <BookOpen size={26} strokeWidth={2.2} />
+            <QuizIcon size={26} strokeWidth={2.2} />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>

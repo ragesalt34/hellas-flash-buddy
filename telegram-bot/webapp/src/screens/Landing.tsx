@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
-  BookOpen, Layers, BookA, BarChart3, Flame, Volume2, ArrowRight,
+  Layers, BookA, BarChart3, Flame, Volume2, ArrowRight,
   MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark, MeanderRule, Sparks } from '../components/icons';
+import { TempleMark, MeanderRule, Sparks, QuizIcon } from '../components/icons';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
 // that used to be dusty rose — it reads more distinctly next to the two warm
 // reds, and it was otherwise unused in this grid.)
-const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
-  { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
+const FEATURES: { icon: LucideIcon | typeof QuizIcon; color: string; titleKey: string; textKey: string }[] = [
+  { icon: QuizIcon, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
   { icon: Layers, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
   { icon: BookA, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
   { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },

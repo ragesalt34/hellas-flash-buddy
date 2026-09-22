@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { House, BookOpen, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
-import { TempleMark } from './components/icons';
+import { House, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { TempleMark, QuizIcon } from './components/icons';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage } from './i18n';
@@ -61,9 +61,9 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: View; icon: LucideIcon; key: string }[] = [
+const NAV: { id: View; icon: LucideIcon | typeof QuizIcon; key: string }[] = [
   { id: 'home', icon: House, key: 'nav.home' },
-  { id: 'quiz', icon: BookOpen, key: 'nav.quiz' },
+  { id: 'quiz', icon: QuizIcon, key: 'nav.quiz' },
   { id: 'flashcards', icon: Layers, key: 'nav.flashcards' },
   { id: 'vocab', icon: BookA, key: 'nav.vocab' },
   { id: 'stats', icon: BarChart3, key: 'nav.stats' },
