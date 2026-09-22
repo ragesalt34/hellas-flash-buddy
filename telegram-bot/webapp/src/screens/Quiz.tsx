@@ -24,7 +24,8 @@ import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
-import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule, GeoIcon } from '../components/icons';
+import { GeoIcon } from '../components/icons';
+import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for the topic picker: one classical element per
    screen edge, faint and pastel, so the centre stays a clean menu. Decorative
@@ -32,20 +33,20 @@ import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, Me
 function TopicDecor() {
   return (
     <div className="hs-deco tp-decor" aria-hidden="true">
-      <span className="blob b-tl" />
-      <span className="blob b-tr" />
-      <span className="blob b-bl" />
-      <span className="blob b-br" />
-      <ColumnSketch className="orn o-column" size={60} />
-      <OliveSprig className="orn o-olive-tl" size={70} />
-      <span className="orn o-key-tr"><MeanderRule height={24} /></span>
-      <TempleScene className="orn o-temple" size={200} />
-      <AmphoraSketch className="orn o-amphora" size={50} />
-      <OliveSprig className="orn o-olive-bl" size={56} />
-      <OliveSprig className="orn o-olive-br" size={80} />
-      <span className="orn o-key-bl"><MeanderRule height={24} /></span>
-      <span className="orn o-diamond d1" />
-      <span className="orn o-diamond d2" />
+      <Greek name="bg-shape-1" className="blob b-tl" />
+      <Greek name="bg-shape-3" className="blob b-tr" />
+      <Greek name="bg-shape-3" className="blob b-bl" />
+      <Greek name="bg-shape-2" className="blob b-br" />
+      <Greek name="column" className="orn o-column" />
+      <Greek name="olive-branch" className="orn o-olive-tl" />
+      <Greek name="greek-key" className="orn o-key-tr" />
+      <Greek name="hill-temple" className="orn o-temple" />
+      <Greek name="amphora" className="orn o-amphora" />
+      <Greek name="olive-branch-small" className="orn o-olive-bl" />
+      <Greek name="olive-branch" className="orn o-olive-br" />
+      <Greek name="greek-key-small" className="orn o-key-bl" />
+      <Greek name="decorative-diamond" className="orn o-diamond d1" />
+      <Greek name="decorative-diamond" className="orn o-diamond d2" />
     </div>
   );
 }
@@ -57,36 +58,36 @@ function TileOrnaments({ id }: { id: string }) {
     case 'mixed':
       return (
         <>
-          <MeanderCorner className="hs-deco tp-o key tr" size={28} />
-          <OliveSprig className="hs-deco tp-o olive br" size={46} />
+          <Greek name="decorative-corner" className="tp-o key tr" />
+          <Greek name="olive-branch-small" className="tp-o olive br" />
         </>
       );
     case 'history':
       return (
         <>
-          <MeanderCorner className="hs-deco tp-o key tr" size={30} />
-          <ColumnSketch className="hs-deco tp-o column br" size={30} />
+          <Greek name="decorative-corner" className="tp-o key tr" />
+          <Greek name="column" className="tp-o column br" />
         </>
       );
     case 'culture':
       return (
         <>
-          <OliveSprig className="hs-deco tp-o olive tr" size={40} />
-          <MeanderCorner className="hs-deco tp-o key br" size={30} />
+          <Greek name="olive-branch-small" className="tp-o olive tr" />
+          <Greek name="decorative-corner" className="tp-o key br" />
         </>
       );
     case 'laws':
       return (
         <>
-          <OliveSprig className="hs-deco tp-o olive tr" size={40} />
-          <MeanderCorner className="hs-deco tp-o key br" size={30} />
+          <Greek name="olive-branch-small" className="tp-o olive tr" />
+          <Greek name="decorative-corner" className="tp-o key br" />
         </>
       );
     case 'geography':
       return (
         <>
-          <MeanderCorner className="hs-deco tp-o key tr" size={30} />
-          <TempleScene className="hs-deco tp-o temple br" size={72} />
+          <Greek name="decorative-corner" className="tp-o key tr" />
+          <Greek name="hill-temple" className="tp-o temple br" />
         </>
       );
     default:
@@ -209,7 +210,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         <TopicDecor />
         <div className="section-label">
           {t('quiz.chooseTopic')}
-          <OliveSprig className="hs-deco tp-label-olive" size={22} />
+          <Greek name="olive-branch-small" className="tp-label-olive" />
         </div>
         <div className="tiles stagger">
           {TOPICS.map((topicDef, i) => {

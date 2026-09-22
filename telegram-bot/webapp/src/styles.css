@@ -3989,3 +3989,155 @@ button.chip:active { transform: scale(0.95); }
    silently created a second, implicit column and the topic tiles ended up
    side by side at uneven widths. */
 @media (max-width: 560px) { [data-theme='soft'] .tp-screen .tile.feature { grid-column: auto; } }
+
+/* ============================================================
+   GREEK ARTWORK — the supplied PNG set (public/greek/).
+
+   These replace the line-drawn SVG ornaments on the home, flashcard, vocab
+   and topic screens; each image keeps the class its SVG had, so positions
+   come from the blocks above and only size and strength are set here. The
+   artwork is coloured and denser than the old outlines, so background pieces
+   sit at 0.2–0.45 and card corners lower still. Never interactive, never in
+   layout: every piece is absolutely positioned (except the two tiny sprigs
+   beside headings) and pointer-events: none.
+   ============================================================ */
+.greek {
+  display: block;
+  height: auto;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* The pastel washes were CSS circles with a fill; as images they must not
+   keep the fill or the circle clip. */
+[data-theme='soft'] .greek.blob { background: none !important; border-radius: 0 !important; height: auto !important; opacity: 0.45; }
+
+/* ---- Home ---- */
+[data-theme='soft'] .home-decor .greek.doodle { opacity: 0.38; }
+[data-theme='soft'] .home-decor .d-column-l { width: 92px; }
+[data-theme='soft'] .home-decor .d-column-r { width: 66px; opacity: 0.3; }
+[data-theme='soft'] .home-decor .d-temple { width: 270px; opacity: 0.42; }
+[data-theme='soft'] .home-decor .d-amphora { width: 84px; }
+[data-theme='soft'] .home-decor .d-bust { width: 130px; opacity: 0.45; }
+[data-theme='soft'] .home-decor .d-olive-1 { width: 96px; }
+[data-theme='soft'] .home-decor .d-olive-2 { width: 72px; }
+[data-theme='soft'] .home-decor .d-olive-3 { width: 120px; }
+[data-theme='soft'] .home-decor .d-olive-4 { width: 72px; }
+[data-theme='soft'] .home .hero-olive { width: 64px; opacity: 0.45; }
+[data-theme='soft'] .home .tile .tile-olive { width: 58px; opacity: 0.35; }
+/* On the coral main tile the artwork goes white, like the old outline did. */
+[data-theme='soft'] .home .tile.feature .tile-olive { width: 76px; filter: brightness(0) invert(1); opacity: 0.28; }
+[data-theme='soft'] .home .tile.feature .tile-column { width: 40px; filter: brightness(0) invert(1); opacity: 0.24; }
+
+/* ---- Flashcards ---- */
+[data-theme='soft'] .fc-screen .fc-illus .fc-illus-img { width: 160px; opacity: 0.55; }
+[data-theme='soft'] .fc-screen .fc-illus { color: inherit; }
+
+/* ---- Vocabulary ---- */
+[data-theme='soft'] .vc-decor .o-column { width: 84px !important; height: auto !important; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .o-olive-tl { width: 92px; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .o-temple { width: 260px; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .o-amphora { width: 80px; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .o-olive-br { width: 104px; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .o-meander { width: 150px; opacity: 0.35; }
+[data-theme='soft'] .vc-decor .o-key-tr { width: 120px; opacity: 0.3; }
+[data-theme='soft'] .vc-decor .o-diamond,
+[data-theme='soft'] .tp-decor .o-diamond { width: 16px; height: auto; border: 0; transform: none; opacity: 0.45; }
+[data-theme='soft'] .vc-screen .vc-meta-olive { display: inline-block; width: 26px; opacity: 0.7; }
+[data-theme='soft'] .vc-screen .vc-corner { width: 58px; height: auto; opacity: 0.45; }
+[data-theme='soft'] .vc-screen .vc-corner-olive { width: 54px; height: auto; opacity: 0.5; }
+[data-theme='soft'] .vc-screen .vc-panel-temple { width: 46px; opacity: 0.4; }
+[data-theme='soft'] .vc-screen .grade .gr-key { width: 46px; opacity: 0.35; }
+[data-theme='soft'] .vc-screen .grade .gr-olive { width: 36px; opacity: 0.4; }
+
+/* ---- Topic picker ---- */
+[data-theme='soft'] .tp-decor .o-column { width: 86px !important; height: auto !important; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-olive-tl { width: 96px; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-key-tr { width: 132px; opacity: 0.32; }
+[data-theme='soft'] .tp-decor .o-temple { width: 270px; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-amphora { width: 84px; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-olive-bl { width: 70px; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-olive-br { width: 112px; opacity: 0.4; }
+[data-theme='soft'] .tp-decor .o-key-bl { width: 130px; opacity: 0.3; }
+[data-theme='soft'] .tp-screen .tp-label-olive { display: inline-block; width: 28px; opacity: 0.75; }
+[data-theme='soft'] .tp-screen .tp-o.key { width: 36px; opacity: 0.4; }
+[data-theme='soft'] .tp-screen .tp-o.olive { width: 48px; opacity: 0.45; }
+[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive { width: 60px; opacity: 0.5; }
+[data-theme='soft'] .tp-screen .tp-o.column { width: 32px; opacity: 0.4; }
+[data-theme='soft'] .tp-screen .tp-o.temple { width: 104px; opacity: 0.4; }
+
+/* ---- Smaller screens ---- */
+@media (max-width: 1199px) {
+  [data-theme='soft'] .vc-decor .o-temple,
+  [data-theme='soft'] .tp-decor .o-temple { width: 180px; opacity: 0.32; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .home-decor .d-temple { width: 170px; opacity: 0.3; }
+  [data-theme='soft'] .home-decor .d-olive-1,
+  [data-theme='soft'] .home-decor .d-olive-3 { width: 64px; opacity: 0.3; }
+  [data-theme='soft'] .greek.blob { opacity: 0.35; }
+  [data-theme='soft'] .vc-decor .o-olive-br,
+  [data-theme='soft'] .tp-decor .o-olive-br { width: 66px; opacity: 0.32; }
+  [data-theme='soft'] .vc-screen .vc-corner { width: 44px; }
+  [data-theme='soft'] .vc-screen .vc-corner-olive { width: 40px; }
+  [data-theme='soft'] .vc-screen .vc-panel-temple { width: 36px; }
+  [data-theme='soft'] .vc-screen .grade .gr-key { width: 36px; }
+  [data-theme='soft'] .tp-screen .tp-o.temple { width: 78px; }
+}
+
+/* Home artwork anchored to the gutters beside the content column instead of
+   to fixed page offsets: the PNGs are larger than the old outlines, and at
+   1280px the fixed offsets slid them under the cards and the sidebar.
+   --gut is the content column's left edge, --cw its width (see .app). */
+@media (min-width: 900px) {
+  [data-theme='soft'] .home-decor { --gut: max(180px, calc((100vw - 720px) / 2)); --cw: 720px; }
+  [data-theme='soft'] .home-decor .greek.doodle { left: auto; right: auto; top: auto; bottom: auto; transform: none; }
+  /* left gutter: right edge a little before the column */
+  [data-theme='soft'] .home-decor .greek.d-olive-1 { right: calc(100vw - var(--gut) + 30px); top: 40px; }
+  [data-theme='soft'] .home-decor .greek.d-column-l { right: calc(100vw - var(--gut) + 40px); top: 210px; }
+  [data-theme='soft'] .home-decor .greek.d-amphora { right: calc(100vw - var(--gut) + 44px); bottom: 150px; }
+  [data-theme='soft'] .home-decor .greek.d-olive-3 { right: calc(100vw - var(--gut) + 18px); bottom: 46px; }
+  /* right gutter: left edge a little after the column */
+  [data-theme='soft'] .home-decor .greek.d-olive-4 { left: calc(var(--gut) + var(--cw) + 44px); top: 34px; }
+  [data-theme='soft'] .home-decor .greek.d-column-r { left: calc(var(--gut) + var(--cw) + 70px); top: 160px; }
+  [data-theme='soft'] .home-decor .greek.d-bust { left: calc(var(--gut) + var(--cw) + 30px); top: 400px; }
+  [data-theme='soft'] .home-decor .greek.d-olive-2 { left: calc(var(--gut) + var(--cw) + 40px); top: 470px; }
+  [data-theme='soft'] .home-decor .greek.d-temple {
+    left: calc(var(--gut) + var(--cw) + 20px);
+    bottom: 26px;
+    width: min(270px, calc(100vw - var(--gut) - var(--cw) - 40px));
+  }
+}
+@media (min-width: 1200px) {
+  [data-theme='soft'] .home-decor { --gut: max(180px, calc((100vw - 820px) / 2)); --cw: 820px; }
+}
+/* The left gutter is shared with the sidebar (~160px), so its pieces only
+   appear once there is real room beside it. */
+@media (max-width: 1399px) {
+  [data-theme='soft'] .home-decor .greek.d-olive-1,
+  [data-theme='soft'] .home-decor .greek.d-column-l,
+  [data-theme='soft'] .home-decor .greek.d-amphora,
+  [data-theme='soft'] .home-decor .greek.d-olive-3 { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1199px) {
+  [data-theme='soft'] .home-decor .greek.d-column-r,
+  [data-theme='soft'] .home-decor .greek.d-bust,
+  [data-theme='soft'] .home-decor .greek.d-olive-4 { display: none; }
+}
+
+/* Vocab: the hill temple sizes to the right gutter of the wide card column,
+   and leaves when that gutter is too thin to hold it. */
+@media (min-width: 900px) {
+  [data-theme='soft'] .vc-decor .o-temple { width: min(260px, calc((100vw - 820px) / 2 - 40px)); right: 16px; }
+}
+@media (max-width: 1279px) {
+  [data-theme='soft'] .vc-decor .o-temple { display: none; }
+}
+/* The temple picture is wider than the old outline beside the flashcard;
+   it moves out so it cannot touch the card's edge. On phones the home temple
+   sat behind the bottom bar; it lifts above it. */
+[data-theme='soft'] .fc-screen .fc-illus { right: -200px; }
+@media (max-width: 899px) {
+  [data-theme='soft'] .home-decor .greek.d-temple { bottom: 96px; right: -24px; }
+}

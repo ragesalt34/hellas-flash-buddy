@@ -7,7 +7,8 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { Sparks, TempleMark } from '../components/icons';
+import { Sparks } from '../components/icons';
+import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for this screen: pastel blobs in the corners and a few
    hand-drawn doodles, fixed behind everything. Decorative only — aria-hidden,
@@ -15,10 +16,10 @@ import { Sparks, TempleMark } from '../components/icons';
 function FcDecor() {
   return (
     <div className="hs-deco fc-decor" aria-hidden="true">
-      <span className="blob b-tl" />
-      <span className="blob b-tr" />
-      <span className="blob b-bl" />
-      <span className="blob b-br" />
+      <Greek name="bg-shape-1" className="blob b-tl" />
+      <Greek name="bg-shape-3" className="blob b-tr" />
+      <Greek name="bg-shape-3" className="blob b-bl" />
+      <Greek name="bg-shape-2" className="blob b-br" />
       <Sparks className="doodle d-tl" size={40} />
       <svg className="doodle d-swirl" width="60" height="50" viewBox="0 0 60 50" fill="none">
         <path d="M6 44 C6 30 14 20 24 22 C32 24 28 34 22 30 C16 26 26 10 40 10 C48 10 52 6 56 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
@@ -171,7 +172,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="fc-stage">
       {/* Temple sketch beside the card on wide screens — decoration only. */}
       <span className="hs-deco fc-illus" aria-hidden="true">
-        <TempleMark size={78} strokeWidth={1.8} />
+        <Greek name="temple" className="fc-illus-img" />
         <Sparks className="fc-illus-spark" size={34} />
       </span>
       <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>

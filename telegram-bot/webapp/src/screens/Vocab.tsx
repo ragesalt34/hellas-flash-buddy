@@ -7,7 +7,7 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule, TempleMark } from '../components/icons';
+import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for the vocabulary screen: a light classical accent
    spread along the edges — one element per corner, never clustered — so the
@@ -16,23 +16,19 @@ import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, Me
 function VocabDecor() {
   return (
     <div className="hs-deco vc-decor" aria-hidden="true">
-      <span className="blob b-tl" />
-      <span className="blob b-bl" />
-      <span className="blob b-br" />
-      <ColumnSketch className="orn o-column" size={58} />
-      <OliveSprig className="orn o-olive-tl" size={64} />
-      <TempleScene className="orn o-temple" size={210} />
-      <AmphoraSketch className="orn o-amphora" size={46} />
-      <OliveSprig className="orn o-olive-br" size={70} />
-      <span className="orn o-meander">
-        <MeanderRule height={24} />
-      </span>
-      <span className="orn o-key-tr">
-        <MeanderRule height={24} />
-      </span>
-      <span className="orn o-diamond d1" />
-      <span className="orn o-diamond d2" />
-      <span className="orn o-diamond d3" />
+      <Greek name="bg-shape-1" className="blob b-tl" />
+      <Greek name="bg-shape-3" className="blob b-bl" />
+      <Greek name="bg-shape-2" className="blob b-br" />
+      <Greek name="column" className="orn o-column" />
+      <Greek name="olive-branch" className="orn o-olive-tl" />
+      <Greek name="hill-temple" className="orn o-temple" />
+      <Greek name="amphora" className="orn o-amphora" />
+      <Greek name="olive-branch" className="orn o-olive-br" />
+      <Greek name="greek-key-small" className="orn o-meander" />
+      <Greek name="greek-key" className="orn o-key-tr" />
+      <Greek name="decorative-diamond" className="orn o-diamond d1" />
+      <Greek name="decorative-diamond" className="orn o-diamond d2" />
+      <Greek name="decorative-diamond" className="orn o-diamond d3" />
     </div>
   );
 }
@@ -159,7 +155,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             <BookA size={14} strokeWidth={2.6} />
           </span>{' '}
           {t('nav.vocab')}
-          <OliveSprig className="hs-deco vc-meta-olive" size={22} />
+          <Greek name="olive-branch-small" className="vc-meta-olive" />
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
@@ -169,8 +165,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="card vc-card">
-        <MeanderCorner className="hs-deco vc-corner tl" size={58} />
-        <OliveSprig className="hs-deco vc-corner-olive" size={54} />
+        <Greek name="decorative-corner" className="vc-corner tl" />
+        <Greek name="olive-branch-small" className="vc-corner-olive" />
         <div className="speak-row center">
           <div className="vocab-word">{card.word}</div>
           <button
@@ -191,9 +187,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             }
           }}
         >
-          <span className="hs-deco vc-panel-temple" aria-hidden="true">
-            <TempleMark size={26} strokeWidth={1.6} />
-          </span>
+          <Greek name="temple" className="vc-panel-temple" />
           <div className="reveal">
             <div className="ru">{card.ru}</div>
             {card.note && <div className="note">{card.note}</div>}
@@ -210,8 +204,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <div className="actionbar">
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
-              <MeanderCorner className="hs-deco gr-key" size={30} />
-              <OliveSprig className="hs-deco gr-olive" size={30} />
+              <Greek name="greek-key-small" className="gr-key" />
+              <Greek name="olive-branch-small" className="gr-olive" />
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
@@ -219,8 +213,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
-              <MeanderCorner className="hs-deco gr-key" size={30} />
-              <OliveSprig className="hs-deco gr-olive" size={30} />
+              <Greek name="greek-key-small" className="gr-key" />
+              <Greek name="olive-branch-small" className="gr-olive" />
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
@@ -228,8 +222,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
-              <MeanderCorner className="hs-deco gr-key" size={30} />
-              <OliveSprig className="hs-deco gr-olive" size={30} />
+              <Greek name="greek-key-small" className="gr-key" />
+              <Greek name="olive-branch-small" className="gr-olive" />
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
