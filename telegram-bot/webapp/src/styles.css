@@ -4141,3 +4141,90 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 899px) {
   [data-theme='soft'] .home-decor .greek.d-temple { bottom: 96px; right: -24px; }
 }
+
+/* ============================================================
+   VOCABULARY — final pass with the screen's own artwork (greek/vocab/).
+
+   The frame is a loose ring at the viewport edges, sized from the space the
+   card column leaves free: --vc-gut is the gutter beside the 820px column, and
+   the larger pieces shrink with it and leave before they could reach the
+   content. Strengths follow the brief: Parthenon ~0.55, column ~0.65,
+   branches ~0.75, small ornaments ~0.65.
+   ============================================================ */
+[data-theme='soft'] body:has(.vc-screen) .aurora {
+  background: radial-gradient(ellipse 70% 60% at 50% 38%, #fbf8f1 0%, #f7f3e9 62%);
+}
+[data-theme='soft'] .vc-decor { --vc-gut: calc((100vw - 820px) / 2); }
+[data-theme='soft'] .vc-decor .va { position: absolute; }
+[data-theme='soft'] .vc-decor .va-column { left: -34px; top: 118px; width: min(150px, calc(var(--vc-gut) - 10px)); opacity: 0.65; }
+[data-theme='soft'] .vc-decor .va-olive-tl { left: 96px; top: 26px; width: 138px; opacity: 0.75; }
+[data-theme='soft'] .vc-decor .va-parthenon { right: 14px; top: 64px; width: min(330px, calc(var(--vc-gut) - 34px)); opacity: 0.55; }
+[data-theme='soft'] .vc-decor .va-meander { right: 18px; top: 14px; width: 150px; opacity: 0.6; }
+[data-theme='soft'] .vc-decor .va-sparkle { opacity: 0.7; }
+[data-theme='soft'] .vc-decor .va-sparkle.s1 { right: 34px; top: 47%; width: 22px; }
+[data-theme='soft'] .vc-decor .va-sparkle.s2 { right: 206px; top: 77%; width: 17px; opacity: 0.55; }
+[data-theme='soft'] .vc-decor .va-amphora { left: 26px; bottom: 58px; width: 128px; opacity: 0.75; }
+[data-theme='soft'] .vc-decor .va-olive-bl { left: 150px; bottom: 116px; width: 62px; opacity: 0.7; transform: rotate(8deg); }
+[data-theme='soft'] .vc-decor .va-olive-br { right: -8px; bottom: -6px; width: 230px; opacity: 0.75; }
+/* The old line-art washes stay as the soft colour underneath, a touch lighter. */
+[data-theme='soft'] .vc-decor .greek.blob { opacity: 0.35; }
+
+/* ---- The card ---- */
+[data-theme='soft'] .vc-screen .vc-card {
+  background: rgba(255, 253, 247, 0.92);
+  border: 1px solid rgba(190, 155, 105, 0.22);
+  border-radius: 30px;
+  box-shadow: 0 18px 50px rgba(100, 75, 40, 0.1);
+}
+[data-theme='soft'] .vc-screen .vc-corner { top: 18px; left: 18px; width: 66px; opacity: 0.7; }
+[data-theme='soft'] .vc-screen .vc-corner-olive { top: 14px; right: 16px; width: 64px; opacity: 0.8; transform: none; }
+[data-theme='soft'] .vc-screen .vc-panel-temple { right: 14px; bottom: 12px; width: 36px; opacity: 0.75; }
+[data-theme='soft'] .vc-screen .spoiler { border-color: rgba(190, 155, 105, 0.28); }
+
+/* ---- Rating buttons: one meander corner each, tinted to the button ---- */
+[data-theme='soft'] .vc-screen .grade .gr-key {
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  opacity: 0.6;
+  transform: none;
+}
+[data-theme='soft'] .vc-screen .grade.g2 .gr-key { filter: hue-rotate(32deg) saturate(1.25) brightness(0.92); }
+[data-theme='soft'] .vc-screen .grade.g3 .gr-key { filter: hue-rotate(118deg) saturate(0.9) brightness(0.88); }
+[data-theme='soft'] .vc-screen .grade.g1 { border-color: rgba(214, 120, 104, 0.35); }
+[data-theme='soft'] .vc-screen .grade.g2 { border-color: rgba(214, 170, 70, 0.4); }
+[data-theme='soft'] .vc-screen .grade.g3 { border-color: rgba(110, 170, 130, 0.4); }
+
+/* ---- Narrower windows: shrink, then drop, anything that would reach content ---- */
+@media (max-width: 1279px) {
+  [data-theme='soft'] .vc-decor .va-olive-tl { left: 70px; width: 110px; }
+  [data-theme='soft'] .vc-decor .va-olive-br { width: 170px; }
+  [data-theme='soft'] .vc-decor .va-sparkle.s2 { display: none; }
+}
+@media (max-width: 1119px) {
+  [data-theme='soft'] .vc-decor .va-column,
+  [data-theme='soft'] .vc-decor .va-parthenon,
+  [data-theme='soft'] .vc-decor .va-olive-bl,
+  [data-theme='soft'] .vc-decor .va-sparkle { display: none; }
+  [data-theme='soft'] .vc-decor .va-amphora { width: 90px; left: 10px; }
+  [data-theme='soft'] .vc-decor .va-olive-tl { left: 14px; top: 64px; width: 90px; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .vc-decor .va-amphora,
+  [data-theme='soft'] .vc-decor .va-olive-tl { display: none; }
+  [data-theme='soft'] .vc-decor .va-meander { width: 84px; top: 10px; right: 10px; opacity: 0.5; }
+  [data-theme='soft'] .vc-decor .va-olive-br { width: 110px; right: -16px; bottom: 96px; opacity: 0.45; }
+  [data-theme='soft'] .vc-screen .vc-corner { width: 46px; top: 12px; left: 12px; }
+  [data-theme='soft'] .vc-screen .vc-corner-olive { width: 44px; top: 10px; right: 10px; }
+  [data-theme='soft'] .vc-screen .vc-panel-temple { width: 28px; }
+  [data-theme='soft'] .vc-screen .grade .gr-key { width: 24px; top: 8px; right: 9px; }
+}
+/* 900–1119px: the gutter beside the 820px column is ~40–150px; the upper
+   branch would sit on the close button and the lower one on the grades. */
+@media (min-width: 900px) and (max-width: 1119px) {
+  [data-theme='soft'] .vc-decor .va-olive-tl { display: none; }
+  [data-theme='soft'] .vc-decor .va-olive-br { width: min(110px, calc(var(--vc-gut) - 16px)); right: -8px; bottom: -6px; }
+}
+@media (min-width: 900px) and (max-width: 1039px) {
+  [data-theme='soft'] .vc-decor .va-amphora { display: none; }
+}

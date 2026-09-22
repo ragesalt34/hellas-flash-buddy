@@ -7,28 +7,30 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { Greek } from '../components/greek';
+import { Greek, VocabArt } from '../components/greek';
 
-/* Round-theme ornaments for the vocabulary screen: a light classical accent
-   spread along the edges — one element per corner, never clustered — so the
-   centre stays clean for the word. Decorative only (aria-hidden, .hs-deco is
-   hidden by the square theme); phones keep only what fits the margins. */
+/* Round-theme frame for the vocabulary screen, built from this screen's own
+   artwork set (public/greek/vocab/, see the README there). A loose, slightly
+   uneven ring around the edges — column and branch upper left, Parthenon and
+   meander upper right, amphora and branch lower left, a larger branch lower
+   right — so the centre stays clean for the word. Decorative only
+   (aria-hidden, .hs-deco is hidden by the square theme); smaller screens drop
+   pieces that would reach the content. */
 function VocabDecor() {
   return (
     <div className="hs-deco vc-decor" aria-hidden="true">
       <Greek name="bg-shape-1" className="blob b-tl" />
       <Greek name="bg-shape-3" className="blob b-bl" />
       <Greek name="bg-shape-2" className="blob b-br" />
-      <Greek name="column" className="orn o-column" />
-      <Greek name="olive-branch" className="orn o-olive-tl" />
-      <Greek name="hill-temple" className="orn o-temple" />
-      <Greek name="amphora" className="orn o-amphora" />
-      <Greek name="olive-branch" className="orn o-olive-br" />
-      <Greek name="greek-key-small" className="orn o-meander" />
-      <Greek name="greek-key" className="orn o-key-tr" />
-      <Greek name="decorative-diamond" className="orn o-diamond d1" />
-      <Greek name="decorative-diamond" className="orn o-diamond d2" />
-      <Greek name="decorative-diamond" className="orn o-diamond d3" />
+      <VocabArt name="01_column_left" className="va va-column" />
+      <VocabArt name="02_olive_branch_top_left" className="va va-olive-tl" />
+      <VocabArt name="03_parthenon_top_right" className="va va-parthenon" />
+      <VocabArt name="04_greek_meander_top_right" className="va va-meander" />
+      <VocabArt name="05_sparkle_right" className="va va-sparkle s1" />
+      <VocabArt name="05_sparkle_right" className="va va-sparkle s2" />
+      <VocabArt name="06_amphora_bottom_left" className="va va-amphora" />
+      <VocabArt name="07_olive_branch_bottom_left" className="va va-olive-bl" />
+      <VocabArt name="08_olive_branch_bottom_right" className="va va-olive-br" />
     </div>
   );
 }
@@ -165,8 +167,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="card vc-card">
-        <Greek name="decorative-corner" className="vc-corner tl" />
-        <Greek name="olive-branch-small" className="vc-corner-olive" />
+        <VocabArt name="09_card_greek_corner" className="vc-corner tl" />
+        <VocabArt name="10_card_olive_branch" className="vc-corner-olive" />
         <div className="speak-row center">
           <div className="vocab-word">{card.word}</div>
           <button
@@ -187,7 +189,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             }
           }}
         >
-          <Greek name="temple" className="vc-panel-temple" />
+          <VocabArt name="11_card_temple_icon" className="vc-panel-temple" />
           <div className="reveal">
             <div className="ru">{card.ru}</div>
             {card.note && <div className="note">{card.note}</div>}
@@ -204,8 +206,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <div className="actionbar">
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
-              <Greek name="greek-key-small" className="gr-key" />
-              <Greek name="olive-branch-small" className="gr-olive" />
+              <VocabArt name="12_greek_corner_bottom_button" className="gr-key" />
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
@@ -213,8 +214,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
-              <Greek name="greek-key-small" className="gr-key" />
-              <Greek name="olive-branch-small" className="gr-olive" />
+              <VocabArt name="12_greek_corner_bottom_button" className="gr-key" />
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
@@ -222,8 +222,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
-              <Greek name="greek-key-small" className="gr-key" />
-              <Greek name="olive-branch-small" className="gr-olive" />
+              <VocabArt name="12_greek_corner_bottom_button" className="gr-key" />
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
