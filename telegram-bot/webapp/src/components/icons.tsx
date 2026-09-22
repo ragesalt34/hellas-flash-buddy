@@ -2,6 +2,7 @@
 // glyphs, so the logo doesn't look like every other lucide app.
 
 import { useId } from 'react';
+import geographyIconUrl from '../assets/geography.png';
 
 /** Greek temple mark: pediment, architrave, three columns, stylobate.
  * Geometric and chunky to match the neo-brutalist UI. Inherits currentColor. */
@@ -249,5 +250,37 @@ export function QuizIcon({
       <path d="M11.5 15.5l5.75-2.9 5.75 2.9-5.75 2.9z" />
       <path d="M14 17v3c0 .8 1.5 1.5 3.25 1.5s3.25-.7 3.25-1.5v-3" />
     </svg>
+  );
+}
+
+/** Geography icon — the exact artwork supplied for it (globe on a monitor
+ * with an open book), used as a mask so it takes the current text colour
+ * like the line icons around it. `strokeWidth` is accepted for drop-in
+ * compatibility with lucide icons and ignored: the stroke is in the artwork. */
+export function GeoIcon({
+  size = 24,
+  color = 'currentColor',
+  className,
+}: {
+  size?: number | string;
+  strokeWidth?: number | string;
+  color?: string;
+  className?: string;
+}) {
+  const mask = `url(${geographyIconUrl}) center / contain no-repeat`;
+  return (
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{
+        display: 'inline-block',
+        flex: 'none',
+        width: size,
+        height: size,
+        backgroundColor: color,
+        WebkitMask: mask,
+        mask,
+      }}
+    />
   );
 }

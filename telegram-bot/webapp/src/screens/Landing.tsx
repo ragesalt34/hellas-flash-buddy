@@ -2,11 +2,11 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   Layers, BookA, BarChart3, Flame, Volume2, ArrowRight,
-  MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
+  MousePointerClick, Target, Drama, Scale, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark, MeanderRule, Sparks, QuizIcon } from '../components/icons';
+import { TempleMark, MeanderRule, Sparks, QuizIcon, GeoIcon } from '../components/icons';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -273,7 +273,7 @@ export function Landing({
               <span className="lp-marquee-item"><TempleMark size={19} strokeWidth={2.4} /> {t('topic.history').toUpperCase()}</span>
               <span className="lp-marquee-item"><Drama size={19} strokeWidth={2.4} /> {t('topic.culture').toUpperCase()}</span>
               <span className="lp-marquee-item"><Scale size={19} strokeWidth={2.4} /> {t('topic.laws').toUpperCase()}</span>
-              <span className="lp-marquee-item"><Globe2 size={19} strokeWidth={2.4} /> {t('topic.geography').toUpperCase()}</span>
+              <span className="lp-marquee-item"><GeoIcon size={19} strokeWidth={2.2} /> {t('topic.geography').toUpperCase()}</span>
             </span>
           ))}
         </div>

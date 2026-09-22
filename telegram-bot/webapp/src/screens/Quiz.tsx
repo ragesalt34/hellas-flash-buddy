@@ -4,7 +4,6 @@ import {
   Landmark,
   Drama,
   Scale,
-  Globe2,
   Check,
   X,
   ArrowRight,
@@ -25,7 +24,7 @@ import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
 import { useLanguage } from '../i18n';
-import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule } from '../components/icons';
+import { OliveSprig, ColumnSketch, AmphoraSketch, TempleScene, MeanderCorner, MeanderRule, GeoIcon } from '../components/icons';
 
 /* Round-theme ornaments for the topic picker: one classical element per
    screen edge, faint and pastel, so the centre stays a clean menu. Decorative
@@ -97,12 +96,12 @@ function TileOrnaments({ id }: { id: string }) {
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
-const TOPICS: { id: string; key: string; icon: LucideIcon; color: string; span?: boolean }[] = [
+const TOPICS: { id: string; key: string; icon: LucideIcon | typeof GeoIcon; color: string; span?: boolean }[] = [
   { id: 'mixed', key: 'topic.mixed', icon: Shuffle, color: 'var(--amber)', span: true },
   { id: 'history', key: 'topic.history', icon: Landmark, color: 'var(--accent)' },
   { id: 'culture', key: 'topic.culture', icon: Drama, color: 'var(--topic-culture)' },
   { id: 'laws', key: 'topic.laws', icon: Scale, color: 'var(--topic-laws)' },
-  { id: 'geography', key: 'topic.geography', icon: Globe2, color: 'var(--topic-geo)' },
+  { id: 'geography', key: 'topic.geography', icon: GeoIcon, color: 'var(--topic-geo)' },
 ];
 
 interface AnswerRec {
