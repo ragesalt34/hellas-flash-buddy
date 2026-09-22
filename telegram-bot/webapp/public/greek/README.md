@@ -20,25 +20,11 @@ Used on the home screen, flashcards and the quiz topic picker.
 | decorative-line.png | small sprig–diamond–sprig composition |
 | bg-shape-1..3.png | soft background washes |
 
-## `vocab/` — Vocabulary / card-answer screen only
+## Screen-specific sets
 
-Cut from that screen's reference; not reused anywhere else.
+Artwork cut for one particular screen lives next to that screen's name under
+`public/assets/menus/`, not here:
 
-| file | use |
-|---|---|
-| 01_column_left.png | large column, left edge, partly off-screen |
-| 02_olive_branch_top_left.png | branch, upper left |
-| 03_parthenon_top_right.png | Parthenon on its hill, upper right |
-| 04_greek_meander_top_right.png | meander, top-right corner |
-| 05_sparkle_right.png | small diamond, right side |
-| 06_amphora_bottom_left.png | amphora, lower left |
-| 07_olive_branch_bottom_left.png | branch beside the amphora |
-| 08_olive_branch_bottom_right.png | branch, lower right |
-| 09_card_greek_corner.png | meander in the main card's corner |
-| 10_card_olive_branch.png | branch inside the main card |
-| 11_card_temple_icon.png | temple in the answer panel's corner |
-| 12_greek_corner_bottom_button.png | meander corner on the rating buttons |
-
-The files in `vocab/` were cleaned from the supplied cut-outs: the
-reference's cream background, the edges of the card and button they were cut
-next to, and fragments of neighbouring pictures were removed.
+- `assets/menus/vocabulary/` — Vocabulary / flashcard-answer screen only.
+  Each file has one slot, listed in `VOCABULARY_DECOR`
+  (`src/screens/vocabularyDecor.tsx`); see the README in that folder.

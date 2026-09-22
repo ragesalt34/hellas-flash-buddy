@@ -4228,3 +4228,200 @@ button.chip:active { transform: scale(0.95); }
 @media (min-width: 900px) and (max-width: 1039px) {
   [data-theme='soft'] .vc-decor .va-amphora { display: none; }
 }
+
+/* ============================================================
+   VOCABULARY — matched to the master reference (1760×893 desktop).
+
+   Measurements taken from the reference: content column ~800px, header
+   centred ~123px from the top, progress 8px, card ~800×413 with a 64px word,
+   a 62px audio button and a 150px definition panel, then three equal
+   140px-tall rating cards 52px below it with 28px gaps. The frame pieces are
+   the screen's own PNGs (assets/menus/vocabulary, VOCABULARY_DECOR), each in
+   the one slot the reference gives it, anchored to the viewport edges and
+   dropped as soon as the gutter beside the column can no longer hold them.
+   These rules come last and use .greek.va-* so they override earlier passes.
+   ============================================================ */
+[data-theme='soft'] body:has(.vc-screen) .aurora { background: #f7f3ea; }
+
+/* ---- Column + vertical rhythm (desktop) ---- */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus:has(.vc-screen) .app {
+    max-width: 848px;
+    padding-top: clamp(40px, 11vh, 100px);
+  }
+}
+[data-theme='soft'] .vc-decor { --vc-gut: calc((100vw - 848px) / 2); }
+
+/* ---- Soft washes where the reference has them ---- */
+[data-theme='soft'] .vc-decor .vc-wash { position: absolute; border-radius: 50%; pointer-events: none; }
+[data-theme='soft'] .vc-decor .w-tl {
+  left: -160px; top: -140px; width: 520px; height: 420px;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+[data-theme='soft'] .vc-decor .w-br {
+  right: -140px; bottom: -170px; width: 420px; height: 340px;
+  background: radial-gradient(closest-side, rgba(214, 222, 240, 0.7), rgba(236, 226, 205, 0.35) 70%, rgba(236, 226, 205, 0));
+}
+
+/* ---- Frame pieces (reference positions) ---- */
+[data-theme='soft'] .vc-decor .greek.va { position: absolute; display: block; height: auto; transform: none; }
+[data-theme='soft'] .vc-decor .greek.va-column { left: -34px; top: 128px; width: 140px; opacity: 0.5; }
+[data-theme='soft'] .vc-decor .greek.va-olive-tl { left: 92px; top: 18px; width: 146px; opacity: 0.78; }
+[data-theme='soft'] .vc-decor .greek.va-parthenon { right: 0; top: 104px; width: min(320px, calc(var(--vc-gut) - 24px)); opacity: 0.6; }
+[data-theme='soft'] .vc-decor .greek.va-meander { right: 22px; top: 22px; width: 104px; opacity: 0.4; }
+[data-theme='soft'] .vc-decor .greek.va-sparkle.s1 { right: 30px; top: 426px; bottom: auto; width: 22px; opacity: 0.6; }
+[data-theme='soft'] .vc-decor .greek.va-sparkle.s2 { right: 198px; top: auto; bottom: 192px; width: 18px; opacity: 0.5; }
+[data-theme='soft'] .vc-decor .greek.va-amphora { left: 30px; bottom: 58px; width: 124px; opacity: 0.72; }
+[data-theme='soft'] .vc-decor .greek.va-olive-bl { left: 112px; bottom: 46px; width: 104px; opacity: 0.75; }
+[data-theme='soft'] .vc-decor .greek.va-olive-br { right: -20px; bottom: -22px; width: 176px; opacity: 0.78; }
+
+/* ---- Header ---- */
+[data-theme='soft'] .vc-screen .topbar { position: relative; margin-bottom: 20px; }
+[data-theme='soft'] .vc-screen .topbar .meta { gap: 12px !important; font-size: 23px; font-weight: 600; color: #2b2b2e; }
+[data-theme='soft'] .vc-screen .vc-meta-ic { width: auto; height: auto; background: none; color: #c9574a; }
+[data-theme='soft'] .vc-screen .vc-meta-ic svg { width: 30px; height: 30px; }
+[data-theme='soft'] .vc-screen .vc-meta-olive { width: 34px; opacity: 0.85; }
+[data-theme='soft'] .vc-screen .topbar .counter {
+  margin-right: 46px;
+  padding: 8px 18px;
+  border-radius: 16px;
+  font-size: 21px;
+  font-weight: 700;
+  background: #f6d98c;
+  color: #3b2a10;
+  border: 1px solid rgba(200, 150, 40, 0.2);
+  box-shadow: 0 4px 10px -8px rgba(160, 110, 20, 0.6);
+}
+[data-theme='soft'] .vc-screen .vc-counter-olive {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 38px;
+  transform: translateY(-58%) scaleX(-1) rotate(-10deg);
+  opacity: 0.85;
+}
+[data-theme='soft'] .vc-screen .progress { height: 8px; background: #ece6da; }
+[data-theme='soft'] .vc-screen .progress > i { background: #e39079; min-width: 52px; }
+[data-theme='soft'] .vc-screen .spacer { height: 26px; }
+
+/* ---- Main card ---- */
+[data-theme='soft'] .vc-screen .vc-card {
+  min-height: 0;
+  padding: 52px 36px 28px;
+  background: rgba(255, 253, 247, 0.92);
+  border: 1px solid rgba(190, 155, 105, 0.24);
+  border-radius: 30px;
+  box-shadow: 0 18px 50px rgba(100, 75, 40, 0.1);
+}
+[data-theme='soft'] .vc-screen .vocab-word { font-size: 64px; line-height: 1.05; color: #24334f; letter-spacing: -0.5px; }
+[data-theme='soft'] .vc-screen .speak-row.center { margin: 0 0 30px; gap: 22px; }
+[data-theme='soft'] .vc-screen .speak-btn {
+  width: 62px;
+  height: 62px;
+  background: #fadcd3;
+  color: #c24c3e;
+  border: 1px solid rgba(214, 120, 104, 0.25);
+  box-shadow: 0 8px 16px -10px rgba(194, 76, 62, 0.55);
+}
+[data-theme='soft'] .vc-screen .speak-btn svg { width: 22px; height: 22px; }
+[data-theme='soft'] .vc-screen .vc-corner { top: 20px; left: 20px; width: 74px; opacity: 0.6; }
+[data-theme='soft'] .vc-screen .vc-corner-olive { top: 22px; right: 22px; width: 74px; opacity: 0.8; }
+
+/* ---- Definition panel ---- */
+[data-theme='soft'] .vc-screen .spoiler {
+  min-height: 150px;
+  padding: 30px 28px 26px;
+  border-radius: 22px;
+  background: #f6efe2;
+  border: 1px solid rgba(190, 155, 105, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+[data-theme='soft'] .vc-screen .spoiler .ru { font-size: 26px; font-weight: 700; color: #24334f; }
+[data-theme='soft'] .vc-screen .spoiler .note { margin-top: 12px; font-size: 18px; font-weight: 400; color: #6f6a62; }
+[data-theme='soft'] .vc-screen .vc-panel-temple { right: 16px; bottom: 12px; width: 44px; opacity: 0.55; }
+
+/* ---- Rating cards ---- */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus .vc-screen .actionbar { padding-top: 52px; }
+}
+[data-theme='soft'] .vc-screen .grade-row { gap: 28px; }
+[data-theme='soft'] .vc-screen .grade {
+  min-height: 140px;
+  gap: 8px;
+  border-radius: 26px;
+  font-size: 21px;
+  font-weight: 600;
+  box-shadow: 0 10px 22px -18px rgba(100, 75, 40, 0.5);
+}
+[data-theme='soft'] .vc-screen .grade .e svg { width: 34px; height: 34px; }
+[data-theme='soft'] .vc-screen .grade .gsub { font-size: 16px; font-weight: 500; }
+[data-theme='soft'] .vc-screen .grade.g1 { background: #f8d9d3; border: 1.5px solid #eeb7ad; }
+[data-theme='soft'] .vc-screen .grade.g2 { background: #f9e6ae; border: 1.5px solid #ecc973; }
+[data-theme='soft'] .vc-screen .grade.g3 { background: #d4ecdd; border: 1.5px solid #9fd0b1; }
+/* One corner per card, a different corner each, as in the reference. */
+[data-theme='soft'] .vc-screen .grade .gr-key { width: 32px; opacity: 0.55; top: auto; bottom: auto; left: auto; right: auto; }
+[data-theme='soft'] .vc-screen .grade.g1 .gr-key { top: 12px; right: 14px; transform: none; }
+[data-theme='soft'] .vc-screen .grade.g2 .gr-key { bottom: 12px; left: 14px; transform: scale(-1, -1); }
+[data-theme='soft'] .vc-screen .grade.g3 .gr-key { top: 12px; left: 14px; transform: scaleX(-1); }
+
+/* ---- Narrower windows: shrink, then drop, before anything reaches content ---- */
+@media (max-width: 1279px) {
+  [data-theme='soft'] .vc-decor .greek.va-olive-tl { left: 64px; width: 118px; }
+  [data-theme='soft'] .vc-decor .greek.va-sparkle.s2,
+  [data-theme='soft'] .vc-decor .greek.va-olive-bl { display: none; }
+  [data-theme='soft'] .vc-decor .greek.va-olive-br { width: 140px; }
+}
+@media (max-width: 1209px) {
+  [data-theme='soft'] .vc-decor .greek.va-parthenon,
+  [data-theme='soft'] .vc-decor .greek.va-sparkle.s1 { display: none; }
+}
+@media (max-width: 1139px) {
+  [data-theme='soft'] .vc-decor .greek.va-column,
+  [data-theme='soft'] .vc-decor .greek.va-olive-tl,
+  [data-theme='soft'] .vc-decor .greek.va-amphora { display: none; }
+  [data-theme='soft'] .vc-decor .greek.va-olive-br { width: min(120px, calc(var(--vc-gut) + 10px)); }
+}
+@media (max-width: 1023px) {
+  [data-theme='soft'] .vc-screen .vocab-word { font-size: 54px; }
+  [data-theme='soft'] .vc-screen .grade-row { gap: 18px; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .vc-decor .greek.va:not(.va-meander):not(.va-olive-br) { display: none; }
+  [data-theme='soft'] .vc-decor .greek.va-meander { width: 80px; top: 10px; right: 10px; opacity: 0.4; }
+  [data-theme='soft'] .vc-decor .greek.va-olive-br { width: 110px; right: -16px; bottom: 96px; opacity: 0.45; }
+  [data-theme='soft'] .vc-screen .topbar .meta { font-size: 18px; }
+  [data-theme='soft'] .vc-screen .vc-meta-ic svg { width: 24px; height: 24px; }
+  [data-theme='soft'] .vc-screen .vc-meta-olive { width: 26px; }
+  [data-theme='soft'] .vc-screen .topbar .counter { font-size: 16px; padding: 6px 13px; margin-right: 34px; }
+  [data-theme='soft'] .vc-screen .vc-counter-olive { width: 28px; }
+  [data-theme='soft'] .vc-screen .vc-card { padding: 42px 18px 20px; }
+  [data-theme='soft'] .vc-screen .vocab-word { font-size: clamp(34px, 10vw, 46px); }
+  [data-theme='soft'] .vc-screen .speak-btn { width: 50px; height: 50px; }
+  [data-theme='soft'] .vc-screen .speak-row.center { margin-bottom: 22px; gap: 16px; }
+  [data-theme='soft'] .vc-screen .vc-corner { width: 48px; top: 12px; left: 12px; }
+  [data-theme='soft'] .vc-screen .vc-corner-olive { width: 48px; top: 12px; right: 12px; }
+  [data-theme='soft'] .vc-screen .spoiler { min-height: 0; padding: 22px 16px 20px; }
+  [data-theme='soft'] .vc-screen .spoiler .ru { font-size: 21px; }
+  [data-theme='soft'] .vc-screen .spoiler .note { font-size: 15px; margin-top: 8px; }
+  [data-theme='soft'] .vc-screen .vc-panel-temple { width: 32px; }
+  [data-theme='soft'] .vc-screen .grade-row { gap: 10px; }
+  [data-theme='soft'] .vc-screen .grade { min-height: 100px; font-size: 16px; border-radius: 20px; }
+  [data-theme='soft'] .vc-screen .grade .e svg { width: 26px; height: 26px; }
+  [data-theme='soft'] .vc-screen .grade .gsub { font-size: 13px; }
+  [data-theme='soft'] .vc-screen .grade .gr-key { width: 24px; }
+}
+/* The focus column reserves 132px at the bottom for the fixed action bar;
+   here the rating cards sit in the flow, so that reserve only made the page
+   scroll. */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus:has(.vc-screen) .app { padding-bottom: 36px; }
+}
+@media (max-width: 1279px) {
+  [data-theme='soft'] .vc-decor .greek.va-olive-tl { left: 94px; width: min(112px, calc(var(--vc-gut) - 110px)); }
+}
+/* Up to ~1340px the full-size upper branch ends within a few px of the header. */
+@media (max-width: 1339px) {
+  [data-theme='soft'] .vc-decor .greek.va-olive-tl { left: 94px; width: min(112px, calc(var(--vc-gut) - 110px)); }
+}
