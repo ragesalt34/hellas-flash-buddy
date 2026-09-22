@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, PartyPopper, Languages, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
+import { CheckCircle2, PartyPopper, BookA, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
@@ -120,7 +120,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           </div>
           <div className="ttl">{t('vocab.done')}</div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Languages size={16} strokeWidth={2.4} /> {cards.length} {t('vocab.wordsCount')}
+            <BookA size={16} strokeWidth={2.4} /> {cards.length} {t('vocab.wordsCount')}
           </div>
         </div>
         <button className="btn btn-block" onClick={load}>
@@ -156,7 +156,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span className="vc-meta-ic">
-            <Languages size={14} strokeWidth={2.6} />
+            <BookA size={14} strokeWidth={2.6} />
           </span>{' '}
           {t('nav.vocab')}
           <OliveSprig className="hs-deco vc-meta-olive" size={22} />

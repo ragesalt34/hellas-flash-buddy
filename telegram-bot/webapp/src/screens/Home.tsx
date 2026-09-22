@@ -1,4 +1,4 @@
-import { Flame, Target, BookOpen, Star, Layers, Languages, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
+import { Flame, Target, BookOpen, Star, Layers, BookA, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -177,7 +177,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="tile-ic">
-            <Languages size={24} strokeWidth={2.2} />
+            <BookA size={24} strokeWidth={2.2} />
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>

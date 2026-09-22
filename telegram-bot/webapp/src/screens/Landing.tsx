@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
-  BookOpen, Layers, Languages, BarChart3, Flame, Volume2, ArrowRight,
+  BookOpen, Layers, BookA, BarChart3, Flame, Volume2, ArrowRight,
   MousePointerClick, Target, Drama, Scale, Globe2, type LucideIcon,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
@@ -15,7 +15,7 @@ import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 const FEATURES: { icon: LucideIcon; color: string; titleKey: string; textKey: string }[] = [
   { icon: BookOpen, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
   { icon: Layers, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
-  { icon: Languages, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
+  { icon: BookA, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
   { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },
   { icon: Flame, color: 'var(--coral)', titleKey: 'landing.feature.streak.title', textKey: 'landing.feature.streak.text' },
   { icon: BarChart3, color: 'var(--blue)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
