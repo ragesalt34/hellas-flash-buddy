@@ -7,31 +7,7 @@ import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 import { QuizIcon, Sparks } from '../components/icons';
-import { Greek } from '../components/greek';
-
-/* Page-level ornaments: pastel corner washes plus a set of classical line
-   drawings — olive sprigs, a column, an amphora, a bust and a temple on its
-   hill — so the empty margins carry the Greek theme instead of generic
-   doodles. Fixed behind the content, never interactive. */
-function HomeDecor() {
-  return (
-    <div className="hs-deco home-decor" aria-hidden="true">
-      <Greek name="bg-shape-1" className="blob b-tl" />
-      <Greek name="bg-shape-3" className="blob b-tr" />
-      <Greek name="bg-shape-3" className="blob b-bl" />
-      <Greek name="bg-shape-2" className="blob b-br" />
-      <Greek name="column" className="doodle d-column-l" />
-      <Greek name="column" className="doodle d-column-r" />
-      <Greek name="hill-temple" className="doodle d-temple" />
-      <Greek name="amphora" className="doodle d-amphora" />
-      <Greek name="decorative-line" className="doodle d-bust" />
-      <Greek name="olive-branch" className="doodle d-olive-1" />
-      <Greek name="olive-branch-small" className="doodle d-olive-2" />
-      <Greek name="laurel-branch" className="doodle d-olive-3" />
-      <Greek name="olive-branch-small" className="doodle d-olive-4" />
-    </div>
-  );
-}
+import { HomeFrame, HomeDecorImg } from './homeDecor';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
@@ -70,10 +46,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
 
   return (
     <div className="home fade-in">
-      <HomeDecor />
+      <HomeFrame />
       <div className="hero">
         <Sparks className="hs-deco spark-badge" />
-        <Greek name="olive-branch-small" className="hero-olive" />
+        <HomeDecorImg slot="oliveRight" className="hero-olive" />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
@@ -157,8 +133,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.quiz.desc')}</span>
           </span>
-          <Greek name="olive-branch-small" className="tile-olive" />
-          <Greek name="column" className="tile-column" />
+          <HomeDecorImg slot="oliveMid" className="tile-olive" />
+          <HomeDecorImg slot="columnTilted" className="tile-column" />
           <Sparks className="hs-deco spark-cta" />
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
@@ -171,7 +147,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="tile-t">{t('nav.flashcards')}</span>
           <span className="tile-d">{t('home.flashcards.desc')}</span>
-          <Greek name="olive-branch-small" className="tile-olive" />
+          <HomeDecorImg slot="oliveSmall" className="tile-olive" />
           <span className="hs-deco tile-go" aria-hidden="true">
             <ArrowRight size={22} strokeWidth={2.4} />
           </span>
@@ -182,7 +158,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>
-          <Greek name="olive-branch-small" className="tile-olive" />
+          <HomeDecorImg slot="oliveMid" className="tile-olive" />
           <span className="hs-deco tile-go" aria-hidden="true">
             <ArrowRight size={22} strokeWidth={2.4} />
           </span>
@@ -202,7 +178,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.stats.desc')}</span>
           </span>
-          <Greek name="olive-branch-small" className="tile-olive" />
+          <HomeDecorImg slot="lilacBranch" className="tile-olive" />
           <span className="arrow" style={{ color: 'var(--muted)' }}>
             <ArrowRight size={20} strokeWidth={2.4} />
           </span>

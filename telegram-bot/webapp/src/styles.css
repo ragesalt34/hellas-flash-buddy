@@ -4425,3 +4425,150 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 1339px) {
   [data-theme='soft'] .vc-decor .greek.va-olive-tl { left: 94px; width: min(112px, calc(var(--vc-gut) - 110px)); }
 }
+
+/* ============================================================
+   HOME — scene matched to the master reference (1736×906 desktop).
+
+   The screen's own PNG set (assets/menus/home, HOME_DECOR). Pieces sit in the
+   two gutters around the content column, measured from the reference:
+   --C is the cards' left edge, --D their right edge. Left-gutter pieces keep
+   their reference x but slide towards the sidebar (never under it) and leave
+   once the gutter is too thin; right-gutter pieces hang off --D. Earlier
+   home rules for the old ornaments no longer match any element.
+   ============================================================ */
+@media (min-width: 1200px) {
+  /* The reference column is ~845px of cards; ours was 772. */
+  [data-theme='soft'] body:has(.home) .app {
+    max-width: 893px;
+    margin-left: max(180px, calc((100vw - 893px) / 2));
+  }
+  [data-theme='soft'] .home-decor {
+    --M: max(180px, calc((100vw - 893px) / 2));
+    --C: calc(var(--M) + 24px);
+    --D: calc(var(--M) + 869px);
+  }
+}
+@media (min-width: 900px) and (max-width: 1199px) {
+  [data-theme='soft'] .home-decor {
+    --M: max(180px, calc((100vw - 720px) / 2));
+    --C: calc(var(--M) + 24px);
+    --D: calc(var(--M) + 696px);
+  }
+}
+
+[data-theme='soft'] .home-decor .greek { position: absolute; transform: none; }
+
+/* ---- Washes ---- */
+[data-theme='soft'] .home-decor .hm-wash { opacity: 0.5; }
+[data-theme='soft'] .home-decor .hw-tl { left: -150px; top: -130px; width: 380px; opacity: 0.55; }
+/* The cool wash was cut flat on its left by the source crop; turned round,
+   that edge sits off-screen. */
+[data-theme='soft'] .home-decor .hw-tr { right: -150px; top: -120px; width: 380px; transform: rotate(180deg); }
+[data-theme='soft'] .home-decor .hw-bl { left: -130px; bottom: -120px; width: 360px; }
+[data-theme='soft'] .home-decor .hw-br { right: -150px; bottom: -130px; width: 420px; opacity: 0.45; }
+
+/* ---- Left gutter (reference x, but never closer than the gap to the cards) ---- */
+[data-theme='soft'] .home-decor .hm-olive-top { left: min(155px, calc(var(--C) - 102px)); top: 72px; width: 62px; opacity: 0.8; }
+[data-theme='soft'] .home-decor .hm-column-tilt { left: min(252px, calc(var(--C) - 120px)); top: 214px; width: 58px; opacity: 0.7; transform: rotate(-22deg); }
+[data-theme='soft'] .home-decor .hm-spark-hero { left: calc(var(--C) - 78px); top: 148px; width: 36px; opacity: 0.85; transform: scaleX(-1) rotate(-8deg); }
+[data-theme='soft'] .home-decor .hm-spark-quiz { left: calc(var(--C) - 46px); top: 350px; width: 30px; opacity: 0.8; transform: scaleX(-1) rotate(12deg); }
+[data-theme='soft'] .home-decor .hm-olive-mid { left: min(200px, calc(var(--C) - 132px)); top: 584px; width: 72px; opacity: 0.8; }
+[data-theme='soft'] .home-decor .hm-column-olive {
+  /* Never under the sidebar (ends ~142px), never within 30px of the cards. */
+  left: max(160px, min(205px, calc(var(--C) - 180px)));
+  bottom: -104px;
+  width: min(150px, calc(var(--C) - 190px));
+  opacity: 0.8;
+}
+
+/* ---- Right gutter ---- */
+[data-theme='soft'] .home-decor .hm-olive-right { left: calc(var(--D) + 105px); top: 40px; width: 68px; opacity: 0.8; }
+[data-theme='soft'] .home-decor .hm-clouds { left: calc(var(--D) + 195px); top: 184px; width: 118px; opacity: 0.75; }
+[data-theme='soft'] .home-decor .hm-spark-right { left: calc(var(--D) + 186px); top: 622px; width: 42px; opacity: 0.8; transform: rotate(18deg); }
+[data-theme='soft'] .home-decor .hm-parthenon { left: calc(var(--D) + 118px); bottom: -22px; width: 360px; opacity: 0.62; }
+
+/* ---- Inside the cards ---- */
+[data-theme='soft'] .home .hero .hero-olive { top: auto; right: 72px; bottom: 36px; width: 66px; opacity: 0.8; transform: none; }
+[data-theme='soft'] .home .tile.feature .greek.tile-olive { top: 46px; right: 186px; width: 50px; opacity: 0.32; transform: none; }
+[data-theme='soft'] .home .tile.feature .greek.tile-column { top: 62px; right: 50px; width: 78px; opacity: 0.28; }
+[data-theme='soft'] .home .tile.t-cards .greek.tile-olive {
+  top: 14px; right: 30px; width: 58px; opacity: 0.75;
+  filter: hue-rotate(255deg) saturate(1.35) brightness(1.08);
+}
+[data-theme='soft'] .home .tile.t-vocab .greek.tile-olive {
+  top: 16px; right: 18px; width: 66px; opacity: 0.8;
+  filter: hue-rotate(-52deg) saturate(1.9) brightness(1.12);
+}
+[data-theme='soft'] .home .tile.t-stats .greek.tile-olive { top: 18px; right: 184px; width: 66px; opacity: 0.8; filter: none; }
+
+/* ---- Narrower desktops: drop what would reach the sidebar or the cards ---- */
+@media (max-width: 1524px) {
+  [data-theme='soft'] .home-decor .hm-column-tilt,
+  [data-theme='soft'] .home-decor .hm-olive-mid { display: none; }
+}
+@media (max-width: 1439px) {
+  [data-theme='soft'] .home-decor .hm-clouds,
+  [data-theme='soft'] .home-decor .hm-spark-right { display: none; }
+  [data-theme='soft'] .home-decor .hm-parthenon { left: calc(var(--D) + 40px); width: 280px; }
+  [data-theme='soft'] .home-decor .hm-olive-right { left: calc(var(--D) + 60px); }
+}
+@media (max-width: 1399px) {
+  [data-theme='soft'] .home-decor .hm-column-olive { display: none; }
+}
+@media (max-width: 1369px) {
+  [data-theme='soft'] .home-decor .hm-olive-top { display: none; }
+}
+@media (max-width: 1319px) {
+  [data-theme='soft'] .home-decor .hm-spark-hero,
+  [data-theme='soft'] .home-decor .hm-spark-quiz { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1199px) {
+  [data-theme='soft'] .home-decor .hm:not(.hm-parthenon):not(.hm-olive-right) { display: none; }
+  [data-theme='soft'] .home-decor .hm-olive-right { left: calc(var(--D) + 30px); width: 56px; }
+  [data-theme='soft'] .home-decor .hm-parthenon { left: calc(var(--D) + 20px); width: 220px; opacity: 0.5; }
+}
+
+/* ---- Phones ---- */
+@media (max-width: 899px) {
+  [data-theme='soft'] .home-decor .hm { display: none; }
+  [data-theme='soft'] .home-decor .hm-parthenon { display: block; left: auto; right: -40px; bottom: 96px; width: 190px; opacity: 0.35; }
+  [data-theme='soft'] .home-decor .hm-olive-mid { display: block; left: -12px; top: auto; bottom: 150px; width: 58px; opacity: 0.35; }
+  [data-theme='soft'] .home-decor .hm-wash { opacity: 0.35; }
+  [data-theme='soft'] .home .tile.feature .greek.tile-olive,
+  [data-theme='soft'] .home .tile.feature .greek.tile-column { display: none; }
+  [data-theme='soft'] .home .tile .greek.tile-olive { top: auto; right: auto; left: 10px; bottom: 8px; width: 46px; opacity: 0.4; }
+  [data-theme='soft'] .home .tile.t-stats .greek.tile-olive { left: auto; right: 52px; bottom: 4px; }
+}
+/* Vertical rhythm of the reference: hero 45–290, label ~342, quiz 365–490,
+   cards 510–690, stats 715–830 (at 906px). Desktop only. */
+@media (min-width: 1200px) {
+  [data-theme='soft'] body:has(.home) .app { padding-top: 44px; }
+  [data-theme='soft'] .home .hero { min-height: 245px; }
+  [data-theme='soft'] .home .section-label { margin-top: 44px; }
+  [data-theme='soft'] .home .tiles { gap: 20px 24px; }
+  [data-theme='soft'] .home .tile.feature { min-height: 125px; }
+  [data-theme='soft'] .home .tile.t-cards,
+  [data-theme='soft'] .home .tile.t-vocab { min-height: 180px; justify-content: flex-end; }
+  [data-theme='soft'] .home .tile.t-stats { min-height: 116px; }
+}
+@media (min-width: 1200px) {
+  /* The stats tile carries minHeight: 'auto' inline (its row layout). */
+  [data-theme='soft'] .home .tile.t-stats { min-height: 116px !important; }
+  [data-theme='soft'] .home .tile.t-cards,
+  [data-theme='soft'] .home .tile.t-vocab { padding-top: 16px; padding-bottom: 18px; }
+  [data-theme='soft'] body:has(.home) .app { padding-bottom: 20px; }
+}
+/* The pink sprig came out muddy; more saturation and light brings it to the
+   reference's coral-pink. */
+[data-theme='soft'] .home .tile.t-cards .greek.tile-olive { filter: hue-rotate(262deg) saturate(2.1) brightness(1.2); }
+/* Phones: the desktop per-tile rules are more specific than the phone ones
+   and pulled the sprigs over the icons; restate them per tile. The arrow owns
+   the top-right corner here, so the sprigs sit bottom-right. */
+@media (max-width: 899px) {
+  [data-theme='soft'] .home .tile.t-cards .greek.tile-olive,
+  [data-theme='soft'] .home .tile.t-vocab .greek.tile-olive {
+    top: auto; left: auto; right: 12px; bottom: 10px; width: 48px; opacity: 0.55;
+  }
+  [data-theme='soft'] .home .tile.t-stats .greek.tile-olive { top: auto; left: auto; right: 52px; bottom: 6px; width: 46px; opacity: 0.55; }
+}
+[data-theme='soft'] .home .tile.t-vocab .greek.tile-olive { filter: hue-rotate(-46deg) saturate(2.4) brightness(1.28); }

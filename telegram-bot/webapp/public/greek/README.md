@@ -6,7 +6,7 @@ and hidden by the square theme.
 
 ## `common/` — shared set
 
-Used on the home screen, flashcards and the quiz topic picker.
+Used on the flashcards screen and the quiz topic picker.
 
 | file | use |
 |---|---|
@@ -25,6 +25,8 @@ Used on the home screen, flashcards and the quiz topic picker.
 Artwork cut for one particular screen lives next to that screen's name under
 `public/assets/menus/`, not here:
 
+- `assets/menus/home/` — Home / Dashboard only (`HOME_DECOR`,
+  `src/screens/homeDecor.tsx`).
 - `assets/menus/vocabulary/` — Vocabulary / flashcard-answer screen only.
   Each file has one slot, listed in `VOCABULARY_DECOR`
   (`src/screens/vocabularyDecor.tsx`); see the README in that folder.
