@@ -4572,3 +4572,32 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home .tile.t-stats .greek.tile-olive { top: auto; left: auto; right: 52px; bottom: 6px; width: 46px; opacity: 0.55; }
 }
 [data-theme='soft'] .home .tile.t-vocab .greek.tile-olive { filter: hue-rotate(-46deg) saturate(2.4) brightness(1.28); }
+/* On the coral Quiz tile the artwork used to be flattened to pure white
+   (brightness(0) invert(1)), which turned the column into a shapeless white
+   blob next to the arrow. Desaturating and lifting it instead keeps the
+   capital and the fluting readable, as in the reference. */
+[data-theme='soft'] .home .tile.feature .greek.tile-column {
+  filter: grayscale(1) brightness(1.9) contrast(0.85);
+  opacity: 0.42;
+  width: 70px;
+  top: 58px;
+  right: 58px;
+}
+[data-theme='soft'] .home .tile.feature .greek.tile-olive {
+  filter: grayscale(1) brightness(2.1) contrast(0.8);
+  opacity: 0.45;
+}
+/* Tuned in place: the column shows capital and shaft, and both pieces keep
+   clear of the arrow's sparks and of the subtitle. */
+[data-theme='soft'] .home .tile.feature .greek.tile-column {
+  top: 14px;
+  right: 118px;
+  width: 64px;
+  filter: grayscale(1) brightness(1.55) contrast(1.6);
+  opacity: 0.5;
+}
+[data-theme='soft'] .home .tile.feature .greek.tile-olive {
+  right: 206px;
+  filter: grayscale(1) brightness(1.7) contrast(1.4);
+  opacity: 0.5;
+}
