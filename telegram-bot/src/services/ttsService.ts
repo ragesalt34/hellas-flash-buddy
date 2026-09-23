@@ -21,8 +21,13 @@ const modelForText = (text: string): string =>
 // audible in-breath multilingual_v2 sometimes adds at the end of a phrase).
 // Tunable so it can be dialed in without a code change.
 const ELEVEN_STABILITY = Number(process.env.ELEVENLABS_STABILITY ?? 0.7);
+// Words were read back noticeably faster than a learner can follow along.
+// 1.0 is normal pace; ElevenLabs accepts 0.7–1.2. 0.85 is ~15% slower.
+const ELEVEN_SPEED = Number(process.env.ELEVENLABS_SPEED ?? 0.85);
 const GOOGLE_KEY = process.env.GOOGLE_TTS_API_KEY;
 const GOOGLE_VOICE = process.env.GOOGLE_TTS_VOICE || 'el-GR-Chirp3-HD-Algenib';
+// Google's own equivalent, scaled the same ~15% off its prior 0.95 pace.
+const GOOGLE_SPEAKING_RATE = Number(process.env.GOOGLE_TTS_SPEAKING_RATE ?? 0.81);
 
 type Provider = 'el' | 'gtts';
 const provider: Provider | null = ELEVEN_KEY ? 'el' : GOOGLE_KEY ? 'gtts' : null;
@@ -34,8 +39,8 @@ const variant = crypto
   .createHash('sha1')
   .update(
     provider === 'el'
-      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_MODEL_SHORT}:${ELEVEN_SHORT_MAXLEN}:${ELEVEN_STABILITY}`
-      : `gtts:${GOOGLE_VOICE}`
+      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_MODEL_SHORT}:${ELEVEN_SHORT_MAXLEN}:${ELEVEN_STABILITY}:${ELEVEN_SPEED}`
+      : `gtts:${GOOGLE_VOICE}:${GOOGLE_SPEAKING_RATE}`
   )
   .digest('hex')
   .slice(0, 8);
@@ -53,8 +58,15 @@ async function synthesizeElevenLabs(text: string): Promise<Buffer> {
       body: JSON.stringify({
         text,
         model_id: modelForText(text),
-        // Tuned for clear language-learning pronunciation (stable, natural).
-        voice_settings: { stability: ELEVEN_STABILITY, similarity_boost: 0.75, style: 0, use_speaker_boost: true },
+        // Tuned for clear language-learning pronunciation (stable, natural, and
+        // slow enough to follow along with).
+        voice_settings: {
+          stability: ELEVEN_STABILITY,
+          similarity_boost: 0.75,
+          style: 0,
+          use_speaker_boost: true,
+          speed: ELEVEN_SPEED,
+        },
       }),
     }
   );
@@ -73,7 +85,7 @@ async function synthesizeGoogle(text: string): Promise<Buffer> {
       body: JSON.stringify({
         input: { text },
         voice: { languageCode: 'el-GR', name: GOOGLE_VOICE },
-        audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 },
+        audioConfig: { audioEncoding: 'MP3', speakingRate: GOOGLE_SPEAKING_RATE },
       }),
     }
   );
