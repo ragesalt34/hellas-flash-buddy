@@ -3379,7 +3379,11 @@ button.chip:active { transform: scale(0.95); }
   letter-spacing: -0.3px;
   line-height: 1.35;
   color: var(--fc-ink);
-  max-width: 24ch;
+  /* A long question used to wrap at a fixed 24 characters regardless of how
+     much width the card actually had, so it grew tall instead of using the
+     room beside it. 40ch is just a ceiling for very wide monitors — below
+     that the text now wraps at the card's real edge, wider first. */
+  max-width: 40ch;
   overflow-wrap: break-word;
 }
 [data-theme='soft'] .fc-screen .speak-btn {
@@ -4610,8 +4614,7 @@ button.chip:active { transform: scale(0.95); }
   right: -140px; bottom: -170px; width: 420px; height: 340px;
   background: radial-gradient(closest-side, rgba(214, 222, 240, 0.7), rgba(236, 226, 205, 0.35) 70%, rgba(236, 226, 205, 0));
 }
-[data-theme='soft'] .fc-decor { --fd-gut: calc((100vw - 680px) / 2); }
-@media (max-width: 1199px) { [data-theme='soft'] .fc-decor { --fd-gut: calc((100vw - 640px) / 2); } }
+[data-theme='soft'] .fc-decor { --fd-gut: calc((100vw - 740px) / 2); }
 [data-theme='soft'] .fc-decor .greek.fd { position: absolute; display: block; height: auto; transform: none; }
 [data-theme='soft'] .fc-decor .greek.fd-column { left: -34px; top: 128px; width: min(140px, calc(var(--fd-gut) - 10px)); opacity: 0.5; }
 [data-theme='soft'] .fc-decor .greek.fd-olive-tl { left: 94px; top: 18px; width: min(112px, calc(var(--fd-gut) - 110px)); opacity: 0.78; }
@@ -4650,6 +4653,16 @@ button.chip:active { transform: scale(0.95); }
 }
 [data-theme='soft'] .fc-screen .progress { height: 8px; background: #ece6da; }
 [data-theme='soft'] .fc-screen .progress > i { background: #e39079; min-width: 8px; }
+
+/* A long question wrapped at the shared 640/680px focus column and grew the
+   card tall. A little more width instead: one column value from 900px up
+   (matching how vocab widened its own column), and the action bar's cap
+   widened by the same amount so the grade row still lines up with the
+   card's edges. */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus:has(.fc-screen) .app { max-width: 740px; }
+  [data-theme='soft'] .fc-screen .actionbar > * { max-width: 692px; }
+}
 
 /* ---- Card ---- */
 [data-theme='soft'] .fc-screen .fc-card {
