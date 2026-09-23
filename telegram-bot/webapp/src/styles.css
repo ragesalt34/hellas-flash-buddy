@@ -4601,3 +4601,11 @@ button.chip:active { transform: scale(0.95); }
   filter: grayscale(1) brightness(1.7) contrast(1.4);
   opacity: 0.5;
 }
+/* The lower-left column was cut in half by the window edge (bottom: -104px)
+   and read as a mistake. It now stands whole on the bottom edge, a little
+   smaller, and the middle branch moves up to make room for it. */
+[data-theme='soft'] .home-decor .hm-column-olive {
+  bottom: 14px;
+  width: min(124px, calc(var(--C) - 190px));
+}
+[data-theme='soft'] .home-decor .hm-olive-mid { top: auto; bottom: 280px; }
