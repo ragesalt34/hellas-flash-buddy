@@ -3268,17 +3268,6 @@ button.chip:active { transform: scale(0.95); }
   pointer-events: none;
   overflow: hidden;
 }
-[data-theme='soft'] .fc-decor .blob { position: absolute; border-radius: 50%; }
-[data-theme='soft'] .fc-decor .b-tl { width: 240px; height: 220px; left: -110px; top: -100px; background: #f9ddd6; opacity: 0.8; }
-[data-theme='soft'] .fc-decor .b-tr { width: 280px; height: 260px; right: -120px; top: -110px; background: #fbe3b5; opacity: 0.75; }
-[data-theme='soft'] .fc-decor .b-bl { width: 340px; height: 230px; left: -130px; bottom: -120px; background: #f9ddd6; opacity: 0.7; }
-[data-theme='soft'] .fc-decor .b-br { width: 220px; height: 300px; right: -110px; bottom: -110px; background: #e6def5; opacity: 0.85; }
-[data-theme='soft'] .fc-decor .doodle { position: absolute; }
-[data-theme='soft'] .fc-decor .d-tl { color: #b5655a; left: 84px; top: 22px; transform: scaleX(-1) rotate(-10deg); }
-[data-theme='soft'] .fc-decor .d-swirl { color: #eeaa55; right: 90px; top: 80px; }
-[data-theme='soft'] .fc-decor .d-heart { color: #f0b76b; left: 80px; bottom: 120px; transform: rotate(-12deg); }
-[data-theme='soft'] .fc-decor .d-br { color: #9b88d8; right: 60px; bottom: 150px; transform: rotate(10deg); }
-
 /* ---- Close button (desktop focus mode): a soft round puck ---- */
 [data-theme='soft'] body:has(.fc-screen) .focus-close {
   width: 56px;
@@ -3393,30 +3382,6 @@ button.chip:active { transform: scale(0.95); }
   max-width: 24ch;
   overflow-wrap: break-word;
 }
-/* Corner shapes, clipped by the card's radius. */
-[data-theme='soft'] .fc-screen .fc-blob {
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-}
-[data-theme='soft'] .fc-screen .fc-blob.tr {
-  width: 150px; height: 130px; right: -40px; top: -40px;
-  border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%;
-  background: #e3dbf4;
-}
-[data-theme='soft'] .fc-screen .fc-blob.bl {
-  width: 200px; height: 140px; left: -50px; bottom: -60px;
-  border-radius: 55% 45% 50% 50% / 60% 55% 45% 40%;
-  background: #dcefe2;
-}
-[data-theme='soft'] .fc-screen .fc-card-spark {
-  position: absolute;
-  top: 28px;
-  left: 30px;
-  color: #f2b43c;
-  transform: rotate(-10deg);
-  pointer-events: none;
-}
 [data-theme='soft'] .fc-screen .speak-btn {
   width: 44px;
   height: 44px;
@@ -3427,24 +3392,6 @@ button.chip:active { transform: scale(0.95); }
 }
 [data-theme='soft'] .fc-screen .speak-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 14px -8px rgba(200, 70, 63, 0.6); }
 [data-theme='soft'] .fc-screen .speak-btn:active { transform: scale(0.94); }
-
-/* Temple sketch outside the card, only where there is room for it. */
-[data-theme='soft'] .fc-screen .fc-illus {
-  display: none;
-  position: absolute;
-  right: -150px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-6deg);
-  color: #e5a53a;
-  pointer-events: none;
-}
-[data-theme='soft'] .fc-screen .fc-illus .fc-illus-spark {
-  position: absolute;
-  right: -26px;
-  top: -18px;
-  color: #8a4a3e;
-  transform: scaleX(-1);
-}
 
 /* ---- Answer ---- */
 [data-theme='soft'] .fc-screen .answer-box {
@@ -3568,16 +3515,8 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .fc-screen .fc-reveal::before,
   [data-theme='soft'] .fc-screen .fc-reveal::after { display: block; }
 }
-@media (min-width: 1180px) {
-  [data-theme='soft'] .fc-screen .fc-illus { display: block; }
-}
-@media (max-width: 1099px) {
-  [data-theme='soft'] .fc-decor .doodle { display: none; }
-}
 @media (max-width: 899px) {
-  [data-theme='soft'] .fc-decor .blob { opacity: 0.5; }
   [data-theme='soft'] .fc-screen .fc-card { padding: 36px 22px; border-radius: 28px; min-height: 220px; }
-  [data-theme='soft'] .fc-screen .fc-card-spark { top: 16px; left: 16px; width: 30px; height: 30px; }
   [data-theme='soft'] .fc-screen .grade { border-radius: 20px; font-size: 15px; }
   [data-theme='soft'] .fc-screen .grade .gsub { font-size: 12px; }
 }
@@ -4073,10 +4012,6 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='soft'] .home .tile.feature .tile-olive { width: 76px; filter: brightness(0) invert(1); opacity: 0.28; }
 [data-theme='soft'] .home .tile.feature .tile-column { width: 40px; filter: brightness(0) invert(1); opacity: 0.24; }
 
-/* ---- Flashcards ---- */
-[data-theme='soft'] .fc-screen .fc-illus .fc-illus-img { width: 160px; opacity: 0.55; }
-[data-theme='soft'] .fc-screen .fc-illus { color: inherit; }
-
 /* ---- Vocabulary ---- */
 [data-theme='soft'] .vc-decor .o-column { width: 84px !important; height: auto !important; opacity: 0.4; }
 [data-theme='soft'] .vc-decor .o-olive-tl { width: 92px; opacity: 0.4; }
@@ -4177,10 +4112,7 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 1279px) {
   [data-theme='soft'] .vc-decor .o-temple { display: none; }
 }
-/* The temple picture is wider than the old outline beside the flashcard;
-   it moves out so it cannot touch the card's edge. On phones the home temple
-   sat behind the bottom bar; it lifts above it. */
-[data-theme='soft'] .fc-screen .fc-illus { right: -200px; }
+/* On phones the home temple sat behind the bottom bar; it lifts above it. */
 @media (max-width: 899px) {
   [data-theme='soft'] .home-decor .greek.d-temple { bottom: 96px; right: -24px; }
 }
@@ -4652,3 +4584,152 @@ button.chip:active { transform: scale(0.95); }
   width: min(124px, calc(var(--C) - 190px));
 }
 [data-theme='soft'] .home-decor .hm-olive-mid { top: auto; bottom: 280px; }
+
+/* ============================================================
+   FLASHCARDS -- restyled to match the Vocabulary screen's look, at the
+   user's request (that look carried over here, but explicitly NOT onto the
+   quiz/topic screen, which keeps its own decor). Same recipe: card shape and
+   colours, header style, progress bar, answer-panel style, one meander
+   corner per grade button, and the Vocabulary screen's own artwork pack
+   (assets/menus/vocabulary/) as the page frame -- sized to THIS screen's own
+   (narrower, 640/680px) column rather than vocab's 848px one, so nothing
+   here depends on vocab's layout changing later.
+   ============================================================ */
+[data-theme='soft'] body:has(.fc-screen) { background: #f7f3ea; }
+[data-theme='soft'] body:has(.fc-screen) .aurora {
+  background: radial-gradient(ellipse 70% 60% at 50% 38%, #fbf8f1 0%, #f7f3e9 62%);
+}
+
+/* ---- Frame ---- */
+[data-theme='soft'] .fc-decor .fc-wash { position: absolute; border-radius: 50%; pointer-events: none; }
+[data-theme='soft'] .fc-decor .w-tl {
+  left: -160px; top: -140px; width: 520px; height: 420px;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+[data-theme='soft'] .fc-decor .w-br {
+  right: -140px; bottom: -170px; width: 420px; height: 340px;
+  background: radial-gradient(closest-side, rgba(214, 222, 240, 0.7), rgba(236, 226, 205, 0.35) 70%, rgba(236, 226, 205, 0));
+}
+[data-theme='soft'] .fc-decor { --fd-gut: calc((100vw - 680px) / 2); }
+@media (max-width: 1199px) { [data-theme='soft'] .fc-decor { --fd-gut: calc((100vw - 640px) / 2); } }
+[data-theme='soft'] .fc-decor .greek.fd { position: absolute; display: block; height: auto; transform: none; }
+[data-theme='soft'] .fc-decor .greek.fd-column { left: -34px; top: 128px; width: min(140px, calc(var(--fd-gut) - 10px)); opacity: 0.5; }
+[data-theme='soft'] .fc-decor .greek.fd-olive-tl { left: 94px; top: 18px; width: min(112px, calc(var(--fd-gut) - 110px)); opacity: 0.78; }
+[data-theme='soft'] .fc-decor .greek.fd-parthenon { right: 0; top: 104px; width: min(320px, calc(var(--fd-gut) - 24px)); opacity: 0.6; }
+[data-theme='soft'] .fc-decor .greek.fd-meander { right: 22px; top: 22px; width: 104px; opacity: 0.4; }
+[data-theme='soft'] .fc-decor .greek.fd-sparkle { opacity: 0.7; }
+[data-theme='soft'] .fc-decor .greek.fd-sparkle.s1 { right: 30px; top: 426px; width: 22px; opacity: 0.6; }
+[data-theme='soft'] .fc-decor .greek.fd-sparkle.s2 { right: 198px; bottom: 192px; width: 18px; opacity: 0.5; }
+[data-theme='soft'] .fc-decor .greek.fd-amphora { left: 30px; bottom: 58px; width: min(124px, calc(var(--fd-gut) - 30px)); opacity: 0.72; }
+[data-theme='soft'] .fc-decor .greek.fd-olive-bl { left: 112px; bottom: 46px; width: 104px; opacity: 0.75; }
+[data-theme='soft'] .fc-decor .greek.fd-olive-br { right: -20px; bottom: -22px; width: min(176px, calc(var(--fd-gut) + 40px)); opacity: 0.78; }
+
+/* ---- Header ---- */
+[data-theme='soft'] .fc-screen .topbar { position: relative; margin-bottom: 20px; }
+[data-theme='soft'] .fc-screen .topbar .meta { gap: 10px !important; font-size: 20px; font-weight: 600; color: #2b2b2e; }
+[data-theme='soft'] .fc-screen .fc-meta-ic { width: auto; height: auto; background: none; box-shadow: none; color: #c9574a; }
+[data-theme='soft'] .fc-screen .fc-meta-ic svg { width: 26px; height: 26px; }
+[data-theme='soft'] .fc-screen .fc-meta-olive { color: #78947a; opacity: 0.85; width: 30px; transform: rotate(-20deg); margin-left: -2px; }
+[data-theme='soft'] .fc-screen .topbar .counter {
+  border: 1px solid rgba(200, 150, 40, 0.2);
+  box-shadow: none;
+  margin-right: 42px;
+  padding: 7px 16px;
+  border-radius: 16px;
+  font-size: 18px;
+  background: #f6d98c;
+}
+[data-theme='soft'] .fc-screen .fc-counter-olive {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 34px;
+  color: #78947a;
+  transform: translateY(-58%) scaleX(-1) rotate(-10deg);
+  opacity: 0.85;
+}
+[data-theme='soft'] .fc-screen .progress { height: 8px; background: #ece6da; }
+[data-theme='soft'] .fc-screen .progress > i { background: #e39079; min-width: 8px; }
+
+/* ---- Card ---- */
+[data-theme='soft'] .fc-screen .fc-card {
+  background: rgba(255, 253, 247, 0.92);
+  border: 1px solid rgba(190, 155, 105, 0.24);
+  box-shadow: 0 18px 50px rgba(100, 75, 40, 0.1);
+}
+[data-theme='soft'] .fc-screen .fc-corner,
+[data-theme='soft'] .fc-screen .fc-corner-olive {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+[data-theme='soft'] .fc-screen .fc-corner { top: 18px; left: 18px; width: 60px; opacity: 0.65; }
+[data-theme='soft'] .fc-screen .fc-corner-olive { top: 16px; right: 20px; width: 62px; opacity: 0.8; }
+[data-theme='soft'] .fc-screen .fc-card .qtext { color: #24334f; }
+
+/* ---- Answer + explanation panels ---- */
+[data-theme='soft'] .fc-screen .answer-box {
+  position: relative;
+  background: #f6efe2;
+  border: 1px solid rgba(190, 155, 105, 0.3);
+}
+[data-theme='soft'] .fc-screen .answer-tag { background: #4f9272; }
+[data-theme='soft'] .fc-screen .answer-text { color: #24334f; }
+[data-theme='soft'] .fc-screen .explain {
+  background: #f6efe2;
+  border: 1px solid rgba(190, 155, 105, 0.3);
+  color: #4a3f37;
+}
+[data-theme='soft'] .fc-screen .fc-panel-temple {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  width: 36px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ---- Grade buttons: one meander corner each, tinted to the card ---- */
+[data-theme='soft'] .fc-screen .grade { position: relative; isolation: isolate; border: 1.5px solid transparent; }
+[data-theme='soft'] .fc-screen .grade.g1 { background: #f8d9d3; border-color: rgba(214, 120, 104, 0.35); }
+[data-theme='soft'] .fc-screen .grade.g2 { background: #f9e6ae; border-color: rgba(214, 170, 70, 0.4); }
+[data-theme='soft'] .fc-screen .grade.g3 { background: #d4ecdd; border-color: rgba(110, 170, 130, 0.4); }
+[data-theme='soft'] .fc-screen .grade .gr-key {
+  position: absolute;
+  z-index: -1;
+  width: 28px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+[data-theme='soft'] .fc-screen .grade.g1 .gr-key { top: 10px; right: 12px; }
+[data-theme='soft'] .fc-screen .grade.g2 .gr-key { bottom: 10px; left: 12px; transform: scale(-1, -1); filter: hue-rotate(32deg) saturate(1.25) brightness(0.92); }
+[data-theme='soft'] .fc-screen .grade.g3 .gr-key { top: 10px; left: 12px; transform: scaleX(-1); filter: hue-rotate(118deg) saturate(0.9) brightness(0.88); }
+
+/* ---- Narrower windows: shrink, then drop, before anything reaches content ---- */
+@media (max-width: 1279px) {
+  [data-theme='soft'] .fc-decor .greek.fd-sparkle.s2,
+  [data-theme='soft'] .fc-decor .greek.fd-olive-bl { display: none; }
+}
+@media (max-width: 1209px) {
+  [data-theme='soft'] .fc-decor .greek.fd-parthenon,
+  [data-theme='soft'] .fc-decor .greek.fd-sparkle.s1 { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1099px) {
+  [data-theme='soft'] .fc-decor .greek.fd-column,
+  [data-theme='soft'] .fc-decor .greek.fd-olive-tl,
+  [data-theme='soft'] .fc-decor .greek.fd-amphora { display: none; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .fc-decor .greek.fd:not(.fd-meander):not(.fd-olive-br) { display: none; }
+  [data-theme='soft'] .fc-decor .greek.fd-meander { width: 80px; top: 10px; right: 10px; opacity: 0.4; }
+  [data-theme='soft'] .fc-decor .greek.fd-olive-br { width: 110px; right: -16px; bottom: 96px; opacity: 0.4; }
+  [data-theme='soft'] .fc-screen .topbar .meta { font-size: 16px; }
+  [data-theme='soft'] .fc-screen .fc-meta-ic svg { width: 22px; height: 22px; }
+  [data-theme='soft'] .fc-screen .fc-meta-olive { width: 24px; }
+  [data-theme='soft'] .fc-screen .topbar .counter { font-size: 15px; padding: 6px 12px; margin-right: 32px; }
+  [data-theme='soft'] .fc-screen .fc-counter-olive { width: 24px; }
+  [data-theme='soft'] .fc-screen .fc-corner { width: 42px; top: 12px; left: 12px; }
+  [data-theme='soft'] .fc-screen .fc-corner-olive { width: 42px; top: 10px; right: 10px; }
+  [data-theme='soft'] .fc-screen .fc-panel-temple { width: 28px; }
+  [data-theme='soft'] .fc-screen .grade .gr-key { width: 22px; }
+}

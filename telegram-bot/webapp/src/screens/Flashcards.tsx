@@ -7,27 +7,28 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { Sparks } from '../components/icons';
 import { Greek } from '../components/greek';
+import { VocabDecorImg } from './vocabularyDecor';
 
-/* Round-theme ornaments for this screen: pastel blobs in the corners and a few
-   hand-drawn doodles, fixed behind everything. Decorative only — aria-hidden,
-   and the square theme hides every .hs-deco element. */
+/* Round-theme frame for this screen, matched to the Vocabulary screen's look
+   (same artwork pack, assets/menus/vocabulary/) at the user's request — sized
+   to this screen's own (narrower) column rather than copy-pasted from vocab's.
+   Decorative only — aria-hidden, and the square theme hides every .hs-deco
+   element. Not used on the quiz/topic screen, which keeps its own decor. */
 function FcDecor() {
   return (
     <div className="hs-deco fc-decor" aria-hidden="true">
-      <Greek name="bg-shape-1" className="blob b-tl" />
-      <Greek name="bg-shape-3" className="blob b-tr" />
-      <Greek name="bg-shape-3" className="blob b-bl" />
-      <Greek name="bg-shape-2" className="blob b-br" />
-      <Sparks className="doodle d-tl" size={40} />
-      <svg className="doodle d-swirl" width="60" height="50" viewBox="0 0 60 50" fill="none">
-        <path d="M6 44 C6 30 14 20 24 22 C32 24 28 34 22 30 C16 26 26 10 40 10 C48 10 52 6 56 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      </svg>
-      <svg className="doodle d-heart" width="46" height="44" viewBox="0 0 46 44" fill="none">
-        <path d="M23 39 C10 30 4 22 5 14 C6 7 13 4 18 7 C21 9 22 12 23 14 C24 11 27 7 31 6 C37 5 42 10 41 17 C40 25 32 32 23 39 Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-      </svg>
-      <Sparks className="doodle d-br" size={40} />
+      <span className="fc-wash w-tl" />
+      <span className="fc-wash w-br" />
+      <VocabDecorImg slot="columnLeft" className="fd fd-column" />
+      <VocabDecorImg slot="oliveTopLeft" className="fd fd-olive-tl" />
+      <VocabDecorImg slot="parthenonTopRight" className="fd fd-parthenon" />
+      <VocabDecorImg slot="meanderTopRight" className="fd fd-meander" />
+      <VocabDecorImg slot="sparkleRight" className="fd fd-sparkle s1" />
+      <VocabDecorImg slot="sparkleRight" className="fd fd-sparkle s2" />
+      <VocabDecorImg slot="amphoraBottomLeft" className="fd fd-amphora" />
+      <VocabDecorImg slot="oliveBottomLeft" className="fd fd-olive-bl" />
+      <VocabDecorImg slot="oliveBottomRight" className="fd fd-olive-br" />
     </div>
   );
 }
@@ -161,24 +162,20 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
             <Layers size={14} strokeWidth={2.6} />
           </span>{' '}
           {t('nav.flashcards')}
+          <Greek name="olive-branch-small" className="fc-meta-olive" />
         </span>
         <span className="counter">
           {i + 1}/{cards.length}
         </span>
+        <Greek name="olive-branch-small" className="fc-counter-olive" />
       </div>
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
       <div className="fc-stage">
-      {/* Temple sketch beside the card on wide screens — decoration only. */}
-      <span className="hs-deco fc-illus" aria-hidden="true">
-        <Greek name="temple" className="fc-illus-img" />
-        <Sparks className="fc-illus-spark" size={34} />
-      </span>
       <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>
-        <span className="hs-deco fc-blob tr" aria-hidden="true" />
-        <span className="hs-deco fc-blob bl" aria-hidden="true" />
-        <Sparks className="hs-deco fc-card-spark" size={40} />
+        <VocabDecorImg slot="cardGreekCorner" className="fc-corner" />
+        <VocabDecorImg slot="cardOliveBranch" className="fc-corner-olive" />
         {/* Pronunciation only where there is Greek to pronounce (see hasGreek). */}
         <div className="speak-row">
           <div className="qtext">{card.question}</div>
@@ -196,6 +193,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
         {revealed && (
           <div className="fade-in">
             <div className="answer-box">
+              <VocabDecorImg slot="cardTemple" className="fc-panel-temple" />
               <span className="answer-tag">
                 <Check size={13} strokeWidth={3.2} /> {t('flashcards.answerLabel')}
               </span>
@@ -231,6 +229,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
         {revealed ? (
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
+              <VocabDecorImg slot="buttonCorner" className="gr-key" />
               <span className="e">
                 <Frown size={22} strokeWidth={2.2} />
               </span>
@@ -238,6 +237,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
+              <VocabDecorImg slot="buttonCorner" className="gr-key" />
               <span className="e">
                 <Smile size={22} strokeWidth={2.2} />
               </span>
@@ -245,6 +245,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
+              <VocabDecorImg slot="buttonCorner" className="gr-key" />
               <span className="e">
                 <Target size={22} strokeWidth={2.2} />
               </span>
