@@ -120,6 +120,7 @@ const translations: Translations = {
   'auth.usernameHint': { ru: 'Латиница, цифры и _ (3–20 символов)', el: 'Λατινικά, αριθμοί και _ (3–20 χαρακτήρες)' },
   'auth.password': { ru: 'Пароль', el: 'Κωδικός' },
   'auth.passwordHint': { ru: 'Минимум 6 символов', el: 'Τουλάχιστον 6 χαρακτήρες' },
+  'auth.remember': { ru: 'Запомнить меня', el: 'Να με θυμάσαι' },
   'auth.submit.login': { ru: 'Войти', el: 'Σύνδεση' },
   'auth.submit.register': { ru: 'Создать аккаунт', el: 'Δημιουργία λογαριασμού' },
   'auth.guest': { ru: 'Продолжить без аккаунта', el: 'Συνέχεια χωρίς λογαριασμό' },

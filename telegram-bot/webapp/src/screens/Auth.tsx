@@ -15,6 +15,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
   const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -38,7 +39,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
         mode === 'register'
           ? await api.register(username, password)
           : await api.login(username, password);
-      setToken(r.token);
+      setToken(r.token, remember);
       clearCache(); // never show the guest account's numbers to the new user
       notify('success');
       onDone();
@@ -110,6 +111,15 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
             autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
           />
           {mode === 'register' && <span className="field-hint">{t('auth.passwordHint')}</span>}
+        </label>
+
+        <label className="remember-row">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          <span>{t('auth.remember')}</span>
         </label>
 
         {err && <div className="auth-err">{err}</div>}

@@ -1,27 +1,37 @@
 // Web-account session token (nickname+password login). The token is an HMAC
 // blob issued by the bot API; we only decode its payload locally to show the
 // nickname and drop it when expired — verification happens server-side.
+//
+// Storage is a choice made once at sign-in ("remember me" on the login form):
+// localStorage survives closing the browser (the token itself still expires
+// after 90 days server-side); sessionStorage drops it the moment the tab
+// closes, for a shared or public computer. Both are checked on read —
+// whichever one the last sign-in chose to write to.
 
 const TOKEN_KEY = 'hs_token';
 
 export function getToken(): string | null {
-  const t = localStorage.getItem(TOKEN_KEY);
+  const t = localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
   if (!t) return null;
   // Drop expired tokens client-side so the UI falls back to guest cleanly.
   const p = decodePayload(t);
   if (!p || Date.now() > p.exp) {
-    localStorage.removeItem(TOKEN_KEY);
+    clearToken();
     return null;
   }
   return t;
 }
 
-export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+/** `remember` picks where the token lives: localStorage (default — survives
+ * closing the browser) or sessionStorage (cleared when the tab closes). */
+export function setToken(token: string, remember = true): void {
+  clearToken(); // never leave a stale copy in the other store
+  (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 export function getAuthUsername(): string | null {
