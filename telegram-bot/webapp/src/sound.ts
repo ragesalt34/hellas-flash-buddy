@@ -35,20 +35,28 @@ function ac(): Ctx | null {
 // ---- File-backed samples (preloaded, decoded once for zero-latency playback) ----
 // `undefined` = not tried yet, `null` = tried and unavailable (use synth).
 //
-// Every clip is peak-normalized to TARGET_PEAK at decode time, so all effects
-// play at the same level regardless of how loud the source file happens to be.
-// Before this, each effect had its own hand-tuned multiplier (0.4–0.6) applied on
-// top of whatever the file's own loudness was — two unrelated variables, so the
-// set never actually matched. One target instead: lower it to make everything
-// quieter together. 0.25 puts every effect ~4 dB below the previous 0.4.
-const TARGET_PEAK = 0.25;
-// Amplification is capped hard, because normalising UP is what made the quiet
-// clips sound dirty: grade-hard peaks at 0.148 and was being multiplied by 2.7
-// (+8.6 dB), which lifted its low-level rattle right into audibility, and
-// grade-know by 1.74 (+4.8 dB). Measured envelopes show their noise floors are
-// fine (−82…−86 dBFS) — the boost was the problem, not the source. 1.5 keeps the
-// set within ~1 dB of each other while never raising a clip's own floor much.
-const MAX_GAIN = 1.5;
+// Normalizing to a target PEAK made the set sound uneven in practice: peak
+// only says how loud a clip's single loudest sample is, not how loud it
+// *reads* — a short percussive click (tap) and a sustained tone (grade-know)
+// can share the same peak while differing by 15+ dB in average level, which
+// is what the ear actually tracks as "volume". Measured on this set: after
+// peak-normalizing, tap's RMS output sat near −44 dBFS while wrong's sat near
+// −26 dBFS — audibly a different volume, not a rounding error.
+//
+// So the target is RMS (average loudness) instead, with a peak ceiling kept
+// alongside purely as a clip guard — it never raises loudness, only stops a
+// peaky clip (tap, wrong) from being pushed past a safe level while chasing
+// the RMS target.
+const TARGET_RMS = 0.05;
+const PEAK_CEILING = 0.9;
+// Amplification is capped hard on top of both targets, because normalizing UP
+// is what made a quiet clip sound dirty before: grade-hard peaks at 0.117 and
+// reads a documented "low-level rattle" once its gain passes roughly 2.7×
+// (+8.6 dB) — its floor is low (−82…−86 dBFS) but not silent. 2.5 lets it
+// close most of the gap to the rest of the set while staying under that
+// measured threshold; it still ends up a few dB under target, which is the
+// honest trade-off for not audibly hissing.
+const MAX_GAIN = 2.5;
 const buffers = new Map<string, { buf: AudioBuffer; gain: number } | null>();
 
 /** Peak sample amplitude (0..1) — mono by the time this is called. */
@@ -62,11 +70,25 @@ function peakOf(buf: AudioBuffer): number {
   return peak;
 }
 
-/** Gain that lands this clip's loudest sample on TARGET_PEAK. */
+/** RMS (average) level — the loudness measure that actually matches what the
+ * ear compares between clips, unlike a single peak sample. Mono by the time
+ * this is called. */
+function rmsOf(buf: AudioBuffer): number {
+  const data = buf.getChannelData(0);
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+  return Math.sqrt(sum / Math.max(1, data.length));
+}
+
+/** Gain that lands this clip's average level on TARGET_RMS, never pushing its
+ * peak past PEAK_CEILING and never amplifying more than MAX_GAIN. A peaky
+ * transient (high peak, low RMS — a click) is peak-limited and lands under
+ * target; that is the clip's own dynamics, not a bug. */
 function normGain(buf: AudioBuffer): number {
   const peak = peakOf(buf);
-  if (peak <= 0.0001) return TARGET_PEAK; // silent → neutral
-  return Math.min(TARGET_PEAK / peak, MAX_GAIN);
+  const rms = rmsOf(buf);
+  if (peak <= 0.0001 || rms <= 0.0001) return TARGET_RMS; // silent → neutral
+  return Math.min(TARGET_RMS / rms, PEAK_CEILING / peak, MAX_GAIN);
 }
 
 /** Downmix to mono so a lopsided stereo asset (e.g. sound only in the right
@@ -219,10 +241,11 @@ function playSample(name: string): boolean {
 }
 
 // ---- Synthesized fallbacks ----
-// Only reached when a sound file is missing or still preloading. Their peaks are
-// scaled by the same factor the samples were quietened by, so a fallback can't
-// come out louder than the real clip it stands in for.
-// Scaled with TARGET_PEAK: 0.8 matched the old 0.4 target, so 0.25 needs 0.5.
+// Only reached when a sound file is missing or still preloading. Trimmed well
+// under the samples' typical post-gain peak (now up to ~0.3–0.5 — normGain
+// targets average loudness, not a fixed peak, so real clips can sit louder
+// here than the old flat 0.25 ceiling) so a fallback can't read louder than
+// the real clip it stands in for.
 const SYNTH_TRIM = 0.5;
 
 // A single oscillator with a percussive envelope.
