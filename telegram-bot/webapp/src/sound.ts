@@ -139,7 +139,7 @@ function trimTail(c: Ctx, buf: AudioBuffer): AudioBuffer {
 
 // Bump when swapping any file in public/sounds/ — busts the CDN edge cache
 // immediately instead of waiting out its max-age (see public/_headers).
-const SOUND_VERSION = 2;
+const SOUND_VERSION = 3;
 
 function preload(name: string): void {
   const c = ac();
