@@ -32,6 +32,7 @@ import {
 import { getDueVocab, gradeVocab, getVocabStats } from '../services/vocabProgressService';
 import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
+import { loadReadiness } from '../services/readinessService';
 import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
@@ -564,6 +565,16 @@ export function createApiApp(): express.Express {
         getVocabStats(a.id, ALL_VOCAB_IDS),
       ]);
       res.json({ stats, streak, vocab, topicLabels: topicLabels(getLang(req)) });
+    })
+  );
+
+  // GET /api/readiness — interview readiness report (verdict decided by Greek only)
+  api.get(
+    '/readiness',
+    wrap(async (req, res) => {
+      const a = req.account!;
+      const report = await loadReadiness(a.id, getTz(req));
+      res.json({ ...report, topicLabels: topicLabels(getLang(req)) });
     })
   );
 

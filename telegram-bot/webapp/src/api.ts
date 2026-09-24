@@ -1,4 +1,4 @@
-import { getStoredLanguage } from './i18n';
+import { getStoredLanguage, type Language } from './i18n';
 import { getToken, clearToken } from './auth';
 
 // Backend base URL — the bot's public API (Render). Set at build time.
@@ -62,7 +62,7 @@ function deviceTimeZone(): string {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}, lang: Language = getStoredLanguage()): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
@@ -86,7 +86,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   // Tag every request with the current UI language so quiz/flashcard content
   // and topic labels come back in the right language (server defaults to 'el').
   const sep = path.includes('?') ? '&' : '?';
-  const url = `${API_BASE}/api${path}${sep}lang=${getStoredLanguage()}`;
+  const url = `${API_BASE}/api${path}${sep}lang=${lang}`;
 
   const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
@@ -97,7 +97,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     // their 401 means "wrong credentials", not "bad session".
     if (res.status === 401 && webToken && !path.startsWith('/auth/')) {
       clearToken();
-      return request<T>(path, options);
+      return request<T>(path, options, lang);
     }
     const body = await res.text().catch(() => '');
     throw new Error(`API ${res.status}: ${body || res.statusText}`);
@@ -133,8 +133,8 @@ export const api = {
       body: JSON.stringify({ username, password }),
     }),
   me: () => request<MeResponse>('/me'),
-  quiz: (topic: string, limit = 10) =>
-    request<QuizResponse>(`/quiz?topic=${encodeURIComponent(topic)}&limit=${limit}`),
+  quiz: (topic: string, limit = 10, lang?: Language) =>
+    request<QuizResponse>(`/quiz?topic=${encodeURIComponent(topic)}&limit=${limit}`, {}, lang),
   quizComplete: (body: QuizCompleteBody) =>
     request<{ ok: boolean }>('/quiz/complete', { method: 'POST', body: JSON.stringify(body) }),
   flashcards: () => request<{ cards: Flashcard[] }>('/flashcards'),
@@ -151,6 +151,7 @@ export const api = {
     }),
   stats: () => request<StatsResponse>('/stats'),
   history: () => request<HistoryResponse>('/history'),
+  readiness: () => request<ReadinessResponse>('/readiness'),
   tts: (text: string, cacheKey: string) =>
     request<{ audioUrl: string }>('/tts', {
       method: 'POST',
@@ -226,5 +227,26 @@ export interface StatsResponse {
 }
 export interface HistoryResponse {
   sessions: { topic: string; score: number; total: number; completed_at: string }[];
+  topicLabels: Record<string, string>;
+}
+
+export interface ReadinessResponse {
+  verdict: 'early' | 'almost' | 'ready';
+  score: number;
+  blockers: { kind: 'topic' | 'words'; topic?: string; known: number; total: number }[];
+  greek: { known: number; checked: number; total: number };
+  russian: { known: number; checked: number; total: number };
+  memory: { strong: number; total: number };
+  words: { learned: number; seen: number; total: number };
+  topics: {
+    topic: string;
+    total: number;
+    greek: { known: number; checked: number };
+    russian: { known: number; checked: number };
+    memory: number;
+  }[];
+  due: { cards: number; words: number };
+  activity: { streak: number; days: string[] };
+  history: { topic: string; score: number; total: number; completed_at: string }[];
   topicLabels: Record<string, string>;
 }
