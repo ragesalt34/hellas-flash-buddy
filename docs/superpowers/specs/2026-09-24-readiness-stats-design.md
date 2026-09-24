@@ -67,15 +67,16 @@ Thresholds live in one exported constant object.
 
 ## Components
 
-- `src/services/readinessService.ts` — `computeReadiness(input, now)`: pure,
-  no I/O. `loadReadiness(accountId, tz)`: fetches the inputs and calls it.
-- `src/services/readinessService.test.ts` — `node:test` via `npx tsx --test`.
+- `src/services/readiness.ts` — `computeReadiness(input, now)`: pure,
+  no I/O, no Supabase import (so tests run without env).
+- `src/services/readinessService.ts` — `loadReadiness(accountId, tz)`: fetches the inputs, calls it, adds activity + history.
+- `src/services/readiness.test.ts` — `node:test` via `npx tsx --test`.
 - `webapp/src/screens/Stats.tsx` — rewritten; sections top to bottom:
   1. Verdict card (status, score, blockers).
   2. Four criteria bars: Greek questions (decides), Words (decides),
      In memory, Russian questions (labelled as an aid).
   3. Topic table: rows = topics, columns = Greek / Russian / memory; the
-     weakest Greek cell is highlighted with a "Train" button that opens the
+     weakest Greek cell is highlighted with a "Train" button that opens a Greek
      quiz for that topic.
   4. Today: due cards and words with buttons to Flashcards / Vocabulary.
   5. Regularity: streak + 5-week day grid.
