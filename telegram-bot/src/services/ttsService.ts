@@ -41,10 +41,6 @@ const variant =
   provider === 'el'
     ? hash8(`${ELEVEN_BASE}:${ELEVEN_SPEED}`)
     : hash8(`gtts:${GOOGLE_VOICE}:${GOOGLE_SPEAKING_RATE}`);
-// Same voice before the speed setting existed. Its ~900 cached clips are served
-// when synthesis fails, so a provider outage or a bad key degrades to the
-// previous pace instead of silence.
-const fallbackVariant = provider === 'el' ? hash8(ELEVEN_BASE) : null;
 
 async function synthesizeElevenLabs(text: string): Promise<Buffer> {
   const res = await fetch(
@@ -112,6 +108,26 @@ async function fileExists(fileName: string): Promise<boolean> {
   return !!data && data.some((f) => f.name === fileName);
 }
 
+let variantsCache: { at: number; list: string[] } | null = null;
+
+/** Variant hashes present in the bucket, most-populated first; refreshed hourly. */
+async function cachedVariants(): Promise<string[]> {
+  if (variantsCache && Date.now() - variantsCache.at < 60 * 60 * 1000) return variantsCache.list;
+  const counts = new Map<string, number>();
+  const re = new RegExp(`^${provider}_([0-9a-f]{8})_s_`);
+  for (let offset = 0; ; offset += 1000) {
+    const { data } = await supabase.storage.from(TTS_BUCKET).list('', { limit: 1000, offset });
+    for (const f of data ?? []) {
+      const m = re.exec(f.name);
+      if (m) counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
+    }
+    if (!data || data.length < 1000) break;
+  }
+  const list = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([v]) => v);
+  variantsCache = { at: Date.now(), list };
+  return list;
+}
+
 async function signUrl(fileName: string): Promise<string | null> {
   const { data, error } = await supabase.storage.from(TTS_BUCKET).createSignedUrl(fileName, 3600);
   return !error && data?.signedUrl ? data.signedUrl : null;
@@ -155,14 +171,17 @@ export async function getOrSynthesizeGreekSpeech(
         ? await synthesizeElevenLabs(trimmed.slice(0, 800))
         : await synthesizeGoogle(trimmed.slice(0, 500));
   } catch (err) {
-    if (fallbackVariant && fallbackVariant !== variant) {
-      const oldName = `${provider}_${fallbackVariant}_s_${fnvKey(trimmed)}.mp3`;
-      if (await fileExists(oldName)) {
-        const url = await signUrl(oldName);
-        if (url) {
-          console.warn('tts: synthesis failed, serving previous-variant clip:', err instanceof Error ? err.message.slice(0, 120) : err);
-          return url;
-        }
+    // Any earlier voice/settings variant of the same text beats silence when the
+    // provider is down or the key is rejected. Deployments have run with
+    // different settings, so the clip may exist under any of several variants.
+    for (const v of await cachedVariants()) {
+      if (v === variant) continue;
+      const oldName = `${provider}_${v}_s_${fnvKey(trimmed)}.mp3`;
+      if (!(await fileExists(oldName))) continue;
+      const url = await signUrl(oldName);
+      if (url) {
+        console.warn('tts: synthesis failed, serving', oldName, '-', err instanceof Error ? err.message.slice(0, 120) : err);
+        return url;
       }
     }
     throw err;
