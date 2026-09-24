@@ -149,8 +149,6 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ vocabId, grade }),
     }),
-  stats: () => request<StatsResponse>('/stats'),
-  history: () => request<HistoryResponse>('/history'),
   readiness: () => request<ReadinessResponse>('/readiness'),
   tts: (text: string, cacheKey: string) =>
     request<{ audioUrl: string }>('/tts', {
@@ -218,16 +216,6 @@ export interface VocabCard {
   note: string | null;
   topic: string;
   level?: number;
-}
-export interface StatsResponse {
-  stats: UserStats;
-  streak: number;
-  vocab: VocabStats;
-  topicLabels: Record<string, string>;
-}
-export interface HistoryResponse {
-  sessions: { topic: string; score: number; total: number; completed_at: string }[];
-  topicLabels: Record<string, string>;
 }
 
 export interface ReadinessResponse {

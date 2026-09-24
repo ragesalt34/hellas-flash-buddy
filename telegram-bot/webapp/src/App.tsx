@@ -3,7 +3,7 @@ import { House, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from '
 import { TempleMark, QuizIcon } from './components/icons';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
-import { useLanguage } from './i18n';
+import { useLanguage, type Language } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
 import { ThemeSwitch } from './components/ThemeSwitch';
 
@@ -79,6 +79,17 @@ export function App() {
   // Bump key to force a screen to remount (reset its internal phase) when its tab is re-tapped.
   const [navKey, setNavKey] = useState(0);
   const home = () => setView('home');
+  // Set only by the readiness screen's "train" button; any other navigation clears it.
+  const [quizStart, setQuizStart] = useState<{ topic: string; lang: Language } | null>(null);
+  const nav = (v: View) => {
+    setQuizStart(null);
+    setView(v);
+  };
+  const train = (topic: string) => {
+    setQuizStart({ topic, lang: 'el' });
+    setNavKey((k) => k + 1);
+    setView('quiz');
+  };
 
   // Focus mode (quiz/flashcards/vocab, or the pre-entry auth gate): on desktop
   // the sidebar is hidden and the content is centred full-width with a bottom
@@ -102,6 +113,7 @@ export function App() {
 
   const goTab = (v: View) => {
     haptic('light');
+    setQuizStart(null);
     if (v === view) setNavKey((k) => k + 1);
     else setView(v);
   };
@@ -151,11 +163,11 @@ export function App() {
     <>
       <div className="aurora" />
       <div className="app">
-        {view === 'home' && <Home key={navKey} onNavigate={setView} />}
-        {view === 'quiz' && <Quiz key={navKey} onHome={home} />}
+        {view === 'home' && <Home key={navKey} onNavigate={nav} />}
+        {view === 'quiz' && <Quiz key={navKey} onHome={home} startTopic={quizStart?.topic} lang={quizStart?.lang} />}
         {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
-        {view === 'stats' && <Stats key={navKey} onHome={home} />}
+        {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={nav} onTrain={train} />}
       </div>
 
       <button className="focus-close" aria-label={t('nav.close')} onClick={home}>

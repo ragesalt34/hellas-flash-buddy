@@ -23,7 +23,7 @@ import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring } from '../ui';
-import { useLanguage } from '../i18n';
+import { useLanguage, type Language } from '../i18n';
 import { GeoIcon } from '../components/icons';
 import { Greek } from '../components/greek';
 
@@ -114,7 +114,7 @@ interface AnswerRec {
 
 type Phase = 'topic' | 'loading' | 'play' | 'result';
 
-export function Quiz({ onHome }: { onHome: () => void }) {
+export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTopic?: string; lang?: Language }) {
   const { t } = useLanguage();
   const [phase, setPhase] = useState<Phase>('topic');
   const [topic, setTopic] = useState('mixed');
@@ -138,12 +138,21 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     q.options.forEach((opt) => prefetchGreek(opt, textKey(opt)));
   }, [phase, idx, questions]);
 
+  // Opened from the readiness screen: go straight into that topic's quiz.
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (!startTopic || autoStarted.current) return;
+    autoStarted.current = true;
+    void start(startTopic);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function start(topicId: string) {
     haptic();
     setTopic(topicId);
     setPhase('loading');
     try {
-      const r = await api.quiz(topicId, 10);
+      const r = await api.quiz(topicId, 10, lang);
       setQuestions(r.questions);
       setTopicLabel(r.topicLabel);
       setIdx(0);
