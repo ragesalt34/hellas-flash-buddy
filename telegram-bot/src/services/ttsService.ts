@@ -35,15 +35,16 @@ const provider: Provider | null = ELEVEN_KEY ? 'el' : GOOGLE_KEY ? 'gtts' : null
 // Short fingerprint of the current voice/model/settings. Baked into the cache
 // filename so changing any of them auto-regenerates (old files just orphan)
 // instead of serving stale audio with the previous voice/tuning.
-const variant = crypto
-  .createHash('sha1')
-  .update(
-    provider === 'el'
-      ? `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_MODEL_SHORT}:${ELEVEN_SHORT_MAXLEN}:${ELEVEN_STABILITY}:${ELEVEN_SPEED}`
-      : `gtts:${GOOGLE_VOICE}:${GOOGLE_SPEAKING_RATE}`
-  )
-  .digest('hex')
-  .slice(0, 8);
+const hash8 = (s: string) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 8);
+const ELEVEN_BASE = `el:${ELEVEN_VOICE}:${ELEVEN_MODEL}:${ELEVEN_MODEL_SHORT}:${ELEVEN_SHORT_MAXLEN}:${ELEVEN_STABILITY}`;
+const variant =
+  provider === 'el'
+    ? hash8(`${ELEVEN_BASE}:${ELEVEN_SPEED}`)
+    : hash8(`gtts:${GOOGLE_VOICE}:${GOOGLE_SPEAKING_RATE}`);
+// Same voice before the speed setting existed. Its ~900 cached clips are served
+// when synthesis fails, so a provider outage or a bad key degrades to the
+// previous pace instead of silence.
+const fallbackVariant = provider === 'el' ? hash8(ELEVEN_BASE) : null;
 
 async function synthesizeElevenLabs(text: string): Promise<Buffer> {
   const res = await fetch(
@@ -147,10 +148,25 @@ export async function getOrSynthesizeGreekSpeech(
     }
   }
 
-  const audioBuffer =
-    provider === 'el'
-      ? await synthesizeElevenLabs(trimmed.slice(0, 800))
-      : await synthesizeGoogle(trimmed.slice(0, 500));
+  let audioBuffer: Buffer;
+  try {
+    audioBuffer =
+      provider === 'el'
+        ? await synthesizeElevenLabs(trimmed.slice(0, 800))
+        : await synthesizeGoogle(trimmed.slice(0, 500));
+  } catch (err) {
+    if (fallbackVariant && fallbackVariant !== variant) {
+      const oldName = `${provider}_${fallbackVariant}_s_${fnvKey(trimmed)}.mp3`;
+      if (await fileExists(oldName)) {
+        const url = await signUrl(oldName);
+        if (url) {
+          console.warn('tts: synthesis failed, serving previous-variant clip:', err instanceof Error ? err.message.slice(0, 120) : err);
+          return url;
+        }
+      }
+    }
+    throw err;
+  }
 
   // Never cache empty/degenerate audio — e.g. eleven_v3 returns an empty body
   // for very short inputs. Caching a 0-byte file would make that clip silent
