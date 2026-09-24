@@ -153,8 +153,10 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     }
   }
 
+  const wide = card.question.length + card.correct_answer.length > 120;
+
   return (
-    <div className="fade-in fc-screen" key={i}>
+    <div className={`fade-in fc-screen${wide ? ' fc-wide' : ''}`} key={i}>
       <FcDecor />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>

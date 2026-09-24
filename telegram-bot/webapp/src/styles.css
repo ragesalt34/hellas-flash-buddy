@@ -4663,6 +4663,20 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] body.focus:has(.fc-screen) .app { max-width: 740px; }
   [data-theme='soft'] .fc-screen .actionbar > * { max-width: 692px; }
 }
+/* Long question/answer: grow sideways instead of down. Chosen per card from
+   text length (see Flashcards.tsx) so the width stays put when the answer opens. */
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus:has(.fc-screen.fc-wide) .app { max-width: 900px; }
+  [data-theme='soft'] .fc-screen.fc-wide .actionbar > * { max-width: 852px; }
+  [data-theme='soft'] .fc-screen.fc-wide .fc-decor { --fd-gut: calc((100vw - 900px) / 2); }
+  [data-theme='soft'] .fc-screen.fc-wide .fc-decor .greek.fd-olive-br { width: min(176px, var(--fd-gut)); }
+}
+@media (min-width: 1280px) {
+  [data-theme='soft'] body.focus:has(.fc-screen.fc-wide) .app { max-width: 1020px; }
+  [data-theme='soft'] .fc-screen.fc-wide .actionbar > * { max-width: 972px; }
+  [data-theme='soft'] .fc-screen.fc-wide .fc-decor { --fd-gut: calc((100vw - 1020px) / 2); }
+}
+[data-theme='soft'] .fc-screen.fc-wide .fc-card .speak-row .qtext { max-width: 60ch; }
 
 /* ---- Card ---- */
 [data-theme='soft'] .fc-screen .fc-card {
