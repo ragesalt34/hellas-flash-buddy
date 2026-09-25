@@ -113,13 +113,6 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
  * host waking from sleep, a dropped request); anything past that is logged so it
  * is at least diagnosable. A full offline queue would be the next step up.
  */
-/** Nudge the API awake as soon as the page opens. The free host sleeps after
- * 15 idle minutes and takes 30–60 s to wake; starting that now means it is
- * usually up by the time the visitor clicks into the app. Fire-and-forget. */
-export function wakeApi(): void {
-  fetch(`${API_BASE}/healthz`, { cache: 'no-store' }).catch(() => {});
-}
-
 export function persistWrite(send: () => Promise<unknown>, what = 'write'): void {
   void send().catch(() =>
     new Promise((r) => setTimeout(r, 1200))
