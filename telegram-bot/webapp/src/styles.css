@@ -13,9 +13,8 @@
      radius  4 steps  — --r-*   (was 10 ad-hoc values)
      colour  muted earth tones + separate lifted tints for the dark plate
 
-   Two values sit off the scales on purpose and say so at the point of use:
-   the .lp-quote-mark ornament, and .input's literal 16px (iOS zooms a focused
-   field whose text is smaller).
+   One value sits off the scales on purpose and says so at the point of use:
+   .input's literal 16px (iOS zooms a focused field whose text is smaller).
    ============================================================ */
 
 :root,
@@ -142,9 +141,7 @@
      distinct font-size declarations (11/11.5/12.5/13/14/14.5/15/16/17/19/22/
      23/24/25/26/28/32/38…), which is what makes an interface feel assembled
      rather than designed. Every size below is a role, not a number: pick the
-     role and the value follows.
-     One documented exception stays off the scale: the giant decorative “ ”
-     glyph in .lp-quote-mark, which is an ornament rather than text. */
+     role and the value follows. */
   --t-hero: clamp(40px, 9.5vw, 78px);   /* landing h1 only */
   --t-h2: clamp(28px, 5vw, 44px);       /* section + screen headings */
   --t-title: clamp(22px, 3.2vw, 26px);  /* question, answer, auth, result titles */
@@ -1929,14 +1926,6 @@ button.chip:active { transform: scale(0.95); }
   max-width: 900px;
   text-align: center;
   padding: 0 10px;
-}
-.lp-quote-mark {
-  display: block;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(80px, 14vw, 150px);
-  line-height: 0.7;
-  color: var(--accent);
-  height: 0.5em;
 }
 .lp-quote-text {
   white-space: pre-line;
@@ -5091,3 +5080,159 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='brut'] .rd-olive-dots i { border-color: var(--muted); background: none; }
 [data-theme='brut'] .rd-olive-dots i.on { background: var(--text); box-shadow: none; }
 [data-theme='brut'] .rd-lang.l-el { color: var(--text); }
+
+/* ============ Landing art (components/landingArt.tsx) ============ */
+.landing { overflow-x: clip; }
+
+/* ---- Hero: Acropolis scene, drifting leaves, pointer parallax ---- */
+.lp-hero { position: relative; }
+.lp-hero-grid { position: relative; z-index: 1; }
+[data-theme='soft'] .lp-hero { background-image: none; }
+.lp-demo-wrap { isolation: isolate; }
+.lp-sun { position: absolute; z-index: -1; top: -64px; right: -58px; width: 190px; height: 190px; pointer-events: none; }
+.lp-sun .s-sun { fill: #f7cf73; opacity: 0.9; }
+.lp-sun .s-rays { transform-box: view-box; transform-origin: 100px 100px; animation: lp-spin 80s linear infinite; }
+.lp-sun .s-rays line { stroke: #f2b84b; stroke-width: 5; stroke-linecap: round; opacity: 0.55; }
+[data-theme='soft'] .lp-hero { padding-bottom: clamp(130px, 15vw, 200px); }
+.lp-panorama {
+  position: absolute; left: -22px; right: -22px; bottom: 0; z-index: 0;
+  width: calc(100% + 44px); height: clamp(120px, 16vw, 210px); pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 32%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 32%);
+  mask-composite: intersect;
+}
+.lp-panorama .s-hill-far { fill: #ece2cc; }
+.lp-panorama .s-sea { fill: #cfe2e3; opacity: 0.85; }
+.lp-panorama .s-wave { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; opacity: 0.85; }
+.lp-panorama .s-rock { fill: #e4d1a8; }
+.lp-panorama .s-temple path, .lp-panorama .s-temple rect { fill: #f8f0df; stroke: #bfa06d; stroke-width: 1.2; }
+.lp-panorama .s-cypress { fill: #8a9e70; }
+.lp-panorama .s-cypress.dark { fill: #6d8257; }
+.lp-panorama .s-ground { fill: #efe5cf; }
+.lp-panorama .lp-layer { transition: transform 0.7s var(--ease); }
+.lp-panorama .l-far { transform: translate(calc(var(--px, 0) * -6px), calc(var(--py, 0) * -2px)); }
+.lp-panorama .l-mid { transform: translate(calc(var(--px, 0) * -14px), calc(var(--py, 0) * -4px)); }
+.lp-panorama .l-near { transform: translate(calc(var(--px, 0) * -22px), 0); }
+@keyframes lp-spin { to { transform: rotate(360deg); } }
+
+.lp-leaves { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.lp-leaf { position: absolute; top: -30px; width: 20px; opacity: 0.75; animation: lp-fall linear infinite both; }
+.lp-leaf svg { display: block; width: 100%; animation: lp-sway 3.4s ease-in-out infinite alternate; }
+.lp-leaf path { fill: #a9b893; }
+.lp-leaf .vein { fill: none; stroke: #869a6c; stroke-width: 0.8; }
+.lp-leaf.k1 { left: 6%; animation-duration: 19s; animation-delay: -3s; }
+.lp-leaf.k2 { left: 22%; width: 15px; animation-duration: 24s; animation-delay: -11s; }
+.lp-leaf.k3 { left: 41%; width: 17px; animation-duration: 21s; animation-delay: -6s; }
+.lp-leaf.k4 { left: 57%; animation-duration: 26s; animation-delay: -17s; }
+.lp-leaf.k5 { left: 71%; width: 14px; animation-duration: 18s; animation-delay: -9s; }
+.lp-leaf.k6 { left: 86%; width: 18px; animation-duration: 23s; animation-delay: -1s; }
+.lp-leaf.k7 { left: 95%; width: 13px; animation-duration: 28s; animation-delay: -14s; }
+.lp-leaf.k2 svg, .lp-leaf.k5 svg { animation-duration: 4.2s; }
+.lp-leaf.k4 svg, .lp-leaf.k7 svg { animation-duration: 2.9s; }
+@keyframes lp-fall { from { transform: translateY(0) rotate(0); } to { transform: translateY(820px) rotate(300deg); } }
+@keyframes lp-sway { from { transform: translateX(-16px) rotate(-20deg); } to { transform: translateX(16px) rotate(20deg); } }
+
+.lp-float-ic { flex: none; width: 19px; height: 19px; }
+
+/* ---- Marquee: drawn topic glyphs ---- */
+.lp-mq-ic { flex: none; width: 22px; height: 22px; color: var(--amber); }
+.lp-mq-ic .g path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lp-mq-ic .g .g-soft { fill: currentColor; fill-opacity: 0.25; stroke: none; }
+.lp-mq-ic .g .g-dot { fill: currentColor; }
+
+/* ---- Steps: coins with Α Β Γ, joined by a path drawn on scroll ---- */
+.lp-steps { position: relative; }
+.lp-step { position: relative; z-index: 1; }
+.lp-steps-path { position: absolute; left: 0; top: 50%; z-index: 0; width: 100%; height: 60px; transform: translateY(-50%); pointer-events: none; }
+.lp-steps-path path { fill: none; stroke: #d7b88a; stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+@media (max-width: 899px) { .lp-steps-path { display: none; } }
+.lp-learn .lp-step .num.lp-coin-num,
+.lp-step .num.lp-coin-num { width: 52px; height: 52px; padding: 0; border: 0; border-radius: 50%; background: none; box-shadow: none; }
+.lp-coin-letter { display: block; width: 52px; height: 52px; }
+.lp-coin-letter .c-rim { fill: #ecca7f; }
+.lp-coin-letter .c-bead { fill: none; stroke: #8a6424; stroke-width: 1.2; stroke-dasharray: 0.1 3.1; stroke-linecap: round; opacity: 0.7; }
+.lp-coin-letter .c-face { fill: #f8e8bf; stroke: #8a6424; stroke-opacity: 0.35; stroke-width: 0.8; }
+.lp-coin-letter .c-letter { fill: #8a6424; font: 700 22px Georgia, 'Times New Roman', serif; }
+[data-theme='brut'] .lp-coin-letter .c-rim, [data-theme='brut'] .lp-coin-letter .c-face { fill: var(--surface, #fff); stroke: var(--text); }
+[data-theme='brut'] .lp-coin-letter .c-letter { fill: var(--text); }
+
+/* ---- Features: drawn objects instead of stock icons ---- */
+.lp-feature .ic .ha { width: 30px; height: 30px; }
+.lp-feature:hover .ha-tablet .ha-stylus { animation: ha-write 0.7s ease-in-out 2; }
+.lp-feature:hover .ha-ostraka .ha-sherd.back { transform: translate(2px, -1.5px) rotate(9deg); }
+.lp-feature:hover .ha-ostraka .ha-sherd.front { transform: translate(-1px, 0.5px) rotate(-6deg); }
+.lp-feature:hover .ha-papyrus .ha-roll { transform: translateX(2.2px); }
+.lp-feature:hover .ha-papyrus .ha-sheet { transform: scaleX(1.12); }
+.lp-feature:hover .ha-chart .ha-col.c1 { transform: scaleY(1.12); }
+.lp-feature:hover .ha-chart .ha-col.c2 { transform: scaleY(1.06); }
+.ha-lyre .ha-wave { opacity: 0.55; }
+.lp-feature:hover .ha-lyre .ha-wave.w1 { animation: lp-wave 0.9s ease-in-out 2; }
+.lp-feature:hover .ha-lyre .ha-wave.w2 { animation: lp-wave 0.9s ease-in-out 0.15s 2; }
+@keyframes lp-wave { 50% { opacity: 1; transform: translateX(1.5px); } }
+
+/* ---- Quote as a marble stele ---- */
+.lp-stele { max-width: 780px; margin: 0 auto; }
+.lp-stele-top { display: block; width: calc(100% + 28px); height: 54px; margin: 0 -14px -1px; }
+.lp-stele-top .p-roof { fill: #f3ead7; stroke: #cdb68d; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.lp-stele-top .p-tymp { fill: #ece0c6; }
+.lp-stele-top .p-rosette { fill: #e2c27a; stroke: #b0915f; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.lp-stele-top .p-acro { fill: #e2c27a; }
+.lp-stele-body { position: relative; padding: 34px clamp(64px, 11vw, 116px) 30px; }
+[data-theme='soft'] .lp-stele-body {
+  background: radial-gradient(120% 90% at 20% 10%, rgba(255, 255, 255, 0.7), transparent 60%), linear-gradient(180deg, #fbf7ee, #f1e8d6);
+  border-left: 1px solid #d9c6a0;
+  border-right: 1px solid #d9c6a0;
+  box-shadow: inset 0 0 44px rgba(180, 150, 100, 0.14);
+}
+.lp-stele-base { height: 14px; margin: 0 -14px; border-radius: 2px; background: #ece0c6; border: 1px solid #cdb68d; box-shadow: 0 12px 26px -16px rgba(100, 75, 40, 0.45); }
+[data-theme='soft'] .lp-stele .lp-quote-text { font-family: 'EB Garamond', Georgia, serif; font-weight: 600; letter-spacing: 0; color: #4e3f28; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85); }
+[data-theme='soft'] .lp-stele .lp-quote-sub { color: #8a7656; }
+.lp-stele-olive { position: absolute; top: 50%; width: 86px; height: auto; opacity: 0.85; }
+.lp-stele-olive.left { left: -6px; transform: translateY(-50%) rotate(-72deg); }
+.lp-stele-olive.right { right: -6px; transform: translateY(-50%) rotate(72deg); }
+@media (max-width: 640px) {
+  .lp-stele-body { padding: 26px 20px 24px; }
+  .lp-stele-olive { display: none; }
+}
+[data-theme='brut'] .lp-stele-top, [data-theme='brut'] .lp-stele-base { display: none; }
+
+/* ---- Stats: drachmas that flip face-up ---- */
+.lp-stats { perspective: 900px; }
+.lp-coin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fbe9ad, #e4ba5c 58%, #c69638);
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.22), inset 0 0 0 7px #b48430, 0 10px 22px -10px rgba(0, 0, 0, 0.6);
+  backface-visibility: hidden;
+}
+.lp-coin::before { content: ''; position: absolute; inset: 11px; border-radius: 50%; border: 2px dotted rgba(90, 61, 16, 0.45); }
+.lp-coin .n { position: relative; color: #5a3d10 !important; font-size: clamp(24px, 3vw, 32px); letter-spacing: -0.5px; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
+.lp-stat .lp-coin + .l { margin-top: 12px; }
+@media (max-width: 700px) {
+  .lp-coin { width: 94px; height: 94px; }
+  .lp-coin .n { font-size: 22px; }
+}
+[data-theme='brut'] .lp-coin { background: var(--amber); box-shadow: none; border: 2px solid var(--border); }
+
+/* ---- Closing call: sunset over the sea ---- */
+[data-theme='soft'] .lp-foot { background: linear-gradient(180deg, #fbe3a8 0%, #f6c27f 55%, #ee9f78 100%); padding-bottom: clamp(128px, 17vw, 178px); }
+.lp-foot > h2, .lp-foot > .lp-btn { position: relative; z-index: 1; }
+.lp-sunset { position: absolute; left: 0; bottom: 0; width: 100%; height: clamp(112px, 15vw, 170px); pointer-events: none; }
+.lp-sunset .u-sun { fill: #fff4d6; opacity: 0.8; }
+.lp-sunset .u-sea { fill: #e8866a; opacity: 0.55; }
+.lp-sunset .u-glint { fill: none; stroke: #fff3cf; stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
+.lp-sunset .u-hill, .lp-sunset .u-temple path, .lp-sunset .u-temple rect, .lp-sunset .u-cypress { fill: #7a4a52; opacity: 0.55; }
+.lp-sunset .u-bird { fill: none; stroke: #7a4a52; stroke-width: 2; stroke-linecap: round; opacity: 0.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-leaves { display: none; }
+  .lp-sun .s-rays { animation: none; }
+  .lp-panorama .lp-layer { transition: none; transform: none; }
+  .lp-feature:hover .ha-lyre .ha-wave { animation: none; }
+}

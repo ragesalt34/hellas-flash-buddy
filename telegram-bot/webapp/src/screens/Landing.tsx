@@ -1,26 +1,30 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import {
-  Layers, BookA, BarChart3, Flame, Volume2, ArrowRight,
-  MousePointerClick, Target, Drama, Scale, type LucideIcon,
-} from 'lucide-react';
+import { ArrowRight, MousePointerClick } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
-import { TempleMark, MeanderRule, Sparks, QuizIcon, GeoIcon } from '../components/icons';
+import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
+import { TopicGlyph } from '../components/statsArt';
+import { Aspis, ColumnChart, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
+import { CoinLetter, HeroPanorama, HeroSun, FallingLeaves, SoundLyre, StelePediment, SunsetScene } from '../components/landingArt';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
 // that used to be dusty rose — it reads more distinctly next to the two warm
 // reds, and it was otherwise unused in this grid.)
-const FEATURES: { icon: LucideIcon | typeof QuizIcon; color: string; titleKey: string; textKey: string }[] = [
-  { icon: QuizIcon, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
-  { icon: Layers, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
-  { icon: BookA, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
-  { icon: Volume2, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },
-  { icon: Flame, color: 'var(--coral)', titleKey: 'landing.feature.streak.title', textKey: 'landing.feature.streak.text' },
-  { icon: BarChart3, color: 'var(--blue)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
+const FEATURES: { icon: ComponentType<{ className?: string }>; color: string; titleKey: string; textKey: string }[] = [
+  { icon: WaxTablet, color: 'var(--accent)', titleKey: 'landing.feature.quiz.title', textKey: 'landing.feature.quiz.text' },
+  { icon: Ostraka, color: 'var(--violet)', titleKey: 'landing.feature.flashcards.title', textKey: 'landing.feature.flashcards.text' },
+  { icon: Papyrus, color: 'var(--mint)', titleKey: 'landing.feature.vocab.title', textKey: 'landing.feature.vocab.text' },
+  { icon: SoundLyre, color: 'var(--amber)', titleKey: 'landing.feature.speech.title', textKey: 'landing.feature.speech.text' },
+  { icon: OilLamp, color: 'var(--coral)', titleKey: 'landing.feature.streak.title', textKey: 'landing.feature.streak.text' },
+  { icon: ColumnChart, color: 'var(--blue)', titleKey: 'landing.feature.progress.title', textKey: 'landing.feature.progress.text' },
 ];
+
+const STEP_LETTERS = ['Α', 'Β', 'Γ'];
+
+const MARQUEE_TOPICS = ['history', 'culture', 'laws', 'geography'];
 
 const STEPS: { titleKey: string; textKey: string }[] = [
   { titleKey: 'landing.step1.title', textKey: 'landing.step1.text' },
@@ -188,6 +192,13 @@ export function Landing({
   onGuest: () => void;
 }) {
   const { t } = useLanguage();
+  // Pointer position over the hero, -1..1, read by CSS to shift the scene layers.
+  const onHeroMove = (e: ReactPointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--px', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+    e.currentTarget.style.setProperty('--py', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+  };
   return (
     <div className="landing">
       <nav className="lp-nav">
@@ -198,7 +209,9 @@ export function Landing({
         </div>
       </nav>
 
-      <header className="lp-hero">
+      <header className="lp-hero" onPointerMove={onHeroMove}>
+        <HeroPanorama />
+        <FallingLeaves />
         <div className="lp-hero-grid">
           <div className="lp-hero-copy">
             <motion.span
@@ -232,6 +245,7 @@ export function Landing({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
           >
+            <HeroSun />
             <div className="lp-demo-label">{t('landing.demo.label')}</div>
             <DemoCard />
             {/* Floating product stickers — fill the side space, echo the app UI */}
@@ -242,7 +256,7 @@ export function Landing({
               transition={{ delay: 0.55, duration: 0.5, ease: EASE }}
               aria-hidden="true"
             >
-              <Flame size={17} strokeWidth={2.5} /> ×7
+              <OilLamp className="lp-float-ic" /> ×7
             </motion.span>
             <motion.span
               className="lp-float f2"
@@ -251,7 +265,7 @@ export function Landing({
               transition={{ delay: 0.7, duration: 0.5, ease: EASE }}
               aria-hidden="true"
             >
-              <Target size={17} strokeWidth={2.5} /> 87%
+              <Aspis className="lp-float-ic" /> 87%
             </motion.span>
             <motion.span
               className="lp-float f3"
@@ -260,7 +274,7 @@ export function Landing({
               transition={{ delay: 0.85, duration: 0.5, ease: EASE }}
               aria-hidden="true"
             >
-              <Volume2 size={17} strokeWidth={2.5} /> α β γ
+              <SoundLyre className="lp-float-ic" /> α β γ
             </motion.span>
           </motion.div>
         </div>
@@ -271,10 +285,14 @@ export function Landing({
         <div className="lp-marquee-track">
           {[0, 1].map((copy) => (
             <span className="lp-marquee-seg" key={copy}>
-              <span className="lp-marquee-item"><TempleMark size={19} strokeWidth={2.4} /> {t('topic.history').toUpperCase()}</span>
-              <span className="lp-marquee-item"><Drama size={19} strokeWidth={2.4} /> {t('topic.culture').toUpperCase()}</span>
-              <span className="lp-marquee-item"><Scale size={19} strokeWidth={2.4} /> {t('topic.laws').toUpperCase()}</span>
-              <span className="lp-marquee-item"><GeoIcon size={19} strokeWidth={2.2} /> {t('topic.geography').toUpperCase()}</span>
+              {MARQUEE_TOPICS.map((topic) => (
+                <span className="lp-marquee-item" key={topic}>
+                  <svg className="lp-mq-ic" viewBox="0 0 32 32" aria-hidden="true">
+                    <TopicGlyph topic={topic} />
+                  </svg>{' '}
+                  {t(`topic.${topic}`).toUpperCase()}
+                </span>
+              ))}
             </span>
           ))}
         </div>
@@ -289,6 +307,15 @@ export function Landing({
         <Sparks className="lp-spark tail" />
       </motion.h2>
       <section className="lp-steps">
+        <svg className="hs-deco lp-steps-path" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
+          <motion.path
+            d="M40 30 C190 -6 320 66 500 30 S810 -6 960 30"
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 1.6, ease: EASE }}
+          />
+        </svg>
         {STEPS.map((s, i) => (
           <motion.div
             key={s.titleKey}
@@ -301,7 +328,9 @@ export function Landing({
             whileHover={{ y: -3 }}
           >
             <Sparks className="lp-spark corner" size={36} />
-            <span className="num">{i + 1}</span>
+            <span className="num lp-coin-num">
+              <CoinLetter letter={STEP_LETTERS[i] ?? String(i + 1)} />
+            </span>
             <h3>{t(s.titleKey)}</h3>
             <p>{t(s.textKey)}</p>
           </motion.div>
@@ -345,7 +374,7 @@ export function Landing({
             >
               <Sparks className="lp-spark corner" size={36} />
               <span className="ic">
-                <Icon size={24} strokeWidth={2.3} />
+                <Icon />
               </span>
               <h3>{t(f.titleKey)}</h3>
               <p>{t(f.textKey)}</p>
@@ -367,18 +396,43 @@ export function Landing({
         transition={{ duration: 0.7, ease: EASE }}
         viewport={{ once: true, margin: '-80px' }}
       >
-        <span className="lp-quote-mark" aria-hidden="true">“</span>
-        <p className="lp-quote-text">{t('landing.quote')}</p>
-        <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
+        <div className="lp-stele">
+          <StelePediment />
+          <div className="lp-stele-body">
+            <OliveSprig className="lp-stele-olive left" flip />
+            <OliveSprig className="lp-stele-olive right" />
+            <p className="lp-quote-text">{t('landing.quote')}</p>
+            <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
+          </div>
+          <div className="lp-stele-base" aria-hidden="true" />
+        </div>
       </motion.section>
 
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
         {/* `-lift` tints, not the base tokens: the muted palette is too dark on
             the ink plate (base --blue lands at 2.92:1, under the 3:1 floor). */}
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--amber-lift)' }}><CountUp to={160} suffix="+" /></div><div className="l">{t('landing.stat.questions')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--mint-lift)' }}><CountUp to={150} suffix="+" /></div><div className="l">{t('landing.stat.words')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--accent-lift)' }}><CountUp to={4} /></div><div className="l">{t('landing.stat.topics')}</div></div>
-        <div className="lp-stat"><div className="n" style={{ color: 'var(--blue-lift)' }}>SRS</div><div className="l">{t('landing.stat.srs')}</div></div>
+        {[
+          { n: <CountUp to={160} suffix="+" />, l: 'landing.stat.questions', c: 'var(--amber-lift)' },
+          { n: <CountUp to={150} suffix="+" />, l: 'landing.stat.words', c: 'var(--mint-lift)' },
+          { n: <CountUp to={4} />, l: 'landing.stat.topics', c: 'var(--accent-lift)' },
+          { n: 'SRS', l: 'landing.stat.srs', c: 'var(--blue-lift)' },
+        ].map((st, i) => (
+          <div className="lp-stat" key={st.l}>
+            {/* A drachma that flips face-up as the plate scrolls in. */}
+            <motion.div
+              className="lp-coin"
+              initial={{ rotateY: 180 }}
+              whileInView={{ rotateY: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.9, delay: i * 0.12, ease: EASE }}
+            >
+              <div className="n" style={{ color: st.c }}>
+                {st.n}
+              </div>
+            </motion.div>
+            <div className="l">{t(st.l)}</div>
+          </div>
+        ))}
       </motion.section>
 
       <div className="lp-rule" aria-hidden="true">
@@ -413,6 +467,7 @@ export function Landing({
         transition={{ duration: 0.6, ease: EASE }}
         viewport={{ once: true }}
       >
+        <SunsetScene />
         <h2>{t('landing.foot.title')}</h2>
         <button className="lp-btn primary" onClick={onStart}>{t('landing.foot.cta')} <ArrowRight size={19} strokeWidth={2.6} /></button>
       </motion.section>
