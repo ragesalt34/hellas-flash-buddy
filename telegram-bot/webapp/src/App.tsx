@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { House, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
-import { TempleMark, QuizIcon } from './components/icons';
+import { QuizIcon } from './components/icons';
+import { LogoMark } from './components/Logo';
 import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
@@ -169,7 +170,7 @@ export function App() {
               theme's coral badge, but the square theme draws the block as bare
               paper, where white-on-white made the logo vanish. */}
           <div className="nav-brand" aria-hidden="true">
-            <TempleMark size={24} />
+            <LogoMark />
           </div>
           <MeanderBand className="nav-meander" height={7} />
           {NAV.map((n) => {

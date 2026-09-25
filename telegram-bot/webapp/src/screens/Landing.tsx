@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ComponentType, type PointerEvent as R
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, MousePointerClick } from 'lucide-react';
 import { useLanguage } from '../i18n';
+import { Logo, LogoMark } from '../components/Logo';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
@@ -166,22 +167,6 @@ function DemoCard() {
   );
 }
 
-/** Brand lockup — the mark plus the two-tone wordmark, used in the nav and the
- *  footer. One component so the two never drift apart; `size` is the mark's,
- *  the wordmark scales from CSS. */
-function Brand({ size }: { size: number }) {
-  return (
-    <div className="lp-brand">
-      <span className="lp-logo">
-        <TempleMark size={size} />
-      </span>
-      <span className="lp-word">
-        Hellas <em>Study</em>
-      </span>
-    </div>
-  );
-}
-
 export function Landing({
   onStart,
   onLogin,
@@ -202,7 +187,8 @@ export function Landing({
   return (
     <div className="landing">
       <nav className="lp-nav">
-        <Brand size={22} />
+        <Logo className="lp-nav-logo" />
+        <LogoMark className="lp-nav-mark" />
         <div className="lp-nav-right">
           <LanguageSwitch />
           <button className="lp-btn ghost" onClick={onLogin}>{t('landing.enter')}</button>
@@ -456,7 +442,7 @@ export function Landing({
       </motion.section>
 
       <footer className="lp-footer">
-        <Brand size={18} />
+        <Logo variant="wide" />
         <span className="lp-footer-note">© 2026 · {t('landing.footer.tag')}</span>
       </footer>
     </div>

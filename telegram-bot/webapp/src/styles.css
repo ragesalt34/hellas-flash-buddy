@@ -129,13 +129,6 @@
      instead of the system fallback. */
   --font-display: 'Rubik', 'Manrope', 'Onest', system-ui, sans-serif;
   --font-body: 'Onest', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  /* Wordmark only — never body or headings. A Garamond revival: Claude Garamond's
-     punchcutting produced the first great Greek types (the grecs du roi, cut for
-     François I in the 1540s), so the lineage is literal rather than decorative.
-     It also covers Greek AND Cyrillic, which the UI fonts do not — Rubik and
-     Onest have no Greek at all. Georgia is the fallback: also a serif with both
-     alphabets, so the lockup degrades in kind rather than into a sans. */
-  --font-brand: 'EB Garamond', Georgia, 'Times New Roman', serif;
 
   /* Type scale — 9 steps for the whole product. The stylesheet had grown to 33
      distinct font-size declarations (11/11.5/12.5/13/14/14.5/15/16/17/19/22/
@@ -1495,36 +1488,6 @@ button.chip:active { transform: scale(0.95); }
 /* Inline in the landing nav row instead of a fixed corner pill (avoids
    overlapping the brand logo in the opposite top corner). */
 .lp-nav-right .lang-switch { position: static; }
-/* Brand lockup. Garamond runs optically smaller than the geometric sans it
-   replaces — same x-height budget, narrower and lighter — so the wordmark gets
-   a size bump and loses the negative tracking a sans wants. */
-.lp-brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  font-family: var(--font-brand);
-  font-weight: 600;
-  font-size: 25px;
-  letter-spacing: 0.005em;
-}
-/* "Study" in terracotta: the name then reads as one word plus a qualifier
-   rather than two words of equal weight. */
-.lp-word { white-space: nowrap; }
-.lp-word em { font-style: normal; color: var(--accent); }
-/* Under ~520px the language pill and the sign-in button leave the wordmark
-   about 76px — not enough at any size, and it was wrapping into a broken
-   "Hellas / Study" stack. The mark alone carries the brand there. */
-@media (max-width: 519px) {
-  .lp-nav .lp-word { display: none; }
-}
-.lp-logo {
-  color: #fff; /* the mark sits on the coral tile — was inline in Landing.tsx */
-  width: 38px; height: 38px; border-radius: var(--r-md);
-  background: var(--accent);
-  border: 2px solid var(--border);
-  display: grid; place-items: center;
-  box-shadow: var(--glow-coral);
-}
 .lp-hero {
   padding: clamp(30px, 6vw, 64px) 0 clamp(28px, 5vw, 48px);
   /* subtle dot grid so the hero canvas isn't dead-white */
@@ -1898,8 +1861,6 @@ button.chip:active { transform: scale(0.95); }
   padding-top: 26px;
   border-top: var(--bd-w) solid var(--bd-c);
 }
-.lp-footer .lp-logo { width: 32px; height: 32px; border-radius: var(--r-sm); }
-.lp-footer .lp-brand { font-size: 19px; }
 .lp-footer-note { font-size: var(--t-meta); font-weight: 600; color: var(--muted); }
 
 /* framer-motion owns `transform` on these cards (scroll-reveal + hover lift), so
@@ -2482,11 +2443,6 @@ button.chip:active { transform: scale(0.95); }
   }
 }
 
-/* Подвальный лок-ап меньше навигационного: 19px — это уже не «крупный текст»,
-   порог поднимается с 3:1 до 4.5:1, а --accent на песке даёт ровно 4.42.
-   Берём готовый тёмный терракотовый токен (5.92:1). В шапке 25px остаются на
-   --accent: там порог 3.0 и запас есть. */
-.lp-footer .lp-word em { color: var(--accent-2); }
 
 /* Главное действие экрана («Далее», «Показать ответ») на телефоне стояло в
    потоке под карточкой и после ответа уезжало под нижнюю навигацию: замер на
@@ -5228,4 +5184,23 @@ button.chip:active { transform: scale(0.95); }
   .lp-sun .s-rays { animation: none; }
   .lp-panorama .lp-layer { transition: none; transform: none; }
   .lp-feature:hover .ha-lyre .ha-wave { animation: none; }
+}
+
+/* ============ Brand artwork (components/Logo.tsx, public/brand/) ============ */
+.logo, .logo-mark { display: block; flex: none; max-width: 100%; user-select: none; }
+.logo-compact { height: 56px; width: auto; }
+.logo-wide { width: min(460px, 100%); height: auto; }
+.lp-footer { flex-direction: column; align-items: center; text-align: center; }
+/* Under ~520px the language pill and sign-in button leave no room for the
+   wordmark; the seal alone carries the brand there. */
+.lp-nav-mark { display: none; width: 44px; height: 44px; }
+@media (max-width: 519px) {
+  .lp-nav-logo { display: none; }
+  .lp-nav-mark { display: block; }
+}
+/* side rail: the seal replaces the coral tile */
+.nav-brand .logo-mark { width: 30px; height: 30px; }
+@media (min-width: 900px) {
+  :not([data-theme='brut']) .nav-brand { background: none; box-shadow: none; border: 0; }
+  .nav-brand .logo-mark { width: 56px; height: 56px; }
 }
