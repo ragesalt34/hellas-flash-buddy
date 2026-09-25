@@ -7,6 +7,7 @@ import {
 import { useLanguage } from '../i18n';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { TempleMark, MeanderRule, Sparks, QuizIcon, GeoIcon } from '../components/icons';
+import { MeanderBand, OliveSprig } from '../components/greekArt';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -306,6 +307,12 @@ export function Landing({
           </motion.div>
         ))}
       </section>
+
+      <div className="lp-greek-divider" aria-hidden="true">
+        <OliveSprig className="lp-div-olive" flip />
+        <MeanderBand className="lp-div-band" height={12} />
+        <OliveSprig className="lp-div-olive" />
+      </div>
 
       <motion.h2
         className="lp-steps-h lp-fun-h h-features"

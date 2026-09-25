@@ -2,6 +2,7 @@ import { useEffect, useId, useState, type ReactNode } from 'react';
 import { House, type LucideIcon } from 'lucide-react';
 import { cacheGet, cacheSet } from './api';
 import { useLanguage } from './i18n';
+import { LaurelWreath } from './components/greekArt';
 
 /**
  * Stale-while-revalidate data hook: returns cached data instantly (so the
@@ -144,6 +145,7 @@ export function Empty({
     <div className="fade-in center-col">
       <div className="empty">
         <div className="e">
+          <LaurelWreath className="e-wreath" />
           <Icon size={52} strokeWidth={1.8} />
         </div>
         <p>{text}</p>

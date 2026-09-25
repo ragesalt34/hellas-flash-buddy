@@ -4,6 +4,8 @@ import { api, clearCache } from '../api';
 import { setToken } from '../auth';
 import { haptic, notify } from '../telegram';
 import { useLanguage } from '../i18n';
+import { Greek } from '../components/greek';
+import { MeanderBand, OliveSprig } from '../components/greekArt';
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 
@@ -57,7 +59,12 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
   return (
     <div className="fade-in center-col">
       <form className="card auth-card" onSubmit={submit}>
-        <h2 className="auth-title">{t('auth.title')}</h2>
+        <MeanderBand className="auth-meander" height={10} />
+        <Greek name="temple" className="auth-temple" />
+        <h2 className="auth-title">
+          {t('auth.title')}
+          <OliveSprig className="auth-olive" />
+        </h2>
         <p className="auth-sub">{t('auth.sub')}</p>
 
         <div className="auth-tabs" role="tablist">

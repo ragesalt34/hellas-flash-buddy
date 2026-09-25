@@ -8,6 +8,7 @@ import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
+import { LaurelWreath } from '../components/greekArt';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
@@ -89,6 +90,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <VocabularyFrame />
         <div className="result">
           <div className="emoji">
+            <LaurelWreath className="emoji-wreath" gold />
             <PartyPopper size={56} strokeWidth={1.8} />
           </div>
           <div className="ttl">{t('vocab.done')}</div>

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { House, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
 import { TempleMark, QuizIcon } from './components/icons';
+import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage, type Language } from './i18n';
@@ -182,6 +183,7 @@ export function App() {
           <div className="nav-brand" aria-hidden="true">
             <TempleMark size={24} />
           </div>
+          <MeanderBand className="nav-meander" height={7} />
           {NAV.map((n) => {
             const Icon = n.icon;
             const active = view === n.id;

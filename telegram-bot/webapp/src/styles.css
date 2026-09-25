@@ -4860,3 +4860,55 @@ button.chip:active { transform: scale(0.95); }
   .rd-verdict-title, .rd-blockers { justify-content: center; }
   .rd-grid { gap: 4px; }
 }
+
+/* ============ Greek ornaments — second pass ============
+   Vector olive sprig / laurel wreath / meander band (components/greekArt.tsx)
+   plus the watercolour PNGs, on the screens that had none. All carry .hs-deco,
+   so the square theme hides every one of them. */
+.olive-sprig, .laurel-wreath { display: block; pointer-events: none; }
+[data-theme='brut'] .lp-greek-divider { display: none; }
+
+/* Stats (readiness) */
+.rd-label { display: flex; align-items: center; gap: 12px; }
+.rd-label > span { flex: none; }
+.rd-label .rd-label-rule { flex: 1; max-width: 200px; color: #d7b88a; opacity: 0.75; }
+.rd-verdict { position: relative; }
+.rd-verdict-olive { position: absolute; top: -22px; right: 16px; width: 104px; height: auto; transform: rotate(-6deg); }
+.rd-ring { position: relative; flex: none; display: grid; place-items: center; }
+.rd-ring-wreath { position: absolute; left: 50%; top: 50%; width: 172px; height: 172px; transform: translate(-50%, -50%); }
+[data-theme='soft'] .rd-verdict .rd-ring { margin: 26px 24px 26px 26px; }
+.rd-ready-temple { width: 34px; height: auto; margin-left: 6px; }
+.rd-topics, .rd-activity { position: relative; }
+.rd-corner { position: absolute; top: 9px; left: 9px; width: 26px; height: auto; opacity: 0.55; }
+[data-theme='soft'] .rd-topics { padding-top: 34px; }
+.rd-amphora { position: absolute; right: 22px; bottom: 14px; width: 64px; height: auto; opacity: 0.85; }
+@media (max-width: 700px) { .rd-amphora { display: none; } }
+@media (max-width: 520px) {
+  [data-theme='soft'] .rd-verdict .rd-ring { margin: 30px auto 22px; }
+  .rd-verdict-olive { width: 76px; top: 10px; right: 12px; }
+}
+
+/* Sign-in card */
+[data-theme='soft'] .auth-card { position: relative; overflow: hidden; padding-top: 38px; }
+[data-theme='soft'] .auth-card > :not(.hs-deco) { position: relative; z-index: 1; }
+.auth-meander { position: absolute; top: 14px; left: 22px; width: calc(100% - 44px); color: #d7b88a; }
+.auth-temple { position: absolute; right: -14px; bottom: -8px; width: 160px; height: auto; opacity: 0.12; }
+.auth-olive { display: inline-block; width: 58px; height: auto; margin-left: 8px; vertical-align: middle; }
+
+/* Empty / error states and finished decks */
+[data-theme='soft'] .empty .e { position: relative; margin-bottom: 36px; }
+.e-wreath { position: absolute; left: 50%; top: 50%; width: 150px; height: 150px; transform: translate(-50%, -50%); }
+[data-theme='soft'] .result .emoji { position: relative; padding: 28px 0; }
+.emoji-wreath { position: absolute; left: 50%; top: 50%; width: 126px; height: 126px; transform: translate(-50%, -50%); }
+
+/* Desktop side rail */
+.nav-meander { display: none; }
+@media (min-width: 900px) {
+  [data-theme='soft'] .nav-meander { display: block; width: 40px; margin: -2px auto 12px; color: #d7b88a; }
+}
+
+/* Landing: divider between "how it works" and "what's inside" */
+.lp-greek-divider { display: flex; align-items: center; gap: 12px; max-width: 560px; margin: 48px auto 4px; padding: 0 16px; color: #d7b88a; }
+.lp-div-olive { flex: none; width: 92px; height: auto; }
+.lp-div-band { flex: 1; min-width: 0; }
+@media (max-width: 560px) { .lp-div-olive { width: 62px; } }

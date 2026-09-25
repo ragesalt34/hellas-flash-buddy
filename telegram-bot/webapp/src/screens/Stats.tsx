@@ -20,6 +20,8 @@ import type { View } from '../App';
 import { Empty, Loading, ProgressBar, Ring, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { haptic } from '../telegram';
+import { Greek } from '../components/greek';
+import { LaurelWreath, MeanderBand, OliveSprig } from '../components/greekArt';
 
 const VERDICT_ICON: Record<ReadinessResponse['verdict'], LucideIcon> = {
   early: Sprout,
@@ -51,6 +53,15 @@ function resultIcon(p: number): LucideIcon {
   if (p >= 80) return Trophy;
   if (p >= 60) return ThumbsUp;
   return Meh;
+}
+
+function Label({ children }: { children: string }) {
+  return (
+    <div className="section-label rd-label">
+      <span>{children}</span>
+      <MeanderBand className="rd-label-rule" height={8} />
+    </div>
+  );
 }
 
 function Criterion({
@@ -110,16 +121,21 @@ export function Stats({
 
   return (
     <div className="fade-in rd-screen">
-      <div className="section-label">{t('rd.title')}</div>
+      <Label>{t('rd.title')}</Label>
       <div className={`card rd-verdict v-${data.verdict}`}>
-        <Ring pct={data.score} size={112} stroke={11}>
-          <div className="ring-pct" style={{ fontSize: 24 }}>
-            {data.score}%
-          </div>
-        </Ring>
+        <OliveSprig className="rd-verdict-olive" />
+        <div className="rd-ring">
+          <LaurelWreath className="rd-ring-wreath" gold={data.verdict === 'ready'} />
+          <Ring pct={data.score} size={112} stroke={11}>
+            <div className="ring-pct" style={{ fontSize: 24 }}>
+              {data.score}%
+            </div>
+          </Ring>
+        </div>
         <div className="rd-verdict-body">
           <div className="rd-verdict-title">
             <VIcon size={22} strokeWidth={2.4} /> {t(`rd.verdict.${data.verdict}`)}
+            {data.verdict === 'ready' && <Greek name="temple" className="rd-ready-temple" />}
           </div>
           <p className="rd-verdict-hint">{t(`rd.verdictHint.${data.verdict}`)}</p>
           {data.blockers.length > 0 && (
@@ -136,7 +152,7 @@ export function Stats({
         </div>
       </div>
 
-      <div className="section-label">{t('rd.criteria')}</div>
+      <Label>{t('rd.criteria')}</Label>
       <div className="card rd-criteria">
         <Criterion
           title={t('rd.crit.greek')}
@@ -170,8 +186,9 @@ export function Stats({
         />
       </div>
 
-      <div className="section-label">{t('rd.byTopic')}</div>
+      <Label>{t('rd.byTopic')}</Label>
       <div className="card rd-topics">
+        <Greek name="decorative-corner" className="rd-corner" />
         <div className="rd-trow rd-thead">
           <span />
           <span>{t('rd.col.greek')}</span>
@@ -207,7 +224,7 @@ export function Stats({
         })}
       </div>
 
-      <div className="section-label">{t('rd.today')}</div>
+      <Label>{t('rd.today')}</Label>
       <div className="card rd-today">
         {data.due.cards + data.due.words === 0 && <div className="rd-sub">{t('rd.nothingDue')}</div>}
         <button
@@ -234,8 +251,9 @@ export function Stats({
         </button>
       </div>
 
-      <div className="section-label">{t('rd.regularity')}</div>
+      <Label>{t('rd.regularity')}</Label>
       <div className="card rd-activity">
+        <Greek name="amphora" className="rd-amphora" />
         <div className="rd-activity-head">
           <span className="rd-streak">
             <Flame size={16} strokeWidth={2.6} /> {t('stats.streak')}: <b>{data.activity.streak}</b>
@@ -253,7 +271,7 @@ export function Stats({
 
       {data.history.length > 0 && (
         <>
-          <div className="section-label">{t('stats.history')}</div>
+          <Label>{t('stats.history')}</Label>
           <div className="card">
             {history.map((s, i) => {
               const p = pct(s.score, s.total);

@@ -8,6 +8,7 @@ import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
+import { LaurelWreath } from '../components/greekArt';
 import { VocabDecorImg } from './vocabularyDecor';
 
 /* Round-theme frame for this screen, matched to the Vocabulary screen's look
@@ -119,6 +120,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
         <FcDecor />
         <div className="result">
           <div className="emoji">
+            <LaurelWreath className="emoji-wreath" gold />
             <PartyPopper size={56} strokeWidth={1.8} />
           </div>
           <div className="ttl">{t('flashcards.done')}</div>
