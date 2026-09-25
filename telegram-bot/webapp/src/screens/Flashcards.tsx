@@ -50,13 +50,14 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   // returns below: a hook after a conditional return breaks React's hook order.
   const gradedRef = useRef<string | null>(null);
 
-  // Warm the current card's question (and its answer once revealed) so 🔊 is instant.
+  // Warm the current card's question and answer so 🔊 is instant — the answer
+  // before it is revealed, so it is ready by the time it shows.
   useEffect(() => {
     const c = cards?.[i];
     if (!c) return;
     prefetchGreek(c.question, `q_${c.question_id}`);
-    if (revealed) prefetchGreek(c.correct_answer, textKey(c.correct_answer, 'a'));
-  }, [cards, i, revealed]);
+    prefetchGreek(c.correct_answer, textKey(c.correct_answer, 'a'));
+  }, [cards, i]);
 
   function reset() {
     setCards(null);

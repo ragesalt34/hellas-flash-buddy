@@ -25,10 +25,9 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   // rather than after the early returns further down.
   const gradedRef = useRef<string | null>(null);
 
-  // Warm the current word's audio so tapping 🔊 is instant.
+  // Warm the current word's audio, and the next one's, so tapping 🔊 is instant.
   useEffect(() => {
-    const c = cards?.[i];
-    if (c) prefetchGreek(c.word, `vocab_${c.id}`);
+    for (const c of [cards?.[i], cards?.[i + 1]]) if (c) prefetchGreek(c.word, `vocab_${c.id}`);
   }, [cards, i]);
 
   function reset() {

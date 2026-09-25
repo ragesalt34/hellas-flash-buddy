@@ -108,32 +108,60 @@ async function fileExists(fileName: string): Promise<boolean> {
   return !!data && data.some((f) => f.name === fileName);
 }
 
-let variantsCache: { at: number; list: string[] } | null = null;
+const INDEX_TTL_MS = 10 * 60 * 1000;
+let clipIndex: { at: number; byKey: Map<string, string> } | null = null;
 
-/** Variant hashes present in the bucket, most-populated first; refreshed hourly. */
-async function cachedVariants(): Promise<string[]> {
-  if (variantsCache && Date.now() - variantsCache.at < 60 * 60 * 1000) return variantsCache.list;
-  const counts = new Map<string, number>();
-  const re = new RegExp(`^${provider}_([0-9a-f]{8})_s_`);
+/** Every cached clip, by text key, so a lookup needs no storage call.
+ *
+ * Deployments have run with different voice/speed settings, so the same text
+ * can sit under several variants. The current variant wins, then the variant
+ * with the most clips — any existing recording is used rather than paying to
+ * synthesize the text again. To re-record a text, delete its files. */
+async function getClipIndex(): Promise<Map<string, string>> {
+  if (clipIndex && Date.now() - clipIndex.at < INDEX_TTL_MS) return clipIndex.byKey;
+  const re = new RegExp(`^${provider}_([0-9a-f]{8})_s_([0-9a-z]+)\\.mp3$`);
+  const found: { v: string; key: string; name: string }[] = [];
+  const perVariant = new Map<string, number>();
   for (let offset = 0; ; offset += 1000) {
-    const { data } = await supabase.storage.from(TTS_BUCKET).list('', { limit: 1000, offset });
+    const { data, error } = await supabase.storage.from(TTS_BUCKET).list('', { limit: 1000, offset });
+    if (error) throw error;
     for (const f of data ?? []) {
       const m = re.exec(f.name);
-      if (m) counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
+      if (!m) continue;
+      found.push({ v: m[1], key: m[2], name: f.name });
+      perVariant.set(m[1], (perVariant.get(m[1]) ?? 0) + 1);
     }
     if (!data || data.length < 1000) break;
   }
-  const list = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([v]) => v);
-  variantsCache = { at: Date.now(), list };
-  return list;
+  const rank = (v: string) => (v === variant ? Number.MAX_SAFE_INTEGER : perVariant.get(v) ?? 0);
+  const byKey = new Map<string, string>();
+  const best = new Map<string, number>();
+  for (const f of found) {
+    const r = rank(f.v);
+    if (r > (best.get(f.key) ?? -1)) {
+      best.set(f.key, r);
+      byKey.set(f.key, f.name);
+    }
+  }
+  clipIndex = { at: Date.now(), byKey };
+  return byKey;
 }
 
-async function signUrl(fileName: string): Promise<string | null> {
+let bucketIsPublic: boolean | null = null;
+
+/** A public bucket gives a stable URL (browser-cacheable, no storage call);
+ * a private one falls back to a short-lived signed URL. */
+async function clipUrl(fileName: string): Promise<string | null> {
+  if (bucketIsPublic === null) {
+    const { data } = await supabase.storage.getBucket(TTS_BUCKET);
+    bucketIsPublic = !!data?.public;
+  }
+  if (bucketIsPublic) return supabase.storage.from(TTS_BUCKET).getPublicUrl(fileName).data.publicUrl;
   const { data, error } = await supabase.storage.from(TTS_BUCKET).createSignedUrl(fileName, 3600);
   return !error && data?.signedUrl ? data.signedUrl : null;
 }
 
-/** Returns a signed URL for cached/synthesized Greek speech audio.
+/** URL of the Greek speech clip for `text`, recording it only if none exists.
  *
  * The cache filename is CONTENT-ADDRESSED (derived server-side from the text),
  * so the same text always maps to the same file no matter what cacheKey the
@@ -147,10 +175,11 @@ export async function getOrSynthesizeGreekSpeech(
   if (!provider) throw new Error('no TTS provider configured (set ELEVENLABS_API_KEY or GOOGLE_TTS_API_KEY)');
 
   const trimmed = text.trim();
-  const fileName = `${provider}_${variant}_s_${fnvKey(trimmed)}.mp3`;
+  const key = fnvKey(trimmed);
 
-  if (await fileExists(fileName)) {
-    const url = await signUrl(fileName);
+  const cached = (await getClipIndex()).get(key);
+  if (cached) {
+    const url = await clipUrl(cached);
     if (url) return url;
   }
 
@@ -159,33 +188,15 @@ export async function getOrSynthesizeGreekSpeech(
   if (legacyCacheKey && SAFE_KEY.test(legacyCacheKey)) {
     const legacyName = `${provider}_${variant}_${legacyCacheKey}.mp3`;
     if (await fileExists(legacyName)) {
-      const url = await signUrl(legacyName);
+      const url = await clipUrl(legacyName);
       if (url) return url;
     }
   }
 
-  let audioBuffer: Buffer;
-  try {
-    audioBuffer =
-      provider === 'el'
-        ? await synthesizeElevenLabs(trimmed.slice(0, 800))
-        : await synthesizeGoogle(trimmed.slice(0, 500));
-  } catch (err) {
-    // Any earlier voice/settings variant of the same text beats silence when the
-    // provider is down or the key is rejected. Deployments have run with
-    // different settings, so the clip may exist under any of several variants.
-    for (const v of await cachedVariants()) {
-      if (v === variant) continue;
-      const oldName = `${provider}_${v}_s_${fnvKey(trimmed)}.mp3`;
-      if (!(await fileExists(oldName))) continue;
-      const url = await signUrl(oldName);
-      if (url) {
-        console.warn('tts: synthesis failed, serving', oldName, '-', err instanceof Error ? err.message.slice(0, 120) : err);
-        return url;
-      }
-    }
-    throw err;
-  }
+  const audioBuffer =
+    provider === 'el'
+      ? await synthesizeElevenLabs(trimmed.slice(0, 800))
+      : await synthesizeGoogle(trimmed.slice(0, 500));
 
   // Never cache empty/degenerate audio — e.g. eleven_v3 returns an empty body
   // for very short inputs. Caching a 0-byte file would make that clip silent
@@ -196,15 +207,14 @@ export async function getOrSynthesizeGreekSpeech(
     );
   }
 
+  const fileName = `${provider}_${variant}_s_${key}.mp3`;
   const { error: uploadError } = await supabase.storage
     .from(TTS_BUCKET)
-    .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true });
+    .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true, cacheControl: '31536000' });
   if (uploadError) throw uploadError;
+  (await getClipIndex()).set(key, fileName);
 
-  const { data: signed, error: signError } = await supabase.storage
-    .from(TTS_BUCKET)
-    .createSignedUrl(fileName, 3600);
-  if (signError || !signed?.signedUrl) throw signError ?? new Error('failed to sign url');
-
-  return signed.signedUrl;
+  const url = await clipUrl(fileName);
+  if (!url) throw new Error('failed to build clip url');
+  return url;
 }
