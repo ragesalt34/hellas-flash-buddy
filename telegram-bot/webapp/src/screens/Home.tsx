@@ -1,4 +1,4 @@
-import { Flame, Target, Star, Layers, BookA, BarChart3, ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
+import { ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -6,7 +6,8 @@ import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-import { QuizIcon, Sparks } from '../components/icons';
+import { Sparks } from '../components/icons';
+import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
@@ -69,20 +70,20 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         <div className="hero-chips">
           {me.streak >= 2 && (
             <span className="chip">
-              <Flame size={15} color="var(--coral)" />
+              <OilLamp className="chip-art c-lamp" />
               {me.streak} {t(me.streak === 1 ? 'home.streakDay' : 'home.streakDays')}
             </span>
           )}
           <span className="chip chip-acc">
-            <Target size={15} color="var(--mint)" />
+            <Aspis className="chip-art c-aspis" />
             {acc}%
           </span>
           <span className="chip">
-            <QuizIcon size={15} color="var(--accent)" />
+            <WaxTablet className="chip-art c-tablet" />
             {me.stats.total_sessions}
           </span>
           <span className="chip">
-            <Star size={15} color="var(--amber)" />
+            <LaurelSprig className="chip-art c-laurel" />
             {me.vocab.mastered}/{me.vocab.total}
           </span>
           {getToken() ? (
@@ -125,7 +126,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('quiz')}
         >
           <span className="tile-ic">
-            <QuizIcon size={26} strokeWidth={2.2} />
+            <WaxTablet />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
@@ -143,7 +144,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
 
         <button className="tile t-cards" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
           <span className="tile-ic">
-            <Layers size={24} strokeWidth={2.2} />
+            <Ostraka />
           </span>
           <span className="tile-t">{t('nav.flashcards')}</span>
           <span className="tile-d">{t('home.flashcards.desc')}</span>
@@ -154,7 +155,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="tile-ic">
-            <BookA size={24} strokeWidth={2.2} />
+            <Papyrus />
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>
@@ -170,7 +171,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('stats')}
         >
           <span className="tile-ic">
-            <BarChart3 size={24} strokeWidth={2.2} />
+            <ColumnChart />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>

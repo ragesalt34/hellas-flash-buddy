@@ -5004,3 +5004,66 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .tp-screen .tp-tile:hover .tp-emblem { transform: none; }
 }
 [data-theme='brut'] .tp-screen .tp-tile .tp-body .tile-t { align-self: flex-start; margin: 0; text-align: left; }
+
+
+/* ============ Home drawings (components/homeArt.tsx) ============ */
+.ha { overflow: visible; }
+.ha path, .ha rect, .ha circle, .ha ellipse { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ha .ha-soft { fill: currentColor; fill-opacity: 0.18; stroke: none; }
+.ha .ha-dot { fill: currentColor; stroke: none; }
+.ha .ha-check { stroke-width: 2.4; }
+.ha-chart path, .ha-chart rect { stroke-width: 1.7; }
+.ha-chart .ha-flute { stroke-width: 1.1; stroke-opacity: 0.7; }
+.ha-laurel path { stroke-width: 1.4; }
+.ha-lamp .ha-flame { fill: #f2a33a; stroke: #c9701c; stroke-width: 1; }
+
+/* chips: one colour per meaning */
+.chip .chip-art { flex: none; width: 17px; height: 17px; }
+.chip-art.c-lamp { color: var(--coral); }
+.chip-art.c-aspis { color: var(--mint); }
+.chip-art.c-tablet { color: var(--accent); }
+.chip-art.c-laurel { color: var(--amber); }
+.chip .chip-art path, .chip .chip-art rect, .chip .chip-art circle, .chip .chip-art ellipse { stroke-width: 2.2; }
+
+/* life: the lamp flickers, tiles act out their object on hover */
+.ha-lamp .ha-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: ha-flicker 2.4s ease-in-out infinite; }
+@keyframes ha-flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0); }
+  30% { transform: scale(0.94, 1.08) rotate(-4deg); }
+  55% { transform: scale(1.04, 0.95) rotate(3deg); }
+  80% { transform: scale(0.97, 1.05) rotate(-2deg); }
+}
+.ha-tablet .ha-stylus { transform-box: view-box; transform-origin: 22px 26px; }
+.tile:hover .ha-tablet .ha-stylus { animation: ha-write 0.7s ease-in-out 2; }
+@keyframes ha-write {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: translate(-1px, 0.6px) rotate(-5deg); }
+  50% { transform: translate(0.6px, 0) rotate(3deg); }
+  75% { transform: translate(-0.6px, 0.4px) rotate(-3deg); }
+}
+.ha-ostraka .ha-sherd { transform-box: fill-box; transform-origin: 50% 90%; transition: transform 0.35s var(--ease); }
+.tile:hover .ha-ostraka .ha-sherd.back { transform: translate(2px, -1.5px) rotate(9deg); }
+.tile:hover .ha-ostraka .ha-sherd.front { transform: translate(-1px, 0.5px) rotate(-6deg); }
+.ha-papyrus .ha-roll { transition: transform 0.4s var(--ease); }
+.ha-papyrus .ha-sheet { transform-box: view-box; transform-origin: 7px 16px; transition: transform 0.4s var(--ease); }
+.tile:hover .ha-papyrus .ha-roll { transform: translateX(2.2px); }
+.tile:hover .ha-papyrus .ha-sheet { transform: scaleX(1.12); }
+.ha-chart .ha-col { transform-box: view-box; transform-origin: 50% 24.5px; transition: transform 0.4s var(--ease); }
+.tile:hover .ha-chart .ha-col.c1 { transform: scaleY(1.12); }
+.tile:hover .ha-chart .ha-col.c2 { transform: scaleY(1.06); transition-delay: 60ms; }
+.tile:hover .ha-chart .ha-col.c3 { transform: scaleY(1.05); transition-delay: 120ms; }
+@media (prefers-reduced-motion: reduce) {
+  .ha-lamp .ha-flame, .tile:hover .ha-tablet .ha-stylus { animation: none; }
+  .ha-ostraka .ha-sherd, .ha-papyrus .ha-roll, .ha-papyrus .ha-sheet, .ha-chart .ha-col { transition: none; }
+  .tile:hover .ha-ostraka .ha-sherd, .tile:hover .ha-papyrus .ha-roll, .tile:hover .ha-papyrus .ha-sheet, .tile:hover .ha-chart .ha-col { transform: none; }
+}
+
+/* round theme: the drawings sit a touch larger than the stock glyphs did */
+[data-theme='soft'] .home .tile .tile-ic svg.ha { width: 36px; height: 36px; }
+[data-theme='soft'] .home .tile.feature .tile-ic svg.ha { width: 38px; height: 38px; }
+[data-theme='soft'] .home .chip svg.chip-art { width: 19px; height: 19px; }
+@media (max-width: 560px) {
+  [data-theme='soft'] .home .tile .tile-ic svg.ha { width: 30px; height: 30px; }
+}
+[data-theme='brut'] .chip-art { color: var(--text) !important; }
+[data-theme='brut'] .ha-lamp .ha-flame { fill: var(--bad); stroke: var(--text); }
