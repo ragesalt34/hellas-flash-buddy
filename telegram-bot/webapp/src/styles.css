@@ -3868,19 +3868,7 @@ button.chip:active { transform: scale(0.95); }
 }
 [data-theme='soft'] .tp-screen .tile:hover { transform: translateY(-3px); }
 [data-theme='soft'] .tp-screen .tile:active { transform: translateY(0); }
-[data-theme='soft'] .tp-screen .tp-o { position: absolute; z-index: -1; pointer-events: none; opacity: 0.35; }
-[data-theme='soft'] .tp-screen .tp-o.tl { top: 12px; left: 12px; }
-[data-theme='soft'] .tp-screen .tp-o.tr { top: 12px; right: 12px; }
-[data-theme='soft'] .tp-screen .tp-o.bl { bottom: 12px; left: 12px; }
-[data-theme='soft'] .tp-screen .tp-o.br { bottom: 12px; right: 12px; }
 /* MeanderCorner is drawn for the top-left; mirror it into the other corners. */
-[data-theme='soft'] .tp-screen .tp-o.key.tr { transform: scaleX(-1); }
-[data-theme='soft'] .tp-screen .tp-o.key.bl { transform: scaleY(-1); }
-[data-theme='soft'] .tp-screen .tp-o.key.br { transform: scale(-1, -1); }
-[data-theme='soft'] .tp-screen .tp-o.olive.br { transform: scaleX(-1) rotate(-10deg); }
-[data-theme='soft'] .tp-screen .tp-o.olive.tr { transform: scaleX(-1) rotate(20deg); }
-[data-theme='soft'] .tp-screen .tp-o.olive.bl { transform: rotate(-12deg); }
-[data-theme='soft'] .tp-screen .tp-o.temple.br { bottom: 6px; right: 6px; opacity: 0.3; }
 
 /* ---- All topics: the main action ---- */
 [data-theme='soft'] .tp-screen .tile.feature.warm {
@@ -3907,8 +3895,6 @@ button.chip:active { transform: scale(0.95); }
 }
 [data-theme='soft'] .tp-screen .tile.feature.warm .tile-t { font-size: 22px; font-weight: 700; color: #2c2210; }
 [data-theme='soft'] .tp-screen .tile.feature.warm .tile-d { font-size: 14px; font-weight: 500; color: #5a4520; }
-[data-theme='soft'] .tp-screen .t-mixed .tp-o { color: #9a6f1c; opacity: 0.4; }
-[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive { color: #6f8a5c; opacity: 0.45; }
 [data-theme='soft'] .tp-screen .tile.feature.warm .arrow { color: #3b2a10; }
 
 /* ---- Four topic tiles ---- */
@@ -3919,25 +3905,13 @@ button.chip:active { transform: scale(0.95); }
   box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 14px 28px -22px rgba(120, 72, 30, 0.45);
 }
 [data-theme='soft'] .tp-screen .tp-tile:hover { box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 20px 34px -20px rgba(120, 72, 30, 0.55); }
-[data-theme='soft'] .tp-screen .tp-tile .tile-ic { width: 60px; height: 60px; border-radius: 50%; }
-[data-theme='soft'] .tp-screen .tp-tile .tile-ic svg { width: 26px; height: 26px; }
 [data-theme='soft'] .tp-screen .tp-tile .tile-t { font-size: 19px; font-weight: 700; color: var(--tp-text); }
 /* The icon colours arrive inline from the component (other themes use them);
    the round theme swaps in its own pastel containers per topic. */
 [data-theme='soft'] .tp-screen .t-history { background: #fdf2ed; border-color: #f4d3c9; }
-[data-theme='soft'] .tp-screen .t-history .tile-ic { background: #f9d6cd !important; color: #c04f40 !important; }
-[data-theme='soft'] .tp-screen .t-history .tp-o { color: #d98b7c; }
 [data-theme='soft'] .tp-screen .t-culture { background: #f7f5fb; border-color: #e2def2; }
-[data-theme='soft'] .tp-screen .t-culture .tile-ic { background: #e3dff4 !important; color: #6b5fa8 !important; }
-[data-theme='soft'] .tp-screen .t-culture .tp-o { color: #9d92cc; }
-[data-theme='soft'] .tp-screen .t-culture .tp-o.olive { color: var(--tp-olive); }
 [data-theme='soft'] .tp-screen .t-laws { background: #fdf6e6; border-color: #f2e0b2; }
-[data-theme='soft'] .tp-screen .t-laws .tile-ic { background: #f8e3a6 !important; color: #946511 !important; }
-[data-theme='soft'] .tp-screen .t-laws .tp-o { color: #c9a14e; }
-[data-theme='soft'] .tp-screen .t-laws .tp-o.olive { color: var(--tp-olive); }
 [data-theme='soft'] .tp-screen .t-geography { background: #f1f7f2; border-color: #cfe5d7; }
-[data-theme='soft'] .tp-screen .t-geography .tile-ic { background: #d4e9de !important; color: #2f7a5c !important; }
-[data-theme='soft'] .tp-screen .t-geography .tp-o { color: #7fae94; }
 
 /* ---- Breakpoints ---- */
 @media (max-width: 1199px) {
@@ -3956,8 +3930,6 @@ button.chip:active { transform: scale(0.95); }
 @media (max-width: 560px) {
   [data-theme='soft'] .tp-screen .tiles { grid-template-columns: 1fr; gap: 12px; }
   [data-theme='soft'] .tp-screen .tp-tile { min-height: 0; flex-direction: row; align-items: center; padding: 16px 18px; }
-  [data-theme='soft'] .tp-screen .tp-tile .tile-ic { width: 52px; height: 52px; }
-  [data-theme='soft'] .tp-screen .tp-o.temple { width: 70px; }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-theme='soft'] .tp-screen .tile { transition: none; }
@@ -3965,12 +3937,8 @@ button.chip:active { transform: scale(0.95); }
 }
 /* The sprig in the "all topics" corner sat under the arrow; it moves left of
    it. The right-hand wash read as a solid disc at 0.6. */
-[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive.br { right: 64px; bottom: 4px; }
 [data-theme='soft'] .tp-decor .b-tr { opacity: 0.35; }
-[data-theme='soft'] .tp-screen .t-mixed .tp-o.key.tr { top: 8px; right: 12px; }
-[data-theme='soft'] .tp-screen .tp-o.temple.br { bottom: 4px; right: 4px; }
 /* On the shorter phone tile the corner key would touch the arrow. */
-@media (max-width: 899px) { [data-theme='soft'] .tp-screen .t-mixed .tp-o.key { display: none; } }
 /* "All topics" spans two columns; in the one-column phone grid that span
    silently created a second, implicit column and the topic tiles ended up
    side by side at uneven widths. */
@@ -4043,11 +4011,6 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='soft'] .tp-decor .o-olive-br { width: 112px; opacity: 0.4; }
 [data-theme='soft'] .tp-decor .o-key-bl { width: 130px; opacity: 0.3; }
 [data-theme='soft'] .tp-screen .tp-label-olive { display: inline-block; width: 28px; opacity: 0.75; }
-[data-theme='soft'] .tp-screen .tp-o.key { width: 36px; opacity: 0.4; }
-[data-theme='soft'] .tp-screen .tp-o.olive { width: 48px; opacity: 0.45; }
-[data-theme='soft'] .tp-screen .t-mixed .tp-o.olive { width: 60px; opacity: 0.5; }
-[data-theme='soft'] .tp-screen .tp-o.column { width: 32px; opacity: 0.4; }
-[data-theme='soft'] .tp-screen .tp-o.temple { width: 104px; opacity: 0.4; }
 
 /* ---- Smaller screens ---- */
 @media (max-width: 1199px) {
@@ -4065,7 +4028,6 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .vc-screen .vc-corner-olive { width: 40px; }
   [data-theme='soft'] .vc-screen .vc-panel-temple { width: 36px; }
   [data-theme='soft'] .vc-screen .grade .gr-key { width: 36px; }
-  [data-theme='soft'] .tp-screen .tp-o.temple { width: 78px; }
 }
 
 /* Home artwork anchored to the gutters beside the content column instead of
@@ -5003,3 +4965,42 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='brut'] .rd-olive-week .o-off { fill: none; stroke: var(--muted); }
 [data-theme='brut'] .rd-olive-week .o-today { stroke: var(--bad); }
 [data-theme='brut'] .rd-laurel .l-leaf { fill: var(--text); }
+
+/* ============ Topic picker: emblems + per-topic progress ============ */
+.tp-emblem { flex: none; width: 46px; height: 46px; }
+.tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; min-width: 0; text-align: left; }
+.tp-meta { font-size: 13px; font-weight: 600; line-height: 1.35; color: var(--muted); }
+.tp-bar { display: block; width: 100%; height: 6px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 16%, transparent); overflow: hidden; }
+.tp-bar i { display: block; height: 100%; min-width: 5px; border-radius: inherit; transition: width 0.8s var(--ease); }
+.tp-bar i.h0 { background: color-mix(in srgb, var(--muted) 40%, transparent); }
+.tp-bar i.h1 { background: #e0927c; }
+.tp-bar i.h2 { background: #e2b44a; }
+.tp-bar i.h3 { background: #7fb07a; }
+.tp-weak { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.mini-temple { width: 34px; height: 30px; }
+.mini-temple .mt-roof { fill: #fbe9b8; stroke: #8a6424; stroke-width: 1.1; stroke-linejoin: round; }
+.mini-temple .mt-col { fill: currentColor; }
+.mini-temple .mt-step { fill: #f3dfae; stroke: #8a6424; stroke-width: 1; }
+[data-theme='brut'] .mini-temple .mt-roof, [data-theme='brut'] .mini-temple .mt-step { fill: none; stroke: var(--text); }
+[data-theme='brut'] .mini-temple .mt-col { fill: var(--text); }
+
+/* Round theme: the emblem is the tile's picture, top right; the text sits at the bottom. */
+[data-theme='soft'] .tp-screen .tp-tile { min-height: 196px; justify-content: flex-end; align-items: stretch; }
+[data-theme='soft'] .tp-screen .tp-tile .tp-emblem { position: absolute; top: 16px; right: 16px; width: 92px; height: 92px; padding: 14px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, currentColor 18%, transparent); transition: transform 0.25s var(--ease); }
+[data-theme='soft'] .tp-screen .tp-tile:hover .tp-emblem { transform: rotate(-6deg) scale(1.04); }
+[data-theme='soft'] .tp-screen .tp-tile .tp-weak { position: absolute; top: 22px; left: 24px; }
+[data-theme='soft'] .tp-screen .tp-tile.is-weak { box-shadow: 0 0 0 2px color-mix(in srgb, var(--bad) 30%, transparent), 0 14px 28px -22px rgba(120, 72, 30, 0.45); }
+[data-theme='soft'] .tp-screen .tp-tile .tp-meta { color: #7a6656; }
+[data-theme='soft'] .tp-screen .tp-tile .tp-bar { background: rgba(120, 90, 50, 0.1); }
+[data-theme='soft'] .tp-screen .tp-mini { background: #fff7e1 !important; color: #8a6424; }
+@media (max-width: 899px) {
+  [data-theme='soft'] .tp-screen .tp-tile { min-height: 180px; }
+  [data-theme='soft'] .tp-screen .tp-tile .tp-emblem { width: 78px; height: 78px; padding: 12px; }
+}
+@media (max-width: 560px) {
+  [data-theme='soft'] .tp-screen .tp-tile { min-height: 0; flex-direction: row; align-items: center; gap: 14px; }
+  [data-theme='soft'] .tp-screen .tp-tile .tp-emblem { position: static; width: 60px; height: 60px; padding: 9px; }
+  [data-theme='soft'] .tp-screen .tp-tile .tp-weak { position: static; }
+  [data-theme='soft'] .tp-screen .tp-tile:hover .tp-emblem { transform: none; }
+}
+[data-theme='brut'] .tp-screen .tp-tile .tp-body .tile-t { align-self: flex-start; margin: 0; text-align: left; }

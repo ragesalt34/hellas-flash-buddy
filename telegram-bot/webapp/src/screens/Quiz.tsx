@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Shuffle,
-  Landmark,
-  Drama,
-  Scale,
   Check,
   X,
   ArrowRight,
@@ -19,12 +15,12 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { api, QuizQuestion, persistWrite } from '../api';
+import { MiniTemple, TopicEmblem } from '../components/statsArt';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
-import { Loading, ProgressBar, Ring } from '../ui';
+import { Loading, ProgressBar, Ring, useCached } from '../ui';
 import { useLanguage, type Language } from '../i18n';
-import { GeoIcon } from '../components/icons';
 import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for the topic picker: one classical element per
@@ -51,58 +47,25 @@ function TopicDecor() {
   );
 }
 
-/* Small ornaments inside each topic tile — two per tile at most, in the
-   corners, so the icon and the name stay the only things that read. */
-function TileOrnaments({ id }: { id: string }) {
-  switch (id) {
-    case 'mixed':
-      return (
-        <>
-          <Greek name="decorative-corner" className="tp-o key tr" />
-          <Greek name="olive-branch-small" className="tp-o olive br" />
-        </>
-      );
-    case 'history':
-      return (
-        <>
-          <Greek name="decorative-corner" className="tp-o key tr" />
-          <Greek name="column" className="tp-o column br" />
-        </>
-      );
-    case 'culture':
-      return (
-        <>
-          <Greek name="olive-branch-small" className="tp-o olive tr" />
-          <Greek name="decorative-corner" className="tp-o key br" />
-        </>
-      );
-    case 'laws':
-      return (
-        <>
-          <Greek name="olive-branch-small" className="tp-o olive tr" />
-          <Greek name="decorative-corner" className="tp-o key br" />
-        </>
-      );
-    case 'geography':
-      return (
-        <>
-          <Greek name="decorative-corner" className="tp-o key tr" />
-          <Greek name="hill-temple" className="tp-o temple br" />
-        </>
-      );
-    default:
-      return null;
-  }
-}
-
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
-const TOPICS: { id: string; key: string; icon: LucideIcon | typeof GeoIcon; color: string; span?: boolean }[] = [
-  { id: 'mixed', key: 'topic.mixed', icon: Shuffle, color: 'var(--amber)', span: true },
-  { id: 'history', key: 'topic.history', icon: Landmark, color: 'var(--accent)' },
-  { id: 'culture', key: 'topic.culture', icon: Drama, color: 'var(--topic-culture)' },
-  { id: 'laws', key: 'topic.laws', icon: Scale, color: 'var(--topic-laws)' },
-  { id: 'geography', key: 'topic.geography', icon: GeoIcon, color: 'var(--topic-geo)' },
+function questionsWord(n: number, lang: Language): string {
+  if (lang === 'el') return n === 1 ? 'ερώτηση' : 'ερωτήσεις';
+  const d10 = n % 10;
+  const d100 = n % 100;
+  if (d10 === 1 && d100 !== 11) return 'вопрос';
+  if (d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14)) return 'вопроса';
+  return 'вопросов';
+}
+
+const tone = (p: number) => (p >= 85 ? 'h3' : p >= 60 ? 'h2' : p > 0 ? 'h1' : 'h0');
+
+const TOPICS: { id: string; key: string; span?: boolean }[] = [
+  { id: 'mixed', key: 'topic.mixed', span: true },
+  { id: 'history', key: 'topic.history' },
+  { id: 'culture', key: 'topic.culture' },
+  { id: 'laws', key: 'topic.laws' },
+  { id: 'geography', key: 'topic.geography' },
 ];
 
 interface AnswerRec {
@@ -115,7 +78,9 @@ interface AnswerRec {
 type Phase = 'topic' | 'loading' | 'play' | 'result';
 
 export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTopic?: string; lang?: Language }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  // Same report the readiness screen shows, so each tile can say how far along that topic is.
+  const { data: readiness } = useCached(`readiness:${language}`, api.readiness);
   const [phase, setPhase] = useState<Phase>('topic');
   const [topic, setTopic] = useState('mixed');
   const [topicLabel, setTopicLabel] = useState('');
@@ -214,6 +179,13 @@ export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTo
 
   // ---- Topic selection ----
   if (phase === 'topic') {
+    // The weakest topic in Greek, flagged only once there is something to compare.
+    const tops = readiness?.topics ?? [];
+    const pctOf = (tp: (typeof tops)[number]) => (tp.total > 0 ? tp.greek.known / tp.total : 0);
+    const weakTopic =
+      tops.some((tp) => tp.greek.checked > 0)
+        ? [...tops].sort((a, b) => pctOf(a) - pctOf(b)).find((tp) => pctOf(tp) < 0.85)?.topic
+        : undefined;
     return (
       <div className="fade-in tp-screen">
         <TopicDecor />
@@ -223,40 +195,54 @@ export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTo
         </div>
         <div className="tiles stagger">
           {TOPICS.map((topicDef, i) => {
-            const Icon = topicDef.icon;
-            return topicDef.span ? (
-              <button
-                key={topicDef.id}
-                className="tile feature warm t-mixed"
-                style={{ animationDelay: `${40 + i * 45}ms` }}
-                onClick={() => start(topicDef.id)}
-              >
-                <TileOrnaments id={topicDef.id} />
-                <span className="tile-ic">
-                  <Icon size={26} strokeWidth={2.2} />
-                </span>
-                <span className="grow">
-                  <span className="tile-t" style={{ display: 'block' }}>
-                    {t(topicDef.key)}
+            if (topicDef.span)
+              return (
+                <button
+                  key={topicDef.id}
+                  className="tile feature warm t-mixed"
+                  style={{ animationDelay: `${40 + i * 45}ms` }}
+                  onClick={() => start(topicDef.id)}
+                >
+                  <span className="tile-ic tp-mini">
+                    <MiniTemple />
                   </span>
-                  <span className="tile-d">{t('topic.mixed.desc')}</span>
-                </span>
-                <span className="arrow">
-                  <ArrowRight size={22} strokeWidth={2.6} />
-                </span>
-              </button>
-            ) : (
+                  <span className="grow">
+                    <span className="tile-t" style={{ display: 'block' }}>
+                      {t(topicDef.key)}
+                    </span>
+                    <span className="tile-d">{t('topic.mixed.desc')}</span>
+                  </span>
+                  <span className="arrow">
+                    <ArrowRight size={22} strokeWidth={2.6} />
+                  </span>
+                </button>
+              );
+            const report = readiness?.topics.find((tp) => tp.topic === topicDef.id);
+            const known = report && report.total > 0 ? Math.round((report.greek.known / report.total) * 100) : 0;
+            const isWeak = weakTopic === topicDef.id;
+            return (
               <button
                 key={topicDef.id}
-                className={`tile tp-tile t-${topicDef.id}`}
+                className={`tile tp-tile t-${topicDef.id}${isWeak ? ' is-weak' : ''}`}
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(topicDef.id)}
               >
-                <TileOrnaments id={topicDef.id} />
-                <span className="tile-ic" style={{ background: `color-mix(in srgb, ${topicDef.color} 18%, transparent)`, color: topicDef.color }}>
-                  <Icon size={24} strokeWidth={2.2} />
+                <TopicEmblem topic={topicDef.id} className="tp-emblem" />
+                <span className="tp-body">
+                  {isWeak && <span className="tp-weak">{t('tp.weak')}</span>}
+                  <span className="tile-t">{t(topicDef.key)}</span>
+                  {report && (
+                    <>
+                      <span className="tp-meta">
+                        {report.total} {questionsWord(report.total, language)} ·{' '}
+                        {t('tp.known').replace('{n}', `${known}%`)}
+                      </span>
+                      <span className="tp-bar">
+                        <i className={tone(known)} style={{ width: `${known}%` }} />
+                      </span>
+                    </>
+                  )}
                 </span>
-                <span className="tile-t">{t(topicDef.key)}</span>
               </button>
             );
           })}

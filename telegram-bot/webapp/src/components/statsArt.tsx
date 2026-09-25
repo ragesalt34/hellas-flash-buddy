@@ -258,3 +258,20 @@ export function LaurelMark() {
     </svg>
   );
 }
+
+const MINI_TOPICS = ['history', 'culture', 'laws', 'geography'];
+
+/** Tiny temple with one column per topic in its colour — "all topics". */
+export function MiniTemple() {
+  return (
+    <svg className="mini-temple" viewBox="0 0 48 40" aria-hidden="true" focusable="false">
+      <path className="mt-roof" d="M4 13 L24 3.5 L44 13 Z" />
+      <rect className="mt-roof" x="4" y="13" width="40" height="4" rx="0.6" />
+      {MINI_TOPICS.map((tp, i) => (
+        <rect key={tp} className={`mt-col tp-${tp}`} x={8.5 + i * 9.4} y="18.5" width="4.4" height="13" rx="0.8" />
+      ))}
+      <rect className="mt-step" x="3" y="32" width="42" height="3" rx="0.6" />
+      <rect className="mt-step" x="1" y="35" width="46" height="3" rx="0.6" />
+    </svg>
+  );
+}
