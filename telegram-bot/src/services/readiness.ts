@@ -57,6 +57,14 @@ export function sessionLangs(answers: AnswerRow[]): (Lang | null)[] {
   return own.map((l) => l ?? majority);
 }
 
+/** The language a whole quiz was taken in (majority of its answers), or null. */
+export function sessionLang(answers: AnswerRow[] | null): Lang | null {
+  const langs = sessionLangs(Array.isArray(answers) ? answers : []).filter((l): l is Lang => l !== null);
+  if (langs.length === 0) return null;
+  const el = langs.filter((l) => l === 'el').length;
+  return el >= langs.length - el ? 'el' : 'ru';
+}
+
 const ratio = (n: number, d: number) => (d > 0 ? n / d : 0);
 
 export function computeReadiness(input: ReadinessInput, now: Date = new Date()): ReadinessCore {

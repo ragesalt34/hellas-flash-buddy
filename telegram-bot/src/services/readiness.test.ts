@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeReadiness, answerLang, sessionLangs, type ReadinessInput } from './readiness';
+import { computeReadiness, answerLang, sessionLangs, sessionLang, type ReadinessInput } from './readiness';
 
 const NOW = new Date('2026-09-24T12:00:00Z');
 const qs = (topic: string, n: number) => Array.from({ length: n }, (_, i) => ({ id: `${topic}-${i}`, topic }));
@@ -120,4 +120,12 @@ test('memory, due counts, unknown ids ignored', () => {
   assert.deepEqual(r.memory, { strong: 1, total: 20 });
   assert.deepEqual(r.due, { cards: 1, words: 1 });
   assert.deepEqual(r.words, { learned: 1, seen: 1, total: 10 });
+});
+
+test('sessionLang: majority language of a whole quiz, null when unknowable', () => {
+  const a = (chosen: string) => ({ question_id: 'x', chosen, correct: true });
+  assert.equal(sessionLang([a('Αθήνα'), a('Афины'), a('Σπάρτη')]), 'el');
+  assert.equal(sessionLang([a('Афины'), a('1821')]), 'ru');
+  assert.equal(sessionLang([a('1821')]), null);
+  assert.equal(sessionLang(null), null);
 });

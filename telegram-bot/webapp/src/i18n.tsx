@@ -104,25 +104,23 @@ const translations: Translations = {
   'rd.unchecked': { ru: 'Не проверено', el: 'Δεν ελέγχθηκαν' },
   'rd.memoryHint': { ru: 'Помнишь неделю и дольше', el: 'Τα θυμάσαι μια εβδομάδα και πάνω' },
   'rd.byTopic': { ru: 'По темам', el: 'Ανά θέμα' },
-  'rd.col.greek': { ru: 'Греч.', el: 'Ελλ.' },
-  'rd.col.russian': { ru: 'Рус.', el: 'Ρωσ.' },
-  'rd.col.memory': { ru: 'Память', el: 'Μνήμη' },
-  'rd.train': { ru: 'Тренировать на греческом', el: 'Εξάσκηση στα ελληνικά' },
-  'rd.today': { ru: 'Сегодня', el: 'Σήμερα' },
-  'rd.dueCards': { ru: 'Карточки к повторению', el: 'Κάρτες για επανάληψη' },
-  'rd.dueWords': { ru: 'Слова к повторению', el: 'Λέξεις για επανάληψη' },
-  'rd.nothingDue': { ru: 'Всё повторено — можно пройти тест', el: 'Όλα επαναλήφθηκαν — κάνε ένα κουίζ' },
-  'rd.regularity': { ru: 'Регулярность', el: 'Συνέπεια' },
   'rd.daysActive': { ru: 'дней занятий за 5 недель', el: 'μέρες μελέτης σε 5 εβδομάδες' },
   'rd.showMore': { ru: 'Показать ещё', el: 'Δείξε περισσότερα' },
   'tp.weak': { ru: 'Слабая тема', el: 'Αδύναμο θέμα' },
+  'rd.activity': { ru: 'Активность', el: 'Δραστηριότητα' },
+  'rd.inRow': { ru: 'подряд', el: 'στη σειρά' },
+  'rd.toReview': { ru: 'к повторению', el: 'για επανάληψη' },
+  'rd.recent': { ru: 'Последние тесты', el: 'Τελευταία κουίζ' },
+  'rd.counts': { ru: 'засчитан в готовность', el: 'μετράει στην ετοιμότητα' },
+  'rd.onGreek': { ru: 'на греческом', el: 'στα ελληνικά' },
+  'rd.onRussian': { ru: 'на русском', el: 'στα ρωσικά' },
+  'rd.inMemory': { ru: 'в памяти', el: 'στη μνήμη' },
+  'rd.of': { ru: 'из', el: 'από' },
   'tp.known': { ru: 'знаешь {n} на греческом', el: 'γνωρίζεις το {n} στα ελληνικά' },
   'rd.scoreLabel': { ru: 'готовность', el: 'ετοιμότητα' },
   'rd.templeHint': { ru: 'Колонны — темы на греческом. Крыша встанет, когда все будут готовы', el: 'Οι κίονες είναι τα θέματα στα ελληνικά. Η στέγη μπαίνει όταν είναι όλα έτοιμα' },
   'rd.oliveHint': { ru: 'Каждая оливка — день. Тёмная — ты занимался', el: 'Κάθε ελιά είναι μια μέρα. Σκούρα — μελέτησες' },
-  'stats.streak': { ru: 'Серия', el: 'Σερί' },
   'stats.reviewed': { ru: 'Повторено', el: 'Επαναλήφθηκαν' },
-  'stats.history': { ru: 'История', el: 'Ιστορικό' },
   'stats.error': { ru: 'Ошибка соединения. Попробуй еще раз.', el: 'Σφάλμα σύνδεσης. Δοκίμασε ξανά.' },
 
   // ---- Streak celebration ----
@@ -290,6 +288,24 @@ const translations: Translations = {
     el: 'Εντελώς δωρεάν: χωρίς κάρτα, χωρίς συνδρομή, χωρίς «premium». Εγγραφή δεν χρειάζεται — μπαίνεις ως επισκέπτης και ξεκινάς αμέσως. Ο λογαριασμός χρειάζεται μόνο για να κρατάς πρόοδο και σερί ανάμεσα σε συσκευές.',
   },
 };
+
+const COUNT_WORDS = {
+  question: { ru: ['вопрос', 'вопроса', 'вопросов'], el: ['ερώτηση', 'ερωτήσεις'] },
+  card: { ru: ['карточка', 'карточки', 'карточек'], el: ['κάρτα', 'κάρτες'] },
+  word: { ru: ['слово', 'слова', 'слов'], el: ['λέξη', 'λέξεις'] },
+  day: { ru: ['день', 'дня', 'дней'], el: ['μέρα', 'μέρες'] },
+} as const;
+
+/** The noun form that goes with a count: countWord(22, 'question', 'ru') → 'вопроса'. */
+export function countWord(n: number, kind: keyof typeof COUNT_WORDS, lang: Language): string {
+  const forms: readonly string[] = COUNT_WORDS[kind][lang];
+  if (lang === 'el') return n === 1 ? forms[0] : forms[1];
+  const d10 = n % 10;
+  const d100 = n % 100;
+  if (d10 === 1 && d100 !== 11) return forms[0];
+  if (d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14)) return forms[1];
+  return forms[2];
+}
 
 export function t(key: string, lang: Language): string {
   const entry = translations[key];

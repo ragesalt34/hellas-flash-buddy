@@ -247,18 +247,6 @@ export function OliveCalendar({ days, active, today }: { days: string[]; active:
   );
 }
 
-/** Two laurel leaves — marks a quiz passed with 80% or more. */
-export function LaurelMark() {
-  return (
-    <svg className="rd-laurel" viewBox="0 0 20 16" aria-hidden="true" focusable="false">
-      <path className="l-stem" d="M10 15 C10 11 10 8 10 6" />
-      <ellipse className="l-leaf" cx="6.2" cy="7.5" rx="5" ry="2" transform="rotate(38 6.2 7.5)" />
-      <ellipse className="l-leaf" cx="13.8" cy="7.5" rx="5" ry="2" transform="rotate(-38 13.8 7.5)" />
-      <ellipse className="l-leaf" cx="10" cy="3.4" rx="1.8" ry="3.4" />
-    </svg>
-  );
-}
-
 const MINI_TOPICS = ['history', 'culture', 'laws', 'geography'];
 
 /** Tiny temple with one column per topic in its colour — "all topics". */

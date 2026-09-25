@@ -1,4 +1,4 @@
-import { getStoredLanguage, type Language } from './i18n';
+import { getStoredLanguage } from './i18n';
 import { getToken, clearToken } from './auth';
 
 // Backend base URL — the bot's public API (Render). Set at build time.
@@ -62,7 +62,7 @@ function deviceTimeZone(): string {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}, lang: Language = getStoredLanguage()): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
@@ -86,7 +86,7 @@ async function request<T>(path: string, options: RequestInit = {}, lang: Languag
   // Tag every request with the current UI language so quiz/flashcard content
   // and topic labels come back in the right language (server defaults to 'el').
   const sep = path.includes('?') ? '&' : '?';
-  const url = `${API_BASE}/api${path}${sep}lang=${lang}`;
+  const url = `${API_BASE}/api${path}${sep}lang=${getStoredLanguage()}`;
 
   const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
@@ -97,7 +97,7 @@ async function request<T>(path: string, options: RequestInit = {}, lang: Languag
     // their 401 means "wrong credentials", not "bad session".
     if (res.status === 401 && webToken && !path.startsWith('/auth/')) {
       clearToken();
-      return request<T>(path, options, lang);
+      return request<T>(path, options);
     }
     const body = await res.text().catch(() => '');
     throw new Error(`API ${res.status}: ${body || res.statusText}`);
@@ -133,8 +133,8 @@ export const api = {
       body: JSON.stringify({ username, password }),
     }),
   me: () => request<MeResponse>('/me'),
-  quiz: (topic: string, limit = 10, lang?: Language) =>
-    request<QuizResponse>(`/quiz?topic=${encodeURIComponent(topic)}&limit=${limit}`, {}, lang),
+  quiz: (topic: string, limit = 10) =>
+    request<QuizResponse>(`/quiz?topic=${encodeURIComponent(topic)}&limit=${limit}`),
   quizComplete: (body: QuizCompleteBody) =>
     request<{ ok: boolean }>('/quiz/complete', { method: 'POST', body: JSON.stringify(body) }),
   flashcards: () => request<{ cards: Flashcard[] }>('/flashcards'),
@@ -235,6 +235,6 @@ export interface ReadinessResponse {
   }[];
   due: { cards: number; words: number };
   activity: { streak: number; days: string[] };
-  history: { topic: string; score: number; total: number; completed_at: string }[];
+  history: { topic: string; score: number; total: number; completed_at: string; lang: 'el' | 'ru' | null }[];
   topicLabels: Record<string, string>;
 }

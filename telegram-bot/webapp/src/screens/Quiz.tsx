@@ -20,7 +20,7 @@ import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { Loading, ProgressBar, Ring, useCached } from '../ui';
-import { useLanguage, type Language } from '../i18n';
+import { countWord, useLanguage } from '../i18n';
 import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for the topic picker: one classical element per
@@ -49,15 +49,6 @@ function TopicDecor() {
 
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
-function questionsWord(n: number, lang: Language): string {
-  if (lang === 'el') return n === 1 ? 'ερώτηση' : 'ερωτήσεις';
-  const d10 = n % 10;
-  const d100 = n % 100;
-  if (d10 === 1 && d100 !== 11) return 'вопрос';
-  if (d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14)) return 'вопроса';
-  return 'вопросов';
-}
-
 const tone = (p: number) => (p >= 85 ? 'h3' : p >= 60 ? 'h2' : p > 0 ? 'h1' : 'h0');
 
 const TOPICS: { id: string; key: string; span?: boolean }[] = [
@@ -77,7 +68,7 @@ interface AnswerRec {
 
 type Phase = 'topic' | 'loading' | 'play' | 'result';
 
-export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTopic?: string; lang?: Language }) {
+export function Quiz({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
   // Same report the readiness screen shows, so each tile can say how far along that topic is.
   const { data: readiness } = useCached(`readiness:${language}`, api.readiness);
@@ -103,21 +94,12 @@ export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTo
     q.options.forEach((opt) => prefetchGreek(opt, textKey(opt)));
   }, [phase, idx, questions]);
 
-  // Opened from the readiness screen: go straight into that topic's quiz.
-  const autoStarted = useRef(false);
-  useEffect(() => {
-    if (!startTopic || autoStarted.current) return;
-    autoStarted.current = true;
-    void start(startTopic);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   async function start(topicId: string) {
     haptic();
     setTopic(topicId);
     setPhase('loading');
     try {
-      const r = await api.quiz(topicId, 10, lang);
+      const r = await api.quiz(topicId, 10);
       setQuestions(r.questions);
       setTopicLabel(r.topicLabel);
       setIdx(0);
@@ -234,7 +216,7 @@ export function Quiz({ onHome, startTopic, lang }: { onHome: () => void; startTo
                   {report && (
                     <>
                       <span className="tp-meta">
-                        {report.total} {questionsWord(report.total, language)} ·{' '}
+                        {report.total} {countWord(report.total, 'question', language)} ·{' '}
                         {t('tp.known').replace('{n}', `${known}%`)}
                       </span>
                       <span className="tp-bar">
