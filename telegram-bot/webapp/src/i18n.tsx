@@ -173,6 +173,7 @@ const translations: Translations = {
   },
   'landing.steps.title': { ru: 'Как это работает', el: 'Πώς λειτουργεί' },
   'landing.features.title': { ru: 'Что внутри', el: 'Τι περιλαμβάνει' },
+  'landing.step': { ru: 'Шаг', el: 'Βήμα' },
   'landing.step1.title': { ru: 'Выбери способ', el: 'Διάλεξε τρόπο' },
   'landing.step1.text': {
     ru: 'Тесты, карточки или словарь — начни с чего хочешь, без регистрации.',

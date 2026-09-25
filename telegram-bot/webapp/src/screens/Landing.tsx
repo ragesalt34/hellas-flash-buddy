@@ -6,8 +6,8 @@ import { LanguageSwitch } from '../components/LanguageSwitch';
 import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
 import { TopicGlyph } from '../components/statsArt';
-import { Aspis, ColumnChart, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
-import { CoinLetter, HeroPanorama, HeroSun, FallingLeaves, SoundLyre, StelePediment, SunsetScene } from '../components/landingArt';
+import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
+import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre, SunsetScene } from '../components/landingArt';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -327,9 +327,11 @@ export function Landing({
             viewport={{ once: true, margin: '-60px' }}
             whileHover={{ y: -3 }}
           >
-            <Sparks className="lp-spark corner" size={36} />
-            <span className="num lp-coin-num">
-              <CoinLetter letter={STEP_LETTERS[i] ?? String(i + 1)} />
+            <span className="lp-step-letter" aria-hidden="true">
+              {STEP_LETTERS[i] ?? i + 1}
+            </span>
+            <span className="lp-step-kicker">
+              {t('landing.step')} {i + 1}
             </span>
             <h3>{t(s.titleKey)}</h3>
             <p>{t(s.textKey)}</p>
@@ -396,41 +398,22 @@ export function Landing({
         transition={{ duration: 0.7, ease: EASE }}
         viewport={{ once: true, margin: '-80px' }}
       >
-        <div className="lp-stele">
-          <StelePediment />
-          <div className="lp-stele-body">
-            <OliveSprig className="lp-stele-olive left" flip />
-            <OliveSprig className="lp-stele-olive right" />
-            <p className="lp-quote-text">{t('landing.quote')}</p>
-            <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
-          </div>
-          <div className="lp-stele-base" aria-hidden="true" />
-        </div>
+        <span className="hs-deco lp-quote-omega" aria-hidden="true">Ω</span>
+        <p className="lp-quote-text">{t('landing.quote')}</p>
+        <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
       </motion.section>
 
       <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
-        {/* `-lift` tints, not the base tokens: the muted palette is too dark on
-            the ink plate (base --blue lands at 2.92:1, under the 3:1 floor). */}
         {[
-          { n: <CountUp to={160} suffix="+" />, l: 'landing.stat.questions', c: 'var(--amber-lift)' },
-          { n: <CountUp to={150} suffix="+" />, l: 'landing.stat.words', c: 'var(--mint-lift)' },
-          { n: <CountUp to={4} />, l: 'landing.stat.topics', c: 'var(--accent-lift)' },
-          { n: 'SRS', l: 'landing.stat.srs', c: 'var(--blue-lift)' },
-        ].map((st, i) => (
-          <div className="lp-stat" key={st.l}>
-            {/* A drachma that flips face-up as the plate scrolls in. */}
-            <motion.div
-              className="lp-coin"
-              initial={{ rotateY: 180 }}
-              whileInView={{ rotateY: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.9, delay: i * 0.12, ease: EASE }}
-            >
-              <div className="n" style={{ color: st.c }}>
-                {st.n}
-              </div>
-            </motion.div>
-            <div className="l">{t(st.l)}</div>
+          { n: <CountUp to={160} suffix="+" />, l: 'landing.stat.questions', Icon: WaxTablet },
+          { n: <CountUp to={150} suffix="+" />, l: 'landing.stat.words', Icon: Papyrus },
+          { n: <CountUp to={4} />, l: 'landing.stat.topics', Icon: ColumnChart },
+          { n: 'SRS', l: 'landing.stat.srs', Icon: LaurelSprig },
+        ].map(({ n, l, Icon }) => (
+          <div className="lp-stat" key={l}>
+            <Icon className="lp-stat-ic" />
+            <div className="n">{n}</div>
+            <div className="l">{t(l)}</div>
           </div>
         ))}
       </motion.section>

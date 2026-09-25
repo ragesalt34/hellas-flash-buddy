@@ -85,20 +85,6 @@ export function FallingLeaves() {
   );
 }
 
-/** Gold coin stamped with a letter — Α, Β, Γ number the steps. */
-export function CoinLetter({ letter }: { letter: string }) {
-  return (
-    <svg className="lp-coin-letter" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <circle className="c-rim" cx="24" cy="24" r="23" />
-      <circle className="c-bead" cx="24" cy="24" r="20" />
-      <circle className="c-face" cx="24" cy="24" r="17" />
-      <text className="c-letter" x="24" y="31.5" textAnchor="middle">
-        {letter}
-      </text>
-    </svg>
-  );
-}
-
 function Svg({ className, children }: { className: string; children: ReactNode }) {
   return (
     <svg className={`ha ${className}`} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -118,18 +104,6 @@ export function SoundLyre({ className = '' }: { className?: string }) {
       <path className="ha-wave w1" d="M22 12.5 C23.6 14.4 23.6 17.6 22 19.5" />
       <path className="ha-wave w2" d="M25 10 C28 13.6 28 18.4 25 22" />
     </Svg>
-  );
-}
-
-/** Top of a marble stele: a pediment with a rosette and acroteria. */
-export function StelePediment() {
-  return (
-    <svg className="lp-stele-top" viewBox="0 0 400 54" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path className="p-roof" d="M4 50 L200 6 L396 50 Z" />
-      <path className="p-tymp" d="M34 46 L200 12 L366 46 Z" />
-      <circle className="p-rosette" cx="200" cy="32" r="6" />
-      <path className="p-acro" d="M4 50 C-2 48 -2 40 4 38 C6 42 6 46 4 50 Z M396 50 C402 48 402 40 396 38 C394 42 394 46 396 50 Z" />
-    </svg>
   );
 }
 
