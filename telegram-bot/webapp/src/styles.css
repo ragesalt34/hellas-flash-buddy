@@ -4851,14 +4851,10 @@ button.chip:active { transform: scale(0.95); }
 .rd-due:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
 .rd-activity-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; font-size: 14px; }
 .rd-streak { display: inline-flex; align-items: center; gap: 6px; }
-.rd-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 420px; }
-.rd-grid i { aspect-ratio: 1; border-radius: 6px; background: color-mix(in srgb, var(--muted) 14%, transparent); }
-.rd-grid i.on { background: var(--good); }
 .rd-more { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 8px; padding: 10px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 @media (max-width: 520px) {
   .rd-verdict { flex-direction: column; text-align: center; }
   .rd-verdict-title, .rd-blockers { justify-content: center; }
-  .rd-grid { gap: 4px; }
 }
 
 /* ============ Greek ornaments — second pass ============
@@ -4873,20 +4869,7 @@ button.chip:active { transform: scale(0.95); }
 .rd-label > span { flex: none; }
 .rd-label .rd-label-rule { flex: 1; max-width: 200px; color: #d7b88a; opacity: 0.75; }
 .rd-verdict { position: relative; }
-.rd-verdict-olive { position: absolute; top: -22px; right: 16px; width: 104px; height: auto; transform: rotate(-6deg); }
-.rd-ring { position: relative; flex: none; display: grid; place-items: center; }
-.rd-ring-wreath { position: absolute; left: 50%; top: 50%; width: 172px; height: 172px; transform: translate(-50%, -50%); }
-[data-theme='soft'] .rd-verdict .rd-ring { margin: 26px 24px 26px 26px; }
-.rd-ready-temple { width: 34px; height: auto; margin-left: 6px; }
 .rd-topics, .rd-activity { position: relative; }
-.rd-corner { position: absolute; top: 9px; left: 9px; width: 26px; height: auto; opacity: 0.55; }
-[data-theme='soft'] .rd-topics { padding-top: 34px; }
-.rd-amphora { position: absolute; right: 22px; bottom: 14px; width: 64px; height: auto; opacity: 0.85; }
-@media (max-width: 700px) { .rd-amphora { display: none; } }
-@media (max-width: 520px) {
-  [data-theme='soft'] .rd-verdict .rd-ring { margin: 30px auto 22px; }
-  .rd-verdict-olive { width: 76px; top: 10px; right: 12px; }
-}
 
 /* Sign-in card */
 [data-theme='soft'] .auth-card { position: relative; overflow: hidden; padding-top: 38px; }
@@ -4912,3 +4895,111 @@ button.chip:active { transform: scale(0.95); }
 .lp-div-olive { flex: none; width: 92px; height: auto; }
 .lp-div-band { flex: 1; min-width: 0; }
 @media (max-width: 560px) { .lp-div-olive { width: 62px; } }
+
+/* ============ Readiness art (components/statsArt.tsx) ============
+   These drawings carry data, so they show in both themes; the square theme
+   gets a flat ink version at the end of this block. */
+.rd-verdict { gap: 26px; }
+.rd-temple-wrap { flex: none; width: 280px; margin: 0; text-align: center; }
+.rd-temple { display: block; width: 280px; height: auto; }
+.rd-temple-wrap figcaption { margin-top: 4px; font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.rd-score { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.rd-score b { font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -1px; }
+.rd-score span { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+
+.rd-temple .t-shadow { fill: rgba(120, 90, 50, 0.1); }
+.rd-temple .t-ghost { fill: #fbf6ec; stroke: #cfb68a; stroke-width: 1; stroke-dasharray: 3 2.5; }
+.rd-temple .t-pct { font: 700 9px var(--font-body, system-ui), sans-serif; fill: #9a8a6c; }
+.rd-temple .t-pct.h1 { fill: #b5553d; }
+.rd-temple .t-pct.h2 { fill: #a87a18; }
+.rd-temple .t-pct.h3 { fill: #4f7d3f; }
+.rd-temple .t-solid { fill: #f5ead3; stroke: #b0915f; stroke-width: 1.1; }
+.rd-temple .t-solid .t-tympanum { fill: #efdfbd; stroke: none; }
+.rd-temple .t-ghost .t-tympanum { fill: none; stroke: none; }
+.rd-temple .t-frieze rect { fill: #b0915f; }
+.rd-temple .t-frieze circle { fill: #e2c27a; stroke: #b0915f; stroke-width: 1; }
+.rd-temple .t-frieze .t-acro { fill: #e2c27a; stroke: #b0915f; stroke-width: 0.9; }
+.rd-temple .t-fill { stroke: #b0915f; stroke-width: 1; }
+.rd-temple .t-fill.h1 { fill: #f2cdbf; }
+.rd-temple .t-fill.h2 { fill: #f4dea6; }
+.rd-temple .t-fill.h3 { fill: #d3e5c6; }
+.rd-temple .t-flute { stroke: rgba(120, 90, 50, 0.28); stroke-width: 1; }
+.rd-temple .t-cap { fill: #f5ead3; stroke: #b0915f; stroke-width: 1; }
+.rd-temple .t-plinth { fill: #eadcc0; stroke: #c4a979; stroke-width: 1; }
+.rd-temple .t-step { fill: #efe3c9; stroke: #cdb68d; stroke-width: 1; }
+.rd-temple .t-rise { transform-box: fill-box; transform-origin: 50% 100%; animation: rd-rise 0.9s var(--ease) both; }
+@keyframes rd-rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .rd-temple .t-rise { animation: none; } }
+
+.rd-temple .g path, .rd-emblem .g path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.rd-temple .g .g-soft, .rd-emblem .g .g-soft { fill: currentColor; fill-opacity: 0.16; stroke: none; }
+.rd-temple .g .g-dot, .rd-emblem .g .g-dot { fill: currentColor; }
+.tp-history { color: #b35a42; }
+.tp-culture { color: #7a5a93; }
+.tp-laws { color: #3f5b88; }
+.tp-geography { color: #2c8480; }
+.tp-mixed { color: #8a7a57; }
+
+.rd-emblem { flex: none; width: 34px; height: 34px; padding: 5px; border-radius: 12px; background: color-mix(in srgb, currentColor 11%, transparent); }
+.rd-tname { display: flex; align-items: center; gap: 10px; }
+.rd-tname > span { min-width: 0; }
+
+.rd-crit { display: flex; align-items: flex-start; gap: 14px; }
+.rd-crit-body { flex: 1; min-width: 0; }
+.rd-medal { flex: none; width: 42px; height: 42px; margin-top: -2px; }
+.rd-medal .m-rim { fill: var(--rim); }
+.rd-medal .m-bead { fill: none; stroke: var(--ink); stroke-width: 0.9; stroke-dasharray: 0.1 2.6; stroke-linecap: round; opacity: 0.7; }
+.rd-medal .m-face { fill: var(--face); stroke: var(--ink); stroke-width: 0.6; stroke-opacity: 0.35; }
+.rd-medal .m-letter { fill: var(--ink); font: 700 17px Georgia, 'Times New Roman', serif; }
+.rd-medal .m-line path, .rd-medal .m-line rect { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.rd-medal .m-line .m-soft { fill: var(--rim); stroke: none; }
+.rd-medal .m-eye { fill: #fffdf7; stroke: var(--ink); stroke-width: 1; }
+.rd-medal .m-pupil, .rd-medal .m-beak { fill: var(--ink); stroke: none; }
+.rd-medal.k-greek { --rim: #ecca7f; --face: #f8e8bf; --ink: #8a6424; }
+.rd-medal.k-words { --rim: #cddbb9; --face: #eef3e3; --ink: #56693a; }
+.rd-medal.k-memory { --rim: #d8cbe7; --face: #f2ecf8; --ink: #5a4677; }
+.rd-medal.k-russian { --rim: #e2dcd2; --face: #f5f2ec; --ink: #8b8378; }
+
+.rd-olives { display: flex; flex-direction: column; gap: 2px; max-width: 440px; }
+.rd-olive-week { display: block; width: 100%; height: auto; }
+.rd-olive-week .o-stem { fill: none; stroke: #8f7c55; stroke-width: 1.6; stroke-linecap: round; }
+.rd-olive-week .o-stalk { fill: none; stroke: #8f7c55; stroke-width: 1.1; }
+.rd-olive-week .o-leaf { fill: #a9b893; }
+.rd-olive-week .o-leaf.dark { fill: #869a6c; }
+.rd-olive-week .o-on { fill: #5c4a6e; }
+.rd-olive-week .o-off { fill: #fbf7ef; stroke: #c9c2ae; stroke-width: 1.2; stroke-dasharray: 2.4 2; }
+.rd-olive-week .o-shine { fill: #fff; opacity: 0.45; }
+.rd-olive-week .o-today { fill: none; stroke: #d0654b; stroke-width: 1.6; }
+.rd-activity .rd-sub { margin-top: 8px; }
+
+.rd-hist-pct { display: inline-flex; align-items: center; gap: 6px; }
+.rd-laurel { width: 20px; height: 16px; }
+.rd-laurel .l-stem { fill: none; stroke: #8f7c55; stroke-width: 1.2; stroke-linecap: round; }
+.rd-laurel .l-leaf { fill: #c9a24a; }
+
+@media (max-width: 640px) {
+  .rd-verdict { flex-direction: column; text-align: center; }
+  .rd-score, .rd-verdict-title, .rd-blockers { justify-content: center; }
+  .rd-temple-wrap { width: 100%; max-width: 280px; margin: 0 auto; }
+  .rd-temple { width: 100%; }
+  .rd-emblem { width: 30px; height: 30px; padding: 4px; }
+  .rd-medal { width: 36px; height: 36px; }
+}
+
+/* Square theme: the same drawings in flat ink. */
+[data-theme='brut'] .rd-temple .t-solid, [data-theme='brut'] .rd-temple .t-cap,
+[data-theme='brut'] .rd-temple .t-plinth, [data-theme='brut'] .rd-temple .t-step { fill: var(--surface, #fff); stroke: var(--text); }
+[data-theme='brut'] .rd-temple .t-ghost { fill: none; stroke: var(--muted); }
+[data-theme='brut'] .rd-temple .t-fill { stroke: var(--text); }
+[data-theme='brut'] .rd-temple .t-fill.h1 { fill: color-mix(in srgb, var(--bad) 45%, #fff); }
+[data-theme='brut'] .rd-temple .t-fill.h2 { fill: color-mix(in srgb, var(--amber) 55%, #fff); }
+[data-theme='brut'] .rd-temple .t-fill.h3 { fill: color-mix(in srgb, var(--good) 55%, #fff); }
+[data-theme='brut'] .rd-temple .t-glyph, [data-theme='brut'] .rd-emblem { color: var(--text); }
+[data-theme='brut'] .rd-emblem { background: none; border: var(--bd-w) solid var(--bd-c); border-radius: var(--r-sm); }
+[data-theme='brut'] .rd-medal { --rim: transparent; --face: transparent; --ink: var(--text); }
+[data-theme='brut'] .rd-olive-week .o-leaf, [data-theme='brut'] .rd-olive-week .o-leaf.dark { fill: var(--muted); opacity: 0.45; }
+[data-theme='brut'] .rd-olive-week .o-stem, [data-theme='brut'] .rd-olive-week .o-stalk { stroke: var(--text); }
+[data-theme='brut'] .rd-olive-week .o-on { fill: var(--text); }
+[data-theme='brut'] .rd-olive-week .o-off { fill: none; stroke: var(--muted); }
+[data-theme='brut'] .rd-olive-week .o-today { stroke: var(--bad); }
+[data-theme='brut'] .rd-laurel .l-leaf { fill: var(--text); }

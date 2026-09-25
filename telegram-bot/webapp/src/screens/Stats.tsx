@@ -17,11 +17,18 @@ import {
 } from 'lucide-react';
 import { api, type ReadinessResponse } from '../api';
 import type { View } from '../App';
-import { Empty, Loading, ProgressBar, Ring, useCached } from '../ui';
+import { Empty, Loading, ProgressBar, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { haptic } from '../telegram';
-import { Greek } from '../components/greek';
-import { LaurelWreath, MeanderBand, OliveSprig } from '../components/greekArt';
+import { MeanderBand } from '../components/greekArt';
+import {
+  LaurelMark,
+  Medallion,
+  OliveCalendar,
+  ParthenonProgress,
+  TopicEmblem,
+  type MedalKind,
+} from '../components/statsArt';
 
 const VERDICT_ICON: Record<ReadinessResponse['verdict'], LucideIcon> = {
   early: Sprout,
@@ -65,6 +72,7 @@ function Label({ children }: { children: string }) {
 }
 
 function Criterion({
+  medal,
   title,
   tag,
   value,
@@ -72,6 +80,7 @@ function Criterion({
   sub,
   aid,
 }: {
+  medal: MedalKind;
   title: string;
   tag: string;
   value: number;
@@ -81,6 +90,8 @@ function Criterion({
 }) {
   return (
     <div className={`bar-row rd-crit${aid ? ' is-aid' : ''}`}>
+      <Medallion kind={medal} />
+      <div className="rd-crit-body">
       <div className="lab">
         <span>
           {title} <span className="rd-tag">{tag}</span>
@@ -91,6 +102,7 @@ function Criterion({
       </div>
       <ProgressBar value={value} total={total} />
       <div className="rd-sub">{sub}</div>
+      </div>
     </div>
   );
 }
@@ -123,19 +135,22 @@ export function Stats({
     <div className="fade-in rd-screen">
       <Label>{t('rd.title')}</Label>
       <div className={`card rd-verdict v-${data.verdict}`}>
-        <OliveSprig className="rd-verdict-olive" />
-        <div className="rd-ring">
-          <LaurelWreath className="rd-ring-wreath" gold={data.verdict === 'ready'} />
-          <Ring pct={data.score} size={112} stroke={11}>
-            <div className="ring-pct" style={{ fontSize: 24 }}>
-              {data.score}%
-            </div>
-          </Ring>
-        </div>
+        <figure className="rd-temple-wrap">
+          <ParthenonProgress
+            topics={data.topics.map((tp) => ({
+              topic: tp.topic,
+              label: label(tp.topic),
+              pct: tp.total > 0 ? tp.greek.known / tp.total : 0,
+            }))}
+          />
+          <figcaption>{t('rd.templeHint')}</figcaption>
+        </figure>
         <div className="rd-verdict-body">
+          <div className="rd-score">
+            <b>{data.score}%</b> <span>{t('rd.scoreLabel')}</span>
+          </div>
           <div className="rd-verdict-title">
             <VIcon size={22} strokeWidth={2.4} /> {t(`rd.verdict.${data.verdict}`)}
-            {data.verdict === 'ready' && <Greek name="temple" className="rd-ready-temple" />}
           </div>
           <p className="rd-verdict-hint">{t(`rd.verdictHint.${data.verdict}`)}</p>
           {data.blockers.length > 0 && (
@@ -155,6 +170,7 @@ export function Stats({
       <Label>{t('rd.criteria')}</Label>
       <div className="card rd-criteria">
         <Criterion
+          medal="greek"
           title={t('rd.crit.greek')}
           tag={t('rd.decides')}
           value={data.greek.known}
@@ -162,6 +178,7 @@ export function Stats({
           sub={`${t('rd.unchecked')}: ${data.greek.total - data.greek.checked}`}
         />
         <Criterion
+          medal="words"
           title={t('rd.crit.words')}
           tag={t('rd.decides')}
           value={data.words.learned}
@@ -169,6 +186,7 @@ export function Stats({
           sub={`${t('stats.reviewed')}: ${data.words.seen}/${data.words.total}`}
         />
         <Criterion
+          medal="memory"
           title={t('rd.crit.memory')}
           tag={t('rd.extra')}
           value={data.memory.strong}
@@ -177,6 +195,7 @@ export function Stats({
           aid
         />
         <Criterion
+          medal="russian"
           title={t('rd.crit.russian')}
           tag={t('rd.aid')}
           value={data.russian.known}
@@ -188,7 +207,6 @@ export function Stats({
 
       <Label>{t('rd.byTopic')}</Label>
       <div className="card rd-topics">
-        <Greek name="decorative-corner" className="rd-corner" />
         <div className="rd-trow rd-thead">
           <span />
           <span>{t('rd.col.greek')}</span>
@@ -203,7 +221,10 @@ export function Stats({
           return (
             <div className={`rd-trow${isWeak ? ' is-weak' : ''}`} key={tp.topic}>
               <span className="rd-tname">
-                {label(tp.topic)} <small>{tp.total}</small>
+                <TopicEmblem topic={tp.topic} />
+                <span>
+                  {label(tp.topic)} <small>{tp.total}</small>
+                </span>
               </span>
               <span className={`rd-cell ${heat(g)}`}>{g}%</span>
               <span className={`rd-cell ${heat(r)} is-aid`}>{r}%</span>
@@ -253,7 +274,6 @@ export function Stats({
 
       <Label>{t('rd.regularity')}</Label>
       <div className="card rd-activity">
-        <Greek name="amphora" className="rd-amphora" />
         <div className="rd-activity-head">
           <span className="rd-streak">
             <Flame size={16} strokeWidth={2.6} /> {t('stats.streak')}: <b>{data.activity.streak}</b>
@@ -262,11 +282,8 @@ export function Stats({
             {grid.filter((d) => active.has(d)).length} {t('rd.daysActive')}
           </span>
         </div>
-        <div className="rd-grid">
-          {grid.map((d) => (
-            <i key={d} className={active.has(d) ? 'on' : ''} title={d} />
-          ))}
-        </div>
+        <OliveCalendar days={grid} active={active} today={grid[grid.length - 1]} />
+        <div className="rd-sub">{t('rd.oliveHint')}</div>
       </div>
 
       {data.history.length > 0 && (
@@ -291,7 +308,10 @@ export function Stats({
                     </div>
                     <div className="dt">{date}</div>
                   </div>
-                  <span className="muted">{p}%</span>
+                  <span className="rd-hist-pct">
+                    {p >= 80 && <LaurelMark />}
+                    <span className="muted">{p}%</span>
+                  </span>
                 </div>
               );
             })}
