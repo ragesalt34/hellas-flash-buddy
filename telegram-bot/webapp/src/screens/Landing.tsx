@@ -8,7 +8,7 @@ import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
 import { TopicGlyph } from '../components/statsArt';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
-import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre, SunsetScene } from '../components/landingArt';
+import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre } from '../components/landingArt';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -436,8 +436,9 @@ export function Landing({
         transition={{ duration: 0.6, ease: EASE }}
         viewport={{ once: true }}
       >
-        <SunsetScene />
+        <HeroPanorama className="at-dusk" />
         <h2>{t('landing.foot.title')}</h2>
+        <p className="lp-foot-sub">{t('landing.foot.sub')}</p>
         <button className="lp-btn primary" onClick={onStart}>{t('landing.foot.cta')} <ArrowRight size={19} strokeWidth={2.6} /></button>
       </motion.section>
 

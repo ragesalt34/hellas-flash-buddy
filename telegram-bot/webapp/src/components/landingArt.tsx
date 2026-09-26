@@ -25,10 +25,10 @@ export function HeroSun() {
 /** A panorama along the bottom of the hero: hills, the sea, the temple on its
  * rock and a few cypresses. Layers shift a little with the pointer (see
  * --px/--py set on .lp-hero). */
-export function HeroPanorama() {
+export function HeroPanorama({ className = '' }: { className?: string }) {
   return (
     <svg
-      className="hs-deco lp-panorama"
+      className={`hs-deco lp-panorama${className ? ` ${className}` : ''}`}
       viewBox="0 0 1200 200"
       preserveAspectRatio="xMidYMax slice"
       aria-hidden="true"
@@ -104,34 +104,5 @@ export function SoundLyre({ className = '' }: { className?: string }) {
       <path className="ha-wave w1" d="M22 12.5 C23.6 14.4 23.6 17.6 22 19.5" />
       <path className="ha-wave w2" d="M25 10 C28 13.6 28 18.4 25 22" />
     </Svg>
-  );
-}
-
-/** Sunset over the sea with the temple in silhouette — the closing call to action. */
-export function SunsetScene() {
-  return (
-    <svg className="hs-deco lp-sunset" viewBox="0 0 1000 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <circle className="u-sun" cx="500" cy="128" r="74" />
-      <path className="u-sea" d="M0 132 H1000 V170 H0 Z" />
-      <path className="u-glint" d="M440 142 H560 M462 152 H538 M484 161 H516" />
-      <path className="u-hill" d="M640 132 C700 96 760 84 830 86 C900 88 950 108 1000 118 V132 Z" />
-      <g className="u-temple">
-        <path d="M760 70 L806 56 L852 70 Z" />
-        <rect x="760" y="70" width="92" height="5" />
-        {Array.from({ length: 6 }, (_, i) => (
-          <rect key={i} x={764 + i * 16.2} y="75" width="4.5" height="15" />
-        ))}
-        <rect x="756" y="90" width="100" height="4" />
-      </g>
-      <path className="u-hill" d="M0 132 C60 112 120 104 190 110 C250 115 300 124 340 132 Z" />
-      {[
-        [96, 112, 40],
-        [118, 110, 30],
-        [230, 118, 34],
-      ].map(([x, y, h], i) => (
-        <path key={i} className="u-cypress" d={CYPRESS(x, y, h)} />
-      ))}
-      <path className="u-bird" d="M300 46 q6 -6 12 0 q6 -6 12 0 M340 32 q4 -4 8 0 q4 -4 8 0 M660 40 q5 -5 10 0 q5 -5 10 0" />
-    </svg>
   );
 }

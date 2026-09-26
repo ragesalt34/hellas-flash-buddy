@@ -5169,15 +5169,60 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .lp-stat + .lp-stat { border-left-color: var(--hair); }
 }
 
-/* ---- Closing call: sunset over the sea ---- */
-[data-theme='soft'] .lp-foot { background: linear-gradient(180deg, #fbe3a8 0%, #f6c27f 55%, #ee9f78 100%); padding-bottom: clamp(128px, 17vw, 178px); }
-.lp-foot > h2, .lp-foot > .lp-btn { position: relative; z-index: 1; }
-.lp-sunset { position: absolute; left: 0; bottom: 0; width: 100%; height: clamp(112px, 15vw, 170px); pointer-events: none; }
-.lp-sunset .u-sun { fill: #fff4d6; opacity: 0.8; }
-.lp-sunset .u-sea { fill: #e8866a; opacity: 0.55; }
-.lp-sunset .u-glint { fill: none; stroke: #fff3cf; stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
-.lp-sunset .u-hill, .lp-sunset .u-temple path, .lp-sunset .u-temple rect, .lp-sunset .u-cypress { fill: #7a4a52; opacity: 0.55; }
-.lp-sunset .u-bird { fill: none; stroke: #7a4a52; stroke-width: 2; stroke-linecap: round; opacity: 0.5; }
+/* ---- Closing call: the hero's panorama again, at dusk — the page ends where it began ---- */
+.lp-foot > h2, .lp-foot > .lp-btn, .lp-foot > .lp-foot-sub { position: relative; z-index: 1; }
+.lp-foot-sub { max-width: 520px; margin: -8px auto 26px; font-size: var(--t-body); font-weight: 500; line-height: 1.55; color: var(--text-body); }
+[data-theme='soft'] .lp-foot {
+  border: 1px solid rgba(190, 150, 100, 0.28);
+  border-radius: 32px;
+  box-shadow: 0 1px 0 rgba(92, 60, 30, 0.04), 0 36px 64px -44px rgba(120, 72, 30, 0.5);
+  background:
+    radial-gradient(80% 60% at 50% 100%, rgba(246, 192, 146, 0.5), transparent 72%),
+    linear-gradient(180deg, #fcf8f0 0%, #f9ecda 58%, #f5dcc3 100%);
+  padding: clamp(52px, 7vw, 84px) 24px clamp(150px, 18vw, 214px);
+}
+[data-theme='soft'] .lp-foot h2 {
+  max-width: 760px; margin: 0 auto 18px;
+  font-family: 'EB Garamond', Georgia, serif; font-weight: 600;
+  font-size: clamp(32px, 4.6vw, 54px); line-height: 1.08; letter-spacing: -0.6px; color: #2c2a25;
+  text-wrap: balance;
+}
+[data-theme='soft'] .lp-foot-sub { color: #7a6a58; }
+[data-theme='soft'] .lp-foot .lp-btn.primary {
+  background: #b5533b; color: #fff; border: 0; border-radius: 999px; padding: 15px 28px;
+  box-shadow: 0 14px 28px -16px rgba(181, 83, 59, 0.85);
+  transition: background 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+[data-theme='soft'] .lp-foot .lp-btn.primary:hover { background: #a0472f; transform: translateY(-1px); box-shadow: 0 18px 32px -16px rgba(181, 83, 59, 0.9); }
+.lp-foot .lp-panorama.at-dusk { left: 0; right: 0; width: 100%; height: clamp(110px, 15vw, 186px); }
+.lp-panorama.at-dusk .s-hill-far { fill: #f2d5bc; }
+.lp-panorama.at-dusk .s-sea { fill: #f4c6a3; opacity: 0.75; }
+.lp-panorama.at-dusk .s-wave { stroke: #fff4e6; }
+.lp-panorama.at-dusk .s-rock { fill: #e9bc9a; }
+.lp-panorama.at-dusk .s-temple path, .lp-panorama.at-dusk .s-temple rect { fill: #fcefe2; stroke: #c9906b; }
+.lp-panorama.at-dusk .s-cypress { fill: #b48a74; }
+.lp-panorama.at-dusk .s-cypress.dark { fill: #9c7563; }
+.lp-panorama.at-dusk .s-ground { fill: #f1d1b6; }
+
+/* ---- FAQ: quiet rows instead of hard-shadow tiles ---- */
+[data-theme='soft'] .lp-faq-h { font-family: 'EB Garamond', Georgia, serif; font-weight: 600; letter-spacing: -0.4px; }
+[data-theme='soft'] .lp-faq-item {
+  border: 1px solid rgba(190, 150, 100, 0.22); border-radius: 18px;
+  background: rgba(255, 253, 248, 0.75); box-shadow: none; margin-bottom: 10px;
+}
+[data-theme='soft'] .lp-faq-item:hover { border-color: rgba(181, 83, 59, 0.3); }
+[data-theme='soft'] .lp-faq-item[open] { background: #fffdf8; border-color: rgba(181, 83, 59, 0.3); box-shadow: 0 18px 34px -28px rgba(120, 72, 30, 0.5); }
+[data-theme='soft'] .lp-faq-item summary { padding: 18px 22px; font-family: var(--font-body); font-size: 17px; font-weight: 600; }
+[data-theme='soft'] .lp-faq-plus {
+  width: 30px; height: 30px; border: 1px solid rgba(181, 83, 59, 0.35); border-radius: 50%;
+  background: none; color: #b5533b; font-size: 20px; font-weight: 400;
+  transition: transform 0.25s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+}
+[data-theme='soft'] .lp-faq-item[open] .lp-faq-plus { background: #b5533b; border-color: #b5533b; color: #fff; }
+[data-theme='soft'] .lp-faq-item p { padding: 0 22px 20px; color: #6f6a62; }
+
+/* ---- Quote: the proverb in Greek, its translation beneath ---- */
+.lp-quote-sub { white-space: pre-line; }
 
 @media (prefers-reduced-motion: reduce) {
   .lp-leaves { display: none; }
