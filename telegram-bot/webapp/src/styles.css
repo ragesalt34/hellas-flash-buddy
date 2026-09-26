@@ -5204,23 +5204,6 @@ button.chip:active { transform: scale(0.95); }
 .lp-panorama.at-dusk .s-cypress.dark { fill: #9c7563; }
 .lp-panorama.at-dusk .s-ground { fill: #f1d1b6; }
 
-/* ---- FAQ: quiet rows instead of hard-shadow tiles ---- */
-[data-theme='soft'] .lp-faq-h { font-family: 'EB Garamond', Georgia, serif; font-weight: 600; letter-spacing: -0.4px; }
-[data-theme='soft'] .lp-faq-item {
-  border: 1px solid rgba(190, 150, 100, 0.22); border-radius: 18px;
-  background: rgba(255, 253, 248, 0.75); box-shadow: none; margin-bottom: 10px;
-}
-[data-theme='soft'] .lp-faq-item:hover { border-color: rgba(181, 83, 59, 0.3); }
-[data-theme='soft'] .lp-faq-item[open] { background: #fffdf8; border-color: rgba(181, 83, 59, 0.3); box-shadow: 0 18px 34px -28px rgba(120, 72, 30, 0.5); }
-[data-theme='soft'] .lp-faq-item summary { padding: 18px 22px; font-family: var(--font-body); font-size: 17px; font-weight: 600; }
-[data-theme='soft'] .lp-faq-plus {
-  width: 30px; height: 30px; border: 1px solid rgba(181, 83, 59, 0.35); border-radius: 50%;
-  background: none; color: #b5533b; font-size: 20px; font-weight: 400;
-  transition: transform 0.25s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
-}
-[data-theme='soft'] .lp-faq-item[open] .lp-faq-plus { background: #b5533b; border-color: #b5533b; color: #fff; }
-[data-theme='soft'] .lp-faq-item p { padding: 0 22px 20px; color: #6f6a62; }
-
 /* ---- Quote: the proverb in Greek, its translation beneath ---- */
 .lp-quote-sub { white-space: pre-line; }
 
