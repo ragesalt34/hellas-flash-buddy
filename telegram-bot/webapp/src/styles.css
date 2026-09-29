@@ -5345,5 +5345,3 @@ button.chip:active { transform: scale(0.95); }
   .topic-scene { display: none; }
   .ts-band { margin-top: 18px; }
 }
-/* the question in the same serif as the landing quote, to sit with the watercolour */
-[data-theme='soft'] .qz-play .card .qtext { font-family: 'EB Garamond', Georgia, serif; font-weight: 600; font-size: clamp(24px, 2.2vw, 30px); line-height: 1.22; letter-spacing: -0.2px; }
