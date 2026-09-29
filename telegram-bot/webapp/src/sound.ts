@@ -64,8 +64,8 @@ const DEFAULT_LUFS = -24;
 // being pushed hard while chasing its target.
 const PEAK_CEILING = 0.5;
 // Amplification is capped hard, because normalizing UP is what made a quiet
-// clip sound dirty before: grade-hard reads a documented "low-level rattle"
-// once its gain passes roughly 2.7× (+8.6 dB). It needs ~2.1× here.
+// clip sound dirty before: the old grade-hard read a "low-level rattle" once
+// its gain passed roughly 2.7× (+8.6 dB).
 const MAX_GAIN = 2.5;
 const buffers = new Map<string, { buf: AudioBuffer; gain: number } | null>();
 
@@ -217,7 +217,7 @@ function trimTail(c: Ctx, buf: AudioBuffer): AudioBuffer {
 
 // Bump when swapping any file in public/sounds/ — busts the CDN edge cache
 // immediately instead of waiting out its max-age (see public/_headers).
-const SOUND_VERSION = 3;
+const SOUND_VERSION = 4;
 
 function preload(name: string): void {
   const c = ac();
