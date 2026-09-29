@@ -167,3 +167,21 @@ export function CycladicHome({ className = '' }: { className?: string }) {
     </Svg>
   );
 }
+
+/** Athena's owl — the explanation after an answer. */
+export function Owl({ className = '' }: { className?: string }) {
+  return (
+    <Svg className={`ha-owl ${className}`}>
+      <path className="ha-soft" d="M9 27 C6.8 20 7.6 10.8 16 10.8 C24.4 10.8 25.2 20 23 27 Z" />
+      <path d="M9 27 C6.8 20 7.6 10.8 16 10.8 C24.4 10.8 25.2 20 23 27 Z" />
+      <path d="M10 12.6 L9.2 7 L13.4 10.4 M22 12.6 L22.8 7 L18.6 10.4" />
+      <circle cx="12.8" cy="16" r="2.7" />
+      <circle cx="19.2" cy="16" r="2.7" />
+      <circle className="ha-dot" cx="12.9" cy="16.2" r="1" />
+      <circle className="ha-dot" cx="19.1" cy="16.2" r="1" />
+      <path d="M15.2 19 L16 20.8 L16.8 19" />
+      <path d="M12.6 23.2 L14.3 24.4 L16 23.2 L17.7 24.4 L19.4 23.2" />
+      <path d="M6 27 H26" />
+    </Svg>
+  );
+}

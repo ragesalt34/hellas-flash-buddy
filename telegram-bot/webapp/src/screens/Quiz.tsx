@@ -10,12 +10,12 @@ import {
   RotateCcw,
   LayoutGrid,
   House,
-  Lightbulb,
   Volume2,
   type LucideIcon,
 } from 'lucide-react';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
+import { Owl } from '../components/homeArt';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
@@ -287,9 +287,13 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   // ---- Playing ----
   const q = questions[idx];
   return (
-    <div className="fade-in" key={idx}>
+    <div className="fade-in qz-play" key={idx}>
+      <TopicDecor />
       <div className="topbar">
-        <span className="meta">{topicLabel}</span>
+        <span className="meta qz-topic">
+          <TopicEmblem topic={topic} className="qz-emblem" />
+          {topicLabel}
+        </span>
         <span className="counter">
           {idx + 1}/{questions.length}
         </span>
@@ -359,12 +363,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         </div>
         {chosen && q.explanation && (
           <div className="explain">
-            <Lightbulb
-              size={16}
-              strokeWidth={2.4}
-              style={{ display: 'inline', verticalAlign: '-3px', marginRight: 6 }}
-            />
-            {q.explanation}
+            <Owl className="qz-owl" />
+            <span>{q.explanation}</span>
           </div>
         )}
       </div>
