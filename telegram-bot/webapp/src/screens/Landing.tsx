@@ -8,7 +8,7 @@ import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
 import { TopicGlyph } from '../components/statsArt';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
-import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre } from '../components/landingArt';
+import { HeroPanorama, FallingLeaves, SoundLyre } from '../components/landingArt';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -231,7 +231,10 @@ export function Landing({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
           >
-            <HeroSun />
+            {/* Collage behind the card: a framed watercolour and an amphora, tilted like
+                photos pinned to a board. Decorative only. */}
+            <img className="lp-coll lp-coll-ruins" src={`${import.meta.env.BASE_URL}assets/topics/history/ruins.webp`} alt="" aria-hidden="true" draggable={false} />
+            <img className="lp-coll lp-coll-amphora" src={`${import.meta.env.BASE_URL}assets/topics/history/amphora.webp`} alt="" aria-hidden="true" draggable={false} />
             <div className="lp-demo-label">{t('landing.demo.label')}</div>
             <DemoCard />
             {/* Floating product stickers — fill the side space, echo the app UI */}
@@ -265,6 +268,21 @@ export function Landing({
           </motion.div>
         </div>
       </header>
+
+      <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+        {[
+          { n: <CountUp to={160} suffix="+" />, l: 'landing.stat.questions', Icon: WaxTablet },
+          { n: <CountUp to={150} suffix="+" />, l: 'landing.stat.words', Icon: Papyrus },
+          { n: <CountUp to={4} />, l: 'landing.stat.topics', Icon: ColumnChart },
+          { n: 'SRS', l: 'landing.stat.srs', Icon: LaurelSprig },
+        ].map(({ n, l, Icon }) => (
+          <div className="lp-stat" key={l}>
+            <Icon className="lp-stat-ic" />
+            <div className="n">{n}</div>
+            <div className="l">{t(l)}</div>
+          </div>
+        ))}
+      </motion.section>
 
       {/* Topic marquee — each exam topic with its own icon (same set as the quiz screen) */}
       <div className="lp-marquee" aria-hidden="true">
@@ -387,21 +405,6 @@ export function Landing({
         <span className="hs-deco lp-quote-omega" aria-hidden="true">Ω</span>
         <p className="lp-quote-text">{t('landing.quote')}</p>
         <p className="lp-quote-sub">{t('landing.quote.sub')}</p>
-      </motion.section>
-
-      <motion.section className="lp-stats" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
-        {[
-          { n: <CountUp to={160} suffix="+" />, l: 'landing.stat.questions', Icon: WaxTablet },
-          { n: <CountUp to={150} suffix="+" />, l: 'landing.stat.words', Icon: Papyrus },
-          { n: <CountUp to={4} />, l: 'landing.stat.topics', Icon: ColumnChart },
-          { n: 'SRS', l: 'landing.stat.srs', Icon: LaurelSprig },
-        ].map(({ n, l, Icon }) => (
-          <div className="lp-stat" key={l}>
-            <Icon className="lp-stat-ic" />
-            <div className="n">{n}</div>
-            <div className="l">{t(l)}</div>
-          </div>
-        ))}
       </motion.section>
 
       <div className="lp-rule" aria-hidden="true">
