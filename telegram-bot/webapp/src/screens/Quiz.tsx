@@ -16,6 +16,7 @@ import {
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
 import { Owl } from '../components/homeArt';
+import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
@@ -288,7 +289,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   const q = questions[idx];
   return (
     <div className="fade-in qz-play" key={idx}>
-      <TopicDecor />
+      {hasTopicScene(topic) ? <TopicScene topic={topic} /> : <TopicDecor />}
       <div className="topbar">
         <span className="meta qz-topic">
           <TopicEmblem topic={topic} className="qz-emblem" />
@@ -368,6 +369,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           </div>
         )}
       </div>
+      <TopicBand topic={topic} />
       {chosen && (
         <div className="actionbar">
           <button className="btn btn-block" onClick={next}>
