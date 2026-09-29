@@ -150,6 +150,8 @@ export const api = {
       body: JSON.stringify({ vocabId, grade }),
     }),
   readiness: () => request<ReadinessResponse>('/readiness'),
+  setInterviewDate: (date: string | null) =>
+    request<{ plan: StudyPlan }>('/account/interview-date', { method: 'PUT', body: JSON.stringify({ date }) }),
   tts: (text: string, cacheKey: string) =>
     request<{ audioUrl: string }>('/tts', {
       method: 'POST',
@@ -179,6 +181,7 @@ export interface MeResponse {
   stats: UserStats;
   streak: number;
   vocab: VocabStats;
+  plan: StudyPlan;
   topicLabels: Record<string, string>;
 }
 export interface QuizQuestion {
@@ -236,5 +239,20 @@ export interface ReadinessResponse {
   due: { cards: number; words: number };
   activity: { streak: number; days: string[] };
   history: { topic: string; score: number; total: number; completed_at: string; lang: 'el' | 'ru' | null }[];
+  plan: StudyPlan;
   topicLabels: Record<string, string>;
+}
+
+/** Today's targets toward the interview date (mirrors src/services/plan.ts). */
+export interface StudyPlan {
+  date: string | null;
+  daysLeft: number | null;
+  phase: 'none' | 'past' | 'learn' | 'final';
+  pace: 'none' | 'done' | 'final' | 'behind' | 'tight' | 'calm';
+  newQuestions: number;
+  newWords: number;
+  reviews: { cards: number; words: number };
+  unseen: { questions: number; words: number };
+  minutes: number;
+  finishNewBy: string | null;
 }

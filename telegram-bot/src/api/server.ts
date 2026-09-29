@@ -19,6 +19,7 @@ import {
   recordQuizSession,
   getUserStats,
   getUserStreak,
+  dayKeyIn,
   isValidTimeZone,
   recordStudyDay,
   getHistory,
@@ -33,6 +34,7 @@ import { getDueVocab, gradeVocab, getVocabStats } from '../services/vocabProgres
 import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 import { loadReadiness } from '../services/readinessService';
+import { loadPlan, setInterviewDate } from '../services/planService';
 import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
@@ -322,10 +324,11 @@ export function createApiApp(): express.Express {
     '/me',
     wrap(async (req, res) => {
       const a = req.account!;
-      const [stats, streak, vocab] = await Promise.all([
+      const [stats, streak, vocab, plan] = await Promise.all([
         getUserStats(a.id),
         getUserStreak(a.id, getTz(req)).catch(() => 0),
         getVocabStats(a.id, ALL_VOCAB_IDS),
+        loadPlan(a.id, getTz(req)),
       ]);
       const lang = getLang(req);
       res.json({
@@ -338,6 +341,7 @@ export function createApiApp(): express.Express {
         stats,
         streak,
         vocab,
+        plan,
         topicLabels: topicLabels(lang),
       });
     })
@@ -573,8 +577,39 @@ export function createApiApp(): express.Express {
     '/readiness',
     wrap(async (req, res) => {
       const a = req.account!;
-      const report = await loadReadiness(a.id, getTz(req));
-      res.json({ ...report, topicLabels: topicLabels(getLang(req)) });
+      const [report, plan] = await Promise.all([loadReadiness(a.id, getTz(req)), loadPlan(a.id, getTz(req))]);
+      res.json({ ...report, plan, topicLabels: topicLabels(getLang(req)) });
+    })
+  );
+
+  // PUT /api/account/interview-date { date: 'YYYY-MM-DD' | null } -> { plan }
+  api.put(
+    '/account/interview-date',
+    wrap(async (req, res) => {
+      const a = req.account!;
+      // Guests share one sandbox account: a date set there would apply to every guest.
+      if (a.isGuest) {
+        res.status(403).json({ error: 'guest' });
+        return;
+      }
+      const { date } = (req.body ?? {}) as { date?: unknown };
+      if (date !== null) {
+        const today = dayKeyIn(new Date(), getTz(req));
+        const [y, m, d] = today.split('-').map(Number);
+        const limit = `${y + 3}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const valid =
+          typeof date === 'string' &&
+          /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+          !Number.isNaN(Date.parse(date)) &&
+          date >= today &&
+          date <= limit;
+        if (!valid) {
+          res.status(400).json({ error: 'bad_date' });
+          return;
+        }
+      }
+      await setInterviewDate(a.id, date as string | null);
+      res.json({ plan: await loadPlan(a.id, getTz(req)) });
     })
   );
 
