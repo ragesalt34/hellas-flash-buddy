@@ -7,7 +7,7 @@ import { api } from './api';
 // TARGET_PEAK normalizes loudness: each clip's gain is set so its loudest
 // sample lands at TARGET_PEAK, so questions (v3) and words (flash) — which the
 // two models render at different baseline loudness — all play at the same level.
-const TARGET_PEAK = 0.5;
+const TARGET_PEAK = 0.45; // was 0.5; 10% quieter
 const MAX_GAIN = 2; // don't over-amplify a near-silent clip (would raise noise)
 const CACHE_TTL_MS = 50 * 60 * 1000;
 // Decoded PCM is ~0.5MB per clip — cap the cache so a long session doesn't
