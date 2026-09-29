@@ -59,6 +59,11 @@ const PEAK_CEILING = 0.9;
 const MAX_GAIN = 2.5;
 const buffers = new Map<string, { buf: AudioBuffer; gain: number } | null>();
 
+// Equal average level is not equal *felt* loudness: a short percussive click at
+// the same RMS as a sustained tone reads as sharper and louder. Per-clip trims
+// on top of the normalization; anything unlisted plays at 1.
+const LEVEL: Record<string, number> = { tap: 0.55 };
+
 /** Peak sample amplitude (0..1) — mono by the time this is called. */
 function peakOf(buf: AudioBuffer): number {
   const data = buf.getChannelData(0);
@@ -174,7 +179,7 @@ function preload(name: string): void {
       // mono → trim → measure: trimming never touches the loudest part, so the
       // gain is still computed against the real peak.
       const buf = trimTail(c, toMono(c, b));
-      buffers.set(name, { buf, gain: normGain(buf) });
+      buffers.set(name, { buf, gain: normGain(buf) * (LEVEL[name] ?? 1) });
     })
     .catch(() => {
       /* no file (or undecodable) — the synth fallback covers it */
@@ -304,7 +309,7 @@ function bell(freq: number, startAt: number, dur: number, peak = 0.18): void {
 /** Soft UI tick — answer/option tap, reveal, next. */
 export function playTap(): void {
   if (playSample('tap')) return;
-  tone(660, 0, 0.05, 'sine', 0.09);
+  tone(660, 0, 0.05, 'sine', 0.05);
 }
 
 /** Correct answer — bright ascending bell arpeggio if no file. */
