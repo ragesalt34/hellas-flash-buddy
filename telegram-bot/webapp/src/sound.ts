@@ -42,7 +42,10 @@ function ac(): Ctx | null {
 // than the short clips. What the ear compares between UI sounds is the loudest
 // moment, weighted for frequency. So: K-weighting (ITU-R BS.1770 — the ear
 // hears 2–4 kHz as louder than bass at the same energy), then the loudest
-// 200ms window, levelled to a per-effect target in LUFS.
+// 50ms window, levelled to a per-effect target in LUFS. The window has to be
+// short: tap is two 10ms clicks, and a 200ms window averaged them with the
+// silence around them, judged the clip quiet, and left each click as loud as
+// a correct/wrong chime.
 //
 // Targets are deliberately unequal: feedback on an answer is the main event,
 // the finish fanfare may stand out a little, grades repeat on every card and
@@ -54,7 +57,7 @@ const TARGET_LUFS: Record<string, number> = {
   'grade-hard': -24,
   'grade-good': -24,
   'grade-know': -24,
-  tap: -30,
+  tap: -36,
 };
 const DEFAULT_LUFS = -24;
 // Clip guard only — it never raises a level, just keeps a peaky click from
@@ -110,7 +113,7 @@ function kWeighting(sr: number): Biquad[] {
   return [shelf(1681.97, 3.99984, 0.7071752), highpass(38.13547, 0.500327)];
 }
 
-/** Loudness (LUFS) of the loudest 200ms of the clip — mono by the time this
+/** Loudness (LUFS) of the loudest 50ms of the clip — mono by the time this
  * is called. A clip shorter than the window is measured as if padded with
  * silence, so a tiny click is not judged as loud as a sustained tone. */
 function loudnessOf(buf: AudioBuffer): number {
@@ -126,8 +129,8 @@ function loudnessOf(buf: AudioBuffer): number {
     }
     x = y;
   }
-  const win = Math.round(buf.sampleRate * 0.2);
-  const hop = Math.round(buf.sampleRate * 0.05);
+  const win = Math.round(buf.sampleRate * 0.05);
+  const hop = Math.round(buf.sampleRate * 0.0125);
   const sq = new Float64Array(x.length + 1); // prefix sums of squares
   for (let i = 0; i < x.length; i++) sq[i + 1] = sq[i] + x[i] * x[i];
   let max = x.length <= win ? sq[x.length] / win : 0;
