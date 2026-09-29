@@ -32,9 +32,11 @@ zone), `totalQuestions`, `seenQuestions` (rows in `question_progress`),
   still unseen, ceil(unseen / max(1, daysLeft)).
 - minutes = ceil((newQ·40 + dueCards·15 + newW·15 + dueWords·8) / 60).
 - `phase`: `none` (no date) · `past` (date passed) · `learn` · `final` (learnDays ≤ 0).
-- `pace`: `done` (nothing unseen) · `final` (final phase, nothing unseen) ·
-  `behind` (minutes > 30, or final phase with unseen material) · `tight`
-  (15 < minutes ≤ 30) · `calm` (≤ 15).
+- `pace` judges only the new material (newMinutes = newQ·40 + newW·15 seconds);
+  a backlog of due reviews is today's load, not lateness: `done` (nothing
+  unseen) · `final` (final phase, nothing unseen) · `behind` (newMinutes > 20,
+  or final phase with unseen material) · `tight` (10 < newMinutes ≤ 20) ·
+  `calm` (≤ 10).
 - `finishNewBy` = date − buffer days.
 
 ## API

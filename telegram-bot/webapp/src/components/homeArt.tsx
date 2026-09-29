@@ -139,3 +139,17 @@ export function Aspis({ className = '' }: { className?: string }) {
     </Svg>
   );
 }
+
+/** An hourglass — time left until the interview. */
+export function Hourglass({ className = '' }: { className?: string }) {
+  return (
+    <Svg className={`ha-hourglass ${className}`}>
+      <path d="M8 4.5 H24 M8 27.5 H24" />
+      <path d="M10 4.5 C10 11 14.6 13.4 16 16 C17.4 13.4 22 11 22 4.5" />
+      <path d="M10 27.5 C10 21 14.6 18.6 16 16 C17.4 18.6 22 21 22 27.5" />
+      <path className="ha-soft ha-sand" d="M11.6 27 C12.4 23.4 14.6 21.6 16 20.2 C17.4 21.6 19.6 23.4 20.4 27 Z" />
+      <path className="ha-soft" d="M12.4 8.2 H19.6 C19 10.6 17.2 12 16 13.4 C14.8 12 13 10.6 12.4 8.2 Z" />
+      <path className="ha-stream" d="M16 16.6 V20" />
+    </Svg>
+  );
+}

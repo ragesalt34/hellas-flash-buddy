@@ -9,6 +9,7 @@ import type { View } from '../App';
 import { Sparks } from '../components/icons';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
+import { PlanCard } from './PlanCard';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
@@ -117,6 +118,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           )}
         </div>
       </div>
+
+      {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
 
       <div className="section-label">{t('home.section.learn')}</div>
       <div className="tiles stagger">

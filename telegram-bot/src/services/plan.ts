@@ -58,12 +58,15 @@ export function computePlan(i: PlanInput): StudyPlan {
   const newQuestions = unseen.questions ? Math.ceil(unseen.questions / spread) : 0;
   const newWords = unseen.words ? Math.ceil(unseen.words / spread) : 0;
   const minutes = minutesFor(newQuestions, newWords);
+  // Pace judges only the new material against the date: a pile of due reviews is
+  // today's load (it clears as it is worked through), not a sign of being late.
+  const newMinutes = Math.ceil((newQuestions * PLAN_SECONDS.newQuestion + newWords * PLAN_SECONDS.newWord) / 60);
   const phase: PlanPhase = learnDays > 0 ? 'learn' : 'final';
   const left = unseen.questions + unseen.words;
   const pace: PlanPace =
     left === 0 ? (phase === 'final' ? 'final' : 'done')
-    : phase === 'final' || minutes > 30 ? 'behind'
-    : minutes > 15 ? 'tight'
+    : phase === 'final' || newMinutes > 20 ? 'behind'
+    : newMinutes > 10 ? 'tight'
     : 'calm';
   return {
     date: i.interviewDate, daysLeft, phase, pace, newQuestions, newWords, reviews, unseen, minutes,

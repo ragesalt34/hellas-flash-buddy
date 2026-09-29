@@ -15,7 +15,7 @@
 - Column `accounts.interview_date date`, applied by the owner (SQL in the spec). Until it exists, `loadPlan` treats the date as unset instead of failing.
 - Guests cannot set a date: API 403 `{ error: 'guest' }`.
 - Seconds per item: new question 40, question review 15, new word 15, word review 8.
-- Buffer = min(21, floor(daysLeft × 0.15)); pace thresholds 15 / 30 minutes.
+- Buffer = min(21, floor(daysLeft × 0.15)); pace judges only new material: 10 / 20 minutes (reviews count toward today's minutes, not pace).
 - Pure module `src/services/plan.ts` must not import `../supabase`.
 - RU + EL strings in `webapp/src/i18n.tsx`; both themes.
 

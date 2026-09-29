@@ -130,6 +130,14 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
             <VIcon size={22} strokeWidth={2.4} /> {t(`rd.verdict.${data.verdict}`)}
           </div>
           <p className="rd-verdict-hint">{t(`rd.verdictHint.${data.verdict}`)}</p>
+          {data.plan?.date && (data.plan.phase === 'learn' || data.plan.phase === 'final') && (
+            <p className={`rd-plan-line${data.plan.pace === 'behind' ? ' is-behind' : ''}`}>
+              {t(data.plan.pace === 'behind' ? 'plan.offTrack' : 'plan.onTrack').replace(
+                '{date}',
+                new Date(`${data.plan.date}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long' })
+              )}
+            </p>
+          )}
           {data.blockers.length > 0 && (
             <div className="rd-blockers">
               <span className="rd-blockers-label">{t('rd.blockers')}:</span>

@@ -48,8 +48,11 @@ test('final phase with unseen material is behind; without it is final', () => {
   assert.equal(covered.pace, 'final');
 });
 
-test('pace thresholds and done', () => {
-  assert.equal(computePlan({ ...base, interviewDate: '2027-03-29', dueCards: 70 }).pace, 'tight');
-  assert.equal(computePlan({ ...base, interviewDate: '2027-03-29', dueCards: 130 }).pace, 'behind');
+test('pace follows the new material only; a review backlog is load, not lateness', () => {
+  const backlog = computePlan({ ...base, interviewDate: '2027-03-29', dueCards: 59, dueWords: 124 });
+  assert.equal(backlog.pace, 'calm');
+  assert.ok(backlog.minutes > 30);
+  assert.equal(computePlan({ ...base, interviewDate: '2026-10-09' }).pace, 'tight'); // 10 days: ~16 min of new
+  assert.equal(computePlan({ ...base, interviewDate: '2026-10-04' }).pace, 'behind'); // 5 days: ~29 min of new
   assert.equal(computePlan({ ...base, interviewDate: '2027-03-29', seenQuestions: 163, seenWords: 150 }).pace, 'done');
 });
