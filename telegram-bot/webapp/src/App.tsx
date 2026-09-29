@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { LogoMark } from './components/Logo';
-import { ColumnChart, Ostraka, Papyrus, TempleHome, WaxTablet } from './components/homeArt';
+import { ColumnChart, CycladicHome, Ostraka, Papyrus, WaxTablet } from './components/homeArt';
 import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
@@ -64,7 +64,7 @@ const isStandalonePWA =
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
 const NAV: { id: View; icon: ComponentType<{ className?: string }>; key: string }[] = [
-  { id: 'home', icon: TempleHome, key: 'nav.home' },
+  { id: 'home', icon: CycladicHome, key: 'nav.home' },
   { id: 'quiz', icon: WaxTablet, key: 'nav.quiz' },
   { id: 'flashcards', icon: Ostraka, key: 'nav.flashcards' },
   { id: 'vocab', icon: Papyrus, key: 'nav.vocab' },

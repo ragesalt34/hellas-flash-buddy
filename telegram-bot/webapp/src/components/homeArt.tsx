@@ -154,14 +154,16 @@ export function Hourglass({ className = '' }: { className?: string }) {
   );
 }
 
-/** A temple front — home. */
-export function TempleHome({ className = '' }: { className?: string }) {
+/** A Cycladic house with its dome — home (the temple is the logo's, not a nav item). */
+export function CycladicHome({ className = '' }: { className?: string }) {
   return (
-    <Svg className={`ha-temple ${className}`}>
-      <path className="ha-soft" d="M5 12.2 L16 5.2 L27 12.2 Z" />
-      <path d="M5 12.2 L16 5.2 L27 12.2 Z M5 12.2 H27" />
-      <path d="M8.6 15 V24 M13.8 15 V24 M18.2 15 V24 M23.4 15 V24" />
-      <path d="M7 15 H25 M6 24 H26 M4.5 27.2 H27.5" />
+    <Svg className={`ha-house ${className}`}>
+      <path className="ha-soft" d="M8.5 14.5 C8.5 9.6 13.8 8.6 16.4 8.6 C19 8.6 22.5 10.4 22.5 14.5 Z" />
+      <path d="M8.5 14.5 C8.5 9.6 13.8 8.6 16.4 8.6 C19 8.6 22.5 10.4 22.5 14.5" />
+      <path d="M15.5 8.7 V5.6 M14 6.9 H17" />
+      <path d="M5.5 14.5 H26.5 M6.5 14.5 V27 H25.5 V14.5" />
+      <path d="M13 27 V21.4 C13 19.6 14.4 18.4 16 18.4 C17.6 18.4 19 19.6 19 21.4 V27" />
+      <path d="M4 27 H28" />
     </Svg>
   );
 }
