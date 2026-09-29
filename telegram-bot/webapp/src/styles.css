@@ -5279,3 +5279,9 @@ button.chip:active { transform: scale(0.95); }
 /* Stats: on-track line under the verdict */
 .rd-plan-line { margin: -4px 0 10px; font-size: 14px; font-weight: 600; color: var(--good); }
 .rd-plan-line.is-behind { color: var(--bad); }
+
+/* Nav: the app's own drawings instead of stock icons */
+.nav-art { display: block; width: 26px; height: 26px; }
+.navbtn.active .nav-art path, .navbtn.active .nav-art rect, .navbtn.active .nav-art circle { stroke-width: 2.4; }
+.navbtn .nav-art .ha-soft { fill-opacity: 0.14; }
+.navbtn.active .nav-art .ha-soft { fill-opacity: 0.28; }

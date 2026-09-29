@@ -153,3 +153,15 @@ export function Hourglass({ className = '' }: { className?: string }) {
     </Svg>
   );
 }
+
+/** A temple front — home. */
+export function TempleHome({ className = '' }: { className?: string }) {
+  return (
+    <Svg className={`ha-temple ${className}`}>
+      <path className="ha-soft" d="M5 12.2 L16 5.2 L27 12.2 Z" />
+      <path d="M5 12.2 L16 5.2 L27 12.2 Z M5 12.2 H27" />
+      <path d="M8.6 15 V24 M13.8 15 V24 M18.2 15 V24 M23.4 15 V24" />
+      <path d="M7 15 H25 M6 24 H26 M4.5 27.2 H27.5" />
+    </Svg>
+  );
+}

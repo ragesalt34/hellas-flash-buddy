@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { House, Layers, BookA, BarChart3, X, ArrowLeft, type LucideIcon } from 'lucide-react';
-import { QuizIcon } from './components/icons';
+import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
+import { X, ArrowLeft } from 'lucide-react';
 import { LogoMark } from './components/Logo';
+import { ColumnChart, Ostraka, Papyrus, TempleHome, WaxTablet } from './components/homeArt';
 import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
@@ -63,12 +63,12 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: View; icon: LucideIcon | typeof QuizIcon; key: string }[] = [
-  { id: 'home', icon: House, key: 'nav.home' },
-  { id: 'quiz', icon: QuizIcon, key: 'nav.quiz' },
-  { id: 'flashcards', icon: Layers, key: 'nav.flashcards' },
-  { id: 'vocab', icon: BookA, key: 'nav.vocab' },
-  { id: 'stats', icon: BarChart3, key: 'nav.stats' },
+const NAV: { id: View; icon: ComponentType<{ className?: string }>; key: string }[] = [
+  { id: 'home', icon: TempleHome, key: 'nav.home' },
+  { id: 'quiz', icon: WaxTablet, key: 'nav.quiz' },
+  { id: 'flashcards', icon: Ostraka, key: 'nav.flashcards' },
+  { id: 'vocab', icon: Papyrus, key: 'nav.vocab' },
+  { id: 'stats', icon: ColumnChart, key: 'nav.stats' },
 ];
 
 export function App() {
@@ -184,7 +184,7 @@ export function App() {
                 onClick={() => goTab(n.id)}
               >
                 <span className="nav-ic">
-                  <Icon size={24} strokeWidth={active ? 2.6 : 2.1} />
+                  <Icon className="nav-art" />
                 </span>
                 <span className="nav-l">{t(n.key)}</span>
               </button>

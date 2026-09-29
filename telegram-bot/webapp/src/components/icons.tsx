@@ -2,7 +2,6 @@
 // glyphs, so the logo doesn't look like every other lucide app.
 
 import { useId } from 'react';
-import geographyIconUrl from '../assets/geography.png';
 
 /** Greek temple mark: pediment, architrave, three columns, stylobate.
  * Geometric and chunky to match the neo-brutalist UI. Inherits currentColor. */
@@ -71,76 +70,5 @@ export function Sparks({ className, size = 44 }: { className?: string; size?: nu
     <svg className={className} width={size} height={size} viewBox="0 0 44 44" fill="none" aria-hidden="true">
       <path d="M8 30 L19 24 M12 15 L21 20 M22 6 L24 16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
     </svg>
-  );
-}
-
-/** Quiz icon — a question sheet (bulleted list) with a mortarboard at its
- * corner. Drawn on lucide's 24px grid with round caps so it sits with the
- * rest of the icon set; takes the same size / strokeWidth / color props. */
-export function QuizIcon({
-  size = 24,
-  strokeWidth = 2,
-  color = 'currentColor',
-  className,
-}: {
-  size?: number | string;
-  strokeWidth?: number | string;
-  color?: string;
-  className?: string;
-}) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {/* sheet with a folded corner, open at the bottom-right for the cap */}
-      <path d="M10 21H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l4 4v4.5" />
-      <path d="M12 2v4h4" />
-      {/* bulleted list */}
-      <path d="M7 9h.01M10 9h2.5M7 13h.01M10 13h1.5M7 17h.01" />
-      {/* mortarboard */}
-      <path d="M11.5 15.5l5.75-2.9 5.75 2.9-5.75 2.9z" />
-      <path d="M14 17v3c0 .8 1.5 1.5 3.25 1.5s3.25-.7 3.25-1.5v-3" />
-    </svg>
-  );
-}
-
-/** Geography icon — the exact artwork supplied for it (globe on a monitor
- * with an open book), used as a mask so it takes the current text colour
- * like the line icons around it. `strokeWidth` is accepted for drop-in
- * compatibility with lucide icons and ignored: the stroke is in the artwork. */
-export function GeoIcon({
-  size = 24,
-  color = 'currentColor',
-  className,
-}: {
-  size?: number | string;
-  strokeWidth?: number | string;
-  color?: string;
-  className?: string;
-}) {
-  const mask = `url(${geographyIconUrl}) center / contain no-repeat`;
-  return (
-    <span
-      className={className}
-      aria-hidden="true"
-      style={{
-        display: 'inline-block',
-        flex: 'none',
-        width: size,
-        height: size,
-        backgroundColor: color,
-        WebkitMask: mask,
-        mask,
-      }}
-    />
   );
 }
