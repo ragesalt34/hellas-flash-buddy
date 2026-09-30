@@ -36,4 +36,5 @@ Delete `.env.development.local` when done.
 - Check UI changes in a browser at desktop (≥1440px) and phone (375px): no horizontal scroll, decor never overlaps content.
 - Commit to `main` with clear messages. **Do not push** — the owner pushes via GitHub Desktop.
 - Never print or commit secrets from `.env`. Database schema changes are applied by the owner in the Supabase dashboard.
+- Homework mode (tutor's notes -> questions -> answer check): routes `/api/homework/*`, pure helpers in `services/homework.ts`, Gemini calls in `services/homeworkAi.ts`. Works without AI (heuristic parser + word-overlap check); with `GEMINI_API_KEY` (+ optional `GEMINI_MODEL`, default `gemini-3.8-flash`) on Render, signed-in accounts get AI parsing and teacher-style checks. Sets are stored in the browser (`hs_homework_v1`), no DB table.
 - Known issue: `ELEVENLABS_API_KEY` on Render is a key ID, not an `sk_` key, so new audio cannot be synthesized; the server falls back to any cached clip of the same text.

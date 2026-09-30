@@ -51,9 +51,10 @@ import { Quiz } from './screens/Quiz';
 import { Flashcards } from './screens/Flashcards';
 import { Vocab } from './screens/Vocab';
 import { Stats } from './screens/Stats';
+import { Homework } from './screens/Homework';
 import { Auth } from './screens/Auth';
 
-export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats';
+export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'homework';
 
 // Inside Telegram, an installed PWA, or with a valid signed-in session, skip
 // the landing page — everyone else always sees it first (guests included:
@@ -86,7 +87,7 @@ export function App() {
   // the sidebar is hidden and the content is centred full-width with a bottom
   // action bar (Duolingo-style).
   const focus =
-    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab')) ||
+    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')) ||
     (!entered && gate === 'auth');
   useEffect(() => {
     document.body.classList.toggle('focus', focus);
@@ -157,6 +158,7 @@ export function App() {
         {view === 'quiz' && <Quiz key={navKey} onHome={home} />}
         {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
+        {view === 'homework' && <Homework key={navKey} onHome={home} />}
         {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={setView} />}
       </div>
 

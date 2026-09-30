@@ -1,4 +1,4 @@
-import { ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
+import { ArrowRight, BookOpenCheck, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -165,6 +165,25 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <HomeDecorImg slot="oliveMid" className="tile-olive" />
           <span className="hs-deco tile-go" aria-hidden="true">
             <ArrowRight size={22} strokeWidth={2.4} />
+          </span>
+        </button>
+
+        <button
+          className="tile span2 t-homework"
+          style={{ animationDelay: '160ms', flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 'auto' }}
+          onClick={() => nav('homework')}
+        >
+          <span className="tile-ic">
+            <BookOpenCheck size={30} strokeWidth={2.2} />
+          </span>
+          <span className="grow">
+            <span className="tile-t" style={{ display: 'block' }}>
+              {t('nav.homework')}
+            </span>
+            <span className="tile-d">{t('home.homework.desc')}</span>
+          </span>
+          <span className="arrow" style={{ color: 'var(--muted)' }}>
+            <ArrowRight size={20} strokeWidth={2.4} />
           </span>
         </button>
 

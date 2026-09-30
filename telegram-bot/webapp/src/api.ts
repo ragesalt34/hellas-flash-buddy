@@ -121,6 +121,21 @@ export function persistWrite(send: () => Promise<unknown>, what = 'write'): void
   );
 }
 
+export interface HomeworkParsedItem {
+  id: string;
+  question: string;
+  answer: string;
+  note: string;
+}
+export interface HomeworkCheck {
+  verdict: 'correct' | 'almost' | 'wrong';
+  corrected: string;
+  comment_ru: string;
+  mistakes: { wrong: string; right: string; why_ru: string }[];
+  missing?: string[];
+  source: 'ai' | 'local';
+}
+
 export const api = {
   register: (username: string, password: string) =>
     request<AuthResponse>('/auth/register', {
@@ -152,6 +167,14 @@ export const api = {
   readiness: () => request<ReadinessResponse>('/readiness'),
   setInterviewDate: (date: string | null) =>
     request<{ plan: StudyPlan }>('/account/interview-date', { method: 'PUT', body: JSON.stringify({ date }) }),
+  homeworkStatus: () => request<{ ai: boolean }>('/homework/status'),
+  homeworkParse: (text: string) =>
+    request<{ items: HomeworkParsedItem[]; source: 'ai' | 'local' }>('/homework/parse', {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    }),
+  homeworkCheck: (body: { question: string; modelAnswer: string; note: string; answer: string }) =>
+    request<HomeworkCheck>('/homework/check', { method: 'POST', body: JSON.stringify(body) }),
   tts: (text: string, cacheKey: string) =>
     request<{ audioUrl: string }>('/tts', {
       method: 'POST',
