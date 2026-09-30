@@ -25,7 +25,6 @@ This file started from the Preply DESIGN.md format and was rewritten around what
 | Error Red | `#bf3f3c` | `--bad` | Wrong answer, destructive |
 | Lifted tints | `#d9776a` `#e3b64f` `#5fa98f` `#7ba3cf` | `--accent-lift` `--amber-lift` `--mint-lift` `--blue-lift` | Only on the ink plate (dark stats block); the base colours fail contrast there |
 | Ring track | `#e5ddcd` | `--ring-track` | Empty progress rings and bars |
-| Hero Canvas | `#e8b94f` | `--canvas` (landing hero only) | Full-bleed sunlit ochre behind the landing headline; ink text on it is about 10:1. Never on buttons or app screens |
 
 Topic colours: history = Aegean blue, culture = indigo, laws = sienna, geography = olive (`--topic-*`).
 
@@ -95,9 +94,6 @@ Desktop: left sidebar pill with the logo mark and hand-drawn nav icons (Cycladic
 ### Topic Scene (quiz backdrop)
 Per-topic illustration pack behind the question card: wide vignette top-left, object pair bottom-left, object pair top-right, one object lower right, olive branches in the top corners, a long ornamental band under the card, two tiny accents in the corner. One 40px outer margin on every side, upper pieces share a top line, pieces are sized from the free gutter so they never touch the card. Hidden below 900px (only the band stays). Marked `.hs-deco` and hidden in `brut`.
 
-### Landing Hero (loud canvas)
-Full-bleed ochre canvas (`--canvas`), 2px ink line under it. Left: pill, heavy Rubik headline (weight 800, tracking -0.035em, line-height 1.02) with one terracotta `.highlight`, lead, ink CTA + white ghost CTA. Right: the tappable demo card, a framed watercolour (white paper, 2px ink border, +4deg) and an amphora behind it, flat ink stickers (`.lp-float`, 4px radius). Collage hides below 900px. Directly under it a white stat strip: big weight-800 numerals in the stat colours, small muted captions, no plate or dividers. Then the black meander marquee, then the calm sand sections.
-
 ### Stats Plate
 Ink `#0a0a0a` block with lifted-tint numerals (`--*-lift`) and `--t-num` numbers, meta labels in white at 12.5px.
 
@@ -130,7 +126,7 @@ Borrowed (ideas that fit the existing system):
 - A quiet, hairline-defined catalog below the loud top fold, which is how the topic tiles and question cards already work.
 
 Not borrowed (conflicts with the existing system, which takes priority):
-- The pink hero canvas `#ff7aac`, Signal Yellow, and Sky Pop. (The landing hero does use a loud full-bleed canvas, but in our own ochre `#e8b94f`.)
+- The pink hero canvas `#ff7aac`, Signal Yellow, and Sky Pop. Ours is sand with terracotta and ochre.
 - 4px radii and "no shadows". Ours uses 8/14/22px radii and the hard offset shadow, which is the app's character.
 - The Platform and Figtree fonts. Ours are Rubik, Onest and Manrope (Greek).
 - Real photography with stickers. Ours is watercolour and line illustration in the Greek style.
