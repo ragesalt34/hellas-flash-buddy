@@ -13,8 +13,8 @@ import { Greek } from '../components/greek';
 
 type Scene = {
   vignette: string;
-  left: [string, string];
-  right: [string, string];
+  left: string[]; // one or two pictures
+  right: string[];
   side: string;
   accents: [string, string];
   band: string;
@@ -26,6 +26,16 @@ const SCENES: Record<string, Scene> = {
     left: ['helmet', 'shield'],
     right: ['amphora', 'coin'],
     side: 'scroll',
+    accents: ['leaf', 'star'],
+    band: 'band',
+  },
+  // Tutor homework. One cluster per pair: the tablet with its inkwell on the
+  // left, the sealed scroll on the right, Athena's owl on her books lower right.
+  homework: {
+    vignette: 'stoa',
+    left: ['tablet'],
+    right: ['scroll'],
+    side: 'owl',
     accents: ['leaf', 'star'],
     band: 'band',
   },
@@ -55,12 +65,14 @@ export function TopicScene({ topic }: { topic: string }) {
       <Greek name="olive-branch" className="ts ts-olive-tr" />
       <Art topic={topic} name={s.vignette} className="ts-vignette" />
       <div className="ts-pair ts-pair-left">
-        <Art topic={topic} name={s.left[0]} className="ts-left-a" />
-        <Art topic={topic} name={s.left[1]} className="ts-left-b" />
+        {s.left.map((n, i) => (
+          <Art key={n} topic={topic} name={n} className={`ts-left-${'ab'[i]}`} />
+        ))}
       </div>
       <div className="ts-pair ts-pair-right">
-        <Art topic={topic} name={s.right[0]} className="ts-right-a" />
-        <Art topic={topic} name={s.right[1]} className="ts-right-b" />
+        {s.right.map((n, i) => (
+          <Art key={n} topic={topic} name={n} className={`ts-right-${'ab'[i]}`} />
+        ))}
       </div>
       <Art topic={topic} name={s.side} className="ts-side" />
       <Art topic={topic} name={s.accents[0]} className="ts-acc-a" />

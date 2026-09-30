@@ -5,8 +5,7 @@ import { haptic } from '../telegram';
 import { playComplete, playCorrect, playTap, playWrong } from '../sound';
 import { useLanguage } from '../i18n';
 import { ProgressBar } from '../ui';
-import { TopicDecor } from '../components/TopicDecor';
-import { MeanderBand } from '../components/greekArt';
+import { TopicBand, TopicScene } from './topicScenes';
 import { Owl, WaxTablet } from '../components/homeArt';
 import { VocabDecorImg } from './vocabularyDecor';
 import { loadSets, newId, saveSets, type HwItem, type HwSet, type HwStatus } from '../homework';
@@ -149,7 +148,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'list') {
     return (
       <div className="fade-in hw-screen">
-        <TopicDecor />
+        <TopicScene topic="homework" />
         <div className="topbar">
           <Meta>{t('nav.homework')}</Meta>
         </div>
@@ -188,7 +187,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
             </div>
           );
         })}
-        <MeanderBand className="hw-meander" height={9} />
+        <TopicBand topic="homework" />
         <button
           className="btn btn-block"
           onClick={() => {
@@ -209,7 +208,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'new') {
     return (
       <div className="fade-in hw-screen">
-        <TopicDecor />
+        <TopicScene topic="homework" />
         <div className="topbar">
           <Meta>{t('hw.new')}</Meta>
         </div>
@@ -250,7 +249,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'review') {
     return (
       <div className="fade-in hw-screen">
-        <TopicDecor />
+        <TopicScene topic="homework" />
         <div className="topbar">
           <Meta>{t('hw.review')}</Meta>
           <span className="counter">{items.length}</span>
@@ -288,11 +287,20 @@ export function Homework({ onHome }: { onHome: () => void }) {
     const weak = current.items.filter((i) => i.status !== 'correct');
     return (
       <div className="fade-in hw-screen">
-        <TopicDecor />
+        <TopicScene topic="homework" />
         <div className="card hw-done">
           <div className="hw-done-t">{t('hw.done')}</div>
-          <div className="hw-done-n">
-            {ok}/{current.items.length}
+          <div className="hw-wreath-wrap">
+            <img
+              className="hw-wreath"
+              src={`${import.meta.env.BASE_URL}assets/topics/homework/wreath.webp`}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+            />
+            <div className="hw-done-n">
+              {ok}/{current.items.length}
+            </div>
           </div>
           <div className="hw-done-d">{t('hw.score')}</div>
         </div>
@@ -312,7 +320,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (!current || !item) {
     return (
       <div className="fade-in hw-screen">
-        <TopicDecor />
+        <TopicScene topic="homework" />
         <button className="btn btn-block secondary" onClick={() => setPhase('list')}>
           {t('hw.toList')}
         </button>
@@ -321,7 +329,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   }
   return (
     <div className="fade-in hw-screen qz-play" key={item.id}>
-      <TopicDecor />
+      <TopicScene topic="homework" />
       <div className="topbar">
         <Meta>{current.title}</Meta>
         <span className="counter">
@@ -408,6 +416,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
           )}
         </div>
       )}
+
+      <TopicBand topic="homework" />
 
       <div className="actionbar">
         {!result ? (

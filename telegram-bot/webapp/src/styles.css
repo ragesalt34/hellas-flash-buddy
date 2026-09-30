@@ -5346,6 +5346,14 @@ button.chip:active { transform: scale(0.95); }
   .ts-band { margin-top: 18px; }
 }
 
+/* Homework scene: one picture per pair, so the pair boxes are sized to the picture */
+.ts-homework .ts-vignette { width: min(420px, var(--room)); }
+.ts-homework .ts-pair-left { width: min(290px, var(--room)); }
+.ts-homework .ts-pair-left .ts-left-a { width: 100%; }
+.ts-homework .ts-pair-right { width: min(300px, var(--room)); }
+.ts-homework .ts-pair-right .ts-right-a { width: 100%; }
+.ts-homework .ts-side { top: 47%; width: min(230px, var(--room)); }
+
 /* ============ Homework from the tutor ============ */
 /* Same visual language as the quiz: pale Greek backdrop, tablet emblem, meander
    progress bar, Athena's owl for the teacher's voice. */
@@ -5357,7 +5365,6 @@ button.chip:active { transform: scale(0.95); }
 .hw-empty { text-align: center; color: var(--text-body); font-weight: 600; line-height: 1.55; margin-bottom: 14px; padding: 26px 22px; }
 .hw-empty p { margin: 10px 0 0; }
 .hw-empty-owl { display: block; margin: 0 auto; width: 54px; height: 54px; color: #a8741f; }
-.hw-meander { display: block; margin: 18px auto 20px; opacity: 0.7; }
 .hw-set { display: flex; align-items: stretch; padding: 0; margin-bottom: 12px; overflow: hidden; transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease); }
 .hw-set:hover { transform: translate(-2px, -2px); box-shadow: var(--e0-hover); }
 .hw-set-main { flex: 1; display: flex; align-items: center; gap: 14px; min-width: 0; text-align: left; border: 0; background: none; padding: 16px 18px; font: inherit; color: inherit; cursor: pointer; }
@@ -5399,5 +5406,8 @@ button.chip:active { transform: scale(0.95); }
 .hw-mistake s { color: var(--bad-text); }
 .hw-done { text-align: center; padding: 34px 20px; margin-bottom: 14px; }
 .hw-done-t { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; }
+.hw-wreath-wrap { position: relative; width: 190px; height: 170px; margin: 6px auto 4px; display: grid; place-items: center; }
+.hw-wreath { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.hw-wreath-wrap .hw-done-n { position: relative; margin: 0 0 14px; }
 .hw-done-n { font-family: var(--font-display); font-size: var(--t-num); font-weight: 800; line-height: 1.1; margin: 8px 0 2px; color: var(--accent-2); }
 .hw-done-d { font-size: var(--t-meta); font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; }
