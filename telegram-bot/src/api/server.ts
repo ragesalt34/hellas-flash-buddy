@@ -35,6 +35,8 @@ import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 import { loadReadiness } from '../services/readinessService';
 import { loadPlan, setInterviewDate } from '../services/planService';
+import { parseHomeworkText, checkLocal, MAX_TEXT } from '../services/homework';
+import { aiConfigured, aiParse, aiCheck } from '../services/homeworkAi';
 import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
@@ -658,6 +660,88 @@ export function createApiApp(): express.Express {
       const a = req.account!;
       const sessions = await getHistory(a.id, 10);
       res.json({ sessions, topicLabels: topicLabels(getLang(req)) });
+    })
+  );
+
+  // ---- Homework from a tutor ----
+  // The AI is paid, and APP_SECRET ships in the public bundle, so it is for real
+  // accounts only (guests get the free no-AI path) and is rate limited per account.
+  const AI_PER_HOUR = 40;
+  const aiUse = new Map<string, number[]>();
+  const aiAllowed = (accountId: string): boolean => {
+    const now = Date.now();
+    const recent = (aiUse.get(accountId) ?? []).filter((t) => now - t < 3_600_000);
+    if (recent.length >= AI_PER_HOUR) {
+      aiUse.set(accountId, recent);
+      return false;
+    }
+    recent.push(now);
+    aiUse.set(accountId, recent);
+    return true;
+  };
+  const canUseAi = (req: AuthedRequest): boolean => aiConfigured() && !req.account!.isGuest;
+
+  // GET /api/homework/status — does this session get AI checking?
+  api.get('/homework/status', (req: AuthedRequest, res) => {
+    res.json({ ai: canUseAi(req) });
+  });
+
+  // POST /api/homework/parse { text } — tutor's notes -> question cards
+  api.post(
+    '/homework/parse',
+    wrap(async (req, res) => {
+      const text = (req.body as { text?: unknown })?.text;
+      if (typeof text !== 'string' || !text.trim() || text.length > MAX_TEXT) {
+        res.status(400).json({ error: 'invalid_input' });
+        return;
+      }
+      if (canUseAi(req) && aiAllowed(req.account!.id)) {
+        try {
+          const items = await aiParse(text);
+          if (items.length) {
+            res.json({ items, source: 'ai' });
+            return;
+          }
+        } catch (err) {
+          console.error('homework ai parse failed:', err instanceof Error ? err.message : err);
+        }
+      }
+      res.json({ items: parseHomeworkText(text), source: 'local' });
+    })
+  );
+
+  // POST /api/homework/check { question, modelAnswer?, note?, answer }
+  api.post(
+    '/homework/check',
+    wrap(async (req, res) => {
+      const b = (req.body ?? {}) as Record<string, unknown>;
+      const field = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+      const question = field(b.question, 300);
+      const answer = field(b.answer, 600);
+      const modelAnswer = field(b.modelAnswer, 600);
+      const note = field(b.note, 400);
+      if (!question || !answer) {
+        res.status(400).json({ error: 'invalid_input' });
+        return;
+      }
+      if (canUseAi(req) && aiAllowed(req.account!.id)) {
+        try {
+          const r = await aiCheck({ question, modelAnswer, note, answer });
+          res.json({ ...r, source: 'ai' });
+          return;
+        } catch (err) {
+          console.error('homework ai check failed:', err instanceof Error ? err.message : err);
+        }
+      }
+      const local = checkLocal(answer, modelAnswer);
+      res.json({
+        verdict: local.verdict,
+        corrected: modelAnswer,
+        comment_ru: '',
+        mistakes: [],
+        missing: local.missing,
+        source: 'local',
+      });
     })
   );
 
