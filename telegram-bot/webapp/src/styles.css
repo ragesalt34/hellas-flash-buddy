@@ -5347,13 +5347,25 @@ button.chip:active { transform: scale(0.95); }
 }
 
 /* ============ Homework from the tutor ============ */
-.hw-screen { display: block; }
-.hw-meta { display: inline-flex; align-items: center; gap: 7px; }
-.hw-empty { color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 14px; }
-.hw-set { display: flex; align-items: stretch; gap: 8px; padding: 0; margin-bottom: 12px; overflow: hidden; }
-.hw-set-main { flex: 1; display: block; text-align: left; border: 0; background: none; padding: 16px 18px; font: inherit; color: inherit; cursor: pointer; }
-.hw-set-t { display: block; font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.2px; }
-.hw-set-d { display: block; margin: 3px 0 10px; font-size: var(--t-meta); font-weight: 700; color: var(--muted); }
+/* Same visual language as the quiz: pale Greek backdrop, tablet emblem, meander
+   progress bar, Athena's owl for the teacher's voice. */
+.hw-screen { display: block; position: relative; --tp-olive: #879d78; }
+.hw-meta { gap: 8px; }
+.hw-emblem { flex: none; width: 30px; height: 30px; padding: 5px; border-radius: 10px; display: grid; place-items: center; color: var(--accent-2); background: color-mix(in srgb, var(--accent) 12%, #fff); }
+.hw-emblem svg { width: 100%; height: 100%; }
+[data-theme='brut'] .hw-emblem { background: none; border: var(--bd-w) solid var(--bd-c); border-radius: var(--r-sm); color: var(--text); }
+.hw-empty { text-align: center; color: var(--text-body); font-weight: 600; line-height: 1.55; margin-bottom: 14px; padding: 26px 22px; }
+.hw-empty p { margin: 10px 0 0; }
+.hw-empty-owl { display: block; margin: 0 auto; width: 54px; height: 54px; color: #a8741f; }
+.hw-meander { display: block; margin: 18px auto 20px; opacity: 0.7; }
+.hw-set { display: flex; align-items: stretch; padding: 0; margin-bottom: 12px; overflow: hidden; transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease); }
+.hw-set:hover { transform: translate(-2px, -2px); box-shadow: var(--e0-hover); }
+.hw-set-main { flex: 1; display: flex; align-items: center; gap: 14px; min-width: 0; text-align: left; border: 0; background: none; padding: 16px 18px; font: inherit; color: inherit; cursor: pointer; }
+.hw-set-ic { flex: none; width: 52px; height: 52px; padding: 10px; border-radius: 16px; color: var(--accent-2); background: color-mix(in srgb, var(--accent) 12%, #fff); display: grid; place-items: center; }
+.hw-set-ic svg { width: 100%; height: 100%; }
+.hw-set-body { flex: 1; min-width: 0; display: block; }
+.hw-set-t { display: block; font-family: var(--font-display); font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hw-set-d { display: block; margin: 2px 0 9px; font-size: var(--t-meta); font-weight: 700; color: var(--muted); }
 .hw-del { flex: none; width: 52px; border: 0; border-left: var(--bd-w) solid var(--bd-c); background: none; color: var(--muted); cursor: pointer; display: grid; place-items: center; }
 .hw-del:hover { color: var(--bad); background: var(--surface-2); }
 .hw-gap { margin-top: 10px; }
@@ -5362,21 +5374,26 @@ button.chip:active { transform: scale(0.95); }
 .hw-err { margin: 10px 0; color: var(--bad-text); font-weight: 700; }
 .hw-hint { margin: 10px 2px 0; font-size: var(--t-meta); font-weight: 600; color: var(--muted); line-height: 1.45; }
 .hw-source { margin: 0 2px 12px; font-size: var(--t-meta); font-weight: 700; color: var(--muted); }
-.hw-item { position: relative; padding-right: 44px; margin-bottom: 10px; }
+.hw-item { position: relative; padding-right: 44px; margin-bottom: 10px; border-left: 5px solid color-mix(in srgb, var(--accent) 55%, transparent); }
 .hw-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border: 0; border-radius: var(--r-full); background: var(--surface-2); color: var(--muted); cursor: pointer; display: grid; place-items: center; }
 .hw-x:hover { color: var(--bad); }
 .hw-q { font-weight: 800; font-size: var(--t-body); line-height: 1.35; }
-.hw-q.big { font-family: var(--font-display); font-size: var(--t-title); line-height: 1.25; letter-spacing: -0.2px; text-align: center; }
-.hw-card { padding: clamp(22px, 4vw, 34px) 20px; }
+.hw-q.big { font-family: var(--font-display); font-size: var(--t-title); line-height: 1.25; letter-spacing: -0.2px; text-align: center; position: relative; }
+.hw-card { position: relative; isolation: isolate; overflow: hidden; padding: clamp(40px, 6vw, 56px) 26px clamp(30px, 5vw, 44px); }
+.hw-corner, .hw-corner-olive { position: absolute; z-index: -1; pointer-events: none; }
+.hw-corner { top: 14px; left: 14px; width: 54px; height: auto; opacity: 0.4; }
+.hw-corner-olive { top: 10px; right: 14px; width: 54px; height: auto; opacity: 0.5; transform: scaleX(-1) rotate(8deg); }
 .hw-a { margin-top: 6px; color: var(--accent-2); font-weight: 700; line-height: 1.4; }
 .hw-n { margin-top: 6px; color: var(--muted); font-size: var(--t-meta); font-weight: 600; line-height: 1.4; }
 .hw-result { margin-top: 14px; border-left: 6px solid var(--amber); }
 .hw-result.v-correct { border-left-color: var(--good); }
 .hw-result.v-wrong { border-left-color: var(--bad); }
-.hw-verdict { font-family: var(--font-display); font-size: var(--t-h3); font-weight: 800; margin-bottom: 10px; }
+.hw-verdict { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: var(--t-h3); font-weight: 800; margin-bottom: 10px; color: #8a5f12; }
+.hw-result.v-correct .hw-verdict { color: var(--good); }
+.hw-result.v-wrong .hw-verdict { color: var(--bad-text); }
 .hw-row { display: grid; gap: 2px; margin-top: 10px; font-weight: 600; line-height: 1.45; }
 .hw-lab { font-size: var(--t-micro); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
-.hw-comment { margin-top: 10px; line-height: 1.5; font-weight: 500; }
+.hw-comment { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: #fdf1dc; line-height: 1.5; font-weight: 500; }
 .hw-mistake { display: grid; gap: 2px; margin-top: 10px; padding: 9px 12px; border-radius: var(--r-sm); background: var(--surface-2); font-weight: 600; line-height: 1.4; }
 .hw-mistake span:last-child { font-size: var(--t-meta); color: var(--text-body); font-weight: 500; }
 .hw-mistake s { color: var(--bad-text); }

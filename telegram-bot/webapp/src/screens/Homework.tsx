@@ -1,13 +1,29 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpenCheck, House, Plus, RotateCcw, Trash2, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2, CircleAlert, CircleX, House, Plus, RotateCcw, Trash2, X } from 'lucide-react';
 import { api, type HomeworkCheck, type HomeworkParsedItem } from '../api';
 import { haptic } from '../telegram';
 import { playComplete, playCorrect, playTap, playWrong } from '../sound';
 import { useLanguage } from '../i18n';
 import { ProgressBar } from '../ui';
+import { TopicDecor } from '../components/TopicDecor';
+import { MeanderBand } from '../components/greekArt';
+import { Owl, WaxTablet } from '../components/homeArt';
+import { VocabDecorImg } from './vocabularyDecor';
 import { loadSets, newId, saveSets, type HwItem, type HwSet, type HwStatus } from '../homework';
 
 type Phase = 'list' | 'new' | 'review' | 'play' | 'done';
+
+/** Title row: a tablet emblem (same tile as the quiz topic) + the label. */
+function Meta({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="meta qz-topic hw-meta">
+      <span className="hw-emblem">
+        <WaxTablet />
+      </span>
+      {children}
+    </span>
+  );
+}
 
 export function Homework({ onHome }: { onHome: () => void }) {
   const { t } = useLanguage();
@@ -133,23 +149,32 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'list') {
     return (
       <div className="fade-in hw-screen">
+        <TopicDecor />
         <div className="topbar">
-          <span className="meta hw-meta">
-            <BookOpenCheck size={15} strokeWidth={2.6} /> {t('nav.homework')}
-          </span>
+          <Meta>{t('nav.homework')}</Meta>
         </div>
         <div className="spacer" />
-        {sets.length === 0 && <div className="card hw-empty">{t('hw.empty')}</div>}
+        {sets.length === 0 && (
+          <div className="card hw-empty">
+            <Owl className="hw-empty-owl" />
+            <p>{t('hw.empty')}</p>
+          </div>
+        )}
         {sets.map((s) => {
           const ok = s.items.filter((i) => i.status === 'correct').length;
           return (
             <div className="card hw-set" key={s.id}>
               <button className="hw-set-main" onClick={() => begin(s)}>
+                <span className="hw-set-ic">
+                  <WaxTablet />
+                </span>
+                <span className="hw-set-body">
                 <span className="hw-set-t">{s.title}</span>
                 <span className="hw-set-d">
                   {ok}/{s.items.length} {t('hw.questions')}
                 </span>
                 <ProgressBar value={ok} total={s.items.length} />
+                </span>
               </button>
               <button
                 className="hw-del"
@@ -163,6 +188,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
             </div>
           );
         })}
+        <MeanderBand className="hw-meander" height={9} />
         <button
           className="btn btn-block"
           onClick={() => {
@@ -183,10 +209,9 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'new') {
     return (
       <div className="fade-in hw-screen">
+        <TopicDecor />
         <div className="topbar">
-          <span className="meta hw-meta">
-            <BookOpenCheck size={15} strokeWidth={2.6} /> {t('hw.new')}
-          </span>
+          <Meta>{t('hw.new')}</Meta>
         </div>
         <div className="spacer" />
         <label className="field">
@@ -225,10 +250,9 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (phase === 'review') {
     return (
       <div className="fade-in hw-screen">
+        <TopicDecor />
         <div className="topbar">
-          <span className="meta hw-meta">
-            <BookOpenCheck size={15} strokeWidth={2.6} /> {t('hw.review')}
-          </span>
+          <Meta>{t('hw.review')}</Meta>
           <span className="counter">{items.length}</span>
         </div>
         <div className="spacer" />
@@ -264,6 +288,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
     const weak = current.items.filter((i) => i.status !== 'correct');
     return (
       <div className="fade-in hw-screen">
+        <TopicDecor />
         <div className="card hw-done">
           <div className="hw-done-t">{t('hw.done')}</div>
           <div className="hw-done-n">
@@ -287,6 +312,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   if (!current || !item) {
     return (
       <div className="fade-in hw-screen">
+        <TopicDecor />
         <button className="btn btn-block secondary" onClick={() => setPhase('list')}>
           {t('hw.toList')}
         </button>
@@ -294,11 +320,10 @@ export function Homework({ onHome }: { onHome: () => void }) {
     );
   }
   return (
-    <div className="fade-in hw-screen" key={item.id}>
+    <div className="fade-in hw-screen qz-play" key={item.id}>
+      <TopicDecor />
       <div className="topbar">
-        <span className="meta hw-meta">
-          <BookOpenCheck size={15} strokeWidth={2.6} /> {current.title}
-        </span>
+        <Meta>{current.title}</Meta>
         <span className="counter">
           {idx + 1}/{queue.length}
         </span>
@@ -307,6 +332,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="card hw-card">
+        <VocabDecorImg slot="cardGreekCorner" className="hw-corner" />
+        <VocabDecorImg slot="cardOliveBranch" className="hw-corner-olive" />
         <div className="hw-q big" lang="el">{item.question}</div>
       </div>
 
@@ -327,12 +354,26 @@ export function Homework({ onHome }: { onHome: () => void }) {
         </>
       ) : (
         <div className={`card hw-result v-${result.verdict}`}>
-          <div className="hw-verdict">{t(`hw.verdict.${result.verdict}`)}</div>
+          <div className="hw-verdict">
+            {result.verdict === 'correct' ? (
+              <CheckCircle2 size={22} strokeWidth={2.4} />
+            ) : result.verdict === 'almost' ? (
+              <CircleAlert size={22} strokeWidth={2.4} />
+            ) : (
+              <CircleX size={22} strokeWidth={2.4} />
+            )}
+            {t(`hw.verdict.${result.verdict}`)}
+          </div>
           <div className="hw-row">
             <span className="hw-lab">{t('hw.fixed')}</span>
             <span lang="el">{result.corrected || item.answer || answer}</span>
           </div>
-          {result.comment_ru && <div className="hw-comment">{result.comment_ru}</div>}
+          {result.comment_ru && (
+            <div className="hw-comment">
+              <Owl className="qz-owl" />
+              <span>{result.comment_ru}</span>
+            </div>
+          )}
           {result.mistakes.map((m, k) => (
             <div className="hw-mistake" key={k}>
               <span lang="el">

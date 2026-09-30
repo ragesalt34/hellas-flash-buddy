@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
+import { TopicDecor } from '../components/TopicDecor';
 import { Owl } from '../components/homeArt';
 import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
@@ -27,27 +28,6 @@ import { Greek } from '../components/greek';
 /* Round-theme ornaments for the topic picker: one classical element per
    screen edge, faint and pastel, so the centre stays a clean menu. Decorative
    only — aria-hidden, and .hs-deco is hidden by the square theme. */
-function TopicDecor() {
-  return (
-    <div className="hs-deco tp-decor" aria-hidden="true">
-      <Greek name="bg-shape-1" className="blob b-tl" />
-      <Greek name="bg-shape-3" className="blob b-tr" />
-      <Greek name="bg-shape-3" className="blob b-bl" />
-      <Greek name="bg-shape-2" className="blob b-br" />
-      <Greek name="column" className="orn o-column" />
-      <Greek name="olive-branch" className="orn o-olive-tl" />
-      <Greek name="greek-key" className="orn o-key-tr" />
-      <Greek name="hill-temple" className="orn o-temple" />
-      <Greek name="amphora" className="orn o-amphora" />
-      <Greek name="olive-branch-small" className="orn o-olive-bl" />
-      <Greek name="olive-branch" className="orn o-olive-br" />
-      <Greek name="greek-key-small" className="orn o-key-bl" />
-      <Greek name="decorative-diamond" className="orn o-diamond d1" />
-      <Greek name="decorative-diamond" className="orn o-diamond d2" />
-    </div>
-  );
-}
-
 const LETTERS = ['Α', 'Β', 'Γ', 'Δ'];
 
 const tone = (p: number) => (p >= 85 ? 'h3' : p >= 60 ? 'h2' : p > 0 ? 'h1' : 'h0');
