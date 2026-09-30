@@ -1,3 +1,5 @@
+import { isDueAt } from '../srs';
+
 export type Lang = 'el' | 'ru';
 export type Verdict = 'early' | 'almost' | 'ready';
 
@@ -146,7 +148,7 @@ export function computeReadiness(input: ReadinessInput, now: Date = new Date()):
   const blockers =
     verdict === 'ready' ? [] : candidates.sort((a, b) => a.pct - b.pct).slice(0, 2).map((c) => c.blocker);
 
-  const isDue = (at: string | null) => at !== null && Date.parse(at) <= now.getTime();
+  const isDue = (at: string | null) => isDueAt(at, now.getTime());
 
   return {
     verdict,

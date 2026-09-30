@@ -67,3 +67,35 @@ export function nextReviewAt(level: number, grade = 2): string {
 
 /** A quiz answer (correct/incorrect) mapped onto the 1–3 grade scale. */
 export const gradeForCorrect = (correct: boolean): number => (correct ? 2 : 1);
+
+/** Is a card with this `next_review_at` due at `now`? A missing or unparseable
+ * timestamp counts as due, otherwise the card would never come up again. Shared
+ * so the flashcard queue, the plan and the readiness report agree on "due". */
+export function isDueAt(nextReviewAt: string | null | undefined, now = Date.now()): boolean {
+  if (!nextReviewAt) return true;
+  const t = Date.parse(nextReviewAt);
+  return Number.isNaN(t) || t <= now;
+}
+
+const clampLevel = (level: number): number =>
+  Number.isFinite(level) ? Math.min(Math.max(0, Math.trunc(level)), MAX_LEVEL) : 0;
+
+/** Level and next review after one review.
+ *
+ * An early review (the card is not due yet) that goes well does not move the
+ * card. Quizzes show questions whatever their schedule, so taking the same
+ * topic three times in one evening used to lift a card 1 hour -> 1 day -> 3 days
+ * -> 7 days, straight into "strong" without a single day of real spacing.
+ * Remembering something seen ten minutes ago says nothing about memory.
+ * A miss still counts at any time: forgetting is real information. */
+export function reviewStep(
+  prev: { level: number; next_review_at: string | null } | null,
+  grade: number,
+  now = Date.now()
+): { level: number; next_review_at: string } {
+  if (prev && grade >= 2 && prev.next_review_at && !isDueAt(prev.next_review_at, now)) {
+    return { level: clampLevel(prev.level), next_review_at: prev.next_review_at };
+  }
+  const level = nextLevel(prev?.level ?? 0, grade);
+  return { level, next_review_at: new Date(now + nextReviewMs(level, grade)).toISOString() };
+}

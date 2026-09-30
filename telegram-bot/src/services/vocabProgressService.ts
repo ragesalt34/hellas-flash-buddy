@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import { nextLevel, nextReviewAt } from '../srs';
+import { reviewStep } from '../srs';
 
 // Vocabulary items live in code (data/vocabulary.ts); only per-account SRS
 // progress is stored here, in the durable `vocab_progress` table.
@@ -60,20 +60,22 @@ export async function getDueVocab(
 }
 
 export async function gradeVocab(accountId: string, vocabId: number, grade: number): Promise<void> {
-  const { data } = await supabase
+  // Same guard as questions: a failed read must not reset the word to level 0.
+  const { data, error: readError } = await supabase
     .from('vocab_progress')
-    .select('level')
+    .select('level, next_review_at')
     .eq('account_id', accountId)
     .eq('vocab_id', vocabId)
     .maybeSingle();
+  if (readError) throw readError;
 
-  const level = nextLevel((data as { level: number } | null)?.level ?? 0, grade);
+  const step = reviewStep(data as { level: number; next_review_at: string | null } | null, grade);
   const { error } = await supabase.from('vocab_progress').upsert(
     {
       account_id: accountId,
       vocab_id: vocabId,
-      level,
-      next_review_at: nextReviewAt(level, grade),
+      level: step.level,
+      next_review_at: step.next_review_at,
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'account_id,vocab_id' }

@@ -724,6 +724,8 @@ export function createApiApp(): express.Express {
         res.status(400).json({ error: 'invalid_input' });
         return;
       }
+      // Homework practice is study: it keeps the day streak like the other modes.
+      await recordStudyDay(req.account!.id, getTz(req)).catch(() => {});
       if (canUseAi(req) && aiAllowed(req.account!.id)) {
         try {
           const r = await aiCheck({ question, modelAnswer, note, answer });
