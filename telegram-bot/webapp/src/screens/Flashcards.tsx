@@ -7,6 +7,7 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
 import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
+import { Ostraka } from '../components/homeArt';
 import { Greek } from '../components/greek';
 import { LaurelWreath } from '../components/greekArt';
 import { VocabDecorImg } from './vocabularyDecor';
@@ -164,7 +165,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span className="fc-meta-ic">
-            <Layers size={14} strokeWidth={2.6} />
+            <Ostraka />
           </span>{' '}
           {t('nav.flashcards')}
           <Greek name="olive-branch-small" className="fc-meta-olive" />

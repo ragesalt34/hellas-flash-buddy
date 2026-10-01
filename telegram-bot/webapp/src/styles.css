@@ -5411,3 +5411,54 @@ button.chip:active { transform: scale(0.95); }
 .hw-wreath-wrap .hw-done-n { position: relative; margin: 0 0 14px; }
 .hw-done-n { font-family: var(--font-display); font-size: var(--t-num); font-weight: 800; line-height: 1.1; margin: 8px 0 2px; color: var(--accent-2); }
 .hw-done-d { font-size: var(--t-meta); font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; }
+
+/* ============ Design audit, 2026-10 ============
+   1. The orange "spark" doodles went: they sat in the gaps between cards, next
+      to the quiz arrow and either side of the reveal button, and read as filler
+      clip-art rather than part of the Greek set.
+   2. On phones the tile sprigs landed on the tile text (Cards, Statistics);
+      they move to the empty strip between icon and arrow, or go.
+   3. The homework tile matches its neighbours (drawn owl, own colour, sprig). */
+[data-theme='soft'] .home .spark-badge,
+[data-theme='soft'] .home .spark-name,
+[data-theme='soft'] .home-decor .hm-spark-hero,
+[data-theme='soft'] .home-decor .hm-spark-quiz,
+[data-theme='soft'] .home-decor .hm-spark-right { display: none; }
+[data-theme='soft'] .fc-screen .fc-reveal::before,
+[data-theme='soft'] .fc-screen .fc-reveal::after { display: none !important; }
+
+[data-theme='soft'] .home .t-homework .tile-ic { background: #f6dccb; color: #9a5a2c; margin-bottom: 0; }
+[data-theme='soft'] .home .t-homework .tile-ic svg { width: 32px; height: 32px; }
+[data-theme='soft'] .home .t-homework .arrow { color: var(--h-ink) !important; }
+[data-theme='soft'] .home .tile.t-homework .greek.tile-olive { top: 18px; right: 184px; width: 58px; opacity: 0.7; filter: none; }
+[data-theme='soft'] .home .t-homework { padding: 20px 24px; }
+[data-theme='soft'] .home .t-homework::after {
+  width: 220px; height: 170px; right: -40px; bottom: -110px;
+  background: #f8e3d3;
+}
+
+@media (max-width: 640px) {
+  [data-theme='soft'] .home .tile.t-cards .greek.tile-olive,
+  [data-theme='soft'] .home .tile.t-vocab .greek.tile-olive {
+    top: 20px; right: 46px; bottom: auto; left: auto; width: 38px; opacity: 0.6;
+  }
+  [data-theme='soft'] .home .tile.t-stats .greek.tile-olive,
+  [data-theme='soft'] .home .tile.t-homework .greek.tile-olive { display: none; }
+  [data-theme='soft'] .home .t-homework { padding: 16px 16px 18px; }
+}
+[data-theme='brut'] .home .t-homework .tile-ic svg { width: 26px; height: 26px; }
+
+/* 4. Vocabulary card: the word keeps clear of the corner ornaments (a long
+      phrase used to run under the meander corner and the olive sprig). */
+[data-theme='soft'] .vc-screen .vc-card .vocab-word { padding-inline: 64px; text-wrap: balance; }
+[data-theme='soft'] .vc-screen .vc-card .vocab-word.long { font-size: 50px; }
+[data-theme='soft'] .vc-screen .vc-card .vocab-word.xlong { font-size: 42px; }
+@media (max-width: 1023px) {
+  [data-theme='soft'] .vc-screen .vc-card .vocab-word.long { font-size: 44px; }
+  [data-theme='soft'] .vc-screen .vc-card .vocab-word.xlong { font-size: 38px; }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .vc-screen .vc-card .vocab-word { padding-inline: 36px; }
+  [data-theme='soft'] .vc-screen .vc-card .vocab-word.long { font-size: clamp(28px, 8vw, 36px); }
+  [data-theme='soft'] .vc-screen .vc-card .vocab-word.xlong { font-size: clamp(26px, 7vw, 32px); }
+}

@@ -9,6 +9,7 @@ import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
 import { LaurelWreath } from '../components/greekArt';
+import { Papyrus } from '../components/homeArt';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
@@ -130,7 +131,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span className="vc-meta-ic">
-            <BookA size={14} strokeWidth={2.6} />
+            <Papyrus />
           </span>{' '}
           {t('nav.vocab')}
           <Greek name="olive-branch-small" className="vc-meta-olive" />
@@ -147,7 +148,11 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <VocabDecorImg slot="cardGreekCorner" className="vc-corner tl" />
         <VocabDecorImg slot="cardOliveBranch" className="vc-corner-olive" />
         <div className="speak-row center">
-          <div className="vocab-word">{card.word}</div>
+          {/* Long phrases ("Εθνικό Αρχαιολογικό Μουσείο") step down a size so they
+              wrap inside the card instead of running into its corner ornaments. */}
+          <div className={`vocab-word${card.word.length > 22 ? ' xlong' : card.word.length > 14 ? ' long' : ''}`}>
+            {card.word}
+          </div>
           <button
             className="speak-btn"
             aria-label={t('common.pronounce')}

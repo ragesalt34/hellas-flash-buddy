@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpenCheck, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
+import { ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
@@ -6,8 +6,7 @@ import { Loading, useCached } from '../ui';
 import { useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-import { Sparks } from '../components/icons';
-import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
+import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Owl, Papyrus, WaxTablet } from '../components/homeArt';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
 import { PlanCard } from './PlanCard';
 
@@ -50,7 +49,6 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
     <div className="home fade-in">
       <HomeFrame />
       <div className="hero">
-        <Sparks className="hs-deco spark-badge" />
         <HomeDecorImg slot="oliveRight" className="hero-olive" />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
@@ -66,7 +64,6 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         <p className="sub">{t('home.welcome')}</p>
         <h1>
           <span className="highlight">{me.user.name}</span>
-          <Sparks className="hs-deco spark-name" />
         </h1>
         <div className="hero-chips">
           {me.streak >= 2 && (
@@ -139,7 +136,6 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <HomeDecorImg slot="oliveMid" className="tile-olive" />
           <HomeDecorImg slot="columnTilted" className="tile-column" />
-          <Sparks className="hs-deco spark-cta" />
           <span className="arrow">
             <ArrowRight size={22} strokeWidth={2.6} />
           </span>
@@ -174,7 +170,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('homework')}
         >
           <span className="tile-ic">
-            <BookOpenCheck size={30} strokeWidth={2.2} />
+            <Owl />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
@@ -182,6 +178,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
             <span className="tile-d">{t('home.homework.desc')}</span>
           </span>
+          <HomeDecorImg slot="oliveSmall" className="tile-olive" />
           <span className="arrow" style={{ color: 'var(--muted)' }}>
             <ArrowRight size={20} strokeWidth={2.4} />
           </span>
