@@ -217,7 +217,10 @@ export async function recordQuestionProgress(
   correct: boolean,
   greek = false
 ): Promise<void> {
-  const trackGreek = await hasColumn('question_progress', 'first_seen_el_at');
+  const [trackGreek, trackFirst] = await Promise.all([
+    hasColumn('question_progress', 'first_seen_el_at'),
+    hasColumn('question_progress', 'first_seen_at'),
+  ]);
   // A failed read must stop here. It used to fall through to the defaults, so a
   // network blip rewrote a month-old card as brand new: level 0, counts reset.
   const { data, error: readError } = await supabase
@@ -246,6 +249,8 @@ export async function recordQuestionProgress(
       next_review_at: step.next_review_at,
       updated_at: now,
       ...(trackGreek && greek && !prev?.first_seen_el_at ? { first_seen_el_at: now } : {}),
+      // first time this question was studied at all (only on the first row)
+      ...(trackFirst && !prev ? { first_seen_at: now } : {}),
     },
     { onConflict: 'account_id,question_id' }
   );

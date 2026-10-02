@@ -17,9 +17,10 @@ schedules it again in 10–60 minutes, so studying made the day's load grow
 - New material target is fixed at the start of the day:
   `target = ceil(unseenAtDayStart / learnDays)`, `unseenAtDayStart = unseenNow + firstSeenToday`.
   Left = target − first seen today.
-- A question counts as covered once seen **in Greek** (same rule as readiness):
-  `question_progress.first_seen_el_at`, plus Greek answers in past quizzes.
-  Flashcards graded in the Greek interface and Greek quiz answers set it.
+- New material counts in **any language** (`question_progress.first_seen_at`):
+  a Greek-only rule made the plan impossible to complete in the Russian
+  interface. The readiness report stays Greek-only. `first_seen_el_at` is still
+  recorded (Greek quiz answers, flashcards in the Greek interface) for later use.
 - Pace is judged on the day's target, so studying more never changes it.
 - Card: "Today left ≈ N min", "Done X of Y" bar, a "done for today" state.
 
@@ -27,6 +28,7 @@ schedules it again in 10–60 minutes, so studying made the day's load grow
 
 ```sql
 alter table public.question_progress add column if not exists first_seen_el_at timestamptz;
+alter table public.question_progress add column if not exists first_seen_at    timestamptz;
 alter table public.vocab_progress   add column if not exists first_seen_at   timestamptz;
 ```
 
@@ -36,6 +38,5 @@ any progress counts as covered.
 
 ## Known limit
 
-Flashcard grades made before the columns existed carry no language, so those
-questions count as covered in Greek only after the next Greek answer (quiz
-history is used where it exists).
+Rows created before `first_seen_at` existed have no date, so they never count
+as "new today" (correct for anything older than today).
