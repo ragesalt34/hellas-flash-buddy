@@ -94,6 +94,18 @@ export function App() {
     return () => document.body.classList.remove('focus');
   }, [focus]);
 
+  // On narrow screens the language/style switches float at the top; they hide
+  // while the page is scrolled so they never sit on top of card text.
+  useEffect(() => {
+    const onScroll = () => document.body.classList.toggle('scrolled', window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.body.classList.remove('scrolled');
+    };
+  }, []);
+
   // Guest entry is intentionally in-memory only (not persisted): reloading the
   // site drops back to the landing page unless a real session was created.
   const enter = () => setEntered(true);

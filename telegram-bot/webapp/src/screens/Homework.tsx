@@ -6,7 +6,7 @@ import { playComplete, playCorrect, playTap, playWrong } from '../sound';
 import { useLanguage } from '../i18n';
 import { ProgressBar } from '../ui';
 import { TopicBand, TopicScene } from './topicScenes';
-import { Owl, WaxTablet } from '../components/homeArt';
+import { Owl } from '../components/homeArt';
 import { VocabDecorImg } from './vocabularyDecor';
 import { loadSets, newId, saveSets, type HwItem, type HwSet, type HwStatus } from '../homework';
 
@@ -17,7 +17,7 @@ function Meta({ children }: { children: React.ReactNode }) {
   return (
     <span className="meta qz-topic hw-meta">
       <span className="hw-emblem">
-        <WaxTablet />
+        <Owl />
       </span>
       {children}
     </span>
@@ -165,7 +165,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
             <div className="card hw-set" key={s.id}>
               <button className="hw-set-main" onClick={() => begin(s)}>
                 <span className="hw-set-ic">
-                  <WaxTablet />
+                  <Owl />
                 </span>
                 <span className="hw-set-body">
                 <span className="hw-set-t">{s.title}</span>

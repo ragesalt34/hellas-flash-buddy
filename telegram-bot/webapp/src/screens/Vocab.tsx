@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, PartyPopper, BookA, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
+import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
-import { useLanguage } from '../i18n';
+import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
 import { LaurelWreath } from '../components/greekArt';
@@ -91,12 +91,12 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <div className="result">
           <div className="emoji">
             <LaurelWreath className="emoji-wreath" gold />
-            <PartyPopper size={56} strokeWidth={1.8} />
+            <span className="wreath-num">
+              <b>{cards.length}</b>
+              <small>{countWord(cards.length, 'word', language)}</small>
+            </span>
           </div>
           <div className="ttl">{t('vocab.done')}</div>
-          <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <BookA size={16} strokeWidth={2.4} /> {cards.length} {t('vocab.wordsCount')}
-          </div>
         </div>
         <button className="btn btn-block" onClick={load}>
           <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}

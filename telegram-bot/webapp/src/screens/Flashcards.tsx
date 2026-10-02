@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, PartyPopper, Layers, RotateCcw, House, Check, Lightbulb, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
+import { Eye, CheckCircle2, RotateCcw, House, Check, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
 import { Empty, Loading, ProgressBar } from '../ui';
-import { useLanguage } from '../i18n';
+import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
-import { Ostraka } from '../components/homeArt';
+import { Ostraka, Owl } from '../components/homeArt';
 import { Greek } from '../components/greek';
 import { LaurelWreath } from '../components/greekArt';
 import { VocabDecorImg } from './vocabularyDecor';
@@ -123,12 +123,12 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
         <div className="result">
           <div className="emoji">
             <LaurelWreath className="emoji-wreath" gold />
-            <PartyPopper size={56} strokeWidth={1.8} />
+            <span className="wreath-num">
+              <b>{cards.length}</b>
+              <small>{countWord(cards.length, 'card', language)}</small>
+            </span>
           </div>
           <div className="ttl">{t('flashcards.done')}</div>
-          <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={16} strokeWidth={2.4} /> {cards.length} {t('flashcards.cardsCount')}
-          </div>
         </div>
         <button className="btn btn-block" onClick={load}>
           <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
@@ -217,13 +217,9 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               </div>
             </div>
             {card.explanation && (
-              <div className="explain">
-                <Lightbulb
-                  size={16}
-                  strokeWidth={2.4}
-                  style={{ display: 'inline', verticalAlign: '-3px', marginRight: 6 }}
-                />
-                {card.explanation}
+              <div className="explain fc-explain">
+                <Owl className="qz-owl" />
+                <span>{card.explanation}</span>
               </div>
             )}
           </div>

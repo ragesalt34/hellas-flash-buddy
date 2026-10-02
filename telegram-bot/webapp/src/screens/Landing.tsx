@@ -276,7 +276,7 @@ export function Landing({
                   <svg className="lp-mq-ic" viewBox="0 0 32 32" aria-hidden="true">
                     <TopicGlyph topic={topic} />
                   </svg>{' '}
-                  {t(`topic.${topic}`).toUpperCase()}
+                  {t(`topic.${topic}`).normalize('NFD').replace(/\u0301/g, '').toUpperCase().normalize('NFC')}
                 </span>
               ))}
             </span>

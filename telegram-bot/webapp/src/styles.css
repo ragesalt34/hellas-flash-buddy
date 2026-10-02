@@ -5462,3 +5462,192 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .vc-screen .vc-card .vocab-word.long { font-size: clamp(28px, 8vw, 36px); }
   [data-theme='soft'] .vc-screen .vc-card .vocab-word.xlong { font-size: clamp(26px, 7vw, 32px); }
 }
+
+/* ================================================================
+   PREMIUM PASS (round theme only), 2026-10
+   What read as "generated": comic fonts (Pangolin, Balsamiq) with tilts and
+   brush underlines, pastel blobs behind everything, doodle sparks, emoji faces
+   on buttons, washed-out pastel icon squares. The direction instead: fewer,
+   bolder moves. A real paper grain on the ground, saturated Greek colours
+   (terracotta, ochre, olive, Aegean blue, indigo), an editorial serif for the
+   few display moments, solid colour where a control carries meaning.
+   ================================================================ */
+
+/* ---- Ground: paper grain instead of pastel blobs ---- */
+[data-theme='soft'] .aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0 0.16 0 0 0 0.11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme='soft'] .home-decor .hm-wash,
+[data-theme='soft'] .vc-decor .vc-wash,
+[data-theme='soft'] .fc-decor .fc-wash,
+[data-theme='soft'] .tp-decor .blob,
+[data-theme='soft'] .greek.blob,
+[data-theme='soft'] .home .tile::after { display: none !important; }
+
+/* ---- Home: the name in an editorial serif, not on a tilted comic plaque ---- */
+[data-theme='soft'] .home .hero h1 .highlight {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(44px, 6.4vw, 64px);
+  letter-spacing: -0.5px;
+  line-height: 1;
+  padding: 0;
+  background: none;
+  color: #b23a2e;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---- Home tiles: saturated icon squares with a lit top edge ---- */
+[data-theme='soft'] .home .tile:not(.feature) .tile-ic {
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 -3px 0 rgba(0, 0, 0, 0.14), 0 8px 18px -10px var(--ic-glow, rgba(0, 0, 0, 0.4));
+}
+[data-theme='soft'] .home .t-cards .tile-ic { background: #c4462f; color: #fff; --ic-glow: rgba(196, 70, 47, 0.7); }
+[data-theme='soft'] .home .t-vocab .tile-ic { background: #e2a126; color: #2b1d05; --ic-glow: rgba(226, 161, 38, 0.75); }
+[data-theme='soft'] .home .t-homework .tile-ic { background: #2c5f9e; color: #fff; --ic-glow: rgba(44, 95, 158, 0.7); }
+[data-theme='soft'] .home .t-stats .tile-ic { background: #5b4b9a; color: #fff; --ic-glow: rgba(91, 75, 154, 0.7); }
+[data-theme='soft'] .home .tile:not(.feature) .tile-ic .ha-soft { fill-opacity: 0.22; }
+[data-theme='soft'] .home .tile:not(.feature) {
+  border: 1px solid rgba(92, 60, 30, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 18px 34px -26px rgba(95, 55, 25, 0.55);
+}
+[data-theme='soft'] .home .tile .tile-t { color: #1c1410; letter-spacing: -0.4px; }
+
+/* ---- Grade buttons: solid colour, no emoji faces ---- */
+[data-theme='soft'] .grade .e { display: none !important; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade { gap: 4px; font-weight: 800; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade.g1 { background: #c4462f !important; color: #fff !important; box-shadow: 0 5px 0 #922f1f, 0 16px 26px -18px rgba(146, 47, 31, 0.9) !important; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade.g2 { background: #e2a126 !important; color: #2b1d05 !important; box-shadow: 0 5px 0 #a8730f, 0 16px 26px -18px rgba(168, 115, 15, 0.9) !important; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade.g3 { background: #3f7a4c !important; color: #fff !important; box-shadow: 0 5px 0 #2a5634, 0 16px 26px -18px rgba(42, 86, 52, 0.9) !important; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade:active { box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) !important; }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade .gsub {
+  margin-top: 2px; padding: 2px 9px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2); color: inherit; font-size: 12.5px; font-weight: 700; opacity: 1;
+}
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade.g2 .gsub { background: rgba(43, 29, 5, 0.12); }
+[data-theme='soft'] :is(.app, .fc-screen, .vc-screen) .grade .gr-key { opacity: 0.18; filter: brightness(0) invert(1); }
+
+/* ---- Finish screens: the number in the wreath instead of a party popper ---- */
+.result .emoji .wreath-num {
+  position: relative;
+  display: grid; place-items: center;
+  width: 126px; height: 126px;
+  font-family: var(--font-display);
+  font-size: 40px; font-weight: 800; letter-spacing: -1px;
+  color: #8a5f12;
+}
+.result .emoji .wreath-num { align-content: center; gap: 0; }
+.result .emoji .wreath-num b { font-weight: 800; line-height: 1; }
+.result .emoji .wreath-num small { font-size: 12px; font-weight: 700; letter-spacing: 0.4px; color: #9a7a3c; margin-top: 2px; }
+.fc-explain { display: flex; align-items: flex-start; gap: 10px; }
+
+/* ---- Landing: editorial serif headings, no comic font, tilt or doodles ---- */
+.lp-fun-h {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(36px, 5.2vw, 56px);
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+  color: #1a120d;
+}
+.lp-fun-t { transform: none; }
+.lp-fun-t::after { display: none; }
+.lp-spark { display: none !important; }
+
+/* ---- Fixes found in the audit ---- */
+/* landing: on one-column widths the stickers hug the card, not the page edge */
+@media (max-width: 900px) {
+  .lp-demo-wrap { max-width: 500px; margin-inline: auto; }
+}
+/* landing, phones: the pill wraps into two lines, so it becomes a rounded slab */
+@media (max-width: 520px) {
+  .lp-pill--sticker { border-radius: 18px; padding: 6px 14px 6px 6px; text-align: left; }
+  .lp-pill-text { display: block; line-height: 1.35; }
+}
+/* home, tablet widths: the homework sprig landed on its owl */
+@media (max-width: 899px) {
+  [data-theme='soft'] .home .tile.t-homework .greek.tile-olive { display: none; }
+}
+/* progress: the readiness card stacks whenever the column is narrow */
+@media (max-width: 899px) {
+  .rd-verdict { flex-direction: column; text-align: center; }
+  .rd-verdict-title, .rd-blockers { justify-content: center; }
+  .rd-temple-wrap, .rd-temple { width: min(280px, 100%); }
+}
+/* vocabulary: the temple mark belongs to the "tap to reveal" state only */
+[data-theme='soft'] .vc-screen .spoiler:not(.hidden) .vc-panel-temple { display: none; }
+/* tile sprigs: natural olive, not tinted pink/orange/lilac */
+[data-theme='soft'] .home .tile:not(.feature) .greek.tile-olive { filter: none !important; opacity: 0.5 !important; }
+
+/* ---- Topic picker: the topic colour carries the emblem, the tile stays clean ---- */
+[data-theme='soft'] .tp-screen .tp-tile {
+  background: #fffcf6 !important;
+  border: 1px solid rgba(92, 60, 30, 0.1) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 18px 34px -26px rgba(95, 55, 25, 0.55);
+}
+[data-theme='soft'] .tp-screen .tp-tile .tp-emblem {
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -4px 0 rgba(0, 0, 0, 0.14), 0 12px 22px -14px var(--tp-glow, rgba(0, 0, 0, 0.5)) !important;
+}
+[data-theme='soft'] .tp-screen .tp-tile .tp-emblem .g-soft { fill-opacity: 0.22; }
+[data-theme='soft'] .tp-screen .t-history .tp-emblem { background: #b8462f !important; --tp-glow: rgba(184, 70, 47, 0.75); }
+[data-theme='soft'] .tp-screen .t-culture .tp-emblem { background: #6a4f9a !important; --tp-glow: rgba(106, 79, 154, 0.75); }
+[data-theme='soft'] .tp-screen .t-laws .tp-emblem { background: #2c5f9e !important; --tp-glow: rgba(44, 95, 158, 0.75); }
+[data-theme='soft'] .tp-screen .t-geography .tp-emblem { background: #23807b !important; --tp-glow: rgba(35, 128, 123, 0.75); }
+[data-theme='soft'] .tp-screen .tp-tile.is-weak { border-color: rgba(196, 70, 47, 0.45) !important; }
+[data-theme='soft'] .tp-screen .tile.feature.warm { background: #e2a126; border-color: #c98a14; }
+@media (max-width: 899px) {
+  [data-theme='soft'] .tp-screen .tp-tile .tp-weak { position: static; align-self: flex-start; }
+}
+@media (min-width: 561px) and (max-width: 899px) {
+  [data-theme='soft'] .tp-screen .tp-tile .tp-emblem { width: 64px; height: 64px; padding: 11px; }
+}
+
+/* ---- Landing cards: clean paper, the colour goes into one strong mark ---- */
+.lp-learn .lp-step,
+.lp-learn .lp-feature {
+  background: #fffcf6 !important;
+  border: 1px solid rgba(92, 60, 30, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 22px 40px -30px rgba(95, 55, 25, 0.6);
+}
+.lp-learn .lp-step::after,
+.lp-learn .lp-feature::after { display: none; }
+.lp-learn .lp-step.s1 { --mark: #3f7a4c; }
+.lp-learn .lp-step.s2 { --mark: #c98a14; }
+.lp-learn .lp-step.s3 { --mark: #5b4b9a; }
+.lp-learn .lp-step .lp-step-letter { color: var(--mark) !important; opacity: 0.9 !important; }
+.lp-learn .lp-step .lp-step-kicker { color: var(--mark) !important; }
+.lp-learn .lp-step { border-top: 4px solid var(--mark); }
+.lp-learn .lp-feature .ic {
+  background: var(--c, var(--accent)) !important;
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -3px 0 rgba(0, 0, 0, 0.14), 0 10px 20px -12px var(--c, var(--accent));
+}
+.lp-learn .lp-feature .ic .ha-soft { fill-opacity: 0.22; }
+
+/* ---- Progress: topic emblems in their solid topic colour, as in the picker ---- */
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem { color: #fff !important; border: 0 !important; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.14); }
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem .g-soft { fill-opacity: 0.22; }
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem.tp-history { background: #b8462f !important; }
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem.tp-culture { background: #6a4f9a !important; }
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem.tp-laws { background: #2c5f9e !important; }
+[data-theme='soft'] :is(.rd-topic, .qz-topic) .rd-emblem.tp-geography { background: #23807b !important; }
+/* homework marks in the homework colour (Aegean blue), as on the home tile */
+[data-theme='soft'] .hw-emblem,
+[data-theme='soft'] .hw-set-ic { background: #2c5f9e; color: #fff; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.14); }
+[data-theme='soft'] :is(.hw-emblem, .hw-set-ic) .ha-soft { fill-opacity: 0.22; }
+/* phones/tablets: the language and style switches sit fixed at the top and
+   covered card text while scrolling; once the page moves they step aside
+   (App.tsx toggles body.scrolled) and come back at the top. */
+@media (max-width: 899px) {
+  [data-theme='soft'] .bottomnav-inner :is(.lang-switch, .theme-switch) { transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
+  [data-theme='soft'] body.scrolled .bottomnav-inner :is(.lang-switch, .theme-switch) { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+}

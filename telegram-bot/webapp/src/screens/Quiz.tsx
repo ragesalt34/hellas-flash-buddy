@@ -3,15 +3,10 @@ import {
   Check,
   X,
   ArrowRight,
-  BookOpen,
-  Zap,
-  ThumbsUp,
-  Trophy,
   RotateCcw,
   LayoutGrid,
   House,
   Volume2,
-  type LucideIcon,
 } from 'lucide-react';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
@@ -220,18 +215,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   if (phase === 'result') {
     const total = questions.length;
     const pct = total ? Math.round((score / total) * 100) : 0;
-    let ResultIcon: LucideIcon = BookOpen;
-    let ttlKey = 'quiz.result.tryHarder';
-    if (pct >= 80) {
-      ResultIcon = Trophy;
-      ttlKey = 'quiz.result.great';
-    } else if (pct >= 60) {
-      ResultIcon = ThumbsUp;
-      ttlKey = 'quiz.result.good';
-    } else if (pct >= 40) {
-      ResultIcon = Zap;
-      ttlKey = 'quiz.result.keepGoing';
-    }
+    const ttlKey =
+      pct >= 80 ? 'quiz.result.great' : pct >= 60 ? 'quiz.result.good' : pct >= 40 ? 'quiz.result.keepGoing' : 'quiz.result.tryHarder';
     return (
       <div className="fade-in center-col">
         <div className="result">
@@ -239,9 +224,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             <div className="ring-pct">{pct}%</div>
             <div className="ring-sub">{score}/{total}</div>
           </Ring>
-          <div className="ttl" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <ResultIcon size={22} strokeWidth={2.4} /> {t(ttlKey)}
-          </div>
+          <div className="ttl">{t(ttlKey)}</div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
               <Check size={15} strokeWidth={3} /> {score} {t('common.correct')}
@@ -252,10 +235,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
             </span>
           </div>
         </div>
-        <button className="btn btn-block good" onClick={() => start(topic)}>
+        <button className="btn btn-block" onClick={() => start(topic)}>
           <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
         </button>
-        <button className="btn btn-block" onClick={() => setPhase('topic')}>
+        <button className="btn btn-block secondary" onClick={() => setPhase('topic')}>
           <LayoutGrid size={18} strokeWidth={2.4} /> {t('quiz.otherTopic')}
         </button>
         <button className="btn btn-block secondary" onClick={onHome}>

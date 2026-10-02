@@ -292,8 +292,8 @@ const translations: Translations = {
   },
   'landing.feature.speech.title': { ru: 'Произношение', el: 'Προφορά' },
   'landing.feature.speech.text': {
-    ru: 'Слушай каждое греческое слово с естественным произношением от Google TTS.',
-    el: 'Άκου κάθε ελληνική λέξη με φυσική εκφώνηση από Google TTS.',
+    ru: 'Каждое греческое слово и вопрос можно прослушать живым голосом.',
+    el: 'Άκου κάθε ελληνική λέξη και ερώτηση με φυσική φωνή.',
   },
   'landing.feature.streak.title': { ru: 'Серия и цель', el: 'Σερί & στόχος' },
   'landing.feature.streak.text': {
