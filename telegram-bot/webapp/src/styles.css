@@ -5743,3 +5743,30 @@ button.chip:active { transform: scale(0.95); }
   @keyframes hs-wave { to { stroke-dashoffset: -28; } }
   .lp-panorama .s-wave { stroke-dasharray: 10 4; animation: hs-wave 3.5s linear infinite; }
 }
+
+/* ---- Topic scenes: Culture, Laws, Geography (one picture per pair) ----
+   Sizes are per picture so the right column's top piece always ends above the
+   lower one (top piece from --top, lower one from 50%). Everything faces the
+   card: the theatre and village open towards the centre, the boat sails in,
+   and the flag is seen from its reverse side (pole outside, canton at the pole). */
+:is(.ts-culture, .ts-laws, .ts-geography) .ts-pair-left .ts-left-a,
+:is(.ts-culture, .ts-laws, .ts-geography) .ts-pair-right .ts-right-a { width: 100%; }
+:is(.ts-culture, .ts-laws, .ts-geography) .ts-vignette { width: min(420px, var(--room)); }
+:is(.ts-culture, .ts-laws, .ts-geography) .ts-side { top: 50%; }
+.ts-culture .ts-pair-left { width: min(300px, var(--room)); }
+.ts-culture .ts-pair-right { width: min(200px, var(--room)); }
+.ts-culture .ts-side { width: min(230px, var(--room)); }
+.ts-laws .ts-pair-left { width: min(330px, var(--room)); }
+.ts-laws .ts-pair-right { width: min(180px, var(--room)); }
+.ts-laws .ts-pair-right .ts-right-a { transform: scaleX(-1); }
+.ts-laws .ts-side { width: min(185px, var(--room)); }
+.ts-geography .ts-pair-left { width: min(260px, var(--room)); }
+.ts-geography .ts-pair-right { width: min(250px, var(--room)); }
+.ts-geography .ts-side { width: min(220px, var(--room)); }
+/* Corner olive branches sit higher and the pictures start a little lower, so the
+   branches frame the pictures instead of lying on their tops; the lower right
+   piece never rises into the upper one on short screens. */
+.topic-scene { --top: 104px; }
+.topic-scene .ts-olive-tl,
+.topic-scene .ts-olive-tr { top: -26px; }
+:is(.ts-culture, .ts-laws, .ts-geography) .ts-side { top: max(50%, 430px); }

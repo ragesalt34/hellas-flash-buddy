@@ -29,6 +29,30 @@ const SCENES: Record<string, Scene> = {
     accents: ['leaf', 'star'],
     band: 'band',
   },
+  culture: {
+    vignette: 'theatre',
+    left: ['masks'],
+    right: ['lyre'],
+    side: 'chapel',
+    accents: ['leaf', 'star'],
+    band: 'band',
+  },
+  laws: {
+    vignette: 'parliament',
+    left: ['book'],
+    right: ['flag'],
+    side: 'ballot',
+    accents: ['wreath', 'lamp'],
+    band: 'band',
+  },
+  geography: {
+    vignette: 'village',
+    left: ['map'],
+    right: ['boat'],
+    side: 'lighthouse',
+    accents: ['shell', 'star'],
+    band: 'band',
+  },
   // Tutor homework. One cluster per pair: the tablet with its inkwell on the
   // left, the sealed scroll on the right, Athena's owl on her books lower right.
   homework: {
