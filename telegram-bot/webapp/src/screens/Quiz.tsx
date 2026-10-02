@@ -12,6 +12,7 @@ import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
 import { TopicDecor } from '../components/TopicDecor';
 import { SectionLabel } from '../components/SectionLabel';
+import { RewardSides, RewardWreath } from '../components/RewardArt';
 import { Owl } from '../components/homeArt';
 import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
@@ -220,10 +221,14 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     return (
       <div className="fade-in center-col">
         <div className="result">
-          <Ring pct={pct} size={150} stroke={13}>
-            <div className="ring-pct">{pct}%</div>
-            <div className="ring-sub">{score}/{total}</div>
-          </Ring>
+          <RewardSides />
+          <div className="ring-wreath">
+            <RewardWreath />
+            <Ring pct={pct} size={150} stroke={13}>
+              <div className="ring-pct">{pct}%</div>
+              <div className="ring-sub">{score}/{total}</div>
+            </Ring>
+          </div>
           <div className="ttl">{t(ttlKey)}</div>
           <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>

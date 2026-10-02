@@ -293,7 +293,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
           <div className="hw-wreath-wrap">
             <img
               className="hw-wreath"
-              src={`${import.meta.env.BASE_URL}assets/topics/homework/wreath.webp`}
+              src={`${import.meta.env.BASE_URL}assets/rewards/wreath.webp`}
               alt=""
               aria-hidden="true"
               draggable={false}

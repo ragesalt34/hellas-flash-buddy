@@ -5770,3 +5770,22 @@ button.chip:active { transform: scale(0.95); }
 .topic-scene .ts-olive-tl,
 .topic-scene .ts-olive-tr { top: -26px; }
 :is(.ts-culture, .ts-laws, .ts-geography) .ts-side { top: max(50%, 430px); }
+
+/* ---- Rewards pack: watercolour wreath around every final score ---- */
+.result { position: relative; }
+.result .emoji .emoji-wreath.reward-wreath { width: 172px; height: auto; top: 46%; }
+.result .emoji .wreath-num { color: #7a5410; }
+.ring-wreath { position: relative; display: grid; place-items: center; width: 250px; height: 220px; margin: -10px auto 0; }
+.ring-wreath .reward-wreath { position: absolute; left: 50%; top: 52%; width: 250px; height: auto; transform: translate(-50%, -50%); }
+.ring-wreath > :not(.reward-wreath) { position: relative; }
+/* amphora and olive bundle beside the result card, wide screens only */
+.reward-side { position: absolute; bottom: 8px; pointer-events: none; }
+.reward-side.rs-left { right: calc(100% + 26px); width: 104px; }
+.reward-side.rs-right { left: calc(100% + 20px); width: 112px; }
+.reward-side.rs-coin { width: 92px; bottom: 30px; rotate: -8deg; }
+@media (max-width: 1099px) { .reward-side { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='soft'] .ring-wreath .reward-wreath { animation: hs-grow 0.7s var(--spring) both; }
+  @keyframes hs-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+  [data-theme='soft'] .reward-side { animation: hs-rise 0.7s var(--ease) 0.2s both; }
+}

@@ -8,7 +8,7 @@ import { Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
-import { LaurelWreath } from '../components/greekArt';
+import { RewardSides, RewardWreath } from '../components/RewardArt';
 import { Papyrus } from '../components/homeArt';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 
@@ -89,8 +89,9 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="fade-in center-col vc-screen">
         <VocabularyFrame />
         <div className="result">
+          <RewardSides left="coin" />
           <div className="emoji">
-            <LaurelWreath className="emoji-wreath" gold />
+            <RewardWreath className="emoji-wreath" />
             <span className="wreath-num">
               <b>{cards.length}</b>
               <small>{countWord(cards.length, 'word', language)}</small>

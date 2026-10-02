@@ -9,7 +9,7 @@ import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Ostraka, Owl } from '../components/homeArt';
 import { Greek } from '../components/greek';
-import { LaurelWreath } from '../components/greekArt';
+import { RewardSides, RewardWreath } from '../components/RewardArt';
 import { VocabDecorImg } from './vocabularyDecor';
 
 /* Round-theme frame for this screen, matched to the Vocabulary screen's look
@@ -121,8 +121,9 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="fade-in center-col fc-screen">
         <FcDecor />
         <div className="result">
+          <RewardSides left="coin" />
           <div className="emoji">
-            <LaurelWreath className="emoji-wreath" gold />
+            <RewardWreath className="emoji-wreath" />
             <span className="wreath-num">
               <b>{cards.length}</b>
               <small>{countWord(cards.length, 'card', language)}</small>
