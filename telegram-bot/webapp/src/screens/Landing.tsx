@@ -196,7 +196,17 @@ export function Landing({
       </nav>
 
       <header className="lp-hero" onPointerMove={onHeroMove}>
-        <HeroPanorama />
+        {/* Watercolour panorama: Acropolis, the Saronic gulf, cypresses and olives.
+            Its sky is transparent, so the headline sits on open air above it. */}
+        <img
+          className="hs-deco lp-hero-pano"
+          src={`${import.meta.env.BASE_URL}assets/landing/panorama.webp`}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          decoding="async"
+          fetchPriority="low"
+        />
         <FallingLeaves />
         <div className="lp-hero-grid">
           <div className="lp-hero-copy">

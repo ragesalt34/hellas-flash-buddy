@@ -5789,3 +5789,12 @@ button.chip:active { transform: scale(0.95); }
   @keyframes hs-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
   [data-theme='soft'] .reward-side { animation: hs-rise 0.7s var(--ease) 0.2s both; }
 }
+
+/* ---- Landing hero: watercolour panorama instead of the flat vector one ---- */
+.lp-hero .lp-hero-pano {
+  position: absolute; z-index: 0; left: -22px; bottom: 0;
+  width: calc(100% + 44px); height: auto; pointer-events: none;
+  translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -3px);
+  transition: translate 0.7s var(--ease);
+}
+[data-theme='soft'] .lp-hero { padding-bottom: clamp(150px, 21vw, 270px); }
