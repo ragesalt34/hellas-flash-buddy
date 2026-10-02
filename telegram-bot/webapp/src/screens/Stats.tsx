@@ -6,6 +6,7 @@ import { Empty, Loading, ProgressBar, useCached } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { haptic } from '../telegram';
 import { MeanderBand } from '../components/greekArt';
+import { SectionLabel } from '../components/SectionLabel';
 import { Medallion, OliveCalendar, ParthenonProgress, TopicEmblem, type MedalKind } from '../components/statsArt';
 import { OilLamp, Ostraka, Papyrus } from '../components/homeArt';
 
@@ -35,12 +36,11 @@ function lastDays(n: number): string[] {
   });
 }
 
-function Label({ children }: { children: string }) {
+function Label({ k }: { k: string }) {
   return (
-    <div className="section-label rd-label">
-      <span>{children}</span>
+    <SectionLabel k={k} className="rd-label">
       <MeanderBand className="rd-label-rule" height={8} />
-    </div>
+    </SectionLabel>
   );
 }
 
@@ -110,7 +110,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
 
   return (
     <div className="fade-in rd-screen">
-      <Label>{t('rd.title')}</Label>
+      <Label k="rd.title" />
       <div className={`card rd-verdict v-${data.verdict}`}>
         <figure className="rd-temple-wrap">
           <ParthenonProgress
@@ -152,7 +152,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         </div>
       </div>
 
-      <Label>{t('rd.criteria')}</Label>
+      <Label k="rd.criteria" />
       <div className="card rd-criteria">
         <Criterion
           medal="greek"
@@ -190,7 +190,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         />
       </div>
 
-      <Label>{t('rd.byTopic')}</Label>
+      <Label k="rd.byTopic" />
       <div className="card rd-topics">
         {data.topics.map((tp) => {
           const g = pct(tp.greek.known, tp.total);
@@ -220,7 +220,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         })}
       </div>
 
-      <Label>{t('rd.activity')}</Label>
+      <Label k="rd.activity" />
       <div className="card rd-activity">
         <div className="rd-act-top">
           <span className="rd-streak">

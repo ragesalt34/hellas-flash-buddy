@@ -106,6 +106,27 @@ export function App() {
     };
   }, []);
 
+  // Depth for the decorative scenes: the backdrop layers drift a few pixels
+  // against a mouse pointer (CSS reads --px/--py on <body>, -1..1). Mouse only,
+  // and nothing at all for people who asked the system for less motion.
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        document.body.style.setProperty('--px', ((e.clientX / window.innerWidth) * 2 - 1).toFixed(3));
+        document.body.style.setProperty('--py', ((e.clientY / window.innerHeight) * 2 - 1).toFixed(3));
+      });
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   // Guest entry is intentionally in-memory only (not persisted): reloading the
   // site drops back to the landing page unless a real session was created.
   const enter = () => setEntered(true);

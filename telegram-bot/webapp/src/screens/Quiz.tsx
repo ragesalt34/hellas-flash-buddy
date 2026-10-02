@@ -11,6 +11,7 @@ import {
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple, TopicEmblem } from '../components/statsArt';
 import { TopicDecor } from '../components/TopicDecor';
+import { SectionLabel } from '../components/SectionLabel';
 import { Owl } from '../components/homeArt';
 import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
@@ -147,10 +148,9 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     return (
       <div className="fade-in tp-screen">
         <TopicDecor />
-        <div className="section-label">
-          {t('quiz.chooseTopic')}
+        <SectionLabel k="quiz.chooseTopic">
           <Greek name="olive-branch-small" className="tp-label-olive" />
-        </div>
+        </SectionLabel>
         <div className="tiles stagger">
           {TOPICS.map((topicDef, i) => {
             if (topicDef.span)
@@ -307,6 +307,13 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 <span className="lt">{LETTERS[i] ?? i + 1}</span>
                 <span style={{ flex: 1 }}>{opt}</span>
                 {showCheck && <Check size={20} strokeWidth={3} />}
+                {showCheck && opt === chosen && (
+                  <span className="hs-deco leaf-burst" aria-hidden="true">
+                    {[0, 1, 2, 3, 4, 5].map((n) => (
+                      <i key={n} style={{ ['--n' as string]: n }} />
+                    ))}
+                  </span>
+                )}
                 {showX && <X size={20} strokeWidth={3} />}
                 {hasGreek(opt) && (
                   <button

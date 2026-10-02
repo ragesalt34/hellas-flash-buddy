@@ -5651,3 +5651,95 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .bottomnav-inner :is(.lang-switch, .theme-switch) { transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
   [data-theme='soft'] body.scrolled .bottomnav-inner :is(.lang-switch, .theme-switch) { opacity: 0; transform: translateY(-10px); pointer-events: none; }
 }
+
+/* ================================================================
+   GREEK ACCENTS: word of the day, Greek eyebrows, motion (round theme)
+   ================================================================ */
+
+/* ---- Section eyebrows: the Greek word after the Russian one ---- */
+.section-label .sl-el { color: color-mix(in srgb, var(--muted) 72%, transparent); font-weight: 700; }
+
+/* ---- Word of the day ---- */
+.wod { position: relative; overflow: hidden; isolation: isolate; margin-top: 16px; border-radius: var(--r-lg); padding: 24px 24px 22px; }
+.wod-band { position: absolute; left: 0; top: 0; width: 100%; }
+.wod-eyebrow { margin-top: 6px; font-size: var(--t-micro); font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; }
+.wod-row { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
+.wod-word { min-width: 0; overflow-wrap: anywhere; }
+.wod-speak { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; border: 0; }
+.wod-ru { margin-top: 10px; font-size: 18px; font-weight: 700; }
+.wod-note { margin-top: 4px; font-size: 14px; max-width: 46ch; line-height: 1.45; }
+.wod-sprig { position: absolute; right: 18px; bottom: 12px; width: 76px; height: auto; pointer-events: none; }
+[data-theme='soft'] .wod {
+  background: radial-gradient(120% 140% at 100% 0%, #2f639f 0%, #1e416e 55%, #152f52 100%);
+  color: #f6efe1;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 26px 46px -30px rgba(21, 47, 82, 0.95);
+}
+[data-theme='soft'] .wod-band { color: #d9a441; opacity: 0.85; }
+[data-theme='soft'] .wod-eyebrow { color: #e9c47c; }
+[data-theme='soft'] .wod-eyebrow span { color: rgba(233, 196, 124, 0.65); }
+[data-theme='soft'] .wod-word { font-family: 'EB Garamond', Georgia, serif; font-weight: 600; font-size: clamp(38px, 5.6vw, 54px); line-height: 1.04; letter-spacing: -0.3px; color: #fffaf0; }
+[data-theme='soft'] .wod-speak { background: #e2a126; color: #1d1405; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18), 0 10px 22px -10px rgba(226, 161, 38, 0.85); transition: transform 0.2s var(--ease); }
+[data-theme='soft'] .wod-speak:hover { transform: scale(1.07); }
+[data-theme='soft'] .wod-ru { color: #fff; }
+[data-theme='soft'] .wod-note { color: rgba(246, 239, 225, 0.72); }
+[data-theme='soft'] .wod-sprig { color: #e9c47c; opacity: 0.38; transform: rotate(-12deg); }
+[data-theme='brut'] .wod { background: var(--surface); border: 2px solid var(--border); box-shadow: var(--e1); }
+[data-theme='brut'] .wod-word { font-size: 34px; font-weight: 800; }
+[data-theme='brut'] .wod-speak { background: var(--amber); border: 2px solid var(--border); }
+
+/* ---- Leaf burst on a right answer ---- */
+.leaf-burst { position: absolute; right: 22px; top: 50%; width: 0; height: 0; pointer-events: none; }
+.leaf-burst i {
+  position: absolute; left: 0; top: 0; width: 14px; height: 8px; opacity: 0;
+  border-radius: 14px 0 14px 0; background: #6f9a4f;
+}
+.qz-play .option.correct { position: relative; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* olive branches breathe in the wind, each at its own pace */
+  @keyframes hs-sway { 0%, 100% { rotate: -1.6deg; } 50% { rotate: 1.6deg; } }
+  [data-theme='soft'] :is(.ts-olive-tl, .ts-olive-tr, .hm-olive-top, .hm-olive-mid, .hm-olive-right,
+    .va-olive-tl, .va-olive-bl, .va-olive-br, .fd-olive-tl, .fd-olive-bl, .fd-olive-br, .o-olive-tl, .o-olive-br, .o-olive-bl) {
+    animation: hs-sway 7.5s ease-in-out infinite;
+    transform-origin: 20% 10%;
+  }
+  [data-theme='soft'] :is(.ts-olive-tr, .hm-olive-right, .va-olive-br, .fd-olive-br, .o-olive-br) { animation-duration: 9s; animation-delay: -3s; }
+  [data-theme='soft'] :is(.hm-olive-mid, .va-olive-bl, .fd-olive-bl, .o-olive-bl) { animation-duration: 8.2s; animation-delay: -5s; }
+  [data-theme='soft'] .home .tile .greek.tile-olive { animation: hs-sway 8s ease-in-out infinite; }
+
+  /* depth: scene layers drift against the mouse (see App.tsx) */
+  @media (pointer: fine) {
+    [data-theme='soft'] :is(.topic-scene, .home-decor, .vc-decor, .fc-decor, .tp-decor) {
+      translate: calc(var(--px, 0) * -8px) calc(var(--py, 0) * -6px);
+      transition: translate 0.8s var(--ease);
+    }
+  }
+
+  /* the streak lamp is lit */
+  @keyframes hs-flicker {
+    0%, 100% { transform: scale(1, 1); opacity: 1; }
+    30% { transform: scale(0.92, 1.08); opacity: 0.85; }
+    60% { transform: scale(1.05, 0.95); opacity: 1; }
+  }
+  [data-theme='soft'] .ha-lamp .ha-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: hs-flicker 1.9s ease-in-out infinite; }
+
+  /* answer feedback: the right one blooms, the wrong one shakes once */
+  @keyframes hs-shake { 0%, 100% { translate: 0; } 20% { translate: -6px; } 40% { translate: 5px; } 60% { translate: -3px; } 80% { translate: 2px; } }
+  [data-theme='soft'] .qz-play .option.wrong { animation: hs-shake 0.36s ease-out; }
+  @keyframes hs-leaf {
+    0% { opacity: 0; transform: rotate(calc(var(--n) * 60deg - 150deg)) translateX(0) scale(0.6); }
+    25% { opacity: 1; }
+    100% { opacity: 0; transform: rotate(calc(var(--n) * 60deg - 150deg)) translateX(46px) scale(1); }
+  }
+  .leaf-burst i { animation: hs-leaf 0.75s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; animation-delay: calc(var(--n) * 25ms); }
+  .leaf-burst i:nth-child(even) { background: #9fbb6e; }
+
+  /* finish screens: the wreath grows in */
+  @keyframes hs-grow { from { scale: 0.55; opacity: 0; } to { scale: 1; opacity: 1; } }
+  [data-theme='soft'] .result .emoji .emoji-wreath { animation: hs-grow 0.7s var(--spring) both; }
+  [data-theme='soft'] .result .emoji .wreath-num { animation: hs-grow 0.5s var(--spring) 0.15s both; }
+
+  /* landing: the little waves on the sea move */
+  @keyframes hs-wave { to { stroke-dashoffset: -28; } }
+  .lp-panorama .s-wave { stroke-dasharray: 10 4; animation: hs-wave 3.5s linear infinite; }
+}

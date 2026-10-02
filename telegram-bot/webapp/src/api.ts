@@ -199,6 +199,12 @@ export interface VocabStats {
   mastered: number;
   total: number;
 }
+export interface WordOfDay {
+  id: number;
+  word: string;
+  ru: string;
+  note: string | null;
+}
 export interface MeResponse {
   user: { id: string; name: string; username: string | null; is_guest: boolean };
   stats: UserStats;
@@ -206,6 +212,8 @@ export interface MeResponse {
   vocab: VocabStats;
   plan: StudyPlan;
   topicLabels: Record<string, string>;
+  /** Absent from servers older than the word-of-the-day release. */
+  wordOfDay?: WordOfDay;
 }
 export interface QuizQuestion {
   id: string;

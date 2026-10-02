@@ -38,6 +38,9 @@ const translations: Translations = {
   'home.stats.title': { ru: 'Статистика', el: 'Στατιστικά' },
   'home.stats.desc': { ru: 'Твой прогресс и история', el: 'Η πρόοδός σου & ιστορικό' },
 
+  // ---- Word of the day (Home) ----
+  'wod.title': { ru: 'Слово дня', el: 'Λέξη της ημέρας' },
+
   // ---- Homework (tutor's assignment) ----
   'nav.homework': { ru: 'Домашка', el: 'Εργασία' },
   'home.homework.desc': { ru: 'Задание от репетитора: разбор и проверка ответов', el: 'Εργασία από τον καθηγητή: έλεγχος απαντήσεων' },

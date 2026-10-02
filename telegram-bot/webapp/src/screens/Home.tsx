@@ -9,6 +9,8 @@ import type { View } from '../App';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Owl, Papyrus, WaxTablet } from '../components/homeArt';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
 import { PlanCard } from './PlanCard';
+import { WordOfDay } from './WordOfDay';
+import { SectionLabel } from '../components/SectionLabel';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
@@ -118,7 +120,9 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
 
       {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
 
-      <div className="section-label">{t('home.section.learn')}</div>
+      {me.wordOfDay && <WordOfDay word={me.wordOfDay} />}
+
+      <SectionLabel k="home.section.learn" />
       <div className="tiles stagger">
         <button
           className="tile feature"
