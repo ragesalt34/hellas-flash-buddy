@@ -4,11 +4,17 @@ import { api } from './api';
 // than <audio>.volume, because iOS Safari ignores HTMLMediaElement.volume — a
 // GainNode is the only way to actually turn the voice down on iPhone.
 //
-// TARGET_PEAK normalizes loudness: each clip's gain is set so its loudest
-// sample lands at TARGET_PEAK, so questions (v3) and words (flash) — which the
-// two models render at different baseline loudness — all play at the same level.
-const TARGET_PEAK = 0.405; // 0.5 → 0.45 → 0.405: two 10% cuts
+// Every clip is levelled to the same perceived loudness, not the same peak.
+// Peak-levelling (the old way) left 4–6 dB between clips: a word with one sharp
+// consonant got turned down, a soft sentence did not. Now each clip's
+// integrated loudness (ITU-R BS.1770: K-weighting, 400ms blocks, gated) is
+// brought to TARGET_LUFS. -23.4 is the median level the peak-levelled library
+// played at after the two 10% cuts, so the overall volume stays where it was
+// set; only the spread goes.
+const TARGET_LUFS = -23.4;
+const PEAK_CEILING = 0.9; // never push a clip's peak past this
 const MAX_GAIN = 2; // don't over-amplify a near-silent clip (would raise noise)
+const FALLBACK_VOLUME = 0.405; // <audio> path (no Web Audio): plain volume
 const CACHE_TTL_MS = 50 * 60 * 1000;
 // Decoded PCM is ~0.5MB per clip — cap the cache so a long session doesn't
 // hold tens of MB of audio in memory (oldest entries are evicted first).
@@ -22,18 +28,72 @@ let currentEl: HTMLAudioElement | null = null; // fallback path
 let generation = 0;
 const bufCache = new Map<string, { buf: AudioBuffer; gain: number; ts: number }>();
 
-/** Peak sample amplitude across all channels (0..1); used to normalize loudness. */
-function peakGain(buf: AudioBuffer): number {
+type Biquad = { b: [number, number, number]; a: [number, number] };
+
+/** BS.1770 K-weighting at any sample rate: a +4 dB shelf above ~1.7 kHz and a
+ * ~38 Hz high-pass (the same filter the UI sounds use in sound.ts). */
+function kWeighting(sr: number): Biquad[] {
+  const A = 10 ** (3.99984 / 40);
+  let w = (2 * Math.PI * 1681.97) / sr;
+  let c = Math.cos(w);
+  const s = 2 * Math.sqrt(A) * (Math.sin(w) / (2 * 0.7071752));
+  const a0 = A + 1 - (A - 1) * c + s;
+  const shelf: Biquad = {
+    b: [(A * (A + 1 + (A - 1) * c + s)) / a0, (-2 * A * (A - 1 + (A + 1) * c)) / a0, (A * (A + 1 + (A - 1) * c - s)) / a0],
+    a: [(2 * (A - 1 - (A + 1) * c)) / a0, (A + 1 - (A - 1) * c - s) / a0],
+  };
+  w = (2 * Math.PI * 38.13547) / sr;
+  c = Math.cos(w);
+  const al = Math.sin(w) / (2 * 0.500327);
+  const h0 = 1 + al;
+  const highpass: Biquad = {
+    b: [(1 + c) / 2 / h0, -(1 + c) / h0, (1 + c) / 2 / h0],
+    a: [(-2 * c) / h0, (1 - al) / h0],
+  };
+  return [shelf, highpass];
+}
+
+/** Gain that brings a clip to TARGET_LUFS, within the peak ceiling and MAX_GAIN. */
+function loudnessGain(buf: AudioBuffer): number {
+  // mono mix, peak on the way
+  const n = buf.length;
+  let x = new Float64Array(n);
   let peak = 0;
   for (let ch = 0; ch < buf.numberOfChannels; ch++) {
-    const data = buf.getChannelData(ch);
-    for (let i = 0; i < data.length; i++) {
-      const a = data[i] < 0 ? -data[i] : data[i];
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < n; i++) {
+      x[i] += d[i] / buf.numberOfChannels;
+      const a = d[i] < 0 ? -d[i] : d[i];
       if (a > peak) peak = a;
     }
   }
-  if (peak <= 0.0001) return TARGET_PEAK; // silent → neutral
-  return Math.min(TARGET_PEAK / peak, MAX_GAIN);
+  if (peak <= 0.0001) return 1; // silent: nothing to level
+  for (const { b, a } of kWeighting(buf.sampleRate)) {
+    const y = new Float64Array(n);
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < n; i++) {
+      const v = b[0] * x[i] + b[1] * x1 + b[2] * x2 - a[0] * y1 - a[1] * y2;
+      x2 = x1; x1 = x[i]; y2 = y1; y1 = v;
+      y[i] = v;
+    }
+    x = y;
+  }
+  // 400ms blocks, 75% overlap; absolute gate -70 LUFS, relative gate -10 LU
+  const win = Math.round(buf.sampleRate * 0.4);
+  const hop = Math.round(buf.sampleRate * 0.1);
+  const sq = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) sq[i + 1] = sq[i] + x[i] * x[i];
+  const blocks: number[] = [];
+  if (n < win) blocks.push(sq[n] / Math.max(1, n));
+  else for (let i = 0; i + win <= n; i += hop) blocks.push((sq[i + win] - sq[i]) / win);
+  const lufs = (p: number) => -0.691 + 10 * Math.log10(Math.max(p, 1e-12));
+  const mean = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / Math.max(1, arr.length);
+  const loud = blocks.filter((p) => lufs(p) > -70);
+  if (!loud.length) return 1;
+  const rel = lufs(mean(loud)) - 10;
+  const gated = loud.filter((p) => lufs(p) > rel);
+  const level = lufs(mean(gated.length ? gated : loud));
+  return Math.min(10 ** ((TARGET_LUFS - level) / 20), PEAK_CEILING / peak, MAX_GAIN);
 }
 
 function audioCtx(): AudioContext | null {
@@ -102,7 +162,7 @@ async function loadBuffer(
     const res = await fetch(audioUrl);
     if (!res.ok) throw new Error(`audio fetch ${res.status}`);
     const buf = await c.decodeAudioData(await res.arrayBuffer());
-    entry = { buf, gain: peakGain(buf), ts: Date.now() };
+    entry = { buf, gain: loudnessGain(buf), ts: Date.now() };
     bufCache.delete(cacheKey); // re-insert at the end (freshest position)
     bufCache.set(cacheKey, entry);
     while (bufCache.size > CACHE_MAX) {
@@ -151,7 +211,7 @@ export async function speakGreek(text: string, cacheKey: string): Promise<void> 
     const { audioUrl } = await api.tts(text, cacheKey);
     if (gen !== generation) return;
     currentEl = new Audio(audioUrl);
-    currentEl.volume = TARGET_PEAK;
+    currentEl.volume = FALLBACK_VOLUME;
     await currentEl.play();
   } catch {
     bufCache.delete(cacheKey); // don't memoize a failed fetch/decode/playback
