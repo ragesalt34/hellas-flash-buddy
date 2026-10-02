@@ -1,5 +1,6 @@
 import { supabase } from '../supabase';
 import { isDueAt, reviewStep } from '../srs';
+import { hasColumn } from './progressColumns';
 
 // Vocabulary items live in code (data/vocabulary.ts); only per-account SRS
 // progress is stored here, in the durable `vocab_progress` table.
@@ -61,23 +62,28 @@ export async function getDueVocab(
 }
 
 export async function gradeVocab(accountId: string, vocabId: number, grade: number): Promise<void> {
+  const trackFirst = await hasColumn('vocab_progress', 'first_seen_at');
   // Same guard as questions: a failed read must not reset the word to level 0.
   const { data, error: readError } = await supabase
     .from('vocab_progress')
-    .select('level, next_review_at')
+    .select(`level, next_review_at${trackFirst ? ', first_seen_at' : ''}`)
     .eq('account_id', accountId)
     .eq('vocab_id', vocabId)
     .maybeSingle();
   if (readError) throw readError;
 
-  const step = reviewStep(data as { level: number; next_review_at: string | null } | null, grade);
+  const prev = data as unknown as { level: number; next_review_at: string | null; first_seen_at?: string | null } | null;
+  const step = reviewStep(prev, grade);
+  const now = new Date().toISOString();
   const { error } = await supabase.from('vocab_progress').upsert(
     {
       account_id: accountId,
       vocab_id: vocabId,
       level: step.level,
       next_review_at: step.next_review_at,
-      updated_at: new Date().toISOString(),
+      updated_at: now,
+      // the daily plan counts words first seen today (column added by SQL)
+      ...(trackFirst && !prev?.first_seen_at ? { first_seen_at: now } : {}),
     },
     { onConflict: 'account_id,vocab_id' }
   );

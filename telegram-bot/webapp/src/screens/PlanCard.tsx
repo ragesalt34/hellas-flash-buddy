@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { ProgressBar } from '../ui';
 import { api, type StudyPlan } from '../api';
 import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
@@ -123,6 +124,11 @@ export function PlanCard({
     );
 
   const days = plan.daysLeft ?? 0;
+  // Today's share: what is done and what is left, so the card only counts down.
+  const td = plan.today;
+  const doneToday = td ? td.reviews.done + td.newQuestions.done + td.newWords.done : 0;
+  const leftToday = plan.newQuestions + plan.newWords + plan.reviews.cards + plan.reviews.words;
+  const complete = td ? td.complete : leftToday === 0;
   const parts = [
     plan.newQuestions > 0 && `${plan.newQuestions} ${countWord(plan.newQuestions, 'newQuestion', language)}`,
     plan.newWords > 0 && `${plan.newWords} ${countWord(plan.newWords, 'newWord', language)}`,
@@ -140,12 +146,24 @@ export function PlanCard({
             {countWord(days, 'day', language)} · {t('plan.until')} {fmt(plan.date)}
           </span>
         </div>
-        <div className="pc-today">
-          <span>{t('plan.today')}</span>
-          <b>≈ {plan.minutes} {t('plan.min')}</b>
+        <div className={`pc-today${complete ? ' is-done' : ''}`}>
+          <span>{complete ? t('plan.today') : t('plan.todayLeft')}</span>
+          <b>{complete ? <Check size={22} strokeWidth={3} /> : <>≈ {plan.minutes} {t('plan.min')}</>}</b>
         </div>
       </div>
-      {parts.length > 0 && <div className="pc-parts">{parts.join(' · ')}</div>}
+      {complete ? (
+        <div className="pc-parts pc-complete">
+          <b>{t('plan.complete')}</b> {t('plan.completeHint')}
+        </div>
+      ) : (
+        parts.length > 0 && <div className="pc-parts">{parts.join(' · ')}</div>
+      )}
+      {td && doneToday + leftToday > 0 && (
+        <div className="pc-progress">
+          <ProgressBar value={doneToday} total={doneToday + leftToday} />
+          <span>{t('plan.doneOf').replace('{done}', String(doneToday)).replace('{total}', String(doneToday + leftToday))}</span>
+        </div>
+      )}
       <p className="pc-pace">
         <i aria-hidden="true" /> {t(`plan.pace.${plan.pace}`)}
       </p>

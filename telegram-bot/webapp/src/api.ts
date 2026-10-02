@@ -286,4 +286,11 @@ export interface StudyPlan {
   unseen: { questions: number; words: number };
   minutes: number;
   finishNewBy: string | null;
+  /** Today's share, fixed at the start of the day (absent on older servers). */
+  today?: {
+    newQuestions: { done: number; target: number };
+    newWords: { done: number; target: number };
+    reviews: { done: number; left: number };
+    complete: boolean;
+  };
 }

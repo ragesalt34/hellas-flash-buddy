@@ -1,6 +1,7 @@
 import { supabase } from '../supabase';
 import { QuizQuestion, FlashcardItem } from '../types';
 import { isDueAt, reviewStep } from '../srs';
+import { hasColumn } from './progressColumns';
 
 export type ContentLang = 'ru' | 'el';
 
@@ -206,29 +207,34 @@ export async function fetchRandomFlashcards(
   return shuffleArray(all).slice(0, limit);
 }
 
-/** Record one SRS review for a question (flashcard grade or quiz answer). */
+/** Record one SRS review for a question (flashcard grade or quiz answer).
+ * `greek`: the question was seen in Greek this time, which the daily plan
+ * counts as covered (first_seen_el_at, once that column exists). */
 export async function recordQuestionProgress(
   accountId: string,
   questionId: string,
   grade: number,
-  correct: boolean
+  correct: boolean,
+  greek = false
 ): Promise<void> {
+  const trackGreek = await hasColumn('question_progress', 'first_seen_el_at');
   // A failed read must stop here. It used to fall through to the defaults, so a
   // network blip rewrote a month-old card as brand new: level 0, counts reset.
   const { data, error: readError } = await supabase
     .from('question_progress')
-    .select('level, correct_count, seen_count, next_review_at')
+    .select(`level, correct_count, seen_count, next_review_at${trackGreek ? ', first_seen_el_at' : ''}`)
     .eq('account_id', accountId)
     .eq('question_id', questionId)
     .maybeSingle();
   if (readError) throw readError;
 
-  const prev = data as
-    | { level: number; correct_count: number; seen_count: number; next_review_at: string | null }
+  const prev = data as unknown as
+    | { level: number; correct_count: number; seen_count: number; next_review_at: string | null; first_seen_el_at?: string | null }
     | null;
   // grade matters, not just the level: a lapse comes back in ten minutes even
   // when the level it fell to would say days; an early correct answer holds.
   const step = reviewStep(prev, grade);
+  const now = new Date().toISOString();
 
   const { error } = await supabase.from('question_progress').upsert(
     {
@@ -238,7 +244,8 @@ export async function recordQuestionProgress(
       correct_count: (prev?.correct_count ?? 0) + (correct ? 1 : 0),
       seen_count: (prev?.seen_count ?? 0) + 1,
       next_review_at: step.next_review_at,
-      updated_at: new Date().toISOString(),
+      updated_at: now,
+      ...(trackGreek && greek && !prev?.first_seen_el_at ? { first_seen_el_at: now } : {}),
     },
     { onConflict: 'account_id,question_id' }
   );

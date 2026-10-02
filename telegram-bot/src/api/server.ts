@@ -38,6 +38,7 @@ import { loadPlan, setInterviewDate } from '../services/planService';
 import { parseHomeworkText, checkLocal, MAX_TEXT } from '../services/homework';
 import { aiConfigured, aiParse, aiCheck } from '../services/homeworkAi';
 import { pickWordOfDay } from '../services/wordOfDay';
+import { sessionLangs } from '../services/readiness';
 import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
@@ -452,10 +453,13 @@ export function createApiApp(): express.Express {
       const score = records.filter((r) => r.correct).length;
       await recordQuizSession(a.id, topic, score, records.length, records);
 
-      // Update per-question SRS from each answer (best-effort).
+      // Update per-question SRS from each answer (best-effort). The language of
+      // each answer (neutral ones like "1821" take the quiz's majority) tells
+      // the plan which questions have been seen in Greek.
+      const langs = sessionLangs(records);
       await Promise.all(
-        records.map((r) =>
-          recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, r.correct).catch((e) =>
+        records.map((r, k) =>
+          recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, r.correct, langs[k] === 'el').catch((e) =>
             console.error('recordQuestionProgress error:', e)
           )
         )
@@ -506,7 +510,8 @@ export function createApiApp(): express.Express {
         return;
       }
       // grade 1 = forgot, 2 = remembered, 3 = knew instantly → 2+ counts correct.
-      await recordQuestionProgress(a.id, questionId, grade, grade >= 2);
+      // The card was shown in the interface language; in Greek it counts as seen in Greek.
+      await recordQuestionProgress(a.id, questionId, grade, grade >= 2, getLang(req) === 'el');
       // Any study counts towards the day streak, not just quizzes.
       // Best-effort: a missing activity log must not fail the action itself.
       await recordStudyDay(a.id, getTz(req)).catch(() => {});
