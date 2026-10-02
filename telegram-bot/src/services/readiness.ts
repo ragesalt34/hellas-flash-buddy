@@ -1,4 +1,4 @@
-import { isDueAt } from '../srs';
+import { dueToday, touchedToday } from './dayRule';
 
 export type Lang = 'el' | 'ru';
 export type Verdict = 'early' | 'almost' | 'ready';
@@ -6,8 +6,8 @@ export type Verdict = 'early' | 'almost' | 'ready';
 export interface QuestionRow { id: string; topic: string }
 export interface AnswerRow { question_id: string; chosen: string; correct: boolean }
 export interface SessionRow { completed_at: string; answers: AnswerRow[] | null }
-export interface ProgressRow { question_id: string; level: number; next_review_at: string | null }
-export interface VocabRow { vocab_id: number; level: number; next_review_at: string | null }
+export interface ProgressRow { question_id: string; level: number; next_review_at: string | null; updated_at?: string | null }
+export interface VocabRow { vocab_id: number; level: number; next_review_at: string | null; updated_at?: string | null }
 
 export interface ReadinessInput {
   questions: QuestionRow[];
@@ -15,6 +15,8 @@ export interface ReadinessInput {
   progress: ProgressRow[];
   vocab: VocabRow[];
   vocabIds: number[];
+  /** The account's time zone, for the calendar-day due rule. */
+  tz?: string;
 }
 
 export interface Coverage { known: number; checked: number; total: number }
@@ -148,7 +150,10 @@ export function computeReadiness(input: ReadinessInput, now: Date = new Date()):
   const blockers =
     verdict === 'ready' ? [] : candidates.sort((a, b) => a.pct - b.pct).slice(0, 2).map((c) => c.blocker);
 
-  const isDue = (at: string | null) => isDueAt(at, now.getTime());
+  // Left to review today, by the same rule as the plan and the queues.
+  const tz = input.tz ?? 'UTC';
+  const isDue = (r: { next_review_at: string | null; updated_at?: string | null }) =>
+    !touchedToday(r, now, tz) && dueToday(r, now, tz);
 
   return {
     verdict,
@@ -160,8 +165,8 @@ export function computeReadiness(input: ReadinessInput, now: Date = new Date()):
     words,
     topics,
     due: {
-      cards: input.progress.filter((p) => topicOf.has(p.question_id) && isDue(p.next_review_at)).length,
-      words: vocabRows.filter((v) => isDue(v.next_review_at)).length,
+      cards: input.progress.filter((p) => topicOf.has(p.question_id) && isDue(p)).length,
+      words: vocabRows.filter((v) => isDue(v)).length,
     },
   };
 }

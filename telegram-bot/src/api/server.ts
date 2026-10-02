@@ -459,7 +459,7 @@ export function createApiApp(): express.Express {
       const langs = sessionLangs(records);
       await Promise.all(
         records.map((r, k) =>
-          recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, r.correct, langs[k] === 'el').catch((e) =>
+          recordQuestionProgress(a.id, r.question_id, r.correct ? 2 : 1, r.correct, langs[k] === 'el', getTz(req)).catch((e) =>
             console.error('recordQuestionProgress error:', e)
           )
         )
@@ -479,7 +479,7 @@ export function createApiApp(): express.Express {
       const lang = getLang(req);
       let cards;
       try {
-        cards = await fetchDueFlashcards(a.id, 20, lang);
+        cards = await fetchDueFlashcards(a.id, 20, lang, getTz(req));
       } catch {
         cards = await fetchRandomFlashcards(20, lang);
       }
@@ -511,7 +511,7 @@ export function createApiApp(): express.Express {
       }
       // grade 1 = forgot, 2 = remembered, 3 = knew instantly → 2+ counts correct.
       // The card was shown in the interface language; in Greek it counts as seen in Greek.
-      await recordQuestionProgress(a.id, questionId, grade, grade >= 2, getLang(req) === 'el');
+      await recordQuestionProgress(a.id, questionId, grade, grade >= 2, getLang(req) === 'el', getTz(req));
       // Any study counts towards the day streak, not just quizzes.
       // Best-effort: a missing activity log must not fail the action itself.
       await recordStudyDay(a.id, getTz(req)).catch(() => {});
@@ -525,7 +525,7 @@ export function createApiApp(): express.Express {
     wrap(async (req, res) => {
       const a = req.account!;
       const [due, stats] = await Promise.all([
-        getDueVocab(a.id, ALL_VOCAB_IDS, 20),
+        getDueVocab(a.id, ALL_VOCAB_IDS, 20, getTz(req)),
         getVocabStats(a.id, ALL_VOCAB_IDS),
       ]);
       const cards = due
@@ -561,7 +561,7 @@ export function createApiApp(): express.Express {
         res.status(400).json({ error: 'unknown_word' });
         return;
       }
-      await gradeVocab(a.id, vocabId, grade);
+      await gradeVocab(a.id, vocabId, grade, getTz(req));
       // Any study counts towards the day streak, not just quizzes.
       // Best-effort: a missing activity log must not fail the action itself.
       await recordStudyDay(a.id, getTz(req)).catch(() => {});

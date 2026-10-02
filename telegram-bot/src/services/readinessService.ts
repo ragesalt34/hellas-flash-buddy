@@ -30,8 +30,8 @@ export async function loadReadiness(accountId: string, tz: string, now = new Dat
       .select('topic, score, total, completed_at, answers')
       .eq('account_id', accountId)
       .order('completed_at', { ascending: true }),
-    supabase.from('question_progress').select('question_id, level, next_review_at').eq('account_id', accountId),
-    supabase.from('vocab_progress').select('vocab_id, level, next_review_at').eq('account_id', accountId),
+    supabase.from('question_progress').select('question_id, level, next_review_at, updated_at').eq('account_id', accountId),
+    supabase.from('vocab_progress').select('vocab_id, level, next_review_at, updated_at').eq('account_id', accountId),
     supabase.from('study_days').select('day').eq('account_id', accountId).gte('day', since),
     getUserStreak(accountId, zone).catch(() => 0),
   ]);
@@ -44,6 +44,7 @@ export async function loadReadiness(accountId: string, tz: string, now = new Dat
       progress: progress.data ?? [],
       vocab: vocab.data ?? [],
       vocabIds: VOCABULARY.map((v) => v.id),
+      tz: zone,
     },
     now
   );

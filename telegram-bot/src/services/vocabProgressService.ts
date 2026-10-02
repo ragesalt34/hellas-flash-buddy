@@ -1,5 +1,6 @@
 import { supabase } from '../supabase';
-import { isDueAt, reviewStep } from '../srs';
+import { reviewStep } from '../srs';
+import { dueToday } from './dayRule';
 import { hasColumn } from './progressColumns';
 
 // Vocabulary items live in code (data/vocabulary.ts); only per-account SRS
@@ -18,27 +19,30 @@ interface Row {
   vocab_id: number;
   level: number;
   next_review_at: string | null;
+  updated_at?: string | null;
 }
 
 export async function getDueVocab(
   accountId: string,
   allIds: number[],
-  limit: number
+  limit: number,
+  tz = 'UTC'
 ): Promise<{ id: number; level: number }[]> {
   const { data, error } = await supabase
     .from('vocab_progress')
-    .select('vocab_id, level, next_review_at')
+    .select('vocab_id, level, next_review_at, updated_at')
     .eq('account_id', accountId);
   if (error) throw error;
 
-  const now = Date.now();
-  const seen = new Map<number, { at: string | null; due: number; level: number }>();
+  const now = new Date();
+  const seen = new Map<number, { at: string | null; upd: string | null; due: number; level: number }>();
   for (const r of (data ?? []) as Row[]) {
     // Sort key: a missing or unparseable time counts as due (isDueAt) and sorts
     // first, as the most overdue.
     const parsed = r.next_review_at ? Date.parse(r.next_review_at) : NaN;
     seen.set(r.vocab_id, {
       at: r.next_review_at,
+      upd: r.updated_at ?? null,
       due: Number.isNaN(parsed) ? 0 : parsed,
       level: r.level ?? 0,
     });
@@ -49,7 +53,7 @@ export async function getDueVocab(
   for (const id of allIds) {
     const s = seen.get(id);
     if (!s) unseen.push({ id, level: 0 });
-    else if (isDueAt(s.at, now)) due.push({ id, level: s.level, due: s.due });
+    else if (dueToday({ next_review_at: s.at, updated_at: s.upd }, now, tz)) due.push({ id, level: s.level, due: s.due });
   }
 
   // Most overdue first — otherwise the slice below took an arbitrary subset
@@ -61,20 +65,23 @@ export async function getDueVocab(
   return result.slice(0, limit);
 }
 
-export async function gradeVocab(accountId: string, vocabId: number, grade: number): Promise<void> {
+export async function gradeVocab(accountId: string, vocabId: number, grade: number, tz = 'UTC'): Promise<void> {
   const trackFirst = await hasColumn('vocab_progress', 'first_seen_at');
   // Same guard as questions: a failed read must not reset the word to level 0.
   const { data, error: readError } = await supabase
     .from('vocab_progress')
-    .select(`level, next_review_at${trackFirst ? ', first_seen_at' : ''}`)
+    .select(`level, next_review_at, updated_at${trackFirst ? ', first_seen_at' : ''}`)
     .eq('account_id', accountId)
     .eq('vocab_id', vocabId)
     .maybeSingle();
   if (readError) throw readError;
 
-  const prev = data as unknown as { level: number; next_review_at: string | null; first_seen_at?: string | null } | null;
-  const step = reviewStep(prev, grade);
-  const now = new Date().toISOString();
+  const prev = data as unknown as
+    | { level: number; next_review_at: string | null; updated_at: string | null; first_seen_at?: string | null }
+    | null;
+  const at = new Date();
+  const step = reviewStep(prev, grade, at.getTime(), prev ? dueToday(prev, at, tz) : true);
+  const now = at.toISOString();
   const { error } = await supabase.from('vocab_progress').upsert(
     {
       account_id: accountId,

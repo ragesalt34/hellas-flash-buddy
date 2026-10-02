@@ -1,6 +1,7 @@
 import { supabase } from '../supabase';
 import { QuizQuestion, FlashcardItem } from '../types';
-import { isDueAt, reviewStep } from '../srs';
+import { reviewStep } from '../srs';
+import { dueToday } from './dayRule';
 import { hasColumn } from './progressColumns';
 
 export type ContentLang = 'ru' | 'el';
@@ -150,26 +151,28 @@ const toFlashcard = (q: QuizQuestion, level = 0): FlashcardItem => ({
 export async function fetchDueFlashcards(
   accountId: string,
   limit = 20,
-  lang: ContentLang = 'el'
+  lang: ContentLang = 'el',
+  tz = 'UTC'
 ): Promise<FlashcardItem[]> {
   const [{ data: qData, error: qErr }, { data: pData, error: pErr }] = await Promise.all([
     supabase.from('questions').select(QUESTION_COLS),
     supabase
       .from('question_progress')
-      .select('question_id, next_review_at, level')
+      .select('question_id, next_review_at, updated_at, level')
       .eq('account_id', accountId),
   ]);
   if (qErr) throw qErr;
   if (pErr) throw pErr;
 
-  const now = Date.now();
-  const progress = new Map<string, { at: string | null; due: number; level: number }>();
-  for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null; level: number }[]) {
+  const now = new Date();
+  const progress = new Map<string, { at: string | null; upd: string | null; due: number; level: number }>();
+  for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null; updated_at: string | null; level: number }[]) {
     // Sort key: a missing or unparseable time counts as due (isDueAt) and sorts
     // first, as the most overdue.
     const parsed = p.next_review_at ? Date.parse(p.next_review_at) : NaN;
     progress.set(p.question_id, {
       at: p.next_review_at,
+      upd: p.updated_at,
       due: Number.isNaN(parsed) ? 0 : parsed,
       level: p.level ?? 0,
     });
@@ -181,7 +184,7 @@ export async function fetchDueFlashcards(
   for (const q of all) {
     const p = progress.get(q.id);
     if (!p) unseen.push(q);
-    else if (isDueAt(p.at, now)) due.push(q);
+    else if (dueToday({ next_review_at: p.at, updated_at: p.upd }, now, tz)) due.push(q);
   }
 
   // Most overdue first. Without this the order was whatever the table returned,
@@ -215,7 +218,8 @@ export async function recordQuestionProgress(
   questionId: string,
   grade: number,
   correct: boolean,
-  greek = false
+  greek = false,
+  tz = 'UTC'
 ): Promise<void> {
   const [trackGreek, trackFirst] = await Promise.all([
     hasColumn('question_progress', 'first_seen_el_at'),
@@ -225,19 +229,27 @@ export async function recordQuestionProgress(
   // network blip rewrote a month-old card as brand new: level 0, counts reset.
   const { data, error: readError } = await supabase
     .from('question_progress')
-    .select(`level, correct_count, seen_count, next_review_at${trackGreek ? ', first_seen_el_at' : ''}`)
+    .select(`level, correct_count, seen_count, next_review_at, updated_at${trackGreek ? ', first_seen_el_at' : ''}`)
     .eq('account_id', accountId)
     .eq('question_id', questionId)
     .maybeSingle();
   if (readError) throw readError;
 
   const prev = data as unknown as
-    | { level: number; correct_count: number; seen_count: number; next_review_at: string | null; first_seen_el_at?: string | null }
+    | {
+        level: number;
+        correct_count: number;
+        seen_count: number;
+        next_review_at: string | null;
+        updated_at: string | null;
+        first_seen_el_at?: string | null;
+      }
     | null;
   // grade matters, not just the level: a lapse comes back in ten minutes even
   // when the level it fell to would say days; an early correct answer holds.
-  const step = reviewStep(prev, grade);
-  const now = new Date().toISOString();
+  const at = new Date();
+  const step = reviewStep(prev, grade, at.getTime(), prev ? dueToday(prev, at, tz) : true);
+  const now = at.toISOString();
 
   const { error } = await supabase.from('question_progress').upsert(
     {

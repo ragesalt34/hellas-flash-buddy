@@ -3,7 +3,7 @@ import { VOCABULARY } from '../data/vocabulary';
 import { computePlan, type StudyPlan } from './plan';
 import { dayKeyIn, isValidTimeZone } from './sessionService';
 import { hasColumn } from './progressColumns';
-import { isDueAt } from '../srs';
+import { countDay } from './dayRule';
 
 const VOCAB_IDS = new Set(VOCABULARY.map((v) => v.id));
 
@@ -44,8 +44,6 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
   for (const r of [questions, progress, vocab]) if (r.error) throw r.error;
 
   const today = dayKeyIn(now, zone);
-  const day = (iso: string | null | undefined) => (iso ? dayKeyIn(new Date(iso), zone) : null);
-  const dueByToday = (at: string | null) => isDueAt(at, now.getTime()) || (day(at) ?? '') <= today;
 
   // Questions that no longer exist are not material. The total comes from the
   // exact count (the row list can be capped); the filter applies when complete.
@@ -54,22 +52,8 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
   const idsComplete = questionIds.size >= totalQuestions;
   const cards = ((progress.data ?? []) as unknown as Row[]).filter((r) => !idsComplete || questionIds.has(r.question_id!));
   const words = ((vocab.data ?? []) as unknown as Row[]).filter((v) => VOCAB_IDS.has(v.vocab_id!));
-
-  const count = (rows: Row[], track: boolean) => {
-    let due = 0;
-    let done = 0;
-    let fresh = 0;
-    for (const r of rows) {
-      const firstToday = track && day(r.first_seen_at) === today;
-      if (firstToday) fresh++;
-      if (day(r.updated_at) === today) {
-        if (!firstToday) done++;
-      } else if (dueByToday(r.next_review_at)) due++;
-    }
-    return { due, done, fresh };
-  };
-  const q = count(cards, qCol);
-  const w = count(words, wCol);
+  const q = countDay(cards, now, zone, qCol);
+  const w = countDay(words, now, zone, wCol);
 
   return computePlan({
     // An error here means the interview_date column is not there yet: no date, not a failure.
@@ -79,8 +63,8 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
     seenQuestions: cards.length,
     totalWords: VOCAB_IDS.size,
     seenWords: words.length,
-    dueCards: q.due,
-    dueWords: w.due,
+    dueCards: q.left,
+    dueWords: w.left,
     doneCards: q.done,
     doneWords: w.done,
     newQuestionsToday: q.fresh,

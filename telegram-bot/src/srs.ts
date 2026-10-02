@@ -91,9 +91,13 @@ const clampLevel = (level: number): number =>
 export function reviewStep(
   prev: { level: number; next_review_at: string | null } | null,
   grade: number,
-  now = Date.now()
+  now = Date.now(),
+  due?: boolean
 ): { level: number; next_review_at: string } {
-  if (prev && grade >= 2 && prev.next_review_at && !isDueAt(prev.next_review_at, now)) {
+  // `due` comes from the caller's calendar-day rule (services/dayRule.ts);
+  // without it, the exact time decides.
+  const isDue = due ?? isDueAt(prev?.next_review_at, now);
+  if (prev && grade >= 2 && prev.next_review_at && !isDue) {
     return { level: clampLevel(prev.level), next_review_at: prev.next_review_at };
   }
   const level = nextLevel(prev?.level ?? 0, grade);
