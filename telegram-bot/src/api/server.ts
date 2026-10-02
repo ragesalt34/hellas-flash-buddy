@@ -37,6 +37,7 @@ import { loadReadiness } from '../services/readinessService';
 import { loadPlan, setInterviewDate } from '../services/planService';
 import { parseHomeworkText, checkLocal, MAX_TEXT } from '../services/homework';
 import { aiConfigured, aiParse, aiCheck } from '../services/homeworkAi';
+import { pickWordOfDay } from '../services/wordOfDay';
 import { AnswerRecord } from '../types';
 
 const ALL_VOCAB_IDS = VOCABULARY.map((v) => v.id);
@@ -345,6 +346,9 @@ export function createApiApp(): express.Express {
         vocab,
         plan,
         topicLabels: topicLabels(lang),
+        wordOfDay: (({ id, word, ru, note }) => ({ id, word, ru, note: note ?? null }))(
+          pickWordOfDay(dayKeyIn(new Date(), getTz(req)), VOCABULARY)
+        ),
       });
     })
   );
