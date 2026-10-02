@@ -1,6 +1,6 @@
 import { supabase } from '../supabase';
 import { QuizQuestion, FlashcardItem } from '../types';
-import { reviewStep } from '../srs';
+import { isDueAt, reviewStep } from '../srs';
 
 export type ContentLang = 'ru' | 'el';
 
@@ -162,12 +162,13 @@ export async function fetchDueFlashcards(
   if (pErr) throw pErr;
 
   const now = Date.now();
-  const progress = new Map<string, { due: number; level: number }>();
+  const progress = new Map<string, { at: string | null; due: number; level: number }>();
   for (const p of (pData ?? []) as { question_id: string; next_review_at: string | null; level: number }[]) {
-    // An unparseable timestamp yields NaN, and `NaN <= now` is false — the card
-    // would silently never come up again. Treat it as due now instead.
-    const parsed = p.next_review_at ? Date.parse(p.next_review_at) : 0;
+    // Sort key: a missing or unparseable time counts as due (isDueAt) and sorts
+    // first, as the most overdue.
+    const parsed = p.next_review_at ? Date.parse(p.next_review_at) : NaN;
     progress.set(p.question_id, {
+      at: p.next_review_at,
       due: Number.isNaN(parsed) ? 0 : parsed,
       level: p.level ?? 0,
     });
@@ -179,7 +180,7 @@ export async function fetchDueFlashcards(
   for (const q of all) {
     const p = progress.get(q.id);
     if (!p) unseen.push(q);
-    else if (p.due <= now) due.push(q);
+    else if (isDueAt(p.at, now)) due.push(q);
   }
 
   // Most overdue first. Without this the order was whatever the table returned,

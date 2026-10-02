@@ -1,4 +1,5 @@
 import { api } from './api';
+import { kWeightedMono, lufs, windowPowers } from './loudness';
 
 // Playback level for TTS. Played through the Web Audio API (GainNode) rather
 // than <audio>.volume, because iOS Safari ignores HTMLMediaElement.volume — a
@@ -28,65 +29,14 @@ let currentEl: HTMLAudioElement | null = null; // fallback path
 let generation = 0;
 const bufCache = new Map<string, { buf: AudioBuffer; gain: number; ts: number }>();
 
-type Biquad = { b: [number, number, number]; a: [number, number] };
-
-/** BS.1770 K-weighting at any sample rate: a +4 dB shelf above ~1.7 kHz and a
- * ~38 Hz high-pass (the same filter the UI sounds use in sound.ts). */
-function kWeighting(sr: number): Biquad[] {
-  const A = 10 ** (3.99984 / 40);
-  let w = (2 * Math.PI * 1681.97) / sr;
-  let c = Math.cos(w);
-  const s = 2 * Math.sqrt(A) * (Math.sin(w) / (2 * 0.7071752));
-  const a0 = A + 1 - (A - 1) * c + s;
-  const shelf: Biquad = {
-    b: [(A * (A + 1 + (A - 1) * c + s)) / a0, (-2 * A * (A - 1 + (A + 1) * c)) / a0, (A * (A + 1 + (A - 1) * c - s)) / a0],
-    a: [(2 * (A - 1 - (A + 1) * c)) / a0, (A + 1 - (A - 1) * c - s) / a0],
-  };
-  w = (2 * Math.PI * 38.13547) / sr;
-  c = Math.cos(w);
-  const al = Math.sin(w) / (2 * 0.500327);
-  const h0 = 1 + al;
-  const highpass: Biquad = {
-    b: [(1 + c) / 2 / h0, -(1 + c) / h0, (1 + c) / 2 / h0],
-    a: [(-2 * c) / h0, (1 - al) / h0],
-  };
-  return [shelf, highpass];
-}
-
-/** Gain that brings a clip to TARGET_LUFS, within the peak ceiling and MAX_GAIN. */
+/** Gain that brings a clip to TARGET_LUFS, within the peak ceiling and MAX_GAIN.
+ * Integrated loudness: 400ms blocks with 75% overlap, absolute gate -70 LUFS,
+ * relative gate -10 LU (a clip shorter than a block is measured over itself). */
 function loudnessGain(buf: AudioBuffer): number {
-  // mono mix, peak on the way
-  const n = buf.length;
-  let x = new Float64Array(n);
-  let peak = 0;
-  for (let ch = 0; ch < buf.numberOfChannels; ch++) {
-    const d = buf.getChannelData(ch);
-    for (let i = 0; i < n; i++) {
-      x[i] += d[i] / buf.numberOfChannels;
-      const a = d[i] < 0 ? -d[i] : d[i];
-      if (a > peak) peak = a;
-    }
-  }
+  const { x, peak } = kWeightedMono(buf);
   if (peak <= 0.0001) return 1; // silent: nothing to level
-  for (const { b, a } of kWeighting(buf.sampleRate)) {
-    const y = new Float64Array(n);
-    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-    for (let i = 0; i < n; i++) {
-      const v = b[0] * x[i] + b[1] * x1 + b[2] * x2 - a[0] * y1 - a[1] * y2;
-      x2 = x1; x1 = x[i]; y2 = y1; y1 = v;
-      y[i] = v;
-    }
-    x = y;
-  }
-  // 400ms blocks, 75% overlap; absolute gate -70 LUFS, relative gate -10 LU
-  const win = Math.round(buf.sampleRate * 0.4);
-  const hop = Math.round(buf.sampleRate * 0.1);
-  const sq = new Float64Array(n + 1);
-  for (let i = 0; i < n; i++) sq[i + 1] = sq[i] + x[i] * x[i];
-  const blocks: number[] = [];
-  if (n < win) blocks.push(sq[n] / Math.max(1, n));
-  else for (let i = 0; i + win <= n; i += hop) blocks.push((sq[i + win] - sq[i]) / win);
-  const lufs = (p: number) => -0.691 + 10 * Math.log10(Math.max(p, 1e-12));
+  const win = Math.min(Math.round(buf.sampleRate * 0.4), Math.max(1, x.length));
+  const blocks = windowPowers(x, win, Math.round(buf.sampleRate * 0.1));
   const mean = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / Math.max(1, arr.length);
   const loud = blocks.filter((p) => lufs(p) > -70);
   if (!loud.length) return 1;

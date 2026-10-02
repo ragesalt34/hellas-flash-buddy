@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import { reviewStep } from '../srs';
+import { isDueAt, reviewStep } from '../srs';
 
 // Vocabulary items live in code (data/vocabulary.ts); only per-account SRS
 // progress is stored here, in the durable `vocab_progress` table.
@@ -31,12 +31,13 @@ export async function getDueVocab(
   if (error) throw error;
 
   const now = Date.now();
-  const seen = new Map<number, { due: number; level: number }>();
+  const seen = new Map<number, { at: string | null; due: number; level: number }>();
   for (const r of (data ?? []) as Row[]) {
-    // NaN from an unparseable timestamp fails `<= now`, which would retire the
-    // word for good. Treat it as due now.
-    const parsed = r.next_review_at ? Date.parse(r.next_review_at) : 0;
+    // Sort key: a missing or unparseable time counts as due (isDueAt) and sorts
+    // first, as the most overdue.
+    const parsed = r.next_review_at ? Date.parse(r.next_review_at) : NaN;
     seen.set(r.vocab_id, {
+      at: r.next_review_at,
       due: Number.isNaN(parsed) ? 0 : parsed,
       level: r.level ?? 0,
     });
@@ -47,7 +48,7 @@ export async function getDueVocab(
   for (const id of allIds) {
     const s = seen.get(id);
     if (!s) unseen.push({ id, level: 0 });
-    else if (s.due <= now) due.push({ id, level: s.level, due: s.due });
+    else if (isDueAt(s.at, now)) due.push({ id, level: s.level, due: s.due });
   }
 
   // Most overdue first — otherwise the slice below took an arbitrary subset

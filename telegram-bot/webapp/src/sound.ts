@@ -1,3 +1,4 @@
+import { kWeightedMono, lufs, windowPowers } from './loudness';
 // Game-feel UI sounds (Duolingo-style). Each effect plays a real audio file
 // from /sounds/ when present, and otherwise falls back to a synthesized Web
 // Audio tone so the app always has feedback even before assets are added.
@@ -80,62 +81,13 @@ function peakOf(buf: AudioBuffer): number {
   return peak;
 }
 
-type Biquad = { b: [number, number, number]; a: [number, number] };
-
-/** BS.1770 K-weighting at any sample rate: a +4 dB shelf above ~1.7 kHz
- * (the head's acoustic effect) and a ~38 Hz high-pass. */
-function kWeighting(sr: number): Biquad[] {
-  const shelf = (f0: number, gainDb: number, q: number): Biquad => {
-    const A = 10 ** (gainDb / 40);
-    const w = (2 * Math.PI * f0) / sr;
-    const c = Math.cos(w);
-    const s = 2 * Math.sqrt(A) * (Math.sin(w) / (2 * q));
-    const a0 = A + 1 - (A - 1) * c + s;
-    return {
-      b: [
-        (A * (A + 1 + (A - 1) * c + s)) / a0,
-        (-2 * A * (A - 1 + (A + 1) * c)) / a0,
-        (A * (A + 1 + (A - 1) * c - s)) / a0,
-      ],
-      a: [(2 * (A - 1 - (A + 1) * c)) / a0, (A + 1 - (A - 1) * c - s) / a0],
-    };
-  };
-  const highpass = (f0: number, q: number): Biquad => {
-    const w = (2 * Math.PI * f0) / sr;
-    const c = Math.cos(w);
-    const al = Math.sin(w) / (2 * q);
-    const a0 = 1 + al;
-    return {
-      b: [(1 + c) / 2 / a0, -(1 + c) / a0, (1 + c) / 2 / a0],
-      a: [(-2 * c) / a0, (1 - al) / a0],
-    };
-  };
-  return [shelf(1681.97, 3.99984, 0.7071752), highpass(38.13547, 0.500327)];
-}
-
-/** Loudness (LUFS) of the loudest 50ms of the clip — mono by the time this
- * is called. A clip shorter than the window is measured as if padded with
- * silence, so a tiny click is not judged as loud as a sustained tone. */
+/** Loudness (LUFS) of the loudest 50ms of the clip. A clip shorter than the
+ * window is measured as if padded with silence, so a tiny click is not judged
+ * as loud as a sustained tone. */
 function loudnessOf(buf: AudioBuffer): number {
-  const src = buf.getChannelData(0);
-  let x = Float64Array.from(src);
-  for (const { b, a } of kWeighting(buf.sampleRate)) {
-    const y = new Float64Array(x.length);
-    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-    for (let i = 0; i < x.length; i++) {
-      const v = b[0] * x[i] + b[1] * x1 + b[2] * x2 - a[0] * y1 - a[1] * y2;
-      x2 = x1; x1 = x[i]; y2 = y1; y1 = v;
-      y[i] = v;
-    }
-    x = y;
-  }
-  const win = Math.round(buf.sampleRate * 0.05);
-  const hop = Math.round(buf.sampleRate * 0.0125);
-  const sq = new Float64Array(x.length + 1); // prefix sums of squares
-  for (let i = 0; i < x.length; i++) sq[i + 1] = sq[i] + x[i] * x[i];
-  let max = x.length <= win ? sq[x.length] / win : 0;
-  for (let i = 0; i + win <= x.length; i += hop) max = Math.max(max, (sq[i + win] - sq[i]) / win);
-  return -0.691 + 10 * Math.log10(Math.max(max, 1e-12));
+  const { x } = kWeightedMono(buf);
+  const powers = windowPowers(x, Math.round(buf.sampleRate * 0.05), Math.round(buf.sampleRate * 0.0125));
+  return lufs(Math.max(...powers));
 }
 
 /** Gain that lands this clip's loudest moment on its target, never pushing

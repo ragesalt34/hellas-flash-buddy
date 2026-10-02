@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import type { WordOfDay as Word } from '../api';
 import { haptic } from '../telegram';
@@ -8,11 +7,12 @@ import { MeanderBand } from '../components/greekArt';
 import { LaurelSprig } from '../components/homeArt';
 
 /** Home: one Greek word a day, the same for everyone on that calendar day.
- * Uses the vocabulary clip (`vocab_<id>`) so the voice is already cached. */
+ * Uses the vocabulary clip (`vocab_<id>`) so the voice is already cached. The
+ * clip is warmed only when the pointer or focus reaches the button, not on
+ * every Home visit: most visits never play it. */
 export function WordOfDay({ word }: { word: Word }) {
   const { t, language } = useLanguage();
   const key = `vocab_${word.id}`;
-  useEffect(() => prefetchGreek(word.word, key), [word.word, key]);
   return (
     <section className="wod" aria-label={t('wod.title')}>
       <MeanderBand className="hs-deco wod-band" height={9} />
@@ -27,6 +27,8 @@ export function WordOfDay({ word }: { word: Word }) {
         <button
           className="wod-speak"
           aria-label={t('common.pronounce')}
+          onPointerEnter={() => prefetchGreek(word.word, key)}
+          onFocus={() => prefetchGreek(word.word, key)}
           onClick={() => {
             haptic();
             speakGreek(word.word, key);

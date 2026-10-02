@@ -107,7 +107,6 @@ const translations: Translations = {
     el: 'Δεν υπάρχουν κάρτες για επανάληψη τώρα. Έλα αργότερα!',
   },
   'flashcards.done': { ru: 'Сессия завершена!', el: 'Η συνεδρία ολοκληρώθηκε!' },
-  'flashcards.cardsCount': { ru: 'карточек', el: 'κάρτες' },
   'flashcards.showAnswer': { ru: 'Показать ответ', el: 'Δείξε απάντηση' },
   'flashcards.answerLabel': { ru: 'Ответ', el: 'Απάντηση' },
 
@@ -117,7 +116,6 @@ const translations: Translations = {
     el: 'Δεν υπάρχουν λέξεις για σήμερα. Έλα αύριο για νέες!',
   },
   'vocab.done': { ru: 'Готово!', el: 'Ολοκληρώθηκε!' },
-  'vocab.wordsCount': { ru: 'слов', el: 'λέξεις' },
   'vocab.tapToReveal': { ru: 'Нажми, чтобы увидеть перевод', el: 'Πάτησε για μετάφραση' },
 
   // ---- Grade buttons (flashcards + vocab) ----

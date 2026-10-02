@@ -205,7 +205,6 @@ export function Landing({
           aria-hidden="true"
           draggable={false}
           decoding="async"
-          fetchPriority="low"
         />
         <FallingLeaves />
         <div className="lp-hero-grid">

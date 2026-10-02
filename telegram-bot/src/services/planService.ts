@@ -11,7 +11,7 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
   const zone = isValidTimeZone(tz) ? tz : 'UTC';
   const [account, questions, progress, vocab] = await Promise.all([
     supabase.from('accounts').select('interview_date').eq('id', accountId).maybeSingle(),
-    supabase.from('questions').select('id'),
+    supabase.from('questions').select('id', { count: 'exact' }),
     supabase.from('question_progress').select('question_id, next_review_at').eq('account_id', accountId),
     supabase.from('vocab_progress').select('vocab_id, next_review_at').eq('account_id', accountId),
   ]);
@@ -20,9 +20,13 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
   // Same "due" rule as the flashcard queue, so the plan's count matches what the cards show.
   const isDue = (r: { next_review_at: string | null }) => isDueAt(r.next_review_at, now.getTime());
   // Progress rows of questions that no longer exist are not "seen" material.
+  // The total comes from the exact count (the row list can be capped by the
+  // API's max-rows), and the filter only applies when the id list is complete.
   const questionIds = new Set(((questions.data ?? []) as { id: string }[]).map((q) => q.id));
-  const cards = ((progress.data ?? []) as { question_id: string; next_review_at: string | null }[]).filter((r) =>
-    questionIds.has(r.question_id)
+  const totalQuestions = questions.count ?? questionIds.size;
+  const idsComplete = questionIds.size >= totalQuestions;
+  const cards = ((progress.data ?? []) as { question_id: string; next_review_at: string | null }[]).filter(
+    (r) => !idsComplete || questionIds.has(r.question_id)
   );
   const words = ((vocab.data ?? []) as { vocab_id: number; next_review_at: string | null }[]).filter((v) =>
     VOCAB_IDS.has(v.vocab_id)
@@ -32,7 +36,7 @@ export async function loadPlan(accountId: string, tz: string, now = new Date()):
     // An error here means the interview_date column is not there yet: no date, not a failure.
     interviewDate: account.error ? null : ((account.data as { interview_date: string | null } | null)?.interview_date ?? null),
     today: dayKeyIn(now, zone),
-    totalQuestions: questionIds.size,
+    totalQuestions,
     seenQuestions: cards.length,
     totalWords: VOCAB_IDS.size,
     seenWords: words.length,

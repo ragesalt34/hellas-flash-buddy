@@ -729,7 +729,8 @@ export function createApiApp(): express.Express {
         return;
       }
       // Homework practice is study: it keeps the day streak like the other modes.
-      await recordStudyDay(req.account!.id, getTz(req)).catch(() => {});
+      // Fire-and-forget: the check itself must not wait on this write.
+      void recordStudyDay(req.account!.id, getTz(req)).catch(() => {});
       if (canUseAi(req) && aiAllowed(req.account!.id)) {
         try {
           const r = await aiCheck({ question, modelAnswer, note, answer });

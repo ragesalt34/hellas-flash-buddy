@@ -12,6 +12,7 @@ export function pickWordOfDay<T extends Pick<VocabItem, 'id'>>(dayKey: string, i
   const [y, m, d] = dayKey.split('-').map(Number);
   const day = Math.floor(Date.UTC(y, (m || 1) - 1, d || 1) / 86_400_000);
   const n = items.length;
+  if (n === 0) throw new Error('pickWordOfDay: empty word list');
   let stride = 37;
   while (gcd(stride, n) !== 1) stride++;
   const i = (((day * stride) % n) + n) % n;
