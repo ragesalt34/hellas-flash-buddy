@@ -5798,3 +5798,26 @@ button.chip:active { transform: scale(0.95); }
   transition: translate 0.7s var(--ease);
 }
 [data-theme='soft'] .lp-hero { padding-bottom: clamp(150px, 21vw, 270px); }
+
+/* ---- One progress bar everywhere: the Greek key with an olive leaf at its tip
+   (it started on the quiz; Cards, Vocabulary, Homework and Progress use it too) ---- */
+[data-theme='soft'] .app .progress.progress {
+  overflow: visible; height: 12px; border: 0; border-radius: 999px;
+  background: rgba(120, 90, 50, 0.1);
+}
+[data-theme='soft'] .app .progress.progress > i {
+  position: relative;
+  min-width: 18px;
+  border-radius: 999px;
+  background-color: #c9674f;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12'%3E%3Cpath d='M0 10 H16 M2 10 V2.5 H12.5 V7.5 H6.5 V5' fill='none' stroke='%23f7dccf' stroke-width='1.3' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-size: 16px 12px;
+  background-repeat: repeat-x;
+}
+[data-theme='soft'] .app .progress.progress > i::after {
+  content: '';
+  position: absolute; right: -10px; top: 50%;
+  width: 20px; height: 12px;
+  transform: translateY(-50%) rotate(-24deg);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 12'%3E%3Cpath d='M1 6 C5 0.8 14 0.6 19 6 C14 11.4 5 11.2 1 6 Z' fill='%238a9e70'/%3E%3Cpath d='M2.5 6 H17' stroke='%23e9efe0' stroke-width='0.9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
