@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ComponentType } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { LogoMark } from './components/Logo';
 import { ColumnChart, CycladicHome, Ostraka, Papyrus, WaxTablet } from './components/homeArt';
@@ -40,7 +40,7 @@ function lazyWithRetry<T>(load: () => Promise<T>): Promise<T> {
   );
 }
 
-// The landing page is the only user of framer-motion (~40KB gzip) and is never
+// The landing page is the only user of Motion (~40KB gzip) and is never
 // shown to signed-in users — split it into its own chunk so the app shell
 // doesn't pay for it.
 const Landing = lazy(() =>
@@ -81,7 +81,7 @@ export function App() {
   const [gateMode, setGateMode] = useState<'login' | 'register'>('register');
   // Bump key to force a screen to remount (reset its internal phase) when its tab is re-tapped.
   const [navKey, setNavKey] = useState(0);
-  const home = () => setView('home');
+  const home = () => navigate('home');
 
   // Focus mode (quiz/flashcards/vocab, or the pre-entry auth gate): on desktop
   // the sidebar is hidden and the content is centred full-width with a bottom
@@ -95,13 +95,18 @@ export function App() {
   }, [focus]);
 
   // On narrow screens the language/style switches float at the top; they hide
-  // while the page is scrolled so they never sit on top of card text.
+  // while the page is scrolled so they never sit on top of card text. A 24px
+  // marker at the top of the document says when: no scroll listener at all.
   useEffect(() => {
-    const onScroll = () => document.body.classList.toggle('scrolled', window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const mark = document.createElement('div');
+    mark.className = 'scroll-mark';
+    mark.setAttribute('aria-hidden', 'true');
+    document.body.prepend(mark);
+    const io = new IntersectionObserver(([e]) => document.body.classList.toggle('scrolled', !e.isIntersecting));
+    io.observe(mark);
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      io.disconnect();
+      mark.remove();
       document.body.classList.remove('scrolled');
     };
   }, []);
@@ -136,18 +141,46 @@ export function App() {
     setGate('auth');
   };
 
+  // The ink pill slides from the old tab to the new one: remember where it was,
+  // and after the re-render play the new pill from that box back to its own.
+  const navRef = useRef<HTMLElement>(null);
+  const pillFrom = useRef<DOMRect | null>(null);
   const goTab = (v: View) => {
     haptic('light');
-    if (v === view) setNavKey((k) => k + 1);
-    else setView(v);
+    if (v === view) {
+      setNavKey((k) => k + 1);
+      return;
+    }
+    navigate(v);
   };
+  function navigate(v: View) {
+    pillFrom.current = navRef.current?.querySelector('.nav-pill')?.getBoundingClientRect() ?? null;
+    setView(v);
+  }
+  useLayoutEffect(() => {
+    const from = pillFrom.current;
+    pillFrom.current = null;
+    const pill = navRef.current?.querySelector<HTMLElement>('.nav-pill');
+    if (!from || !pill || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const to = pill.getBoundingClientRect();
+    if (!to.width || !to.height || !from.width) return;
+    pill.animate(
+      [
+        {
+          transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`,
+        },
+        { transform: 'none' },
+      ],
+      { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+    );
+  }, [view]);
 
   // Telegram BackButton mirrors in-app navigation back to the menu.
   // (All hooks must run unconditionally — the landing early-return is below.)
   useEffect(() => {
     const bb = tg?.BackButton;
     if (!bb) return;
-    const onBack = () => setView('home');
+    const onBack = () => navigate('home');
     bb.onClick(onBack);
     if (view === 'home') bb.hide();
     else bb.show();
@@ -187,19 +220,19 @@ export function App() {
     <>
       <div className="aurora" />
       <div className="app">
-        {view === 'home' && <Home key={navKey} onNavigate={setView} />}
+        {view === 'home' && <Home key={navKey} onNavigate={navigate} />}
         {view === 'quiz' && <Quiz key={navKey} onHome={home} />}
         {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
         {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
         {view === 'homework' && <Homework key={navKey} onHome={home} />}
-        {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={setView} />}
+        {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={navigate} />}
       </div>
 
       <button className="focus-close" aria-label={t('nav.close')} onClick={home}>
         <X size={22} strokeWidth={2.6} />
       </button>
 
-      <nav className="bottomnav" aria-label={t('nav.aria')}>
+      <nav ref={navRef} className="bottomnav" aria-label={t('nav.aria')}>
         <div className="bottomnav-inner glass">
           {/* Colour lives in CSS, not inline: the mark is white on the round
               theme's coral badge, but the square theme draws the block as bare
@@ -218,6 +251,7 @@ export function App() {
                 aria-current={active ? 'page' : undefined}
                 onClick={() => goTab(n.id)}
               >
+                {active && <span className="nav-pill" aria-hidden="true" />}
                 <span className="nav-ic">
                   <Icon className="nav-art" />
                 </span>

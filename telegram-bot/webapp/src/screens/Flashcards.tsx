@@ -4,7 +4,7 @@ import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
-import { Empty, Loading, ProgressBar } from '../ui';
+import { CountUp, Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Ostraka, Owl } from '../components/homeArt';
@@ -125,7 +125,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <div className="emoji">
             <RewardWreath className="emoji-wreath" />
             <span className="wreath-num">
-              <b>{cards.length}</b>
+              <b><CountUp value={cards.length} delay={150} duration={600} /></b>
               <small>{countWord(cards.length, 'card', language)}</small>
             </span>
           </div>
@@ -161,7 +161,8 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const wide = card.question.length + card.correct_answer.length > 120;
 
   return (
-    <div className={`fade-in fc-screen${wide ? ' fc-wide' : ''}`} key={i}>
+    // Keyed on the card only (see Quiz): the decor and progress bar stay put.
+    <div className={`fade-in fc-screen${wide ? ' fc-wide' : ''}`}>
       <FcDecor />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -179,7 +180,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <div className="fc-stage">
+      <div className="fc-stage" key={i}>
       <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>
         <VocabDecorImg slot="cardGreekCorner" className="fc-corner" />
         <VocabDecorImg slot="cardOliveBranch" className="fc-corner-olive" />

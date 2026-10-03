@@ -1266,8 +1266,10 @@ button.chip:active { transform: scale(0.95); }
 .navbtn .nav-ic { display: grid; place-items: center; }
 .navbtn .nav-l { font-size: var(--t-micro); font-weight: 700; letter-spacing: -0.2px; }
 .navbtn.active { color: #fff; }
-.navbtn.active::before {
-  content: '';
+.navbtn .nav-pill {
+  /* a real element, not ::before, so App.tsx can measure it and slide it from
+     the old tab to the new one (FLIP: transform from the old box to none) */
+  transform-origin: 0 0;
   position: absolute;
   inset: 0;
   border-radius: var(--r-md);
@@ -1359,7 +1361,7 @@ button.chip:active { transform: scale(0.95); }
      much larger glyph. Scoped away from brut, whose brand block is small. */
   :not([data-theme='brut']) .nav-brand svg { width: 28px; height: 28px; }
   .navbtn { padding: 11px 4px; gap: 6px; border-radius: 16px; }
-  .navbtn.active::before { border-radius: 16px; }
+  .navbtn .nav-pill { border-radius: 16px; }
   .navbtn .nav-l { font-size: 12px; font-weight: 600; letter-spacing: 0; }
 
   /* On desktop the switch sits at the bottom of the sidebar instead of
@@ -1628,7 +1630,7 @@ button.chip:active { transform: scale(0.95); }
   user-select: none;
   border: 2px solid var(--border);
   box-shadow: var(--e1);
-  transition: box-shadow 0.18s var(--ease); /* transform is owned by framer tilt */
+  transition: box-shadow 0.18s var(--ease); /* transform is owned by the Motion tilt */
   will-change: transform;
 }
 .lp-demo:hover { box-shadow: var(--e2); }
@@ -1863,7 +1865,7 @@ button.chip:active { transform: scale(0.95); }
 }
 .lp-footer-note { font-size: var(--t-meta); font-weight: 600; color: var(--muted); }
 
-/* framer-motion owns `transform` on these cards (scroll-reveal + hover lift), so
+/* Motion owns `transform` on these cards (scroll-reveal + hover lift), so
    CSS must not transition transform as well or the two lerps fight. Only the
    hairline border animates from CSS. */
 .lp-step, .lp-feature { transition: border-color 0.18s var(--ease); }
@@ -1984,7 +1986,7 @@ button.chip:active { transform: scale(0.95); }
 .lp-marquee:hover .lp-marquee-track { animation-play-state: paused; }
 
 /* Floating hero stickers idle-bob (the `translate` property composes with the
-   rotate that framer-motion sets via `transform`, so they don't clobber). */
+   rotate that Motion sets via `transform`, so they don't clobber). */
 @media (prefers-reduced-motion: no-preference) {
   .lp-float { animation: lp-bob 3.6s ease-in-out infinite; }
   .lp-float.f2 { animation-duration: 4.4s; animation-delay: -1.6s; }
@@ -2050,7 +2052,7 @@ button.chip:active { transform: scale(0.95); }
   /* Ink on terracotta, not white: the reference sets the active label in black,
      and it measures better too (7.1:1 against 3.9:1). */
   [data-theme='brut'] .navbtn.active { color: var(--ink); }
-  [data-theme='brut'] .navbtn.active::before {
+  [data-theme='brut'] .navbtn .nav-pill {
     border-radius: 0;
     background: var(--accent);
   }
@@ -2659,7 +2661,7 @@ button.chip:active { transform: scale(0.95); }
     box-shadow: 0 1px 0 rgba(92, 60, 30, 0.05), 0 18px 36px -18px rgba(120, 72, 30, 0.5);
   }
   [data-theme='soft'] .navbtn,
-  [data-theme='soft'] .navbtn.active::before { border-radius: 18px; }
+  [data-theme='soft'] .navbtn .nav-pill { border-radius: 18px; }
   [data-theme='soft'] .bottomnav .lang-switch,
   [data-theme='soft'] .bottomnav .theme-switch {
     border: 1px solid var(--w-line);
@@ -3048,7 +3050,7 @@ button.chip:active { transform: scale(0.95); }
   letter-spacing: 0;
   color: #1f1712;
 }
-/* Tilt lives on the text, not the h2: framer-motion owns the h2's transform
+/* Tilt lives on the text, not the h2: Motion owns the h2's transform
    for its entrance and would wipe a rotate set there. */
 .lp-fun-t { position: relative; display: inline-block; transform: rotate(-1.5deg); }
 /* Brush underline under the heading's first half. */
@@ -5829,3 +5831,26 @@ button.chip:active { transform: scale(0.95); }
 .pc-today.is-done b { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--good); color: #fff; }
 .pc-complete { line-height: 1.5; }
 .pc-complete b { color: var(--good); }
+
+/* ---- Motion pass: continuity and answer feedback ----
+   The study screens keep their scene, counter and progress bar mounted and
+   swap only the card (see Quiz.tsx), so the motion explains one thing at a
+   time: the new card slides in from the direction of travel, the explanation
+   unfolds after the answer has coloured, and the next action rises into place.
+   Reduced motion keeps the state changes as plain fades. */
+.scroll-mark { position: absolute; top: 0; left: 0; width: 1px; height: 24px; pointer-events: none; }
+
+@keyframes hs-fade { from { opacity: 0; } }
+@keyframes hs-swap { from { opacity: 0; translate: 18px 0; } }
+@keyframes hs-unfold { from { opacity: 0; translate: 0 8px; } }
+@keyframes hs-bar { from { opacity: 0; translate: 0 18px; } }
+
+.swap-in { animation: hs-fade 0.2s ease-out backwards; }
+@media (prefers-reduced-motion: no-preference) {
+  .swap-in { animation: hs-swap 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .qz-play .card .explain { animation: hs-unfold 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.12s backwards; }
+  :is(.qz-play, .vc-screen) .actionbar,
+  .fc-screen .actionbar .grade-row { animation: hs-bar 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.06s backwards; }
+  /* the tab's label turns white as the sliding pill arrives, not before it */
+  .navbtn.active { transition-delay: 0.12s, 0s; }
+}

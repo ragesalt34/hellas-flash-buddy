@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Check,
   X,
@@ -18,7 +18,7 @@ import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
-import { Loading, ProgressBar, Ring, useCached } from '../ui';
+import { CountUp, Loading, ProgressBar, Ring, useCached } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { Greek } from '../components/greek';
 
@@ -82,6 +82,9 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       setTopicLabel(r.topicLabel);
       setIdx(0);
       setChosen(null);
+      // A new session may be submitted again (retry / other topic used to stall
+      // on the last question: the guard was still set from the previous one).
+      submitted.current = false;
       setAnswers([]);
       setScore(0);
       setPhase(r.questions.length ? 'play' : 'topic');
@@ -225,7 +228,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           <div className="ring-wreath">
             <RewardWreath />
             <Ring pct={pct} size={150} stroke={13}>
-              <div className="ring-pct">{pct}%</div>
+              <div className="ring-pct"><CountUp value={pct} />%</div>
               <div className="ring-sub">{score}/{total}</div>
             </Ring>
           </div>
@@ -256,7 +259,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   // ---- Playing ----
   const q = questions[idx];
   return (
-    <div className="fade-in qz-play" key={idx}>
+    // Only the question card is keyed: the scene, counter and progress bar stay
+    // mounted, so the backdrop no longer flashes on every question and the
+    // leaf on the progress bar glides forward instead of jumping.
+    <div className="fade-in qz-play">
       {hasTopicScene(topic) ? <TopicScene topic={topic} /> : <TopicDecor />}
       <div className="topbar">
         <span className="meta qz-topic">
@@ -269,7 +275,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       </div>
       <ProgressBar value={idx + (chosen ? 1 : 0)} total={questions.length} />
       <div className="spacer" />
-      <div className="card">
+      <Fragment key={idx}>
+      <div className="card swap-in">
         {/* Pronunciation only where there is Greek to pronounce — in RU mode the
             question and options are Russian and the voice is Greek-only. */}
         <div className="speak-row">
@@ -344,6 +351,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           </div>
         )}
       </div>
+      </Fragment>
       <TopicBand topic={topic} />
       {chosen && (
         <div className="actionbar">

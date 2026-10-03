@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete, playTap } from '../sound';
-import { Empty, Loading, ProgressBar } from '../ui';
+import { CountUp, Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
@@ -93,7 +93,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           <div className="emoji">
             <RewardWreath className="emoji-wreath" />
             <span className="wreath-num">
-              <b>{cards.length}</b>
+              <b><CountUp value={cards.length} delay={150} duration={600} /></b>
               <small>{countWord(cards.length, 'word', language)}</small>
             </span>
           </div>
@@ -127,7 +127,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   }
 
   return (
-    <div className="fade-in vc-screen" key={i}>
+    // Keyed on the card only (see Quiz): the frame and progress bar stay put.
+    <div className="fade-in vc-screen">
       <VocabularyFrame />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -145,7 +146,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <div className="card vc-card">
+      <Fragment key={i}>
+      <div className="card vc-card swap-in">
         <VocabDecorImg slot="cardGreekCorner" className="vc-corner tl" />
         <VocabDecorImg slot="cardOliveBranch" className="vc-corner-olive" />
         <div className="speak-row center">
@@ -184,6 +186,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           )}
         </div>
       </div>
+      </Fragment>
 
       {revealed && (
         <div className="actionbar">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, CircleAlert, CircleX, House, Plus, RotateCcw, Trash2, X } from 'lucide-react';
 import { api, type HomeworkCheck, type HomeworkParsedItem } from '../api';
 import { haptic } from '../telegram';
@@ -328,7 +328,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
     );
   }
   return (
-    <div className="fade-in hw-screen qz-play" key={item.id}>
+    // Keyed on the task only (see Quiz): the scene and progress bar stay put.
+    <div className="fade-in hw-screen qz-play">
       <TopicScene topic="homework" />
       <div className="topbar">
         <Meta>{current.title}</Meta>
@@ -339,7 +340,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
       <ProgressBar value={idx} total={queue.length} />
       <div className="spacer" />
 
-      <div className="card hw-card">
+      <Fragment key={item.id}>
+      <div className="card hw-card swap-in">
         <VocabDecorImg slot="cardGreekCorner" className="hw-corner" />
         <VocabDecorImg slot="cardOliveBranch" className="hw-corner-olive" />
         <div className="hw-q big" lang="el">{item.question}</div>
@@ -416,6 +418,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
           )}
         </div>
       )}
+      </Fragment>
 
       <TopicBand topic="homework" />
 

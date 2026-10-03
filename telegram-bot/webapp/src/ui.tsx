@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { House, type LucideIcon } from 'lucide-react';
 import { cacheGet, cacheSet } from './api';
 import { useLanguage } from './i18n';
@@ -77,6 +77,32 @@ export function ProgressBar({ value, total }: { value: number; total: number }) 
       <i style={{ width: `${pct}%` }} />
     </div>
   );
+}
+
+/** A whole number that counts up to `value` in step with the Ring's stroke
+ * (same 60ms delay, 0.9s, ease-out). Writes the DOM directly, never React
+ * state, so the count costs no re-renders; reduced motion shows the value. */
+export function CountUp({ value, delay = 60, duration = 900 }: { value: number; delay?: number; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = String(value);
+      return;
+    }
+    el.textContent = '0';
+    const start = performance.now() + delay;
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, Math.max(0, (now - start) / duration));
+      el.textContent = String(Math.round(value * (1 - (1 - t) ** 5)));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, delay, duration]);
+  return <span ref={ref}>{value}</span>;
 }
 
 /** Animated circular progress ring with a gradient stroke. */

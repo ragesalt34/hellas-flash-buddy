@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, MousePointerClick } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { Logo, LogoMark } from '../components/Logo';
@@ -103,9 +103,7 @@ function DemoCard() {
   const rotateX = useSpring(useTransform(my, [0, 1], [7, -7]), spring);
   const rotateY = useSpring(useTransform(mx, [0, 1], [-9, 9]), spring);
   const glare = useTransform(
-    [mx, my],
-    ([x, y]: number[]) =>
-      `radial-gradient(220px circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.5), transparent 60%)`
+    () => `radial-gradient(220px circle at ${mx.get() * 100}% ${my.get() * 100}%, rgba(255,255,255,0.5), transparent 60%)`
   );
 
   const reduce =
