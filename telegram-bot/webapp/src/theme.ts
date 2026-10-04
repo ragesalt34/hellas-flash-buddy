@@ -2,8 +2,10 @@
 //
 //   soft — the original. Warm sand ground, white cards, hairline borders,
 //          quiet ink shadows, 8/14/22px radii, Rubik + Onest.
-//   brut — neo-brutalist. Paper ground, 2px ink borders, hard offset shadows,
-//          near-square corners, lime + terracotta accents, Inter.
+//   brut — soft neo-brutalist, editorial. Near-white ground, 1.5px ink
+//          outlines, rounded corners, hard offset shadows in Greek colours
+//          (saffron, terracotta, Aegean, olive), an Aegean pill for the main
+//          action, Source Serif 4 for titles over Inter.
 //
 // Everything visual in styles.css is already driven by custom properties, so a
 // theme is mostly a block of token overrides under [data-theme='brut'] plus a

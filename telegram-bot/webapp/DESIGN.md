@@ -28,7 +28,7 @@ This file started from the Preply DESIGN.md format and was rewritten around what
 
 Topic colours: history = Aegean blue, culture = indigo, laws = sienna, geography = olive (`--topic-*`).
 
-`brut` theme swaps the ground to `#f4f2ee`, borders to 2px ink, corners to 2px and the font to Inter; the landing page is walled off from it and always stays `soft`.
+`brut` theme is a soft neo-brutalist, editorial look (adapted from the Brave Leo page, not its colours): ground `#faf8f3`, 1.5px ink outlines, radii 8/14/20px and pill buttons, hard offset shadows that carry the colour (saffron by default, terracotta on the Home greeting, topic colours on topic tiles and question cards), an Aegean `#2456a4` pill for the main action, Source Serif 4 700 for titles over Inter. The landing page is walled off from it and always stays `soft`.
 
 ## Tokens — Typography
 
