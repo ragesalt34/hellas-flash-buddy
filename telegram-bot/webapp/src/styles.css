@@ -5856,9 +5856,10 @@ button.chip:active { transform: scale(0.95); }
 }
 
 /* ============================================================
-   brut, editorial pass (2026-10): soft neo-brutalism adapted from the Brave
-   Leo page — a near-white ground, thin ink outlines, rounded corners, a hard
-   offset shadow that carries the colour, and a big display serif for titles.
+   brut, editorial pass (2026-10): ideas from the Brave Leo page on top of
+   the square look — a near-white ground, a hard offset shadow that carries
+   the colour, and a big display serif for titles. The corners and the 2px
+   ink rules stay square: they are what makes this theme the square one.
    Not Brave's palette: the shadows come from the Greek set (terracotta,
    Aegean blue, olive, saffron) and the lime is gone. Later in the file than
    the first brut block, so these win at equal specificity.
@@ -5884,7 +5885,7 @@ button.chip:active { transform: scale(0.95); }
   --topic-laws: #b06a12;
   --topic-geo: #7c8f2e;
 
-  --bd-w: 1.5px;
+  --bd-w: 2px;
   /* Controls keep a small ink shadow; the big surfaces get a coloured one
      (see below), so colour marks the surfaces and the controls stay quiet. */
   --e0: 3px 3px 0 0 var(--ink);
@@ -5898,10 +5899,10 @@ button.chip:active { transform: scale(0.95); }
   --ec-bad: 4px 4px 0 0 var(--ink);
   --glow-coral: 4px 4px 0 0 var(--ink);
 
-  --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-btn: 999px;
+  --r-sm: 2px;
+  --r-md: 2px;
+  --r-lg: 2px;
+  --r-btn: 2px;
 
   --ring-track: #ebe5d8;
   --font-editorial: 'Source Serif 4', 'EB Garamond', Georgia, serif;
@@ -5910,7 +5911,7 @@ button.chip:active { transform: scale(0.95); }
 /* ---- Big surfaces: thin outline, colour in the hard shadow ---- */
 [data-theme='brut'] .app :is(.card, .tile, .wod, .result) {
   --sh: var(--amber);
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   box-shadow: 6px 6px 0 0 var(--sh);
 }
 [data-theme='brut'] .app .tile.t-cards { --sh: var(--topic-history); }
@@ -5938,34 +5939,22 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='brut'] .app .hero h1 { font-size: clamp(44px, 7vw, 64px); }
 [data-theme='brut'] .app .tile:not(.feature):not(.span2) .tile-t { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; }
 
-/* ---- The primary action: an Aegean pill with an ink shadow ---- */
+/* ---- The primary action: Aegean blue with an ink shadow ---- */
 [data-theme='brut'] .app .btn:not(.secondary):not(.good),
 [data-theme='brut'] .gate-app .btn:not(.secondary):not(.good) {
   background: var(--aegean);
   color: #fff;
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
 }
 [data-theme='brut'] .btn:hover { box-shadow: 6px 6px 0 0 var(--ink); }
 [data-theme='brut'] .btn:active { box-shadow: 1px 1px 0 0 var(--ink); }
 
-/* ---- Rail: rounded card, inset rounded active row ---- */
+/* ---- Rail: the same square card, now with a saffron shadow ---- */
 @media (min-width: 900px) {
-  [data-theme='brut'] .bottomnav-inner { border-width: 1.5px; box-shadow: 6px 6px 0 0 var(--amber); }
-  [data-theme='brut'] .nav-brand { border-bottom-width: 1.5px; }
-  [data-theme='brut'] .navbtn { margin: 0 10px; padding: 14px 14px; border-radius: var(--r-md); }
-  [data-theme='brut'] .navbtn .nav-pill { border-radius: var(--r-md); background: var(--accent); }
-  [data-theme='brut'] .bottomnav-inner .lang-switch { border-width: 1.5px; border-radius: var(--r-btn); overflow: hidden; }
-  [data-theme='brut'] .bottomnav-inner .lang-switch::before { height: 1.5px; }
+  [data-theme='brut'] .bottomnav-inner { box-shadow: 6px 6px 0 0 var(--amber); }
 }
 
-/* ---- Smaller pieces follow the rounder shape ---- */
-[data-theme='brut'] .chip { border-width: 1.5px; border-radius: var(--r-btn); }
-[data-theme='brut'] .progress,
-[data-theme='brut'] .progress > i { border-radius: 999px; }
-[data-theme='brut'] .progress { border-width: 1.5px; height: 12px; }
-[data-theme='brut'] .empty .e { border-radius: var(--r-md); }
 [data-theme='brut'] .grade.g2 { background: var(--amber); }
-[data-theme='brut'] .hero::before { border-radius: var(--r-lg); border: 1.5px solid var(--ink); }
 /* The question card takes its topic's colour, like the topic tiles. */
 [data-theme='brut'] .qz-play:has(.ts-history) > .card { --sh: var(--topic-history); }
 [data-theme='brut'] .qz-play:has(.ts-culture) > .card { --sh: var(--topic-culture); }
@@ -5974,4 +5963,4 @@ button.chip:active { transform: scale(0.95); }
 /* Score ring: terracotta into saffron (the stock gradient ran into ink here). */
 [data-theme='brut'] .ring stop:last-child { stop-color: var(--amber); }
 /* The greeting card is the one warm anchor at the top of Home. */
-[data-theme='brut'] .app .hero { border: 1.5px solid var(--ink); box-shadow: 6px 6px 0 0 var(--accent); }
+[data-theme='brut'] .app .hero { border: 2px solid var(--ink); box-shadow: 6px 6px 0 0 var(--accent); }
