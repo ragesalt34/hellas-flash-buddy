@@ -45,3 +45,24 @@ input { font: inherit; color: var(--ink); background: #0b1118; border: 1px solid
 body { font-family: 'GFS Didot', Georgia, serif; }
 .talk-hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); background: #fbf6ea; color: #1b1712; border: 2px solid #1b1712; padding: 4px 12px; font-size: 16px; pointer-events: none; }
 .hud .badge { background: rgba(251, 246, 234, .85); color: #1b1712; border: 1.5px solid #1b1712; }
+.bubble { position: absolute; transform: translate(-50%, -100%); background: #fbf6ea; color: #1b1712; border: 2.5px solid #1b1712; padding: 8px 16px; font-size: 26px; letter-spacing: .06em; white-space: nowrap; cursor: pointer; z-index: 5; }
+.bubble::after { content: ''; position: absolute; left: 50%; bottom: -10px; margin-left: -8px; border: 8px solid transparent; border-top-color: #1b1712; border-bottom: 0; }
+.greek .word { display: inline-flex; flex-direction: column; align-items: center; cursor: pointer; border-bottom: 1px dotted transparent; }
+.greek .word:hover { border-bottom-color: #1b1712; }
+.greek .word small { font-size: 11px; letter-spacing: 0; color: #6b5a42; font-family: system-ui, sans-serif; }
+.choices { position: absolute; left: 50%; bottom: 70px; transform: translateX(-50%); display: flex; gap: 12px; z-index: 6; }
+.choices button { background: #fbf6ea; color: #1b1712; border: 2.5px solid #1b1712; border-radius: 0; font-size: 22px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+.choices button.pic { font-size: 40px; }
+.choices .num { font-size: 13px; font-family: system-ui, sans-serif; opacity: .6; }
+.dialog-hint { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); color: #1b1712; opacity: .7; font-size: 14px; pointer-events: none; }
+.inventory { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; }
+.inventory .item { background: #fbf6ea; border: 2px solid #1b1712; width: 44px; height: 44px; display: grid; place-items: center; font-size: 26px; }
+.toast { background: #fbf6ea; color: #1b1712; border: 2px solid #1b1712; }
+/* Exam dialog in the same paper-and-ink style as the world */
+.dialog { background: #f4ead2; color: #1b1712; border: 3px solid #1b1712; border-radius: 0; }
+.dialog .meta { color: #6b5a42; }
+.dialog .options button { background: #fbf6ea; color: #1b1712; border: 2px solid #1b1712; border-radius: 0; }
+.dialog .options button.right { background: #7fae6a; }
+.dialog .options button.wrong { background: #d9826f; }
+.dialog > button { background: #1b1712; color: #fbf6ea; border-radius: 0; }
+.dialog .muted { color: #6b5a42; }

@@ -15,7 +15,7 @@ export interface WorldDeps {
 }
 
 const SPEED = 4.2;
-const TALK_RADIUS = 3;
+const TALK_RADIUS = 3.4;
 const BODY = 0.45;
 const CLOSE: Shot = { pos: [5, 3.2, 9], look: [-1, 1.6, -1], follow: 1 };
 
