@@ -10,6 +10,7 @@ var caps := false
 var capitalize := true
 var click_holds := true
 var object_word := ""
+var plain := false     # no class colours / links (crate labels: the class is the puzzle)
 var _bound_frame := -1
 
 
@@ -31,7 +32,10 @@ func _init(px: int = 30) -> void:
 
 func set_line(l: Array) -> void:
 	line = l
-	text = LineFormat.bbcode(l, GameState.lex, capitalize, caps)
+	if plain:
+		text = LineFormat.plain(l, GameState.lex, capitalize)
+	else:
+		text = LineFormat.bbcode(l, GameState.lex, capitalize, caps)
 
 
 func _gui_input(event: InputEvent) -> void:
