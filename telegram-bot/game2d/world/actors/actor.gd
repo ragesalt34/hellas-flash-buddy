@@ -91,11 +91,15 @@ func _build_painted() -> void:
 	_set_pose("idle", false)
 
 
-func _set_pose(pose: String, flip: bool) -> void:
+## `want_left`: the gesture should face screen-left. A pose image whose feet sit right of its centre
+## was drawn pointing left, so it is flipped only when the wanted side differs.
+func _set_pose(pose: String, want_left: bool) -> void:
 	var tex: Texture2D = _poses.get(pose) if _poses.get(pose) else _poses["idle"]
 	_sprite.texture = tex
-	_sprite.flip_h = flip
 	var ax := ArtLibrary.anchor_x("char_%s_%s" % [art, pose], tex.get_width() / 2.0)
+	var drawn_left := ax > tex.get_width() / 2.0
+	var flip := pose != "idle" and pose != "chest" and want_left != drawn_left
+	_sprite.flip_h = flip
 	if flip:
 		ax = tex.get_width() - ax
 	_sprite.position = Vector2(-ax, -tex.get_height())

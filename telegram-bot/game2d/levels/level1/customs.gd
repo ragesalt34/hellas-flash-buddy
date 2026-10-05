@@ -5,7 +5,6 @@ extends LevelScene
 ## and repeats with the ending pulsing; other morphology → echo correction; syntactic → comic laugh.
 ## Then the right document must be dragged into the window.
 
-const ASK_X := 820.0
 
 var cfg: Dictionary
 var guard: Actor
@@ -22,25 +21,26 @@ func build() -> void:
 	right_exit = "end"
 	walk_rect = Rect2(60, 850, 1800, 160)
 	poster = back_layer(Poster.new())
-	poster.position = Vector2(860, 520)
+	poster.position = ArtLibrary.point("customs", "poster", Vector2(860, 520))
 	guard = Actor.new()
 	guard.coat = Color("#2E3A5C")
 	guard.hat = "peaked"
 	guard.art = "guard"
-	guard.position = Vector2(1200, 832)
+	var desk_x := ArtLibrary.point("customs", "desk", Vector2(1200, 848)).x
+	guard.position = Vector2(desk_x, 832)
 	ysort.add_child(guard)
 	var guard_hit := Interactable.new().setup("fylakas", Rect2(-50, -240, 100, 110))
 	guard.add_child(guard_hit)
 	guard_hit.clicked.connect(_on_guard_clicked)
 	booth = Booth.new()
-	booth.position = Vector2(1200, 848)
+	booth.position = Vector2(desk_x, 848)
 	ysort.add_child(booth)
 	booth.window.item_dropped.connect(handle_item)
 	barrier = Barrier.new()
-	barrier.position = Vector2(1530, 930)
+	barrier.position = ArtLibrary.point("customs", "barrier", Vector2(1530, 930))
 	ysort.add_child(barrier)
 	var exit_sign := SignBoard.new().setup([["exodos", "nom"]], 170.0)
-	exit_sign.position = Vector2(1720, 860)
+	exit_sign.position = ArtLibrary.point("customs", "exit_sign", Vector2(1720, 860))
 	ysort.add_child(exit_sign)
 	add_puzzle("customs_sentence")
 	add_puzzle("customs_item")
@@ -55,7 +55,7 @@ func build() -> void:
 
 func _process(delta: float) -> void:
 	super(delta)
-	if stage == "idle" and player.position.x >= ASK_X:
+	if stage == "idle" and player.position.x >= booth.position.x - 380.0:
 		ask()
 
 

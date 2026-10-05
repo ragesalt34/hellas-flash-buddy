@@ -24,12 +24,16 @@ func build() -> void:
 		var b := Belt.new()
 		b.gender = genders[i]
 		b.draw_chute = not ArtLibrary.has("bg_warehouse")
+		if not b.draw_chute:
+			b.plaque_y = ArtLibrary.point("conveyor", "plaque", Vector2(0, -300)).y
+			b.chain_top = ArtLibrary.point("conveyor", "chain_top", Vector2(0, -618)).y
 		b.position = ArtLibrary.point("conveyor", "belt_" + genders[i], Vector2(960 + i * 300, 760))
 		back_layer(b)
 		belts.append(b)
-	var table := back_layer(Node2D.new())
-	table.position = SPAWN
-	table.add_child(Shape.make(Ink.pts([-130, 0, 130, 0, 130, 30, -130, 30]), Palette.WOOD))
+	if not ArtLibrary.has("bg_warehouse"):
+		var table := back_layer(Node2D.new())
+		table.position = SPAWN
+		table.add_child(Shape.make(Ink.pts([-130, 0, 130, 0, 130, 30, -130, 30]), Palette.WOOD))
 	worker = Actor.new()
 	worker.coat = Color("#6B8E5A")
 	worker.hat = "cap"

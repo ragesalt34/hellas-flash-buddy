@@ -1,0 +1,14 @@
+{
+ "char_guard_idle": 43.5,
+ "char_guard_point": 107.8,
+ "char_guard_chest": 42.0,
+ "char_sailor_idle": 51.3,
+ "char_sailor_point": 82.0,
+ "char_sailor_chest": 42.1,
+ "char_traveler_idle": 46.0,
+ "char_traveler_point": 106.4,
+ "char_traveler_chest": 42.7,
+ "char_worker_idle": 42.7,
+ "char_worker_point": 77.9,
+ "char_worker_chest": 41.6
+}

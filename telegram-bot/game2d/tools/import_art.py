@@ -23,6 +23,7 @@ DST = ROOT / "assets" / "art"
 POSE_HEIGHT = 262          # px; actors are scaled x1.15 in game -> ~300 px tall
 BG_TOLERANCE = 38          # colour distance treated as "background" when flood-filling from the border
 POSES = ["idle", "point", "chest"]
+PROP_MAX = 512            # px, longest side of a prop
 
 
 def load_rgba(p: Path) -> Image.Image:
@@ -154,6 +155,7 @@ def do_char(p: Path) -> None:
 
 def do_prop(p: Path) -> None:
     img = trim(remove_background(load_rgba(p)))
+    img.thumbnail((PROP_MAX, PROP_MAX), Image.LANCZOS)
     out = DST / (p.stem + ".png")
     img.save(out)
     print(f"prop  {p.name} -> {out.name} {img.size}")

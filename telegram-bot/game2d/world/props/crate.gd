@@ -16,10 +16,21 @@ var _offset := Vector2.ZERO
 var _mouse := Vector2.ZERO     # last pointer position in canvas space, taken from events
 var _busy := false
 var _hint := false
+var _painted: Sprite2D
 
 
 func _ready() -> void:
 	z_index = 5
+	var art := ArtLibrary.tex("prop_crate")
+	if art:
+		_painted = Sprite2D.new()
+		_painted.texture = art
+		_painted.centered = false
+		var k := SIZE.x / art.get_width()
+		_painted.scale = Vector2(k, k)
+		_painted.position = Vector2(-SIZE.x / 2.0, -art.get_height() * k)
+		_painted.show_behind_parent = true
+		add_child(_painted)
 	label = InteractiveText.new(34)
 	label.capitalize = false
 	label.click_holds = false
@@ -108,12 +119,7 @@ func show_frame_hint(on: bool) -> void:
 
 
 func _draw() -> void:
-	var art := ArtLibrary.tex("prop_crate")
-	if art:
-		var s := SIZE.x / art.get_width()
-		var h := art.get_height() * s
-		draw_texture_rect(art, Rect2(-SIZE.x / 2.0, -h, SIZE.x, h), false)
-	else:
+	if _painted == null:
 		Ink.rect(self, Rect2(-SIZE.x / 2.0, -SIZE.y, SIZE.x, SIZE.y), Palette.WOOD)
 		for y in [-SIZE.y + 30.0, -40.0]:
 			draw_line(Vector2(-SIZE.x / 2.0, y), Vector2(SIZE.x / 2.0, y), Color(Palette.INK, 0.5), 3.0)

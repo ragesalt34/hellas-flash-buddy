@@ -17,7 +17,7 @@ func build() -> void:
 	objects["faros"] = _prop(Lighthouse.new(), "faros", Vector2(1540, 560), Lighthouse.HIT)
 	objects["varka"] = _prop(Boat.new(), "varka", Vector2(1080, 724), Boat.HIT)
 	var sign := SignBoard.new().setup([["limani", "nom"]], 130.0)
-	sign.position = Vector2(760, 850)
+	sign.position = ArtLibrary.point("pier", "sign", Vector2(760, 850))
 	ysort.add_child(sign)
 	objects["limani"] = sign.hit
 	for w in objects:
@@ -26,11 +26,11 @@ func build() -> void:
 	sailor.coat = Color("#2F5D8A")
 	sailor.hat = "cap"
 	sailor.art = "sailor"
-	sailor.position = Vector2(1340, 900)
+	sailor.position = ArtLibrary.point("pier", "sailor", Vector2(1340, 900))
 	ysort.add_child(sailor)
 	_hit(sailor, "naftis", Rect2(-50, -240, 100, 240)).clicked.connect(_on_sailor_clicked)
 	rope = RopeGate.new()
-	rope.position = Vector2(1770, 920)
+	rope.position = ArtLibrary.point("pier", "rope", Vector2(1770, 920))
 	ysort.add_child(rope)
 	SignalBus.page_checked.connect(_on_page_checked)
 	if GameState.has_flag("pier_open"):

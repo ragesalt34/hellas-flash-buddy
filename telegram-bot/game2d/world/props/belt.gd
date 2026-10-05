@@ -8,13 +8,15 @@ const ARTICLE := {"m": "Ο", "f": "Η", "n": "ΤΟ"}
 
 var gender := "m"
 var draw_chute := true      # false when the painted background already shows the chute
+var plaque_y := -300.0      # plaque centre, relative to the belt foot
+var chain_top := -618.0     # where the chains hang from (ceiling beam)
 var _pulse := false
 var _t := 0.0
 var _scroll := 0.0
 
 
 func drop_rect() -> Rect2:
-	return Rect2(global_position + Vector2(-W / 2.0 - 20.0, -380.0), Vector2(W + 40.0, 440.0))
+	return Rect2(global_position + Vector2(-W / 2.0 - 20.0, plaque_y - 90.0), Vector2(W + 40.0, -plaque_y + 130.0))
 
 
 func set_pulse(on: bool) -> void:
@@ -59,9 +61,9 @@ func _draw() -> void:
 
 ## Enamel plaque hanging on chains from the ceiling beam.
 func _plaque(col: Color) -> void:
-	var c := Vector2(0, -300)
+	var c := Vector2(0, plaque_y)
 	for cx in [-34.0, 34.0]:
-		var top := Vector2(cx, -618)
+		var top := Vector2(cx, chain_top)
 		var bottom := c + Vector2(cx, -80)
 		var n := 12
 		for i in n:
