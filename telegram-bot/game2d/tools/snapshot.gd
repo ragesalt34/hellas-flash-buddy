@@ -7,6 +7,8 @@ extends SceneTree
 
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://tools/out"))
+	# .gdignore keeps Godot from importing the PNGs as project resources.
+	FileAccess.open("res://tools/out/.gdignore", FileAccess.WRITE).close()
 	var gs := root.get_node("GameState")
 	gs.save_path = "user://snapshot_save.json"
 	for arg in OS.get_cmdline_user_args():
