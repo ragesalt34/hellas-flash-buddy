@@ -1,0 +1,44 @@
+:root {
+  --bg: #0f1620;
+  --panel: #1b2633;
+  --ink: #f2e8cf;
+  --muted: #9aa7b4;
+  --accent: #2f6fd6;
+  --good: #4caf6a;
+  --bad: #d9534f;
+  --gold: #e0b84c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.4 system-ui, 'Segoe UI', sans-serif; overflow: hidden; }
+button { font: inherit; color: var(--ink); background: var(--accent); border: 0; border-radius: 6px; padding: 10px 14px; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+button.ghost { background: transparent; border: 1px solid var(--muted); }
+input { font: inherit; color: var(--ink); background: #0b1118; border: 1px solid #2c3a49; border-radius: 6px; padding: 10px 12px; }
+.screen { height: 100%; display: grid; place-items: center; padding: 16px; }
+.panel { background: var(--panel); border-radius: 12px; padding: 24px; min-width: 320px; max-width: 640px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
+.login h1 { margin: 0 0 8px; }
+.error { color: var(--bad); margin: 0; }
+.muted { color: var(--muted); margin: 0; }
+.ship { font-size: 48px; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.stage { position: relative; width: 100%; height: 100%; }
+.canvas { position: absolute; inset: 0; }
+.overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, .55); }
+.hud { position: absolute; top: 10px; left: 12px; right: 12px; display: flex; gap: 16px; align-items: center; pointer-events: none; text-shadow: 0 1px 2px #000; }
+.hud .hearts { color: var(--bad); letter-spacing: 2px; font-size: 20px; }
+.hud .spacer { flex: 1; }
+.hud .badge { background: rgba(0, 0, 0, .4); border-radius: 6px; padding: 2px 8px; }
+.hud .off { background: var(--bad); }
+.dialog { background: var(--panel); border-radius: 12px; padding: 24px; width: min(640px, calc(100% - 32px)); display: flex; flex-direction: column; gap: 12px; }
+.dialog .meta { display: flex; gap: 8px; color: var(--muted); font-size: 14px; }
+.dialog .prompt { font-size: 26px; font-weight: 600; }
+.dialog .options { display: grid; gap: 8px; }
+.dialog .options button { text-align: left; background: #26364a; }
+.dialog .options button.right { background: var(--good); }
+.dialog .options button.wrong { background: var(--bad); }
+.dialog .verdict.good { color: var(--good); }
+.dialog .verdict.bad { color: var(--bad); }
+.toasts { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.toast { background: rgba(0, 0, 0, .7); border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: 6px 14px; }
