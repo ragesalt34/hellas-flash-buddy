@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { bus } from '../bus';
 import type { Session } from '../session';
 import { ChallengeDialog } from './ChallengeDialog';
+import { GameCanvas } from './GameCanvas';
 import { Hud } from './Hud';
 import { PauseMenu } from './PauseMenu';
 import { Toasts } from './Toasts';
@@ -31,7 +32,7 @@ export function Play({ session }: { session: Session }) {
   const { done, total } = session.controller.progress();
   return (
     <div className="stage">
-      <div className="canvas" />
+      <GameCanvas accountId={session.accountId} />
       <Hud session={session} />
       <Toasts />
       <ChallengeDialog controller={session.controller} />
