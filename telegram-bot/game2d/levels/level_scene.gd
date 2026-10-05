@@ -38,6 +38,7 @@ func _ready() -> void:
 	player.hat = "beret"
 	ysort.add_child(player)
 	player.arrived.connect(_check_exit)
+	add_child(PostFx.new())
 	hud = Hud.new()
 	add_child(hud)
 	SignalBus.card_assigned.connect(_on_activity)

@@ -40,19 +40,33 @@ func _layout() -> void:
 	queue_redraw()
 
 
+const BOARD := Color("#F2E3C8")
+
+
 func _draw() -> void:
 	Ink.rect(self, Rect2(-8, -_post, 16, _post), Palette.WOOD)
+	draw_line(Vector2(-3, -_post + 4), Vector2(-3, -6), Color(1, 1, 1, 0.25), 2.0)
 	var g := GameState.lex.gender(word_id)
 	var col := Palette.gender_color(g)
 	match g:
 		"m":
-			Ink.rect(self, _board, Palette.PAPER)
+			_board_fill(_board)
 			Ink.rect(self, Rect2(_board.position - Vector2(16, 10), Vector2(16, _board.size.y + 20)), col, 3.0)
 			Ink.rect(self, Rect2(Vector2(_board.end.x, _board.position.y - 10), Vector2(16, _board.size.y + 20)), col, 3.0)
 		"f":
-			var sb := Ui.panel_style(int(_board.size.y / 2.0), 7, Palette.PAPER)
+			var sb := Ui.panel_style(int(_board.size.y / 2.0), 7, BOARD)
 			sb.border_color = col
 			draw_style_box(sb, _board)
 		_:
 			Ink.rect(self, _board.grow(6), col, 3.0)
-			Ink.rect(self, _board, Palette.PAPER)
+			_board_fill(_board)
+
+
+## Painted plank: warm board with faint wood grain and two nails.
+func _board_fill(r: Rect2) -> void:
+	Ink.rect(self, r, BOARD)
+	for i in 3:
+		var y := r.position.y + r.size.y * (0.25 + 0.25 * i)
+		draw_line(Vector2(r.position.x + 6, y), Vector2(r.end.x - 6, y + (i - 1) * 2.0), Color(Palette.WOOD, 0.35), 1.5)
+	for nx in [r.position.x + 10, r.end.x - 10]:
+		draw_circle(Vector2(nx, r.position.y + 10), 3.0, Palette.INK.lightened(0.2))
