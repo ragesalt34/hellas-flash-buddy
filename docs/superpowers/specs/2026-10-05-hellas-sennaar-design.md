@@ -41,7 +41,7 @@ Premise: you step off a ship in Piraeus and must reach the road to Athens.
 | `fish` | Ψαραγορά (fish market) | fisherman, woman buying fish |
 | `bakery` | Φούρνος (bakery) | baker, hungry child |
 | `square` | Πλατεία (square with fountain) | water; the historian |
-| `lane` | Σοκάκι (lane of houses) | locked door, key |
+| `lane` | Σοκάκι (lane of houses) | a wall with a locked door — the way to the gate |
 | `gate` | Πύλη (gate / ticket booth) | guard, ticket seller; chapter end |
 
 Scenes connect left/right through exit zones, like rooms.
@@ -73,11 +73,11 @@ no stray words.
 
 - Entries: every seen lemma with the player's note; deciphered ones also show
   the Russian meaning.
-- Pages: 8 pages of 3–4 drawings (emoji/icon placeholders in v1). A page opens
+- Pages: 8 word pages of 4–5 drawings (emoji/icon placeholders in v1). A page opens
   once all its lemmas have been seen. The player assigns seen lemmas to the
   drawings; the page validates only when every slot is right (no per-slot
   feedback — the Chants rule). Solving a page deciphers its lemmas.
-- Two grammar pages: article (ο ψαράς / η γυναίκα / το παιδί) and plural
+- Plus two grammar pages: article (ο ψαράς / η γυναίκα / το παιδί) and plural
   (ψάρι → ψάρια, πλοίο → πλοία) — drawings of one vs many / man vs woman vs
   child.
 
@@ -88,8 +88,9 @@ Ticket seller: «Θέλω ψάρι.» → fisherman: «Θέλω ψωμί.» → 
 θέλει νερό.» → fill a jug at the fountain → give water to the child → baker
 gives bread → fisherman gives fish → seller gives ticket → guard: answer
 «Ναι. Έχω εισιτήριο.» → gate opens; chapter complete.
-Side puzzle: the lane door («Η πόρτα;») opens with a key the sailor gives when
-you answer his question correctly; behind it is the historian's house.
+Key puzzle: the lane is closed by a wall with a locked door («Η πόρτα. Όχι.»);
+the sailor gives the key when you answer «Πού πηγαίνεις;» with «Πηγαίνω Αθήνα.».
+The door is the only way to the gate scene.
 
 Replies: when an NPC asks something, the player picks one of 2–3 Greek
 phrases built only from seen lemmas. Wrong reply → NPC repeats with a gesture
@@ -100,7 +101,7 @@ Inventory: up to 6 items shown as icons; give an item with E near an NPC.
 ### Daily loop
 
 - Deciphered lemmas enter a **local** SRS (per account, `localStorage`):
-  levels 0–6, intervals 0/1/2/4/7/14/30 days, grade 3 = right, 1 = wrong.
+  levels 0–6 with the server's ladder (`nextLevel` from the web app: right = +2, wrong = −2), intervals 0/0/1/3/7/14/30 days by level, a wrong answer is due again today.
 - Each day, NPCs in the chapter post *requests* for due lemmas:
   «Φέρε μου ψωμί» (bring), «Πού είναι το πλοίο;» (point/choose). Fulfilling
   one = a review graded 3; picking the wrong item/answer = graded 1 and the
