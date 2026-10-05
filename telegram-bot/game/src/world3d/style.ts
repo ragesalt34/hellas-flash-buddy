@@ -4,29 +4,32 @@ import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { NO_EDGE_LAYER, type SennaarPipeline } from './pipeline';
 
+/** Chants-of-Sennaar "garden" style palette: white stone, teal, magenta, gold, maroon ink. */
 export const PAL = {
-  horizon: 0xf8e6c4,
-  wall: 0xf3ede2,
-  stone: 0xd8c7a3,
-  stoneDark: 0xb9a37c,
-  blue: 0x2557a8,
-  sea: 0x3f7fbf,
-  seaFar: 0x7aa6cf,
-  ochre: 0xc98b3c,
-  terracotta: 0xb4552f,
-  red: 0xa63a2a,
-  magenta: 0xb8337a,
-  green: 0x5d7f3a,
-  olive: 0x7d8f4e,
+  horizon: 0xfbeee6,
+  wall: 0xffffff,
+  stone: 0xf7f1ea,
+  stoneDark: 0xe6d3c4,
+  blue: 0x00939f, // doors, shutters, hulls: Chants teal instead of Cycladic blue
+  dome: 0xca1a7a,
+  sea: 0x2bc5a2,
+  seaFar: 0x8fe0cc,
+  ochre: 0xe6c793,
+  gold: 0xfffe62,
+  terracotta: 0xb18a71,
+  red: 0xae2434,
+  magenta: 0xca1a7a,
+  green: 0x00939f,
+  olive: 0x5f8fa0,
   skin: 0xe9cfa6,
-  ink: 0x1b1712,
-  mountain: 0xc9a77f,
-  mountainFar: 0xdcbf98,
-  cloud: 0xfbf3e4,
-  cat: 0x3a3330,
+  ink: 0x4b1430,
+  mountain: 0xf2d6cc,
+  mountainFar: 0xf8e6de,
+  cloud: 0xffffff,
+  cat: 0x3a2a33,
   fishScale: 0x9db3c4,
-  wood: 0x8a5a34,
-  brown: 0x5a4a3a,
+  wood: 0x775d4c,
+  brown: 0x774e33,
 } as const;
 
 const lines = {
@@ -118,7 +121,7 @@ export class Kit {
       g.fillText(spaced, cx + 4, cy + 4);
       g.fillStyle = '#8f7a58';
     } else {
-      g.fillStyle = '#2557a8';
+      g.fillStyle = '#00939f';
     }
     g.fillText(spaced, cx, cy);
     const tex = new THREE.CanvasTexture(c);
@@ -179,7 +182,8 @@ export class Kit {
     this.box(w + 0.3, 0.25, d + 0.3, PAL.wall, x, baseY + h, z);
     if (opts.dome) {
       const r = w * 0.34;
-      this.add(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), PAL.blue, x, baseY + h + 0.25, z);
+      this.add(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), PAL.dome, x, baseY + h + 0.25, z);
+      this.add(new THREE.CylinderGeometry(r + 0.05, r + 0.05, 0.2, 16), PAL.gold, x, baseY + h + 0.3, z);
       this.box(0.12, 0.9, 0.12, PAL.ink, x, baseY + h + 0.25 + r, z);
       this.box(0.6, 0.12, 0.12, PAL.ink, x, baseY + h + 0.85 + r, z);
     }
@@ -330,8 +334,29 @@ export class Kit {
   }
 
   /** Harbour quay: top at y = 0 for z in [-9, 7]. */
+  /** Painted tile grid over a floor (Chants' Sol_4x4 look): faint lines that stay clean at any distance. */
+  tiles(x0: number, x1: number, z0: number, z1: number, size = 4): void {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d')!;
+    g.strokeStyle = 'rgba(110, 30, 60, 0.42)';
+    g.lineWidth = 3;
+    g.strokeRect(0, 0, 128, 128);
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set((x1 - x0) / size, (z1 - z0) / size);
+    tex.anisotropy = 8;
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+    mat.userData.own = true;
+    const grid = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0).rotateX(-Math.PI / 2), mat);
+    grid.position.set((x0 + x1) / 2, 0.01, (z0 + z1) / 2);
+    grid.layers.set(NO_EDGE_LAYER);
+    this.scene.add(grid);
+  }
+
   quay(): void {
     this.box(90, 2, 16, PAL.stone, 0, -2, -1);
+    this.tiles(-32, 32, -9, 7);
     for (let x = -44; x <= 44; x += 4) this.box(4, 0.25, 0.6, PAL.stoneDark, x, 0, 6.7);
   }
 
@@ -345,6 +370,7 @@ export class Kit {
   /** Inland ground: top at y = 0 for z in [-11, 9], with a low wall at the front. */
   plaza(): void {
     this.box(90, 2, 20, PAL.stone, 0, -2, -1);
+    this.tiles(-32, 32, -11, 9);
     this.box(90, 0.6, 0.6, PAL.stoneDark, 0, 0, 8.7);
     this.box(90, 3, 10, PAL.stone, 0, -1, -16);
     this.box(76, 6, 10, PAL.stone, -4, -1, -26);

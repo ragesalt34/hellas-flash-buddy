@@ -26,6 +26,8 @@ export interface Look {
   filterTex: THREE.Texture;
   filterU: number;
   filterRate: number;
+  /** Added (not multiplied) filter colour, for hazy levels; 0 = off. */
+  additiveRate: number;
   minDepth: number;
   maxDepth: number;
   minY: number;
@@ -81,6 +83,7 @@ export class SennaarPipeline {
         tFilter: { value: look.filterTex },
         filterU: { value: 0 },
         filterRate: { value: 0 },
+        additiveRate: { value: 0 },
         depthRange: { value: new THREE.Vector2() },
         yRange: { value: new THREE.Vector2() },
         edgeTint: { value: new THREE.Color() },
@@ -94,7 +97,7 @@ export class SennaarPipeline {
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
       fragmentShader: /* glsl */ `
         uniform sampler2D tColor, tDepth, tNormal, tFilter;
-        uniform float filterU, filterRate, edgeDark, edgeDepth, edgeNormal;
+        uniform float filterU, filterRate, additiveRate, edgeDark, edgeDepth, edgeNormal;
         uniform vec2 depthRange, yRange, texel;
         uniform vec3 edgeTint;
         uniform mat4 projInv, camWorld;
@@ -132,7 +135,7 @@ export class SennaarPipeline {
             float tY = clamp((yRange.y - world.y) / max(yRange.y - yRange.x, 1e-3), 0., 1.);
             float t = max(tDepthF, tY);
             vec3 f = texture2D(tFilter, vec2(filterU, 1. - t)).rgb;
-            col = mix(col, col * f, filterRate * t);
+            col = mix(col, col * f, filterRate * t) + f * additiveRate * t;
           }
           gl_FragColor = vec4(col, 1.);
         }`,
@@ -196,6 +199,7 @@ export class SennaarPipeline {
     u.tFilter.value = L.filterTex;
     u.filterU.value = L.filterU;
     u.filterRate.value = L.filterRate;
+    u.additiveRate.value = L.additiveRate;
     u.depthRange.value.set(L.minDepth, L.maxDepth);
     u.yRange.value.set(L.minY, L.maxY);
     u.edgeTint.value.copy(L.edgeTint);

@@ -15,8 +15,8 @@ export const box2 = (x: number, z: number, w: number, d: number) => new Solids()
 
 export const BOUNDS = { minX: -22, maxX: 22, minZ: -4, maxZ: 6 };
 
-/** Wide 3/4 shot shared by the chapter's scenes; drifts with the player. */
-export const WIDE: Shot = { pos: [12, 15, 38], look: [-2, 3.5, -10], follow: 0.35 };
+/** High 3/4 shot looking down like Chants' cameras; drifts with the player. */
+export const WIDE: Shot = { pos: [11, 24, 25], look: [-1, 0, -4], follow: 0.6 };
 
 export const toLeft = (to: SceneId): Exit => ({ side: 'left', to, toX: 20.5, toZ: 2 });
 export const toRight = (to: SceneId): Exit => ({ side: 'right', to, toX: -20.5, toZ: 2 });

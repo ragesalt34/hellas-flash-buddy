@@ -27,10 +27,10 @@ function skyTexture(): THREE.Texture {
   c.height = 256;
   const g = c.getContext('2d')!;
   const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, '#e7a866');
-  grad.addColorStop(0.45, '#f2cf98');
-  grad.addColorStop(0.75, '#f8e6c4');
-  grad.addColorStop(1, '#f8e6c4');
+  grad.addColorStop(0, '#f3b3a6');
+  grad.addColorStop(0.45, '#f8d3c6');
+  grad.addColorStop(0.75, '#fbeee6');
+  grad.addColorStop(1, '#fbeee6');
   g.fillStyle = grad;
   g.fillRect(0, 0, 2, 256);
   const tex = new THREE.CanvasTexture(c);
