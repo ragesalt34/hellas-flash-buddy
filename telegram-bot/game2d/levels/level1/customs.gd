@@ -26,6 +26,7 @@ func build() -> void:
 	guard = Actor.new()
 	guard.coat = Color("#2E3A5C")
 	guard.hat = "peaked"
+	guard.art = "guard"
 	guard.position = Vector2(1200, 832)
 	ysort.add_child(guard)
 	var guard_hit := Interactable.new().setup("fylakas", Rect2(-50, -240, 100, 110))

@@ -17,6 +17,7 @@ const MASK := Color("#F4E7D8")
 @export var skin := Color("#E8B89A")                ## hands
 @export_enum("none", "cap", "peaked", "beret") var hat := "none"   ## cap = sailor, peaked = guard, beret = traveller's hood
 @export var speed := 420.0
+@export var art := ""   ## painted character (assets/art/char_<art>_idle|point|chest.png); "" = code-drawn
 
 var body: Node2D
 var robe: Node2D
@@ -29,11 +30,16 @@ var _t := 0.0
 var _walk_t := 0.0
 var _gesture: Tween
 var _bubble: DialogueBubble
+var _sprite: Sprite2D           # painted mode only
+var _poses: Dictionary = {}     # pose -> Texture2D
 
 
 func _ready() -> void:
 	scale = Vector2(1.15, 1.15)
 	_t = randf() * 10.0
+	if art != "" and ArtLibrary.has("char_%s_idle" % art):
+		_build_painted()
+		return
 	body = Node2D.new()
 	add_child(body)
 	var dark := coat.darkened(0.25)
@@ -62,6 +68,45 @@ func _ready() -> void:
 	head.add_child(_line([4, -1, 10, -2], Palette.INK, 2.5))
 	head.add_child(_line([0, 1, -1, 10], Color(Palette.INK, 0.45), 2.0))
 	_add_hat_front()
+
+
+## Painted mode: one Sprite2D whose texture switches between the idle / point / chest poses.
+## head and arms stay as invisible pivots so every gesture call still works.
+func _build_painted() -> void:
+	body = Node2D.new()
+	add_child(body)
+	robe = body
+	head = Node2D.new()
+	head.position = Vector2(0, HEAD_Y)
+	body.add_child(head)
+	arm_l = Node2D.new()
+	arm_r = Node2D.new()
+	body.add_child(arm_l)
+	body.add_child(arm_r)
+	for pose in ["idle", "point", "chest"]:
+		_poses[pose] = ArtLibrary.tex("char_%s_%s" % [art, pose])
+	_sprite = Sprite2D.new()
+	_sprite.centered = false
+	body.add_child(_sprite)
+	_set_pose("idle", false)
+
+
+func _set_pose(pose: String, flip: bool) -> void:
+	var tex: Texture2D = _poses.get(pose) if _poses.get(pose) else _poses["idle"]
+	_sprite.texture = tex
+	_sprite.flip_h = flip
+	var ax := ArtLibrary.anchor_x("char_%s_%s" % [art, pose], tex.get_width() / 2.0)
+	if flip:
+		ax = tex.get_width() - ax
+	_sprite.position = Vector2(-ax, -tex.get_height())
+
+
+## Painted gestures: hold a pose for a while, then back to idle.
+func _pose_for(pose: String, hold: float, flip: bool) -> void:
+	var t := _play()
+	_set_pose(pose, flip)
+	t.tween_interval(hold + 0.5)
+	t.tween_callback(_set_pose.bind("idle", false))
 
 
 func _arm(shoulder: Vector2) -> Node2D:
@@ -157,12 +202,15 @@ func say(line: Array, seconds: float = 4.5) -> void:
 	GameState.see_line(line)
 	if _bubble == null:
 		_bubble = DialogueBubble.new()
-		_bubble.position = Vector2(0, -250)
+		_bubble.position = Vector2(0, -(_sprite.texture.get_height() + 22.0) if _sprite else -250.0)
 		add_child(_bubble)
 	_bubble.show_line(line, seconds)
 
 
 func point_at(world_pos: Vector2, hold: float = 1.4) -> void:
+	if _sprite:
+		_pose_for("point", hold, world_pos.x < global_position.x)
+		return
 	var arm := arm_r if world_pos.x >= global_position.x else arm_l
 	var r := arm_rotation(arm.global_position, world_pos)
 	var t := _play()
@@ -172,6 +220,9 @@ func point_at(world_pos: Vector2, hold: float = 1.4) -> void:
 
 
 func hand_to_chest(hold: float = 1.2) -> void:
+	if _sprite:
+		_pose_for("chest", hold, false)
+		return
 	var r := arm_rotation(arm_r.global_position, global_position + Vector2(-6, -140))
 	var t := _play()
 	t.tween_property(arm_r, "rotation", r, 0.25)
@@ -181,6 +232,12 @@ func hand_to_chest(hold: float = 1.2) -> void:
 
 func shake_head() -> void:
 	var t := _play()
+	if _sprite:
+		for i in 3:
+			t.tween_property(_sprite, "rotation", 0.05, 0.08)
+			t.tween_property(_sprite, "rotation", -0.05, 0.08)
+		t.tween_property(_sprite, "rotation", 0.0, 0.08)
+		return
 	for i in 3:
 		t.tween_property(head, "rotation", 0.28, 0.08)
 		t.tween_property(head, "rotation", -0.28, 0.08)
@@ -189,12 +246,24 @@ func shake_head() -> void:
 
 func nod() -> void:
 	var t := _play()
+	if _sprite:
+		for i in 2:
+			t.tween_property(_sprite, "scale:y", 0.95, 0.12)
+			t.tween_property(_sprite, "scale:y", 1.0, 0.12)
+		return
 	for i in 2:
 		t.tween_property(head, "position:y", HEAD_Y + 10.0, 0.12)
 		t.tween_property(head, "position:y", HEAD_Y, 0.12)
 
 
 func scratch_head() -> void:
+	if _sprite:
+		var ts := _play()
+		for i in 2:
+			ts.tween_property(_sprite, "rotation", 0.08, 0.25)
+			ts.tween_property(_sprite, "rotation", -0.03, 0.25)
+		ts.tween_property(_sprite, "rotation", 0.0, 0.2)
+		return
 	var r := arm_rotation(arm_r.global_position, global_position + Vector2(18, HEAD_Y - 28))
 	var t := _play()
 	t.tween_property(arm_r, "rotation", r, 0.25)
@@ -208,6 +277,9 @@ func scratch_head() -> void:
 
 
 func reach_toward(world_pos: Vector2, hold: float = 2.0) -> void:
+	if _sprite:
+		_pose_for("point", hold, world_pos.x < global_position.x)
+		return
 	var t := _play()
 	t.set_parallel(true)
 	t.tween_property(arm_l, "rotation", arm_rotation(arm_l.global_position, world_pos), 0.3)
@@ -219,6 +291,11 @@ func reach_toward(world_pos: Vector2, hold: float = 2.0) -> void:
 
 func laugh() -> void:
 	var t := _play()
+	if _sprite:
+		for i in 4:
+			t.tween_property(_sprite, "position:y", _sprite.position.y - 8.0, 0.08)
+			t.tween_property(_sprite, "position:y", _sprite.position.y, 0.08)
+		return
 	for i in 4:
 		t.tween_property(head, "position:y", HEAD_Y - 8.0, 0.08)
 		t.tween_property(head, "position:y", HEAD_Y, 0.08)
@@ -234,5 +311,9 @@ func _play() -> Tween:
 	arm_r.rotation = 0.0
 	head.rotation = 0.0
 	head.position.y = HEAD_Y
+	if _sprite:
+		_sprite.rotation = 0.0
+		_sprite.scale = Vector2.ONE
+		_set_pose("idle", false)
 	_gesture = create_tween()
 	return _gesture

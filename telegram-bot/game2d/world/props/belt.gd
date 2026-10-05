@@ -7,6 +7,7 @@ const W := 220.0
 const ARTICLE := {"m": "Ο", "f": "Η", "n": "ΤΟ"}
 
 var gender := "m"
+var draw_chute := true      # false when the painted background already shows the chute
 var _pulse := false
 var _t := 0.0
 var _scroll := 0.0
@@ -35,6 +36,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var col := Palette.gender_color(gender)
 	var wood := Color("#9A6B47")
+	if not draw_chute:
+		_plaque(col)
+		return
 	# opening in the wall the chute runs into
 	Ink.poly(self, Ink.pts([-W / 2 + 30, -196, W / 2 - 30, -196, W / 2 - 30, -246, 0, -270, -W / 2 + 30, -246]), Color("#4A3A40"), 3.0)
 	# chute: canvas belt between wooden rails, perspective towards the wall
@@ -50,7 +54,11 @@ func _draw() -> void:
 			draw_circle(Vector2(sgn * lerpf(W / 2 + 9, W / 2 - 33, t), lerpf(30, -190, t)), 3.0, Palette.INK)
 	for sgn in [-1.0, 1.0]:
 		Ink.rect(self, Rect2(sgn * (W / 2 + 4) - 7, 40, 14, 40), wood.darkened(0.2), 2.0)
-	# enamel plaque hanging on chains from the ceiling beam
+	_plaque(col)
+
+
+## Enamel plaque hanging on chains from the ceiling beam.
+func _plaque(col: Color) -> void:
 	var c := Vector2(0, -300)
 	for cx in [-34.0, 34.0]:
 		var top := Vector2(cx, -618)

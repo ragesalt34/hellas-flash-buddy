@@ -13,15 +13,9 @@ var _blocked_until := 0
 func build() -> void:
 	backdrop.style = "pier"
 	right_exit = "conveyor"
-	var ship := back_layer(Ship.new())
-	ship.position = Vector2(430, 740)
-	var light := back_layer(Lighthouse.new())
-	light.position = Vector2(1540, 560)
-	var boat := back_layer(Boat.new())
-	boat.position = Vector2(1080, 724)
-	objects["ploio"] = _hit(ship, "ploio", Ship.HIT)
-	objects["faros"] = _hit(light, "faros", Lighthouse.HIT)
-	objects["varka"] = _hit(boat, "varka", Boat.HIT)
+	objects["ploio"] = _prop(Ship.new(), "ploio", Vector2(430, 740), Ship.HIT)
+	objects["faros"] = _prop(Lighthouse.new(), "faros", Vector2(1540, 560), Lighthouse.HIT)
+	objects["varka"] = _prop(Boat.new(), "varka", Vector2(1080, 724), Boat.HIT)
 	var sign := SignBoard.new().setup([["limani", "nom"]], 130.0)
 	sign.position = Vector2(760, 850)
 	ysort.add_child(sign)
@@ -31,6 +25,7 @@ func build() -> void:
 	sailor = Actor.new()
 	sailor.coat = Color("#2F5D8A")
 	sailor.hat = "cap"
+	sailor.art = "sailor"
 	sailor.position = Vector2(1340, 900)
 	ysort.add_child(sailor)
 	_hit(sailor, "naftis", Rect2(-50, -240, 100, 240)).clicked.connect(_on_sailor_clicked)
@@ -52,6 +47,18 @@ func on_enter() -> void:
 	GameState.set_flag("pier_intro")
 	await get_tree().create_timer(0.8, false).timeout
 	_introduce()
+
+
+## A pier object: code-drawn prop, or — when the painted background already shows it — just its
+## click area (from data/art_layout.json).
+func _prop(node: Node2D, word: String, pos: Vector2, hit: Rect2) -> Interactable:
+	if ArtLibrary.has("bg_pier"):
+		node.free()
+		var anchor := back_layer(Node2D.new())
+		return _hit(anchor, word, ArtLibrary.rect("pier", word, Rect2(hit.position + pos, hit.size)))
+	back_layer(node)
+	node.position = pos
+	return _hit(node, word, hit)
 
 
 func _hit(parent: Node2D, word: String, r: Rect2) -> Interactable:
@@ -137,5 +144,8 @@ func debug_setup(case_name: String) -> void:
 			hud.open_notebook("faros")
 		"hint":
 			hints["pier"].tick(65.0)
+		"point":
+			_introduce()
+			player.point_at(sailor.global_position + Vector2(0, -150), 5.0)
 		_:
 			_introduce()

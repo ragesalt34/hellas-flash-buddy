@@ -36,6 +36,7 @@ func _ready() -> void:
 	player = Actor.new()
 	player.coat = Palette.HAZE_DEEP
 	player.hat = "beret"
+	player.art = "traveler"
 	ysort.add_child(player)
 	player.arrived.connect(_check_exit)
 	add_child(PostFx.new())

@@ -7,14 +7,24 @@ const WINDOW := Rect2(-120, -290, 240, 150)
 var window: DropWindow
 
 
+var _desk: Texture2D
+
+
 func _ready() -> void:
+	_desk = ArtLibrary.tex("prop_desk")
+	var zone := WINDOW if _desk == null else Rect2(-170, -260, 340, 190)
 	window = DropWindow.new()
-	window.position = WINDOW.position
-	window.size = WINDOW.size
+	window.position = zone.position
+	window.size = zone.size
 	add_child(window)
 
 
 func _draw() -> void:
+	if _desk:
+		var w := 360.0
+		var h := _desk.get_height() * w / _desk.get_width()
+		draw_texture_rect(_desk, Rect2(-w / 2.0, -h, w, h), false)
+		return
 	var wood := Color("#B98A5E")
 	var panel := Color("#E8CFA6")
 	var roof := Color("#C8643B")

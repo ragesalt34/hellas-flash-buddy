@@ -1,3 +1,5 @@
 .godot/
 tools/out/
 export/
+art_in/*
+!art_in/.gdignore

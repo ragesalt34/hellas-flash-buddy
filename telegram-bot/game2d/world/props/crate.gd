@@ -108,9 +108,15 @@ func show_frame_hint(on: bool) -> void:
 
 
 func _draw() -> void:
-	Ink.rect(self, Rect2(-SIZE.x / 2.0, -SIZE.y, SIZE.x, SIZE.y), Palette.WOOD)
-	for y in [-SIZE.y + 30.0, -40.0]:
-		draw_line(Vector2(-SIZE.x / 2.0, y), Vector2(SIZE.x / 2.0, y), Color(Palette.INK, 0.5), 3.0)
+	var art := ArtLibrary.tex("prop_crate")
+	if art:
+		var s := SIZE.x / art.get_width()
+		var h := art.get_height() * s
+		draw_texture_rect(art, Rect2(-SIZE.x / 2.0, -h, SIZE.x, h), false)
+	else:
+		Ink.rect(self, Rect2(-SIZE.x / 2.0, -SIZE.y, SIZE.x, SIZE.y), Palette.WOOD)
+		for y in [-SIZE.y + 30.0, -40.0]:
+			draw_line(Vector2(-SIZE.x / 2.0, y), Vector2(SIZE.x / 2.0, y), Color(Palette.INK, 0.5), 3.0)
 	var plate := Rect2(-84, -SIZE.y + 22, 168, 64)
 	Ink.rect(self, plate, Palette.PAPER, 3.0)
 	if _hint:

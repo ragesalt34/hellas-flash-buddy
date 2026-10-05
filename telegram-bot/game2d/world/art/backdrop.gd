@@ -24,6 +24,16 @@ func _build() -> void:
 	for c in get_children():
 		remove_child(c)
 		c.queue_free()
+	var painted := ArtLibrary.tex("bg_" + style)
+	if painted:
+		var bg := Sprite2D.new()
+		bg.texture = painted
+		bg.centered = false
+		bg.scale = Vector2(1920.0 / painted.get_width(), 1080.0 / painted.get_height())
+		add_child(bg)
+		if style == "pier":
+			add_child(Gulls.new())
+		return
 	match style:
 		"pier":
 			_build_pier()

@@ -23,7 +23,8 @@ func build() -> void:
 	for i in 3:
 		var b := Belt.new()
 		b.gender = genders[i]
-		b.position = Vector2(960 + i * 300, 760)
+		b.draw_chute = not ArtLibrary.has("bg_warehouse")
+		b.position = ArtLibrary.point("conveyor", "belt_" + genders[i], Vector2(960 + i * 300, 760))
 		back_layer(b)
 		belts.append(b)
 	var table := back_layer(Node2D.new())
@@ -32,6 +33,7 @@ func build() -> void:
 	worker = Actor.new()
 	worker.coat = Color("#6B8E5A")
 	worker.hat = "cap"
+	worker.art = "worker"
 	worker.position = Vector2(330, 900)
 	ysort.add_child(worker)
 	rope = RopeGate.new()
