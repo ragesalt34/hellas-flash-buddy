@@ -86,3 +86,9 @@ body { font-family: 'GFS Didot', Georgia, serif; }
 .journal .page.solved .slot { background: #efe2bf; }
 .journal .check { grid-column: 1 / -1; justify-self: center; background: #1b1712; color: #fbf6ea; border-radius: 0; padding: 10px 28px; }
 .greek .word.target { color: #2557a8; border-bottom: 2px solid #2557a8; }
+.chapter-end { background: #f4ead2; color: #1b1712; border: 3px solid #1b1712; padding: 32px; width: min(560px, calc(100% - 32px)); display: grid; gap: 18px; text-align: center; }
+.chapter-end h2 { margin: 0; letter-spacing: .08em; }
+.chapter-end .meter { position: relative; height: 14px; border: 2px solid #1b1712; background: #fbf6ea; }
+.chapter-end .meter div { height: 100%; background: #2557a8; }
+.chapter-end .meter span { position: absolute; top: -6px; bottom: -6px; width: 2px; background: #a63a2a; }
+.chapter-end button { justify-self: center; background: #1b1712; color: #fbf6ea; border-radius: 0; padding: 10px 28px; }
