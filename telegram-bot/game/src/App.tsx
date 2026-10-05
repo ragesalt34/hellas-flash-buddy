@@ -3,6 +3,7 @@ import { getToken } from '@shared/auth';
 import { GUEST_KEY, startSession, type Session } from './session';
 import { Loading } from './ui/Loading';
 import { Login } from './ui/Login';
+import { Play } from './ui/Play';
 
 type Phase =
   | { name: 'login' }
@@ -53,6 +54,6 @@ export function App() {
     case 'error':
       return <Loading attempt={0} error onRetry={() => setPhase({ name: 'loading', attempt: 0 })} />;
     case 'play':
-      return <div className="stage" />;
+      return <Play session={phase.session} />;
   }
 }
