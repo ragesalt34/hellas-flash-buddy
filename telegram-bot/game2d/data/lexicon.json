@@ -1,0 +1,18 @@
+{
+	"limani": {"pos": "noun", "article": "το", "gender": "n", "stem": "λιμάν", "ending": "ι", "picto": "port"},
+	"ploio": {"pos": "noun", "article": "το", "gender": "n", "stem": "πλοί", "ending": "ο", "picto": "ship"},
+	"faros": {"pos": "noun", "article": "ο", "gender": "m", "stem": "φάρ", "ending": "ος", "picto": "lighthouse"},
+	"varka": {"pos": "noun", "article": "η", "gender": "f", "stem": "βάρκ", "ending": "α", "picto": "boat"},
+	"naftis": {"pos": "noun", "article": "ο", "gender": "m", "stem": "ναύτ", "ending": "ης", "picto": "sailor"},
+	"sakos": {"pos": "noun", "article": "ο", "gender": "m", "stem": "σάκ", "ending": "ος", "picto": "sack"},
+	"valitsa": {"pos": "noun", "article": "η", "gender": "f", "stem": "βαλίτσ", "ending": "α", "picto": "suitcase"},
+	"kouti": {"pos": "noun", "article": "το", "gender": "n", "stem": "κουτ", "ending": "ί", "picto": "box"},
+	"fylakas": {"pos": "noun", "article": "ο", "gender": "m", "stem": "φύλακ", "ending": "ας", "picto": "guard"},
+	"diavatirio": {"pos": "noun", "article": "το", "gender": "n", "stem": "διαβατήρι", "ending": "ο", "picto": "passport"},
+	"eisitirio": {"pos": "noun", "article": "το", "gender": "n", "stem": "εισιτήρι", "ending": "ο", "picto": "ticket"},
+	"exodos": {"pos": "noun", "article": "η", "gender": "f", "stem": "έξοδ", "ending": "ος", "picto": "exit"},
+	"eimai": {"pos": "verb", "stem": "εί", "endings": {"1s": "μαι", "2s": "σαι", "3s": "ναι"}, "picto": "be"},
+	"echo": {"pos": "verb", "stem": "έχ", "endings": {"1s": "ω", "2s": "εις", "3s": "ει"}, "picto": "have"},
+	"nai": {"pos": "particle", "stem": "ναι", "ending": "", "picto": "yes"},
+	"ochi": {"pos": "particle", "stem": "όχι", "ending": "", "picto": "no"}
+}
