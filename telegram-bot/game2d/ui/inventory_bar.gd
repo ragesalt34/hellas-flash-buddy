@@ -18,5 +18,5 @@ func refresh() -> void:
 
 func pulse(item_id: String, on: bool) -> void:
 	for s in get_children():
-		if s.item_id == item_id:
+		if s is InventorySlot and s.item_id == item_id:
 			s.set_pulse(on)

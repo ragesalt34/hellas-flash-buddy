@@ -58,3 +58,15 @@ func test_reentry_after_open_keeps_gate_open() -> void:
 	eq(s.gate_x, INF, "open on re-entry")
 	eq(s.active_puzzle, "", "no active puzzle")
 	s.free()
+
+
+func test_arriving_near_the_edge_leaves_only_when_open() -> void:
+	var gs := tree.root.get_node("GameState")
+	var s := _scene()
+	s.right_exit = ""          # do not actually change scene in the test
+	s.player.position = Vector2(s.walk_rect.end.x - 30.0, 900)
+	s._check_exit()
+	eq(s._leaving, false, "no exit configured")
+	s.right_exit = "conveyor"
+	check(s.walk_rect.end.x - 30.0 >= s.walk_rect.end.x - s.EXIT_MARGIN, "30 px from the edge is inside the exit zone")
+	s.free()

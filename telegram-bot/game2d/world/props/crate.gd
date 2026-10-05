@@ -13,6 +13,7 @@ var dragging := false
 var label: InteractiveText
 var hit: Area2D
 var _offset := Vector2.ZERO
+var _mouse := Vector2.ZERO     # last pointer position in canvas space, taken from events
 var _busy := false
 var _hint := false
 
@@ -50,18 +51,26 @@ func _on_hit_input(_vp: Node, event: InputEvent, _idx: int) -> void:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		dragging = true
-		_offset = global_position - get_global_mouse_position()
+		_mouse = _to_canvas(event.position)
+		_offset = global_position - _mouse
 
 
 func _input(event: InputEvent) -> void:
-	if dragging and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+	if not dragging or not (event is InputEventMouse):
+		return
+	_mouse = _to_canvas(event.position)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		dragging = false
-		dropped.emit(self, get_global_mouse_position())
+		dropped.emit(self, _mouse)
 
 
 func _process(_delta: float) -> void:
 	if dragging:
-		global_position = get_global_mouse_position() + _offset
+		global_position = _mouse + _offset
+
+
+func _to_canvas(p: Vector2) -> Vector2:
+	return get_canvas_transform().affine_inverse() * p
 
 
 func slide_in() -> void:

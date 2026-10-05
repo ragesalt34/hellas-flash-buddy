@@ -4,6 +4,8 @@ extends Node2D
 ## screen edges, HUD, and one HintDirector per puzzle (ticked only while unpaused, so the notebook
 ## never escalates hints). Subclasses override build(), on_enter(), apply_hint(), on_gate_blocked().
 
+const EXIT_MARGIN := 60.0       # arriving this close to a screen edge leaves through it
+
 var walk_rect := Rect2(60, 820, 1800, 200)
 var left_exit := ""
 var right_exit := ""
@@ -107,7 +109,8 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_on_activity()
-		walk_player_to(get_global_mouse_position())
+		# From the event, not get_global_mouse_position(): pushed/synthetic events carry their own position.
+		walk_player_to(get_canvas_transform().affine_inverse() * event.position)
 
 
 func _on_activity(_a: Variant = null, _b: Variant = null) -> void:
@@ -123,17 +126,17 @@ func _on_hint_level(level: int, id: String) -> void:
 func _place_player() -> void:
 	var y := walk_rect.get_center().y
 	if GameState.entry_side == "right":
-		player.position = Vector2(walk_rect.end.x - 60.0, y)
+		player.position = Vector2(walk_rect.end.x - EXIT_MARGIN * 2.0, y)
 	else:
-		player.position = Vector2(walk_rect.position.x + 60.0, y)
+		player.position = Vector2(walk_rect.position.x + EXIT_MARGIN * 2.0, y)
 
 
 func _check_exit() -> void:
 	if _leaving:
 		return
-	if right_exit != "" and player.position.x >= walk_rect.end.x - 1.0:
+	if right_exit != "" and player.position.x >= walk_rect.end.x - EXIT_MARGIN:
 		_leaving = true
 		GameState.goto_scene(right_exit, "left")
-	elif left_exit != "" and player.position.x <= walk_rect.position.x + 1.0:
+	elif left_exit != "" and player.position.x <= walk_rect.position.x + EXIT_MARGIN:
 		_leaving = true
 		GameState.goto_scene(left_exit, "right")
