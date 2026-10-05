@@ -30,7 +30,7 @@ with its own `package.json`. It does not live inside the web app bundle.
 `vite.config.ts` and `tsconfig.json` define an alias `@shared` -> `../webapp/src`.
 The game imports only these modules from the web app:
 
-- `api.ts` (the `api` object, `persistWrite`, types `Flashcard`, `VocabCard`, `MeResponse`)
+- `api.ts` (the `api` object, `clearCache`, types `Flashcard`, `VocabCard`, `MeResponse`)
 - `auth.ts` (token storage)
 - `speech.ts` (`speakGreek`, `textKey`, `hasGreek`)
 - `i18n.tsx` (`t`, `getStoredLanguage`, `Language`)
@@ -133,8 +133,8 @@ its explanation (if any) and Greek audio.
 - Backend asleep (Render free tier, up to ~50 s): loading screen with retries
   every 5 s, up to 90 s.
 - Backend unreachable after that: play from the last cached queue
-  (`localStorage`). Grades are buffered in `localStorage` and flushed with
-  `persistWrite` when the API answers again.
+  (`localStorage`). Grades are buffered in `localStorage` (per account) and
+  flushed on start and every 60 s once the API answers again.
 - 401 with a stale token: handled by the shared `api.ts` (falls back to guest).
 - TTS failures stay silent (existing `speech.ts` behaviour).
 
