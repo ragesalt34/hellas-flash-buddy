@@ -14,13 +14,30 @@ func _build() -> void:
 	bg.color = Palette.PAPER
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	var harbour := ArtLibrary.tex("bg_pier")
+	if harbour:
+		var view := TextureRect.new()
+		view.texture = harbour
+		view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		view.set_anchors_preset(Control.PRESET_FULL_RECT)
+		view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(view)
+		var wash := ColorRect.new()
+		wash.color = Color(Palette.PAPER, 0.60)
+		wash.set_anchors_preset(Control.PRESET_FULL_RECT)
+		wash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(wash)
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
+	var paper := PanelContainer.new()
+	paper.add_theme_stylebox_override("panel", Ui.paper_style(48))
+	center.add_child(paper)
 	var v := VBoxContainer.new()
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_theme_constant_override("separation", 22)
-	center.add_child(v)
+	paper.add_child(v)
 	var title := Ui.greek_label(Greek.caps("λιμάνι"), 84)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(title)

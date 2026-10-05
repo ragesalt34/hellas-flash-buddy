@@ -13,6 +13,11 @@ var chain_top := -618.0     # where the chains hang from (ceiling beam)
 var _pulse := false
 var _t := 0.0
 var _scroll := 0.0
+var _painted: Texture2D
+
+
+func _ready() -> void:
+	_painted = ArtLibrary.tex("prop_plaque_" + gender)
 
 
 func drop_rect() -> Rect2:
@@ -68,7 +73,21 @@ func _plaque(col: Color) -> void:
 		var n := 12
 		for i in n:
 			var a1 := top.lerp(bottom, float(i) / n)
-			draw_arc(a1 + (bottom - top) / n * 0.5, 5.0, 0, TAU, 8, Color(Palette.INK, 0.8), 1.6, true)
+			draw_arc(a1 + (bottom - top) / n * 0.5, 4.0, 0, TAU, 10, Color("#806443"), 1.8, true)
+	if _painted:
+		var plaque_size := Vector2(126, 188) if gender == "m" else Vector2(180, 180)
+		draw_texture_rect(_painted, Rect2(c - plaque_size / 2.0, plaque_size), false)
+	else:
+		_draw_plain_plaque(c, col)
+	var font := Fonts.greek()
+	var art: String = ARTICLE[gender]
+	var sz := font.get_string_size(art, HORIZONTAL_ALIGNMENT_LEFT, -1, 76)
+	draw_string(font, c + Vector2(-sz.x / 2.0, sz.y * 0.32 + (6.0 if _painted else 0.0)), art, HORIZONTAL_ALIGNMENT_LEFT, -1, 76, Palette.PAPER)
+	if _pulse:
+		draw_arc(c, 112, 0, TAU, 48, Color(Palette.HAZE_DEEP, 0.4 + 0.4 * sin(_t * 6.0)), 6.0, true)
+
+
+func _draw_plain_plaque(c: Vector2, col: Color) -> void:
 	match gender:
 		"m":
 			Ink.rect(self, Rect2(c + Vector2(-50, -84), Vector2(100, 168)), col, 4.0)
@@ -80,9 +99,3 @@ func _plaque(col: Color) -> void:
 			Ink.rect(self, Rect2(c + Vector2(-78, -78), Vector2(156, 156)), col, 4.0)
 			draw_rect(Rect2(c + Vector2(-66, -66), Vector2(132, 132)), Color(1, 1, 1, 0.55), false, 3.0)
 	draw_line(c + Vector2(-30, -60), c + Vector2(-8, -70), Color(1, 1, 1, 0.35), 4.0)
-	var font := Fonts.greek()
-	var art: String = ARTICLE[gender]
-	var sz := font.get_string_size(art, HORIZONTAL_ALIGNMENT_LEFT, -1, 80)
-	draw_string(font, c + Vector2(-sz.x / 2.0, sz.y * 0.32), art, HORIZONTAL_ALIGNMENT_LEFT, -1, 80, Palette.PAPER)
-	if _pulse:
-		draw_arc(c, 104, 0, TAU, 48, Color(Palette.HAZE_DEEP, 0.4 + 0.4 * sin(_t * 6.0)), 6.0, true)

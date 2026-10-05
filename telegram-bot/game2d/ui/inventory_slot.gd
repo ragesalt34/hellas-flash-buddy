@@ -12,12 +12,17 @@ func _init(id: String = "") -> void:
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(120, 120)
+	custom_minimum_size = Vector2(160 if item_id == "eisitirio" else 112, 120)
 	add_theme_stylebox_override("panel", Ui.panel_style(14, 4))
+	var margin := MarginContainer.new()
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for side in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, 4)
+	add_child(margin)
 	_picto = Picto.new()
 	_picto.picto_id = GameState.lex.picto(item_id)
 	_picto.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_picto)
+	margin.add_child(_picto)
 
 
 func _get_drag_data(_at: Vector2) -> Variant:

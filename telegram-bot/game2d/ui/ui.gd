@@ -6,11 +6,27 @@ extends RefCounted
 static func panel_style(radius: int = 0, border: int = 4, bg: Color = Palette.PAPER) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = bg
-	sb.border_color = Palette.INK
-	sb.set_border_width_all(border)
+	sb.border_color = Color(Palette.INK, 0.58)
+	sb.set_border_width_all(mini(border, 2))
 	sb.set_corner_radius_all(radius)
 	sb.set_content_margin_all(14)
 	sb.anti_aliasing = true
+	sb.shadow_color = Color(Palette.INK, 0.10)
+	sb.shadow_size = 6
+	sb.shadow_offset = Vector2(0, 3)
+	return sb
+
+
+## Generated paper is nine-sliced: the frame stays crisp while text remains real, interactive UI.
+static func paper_style(padding: int = 24, dialogue: bool = false) -> StyleBox:
+	var tex := ArtLibrary.tex("prop_dialogue_panel" if dialogue else "prop_paper_panel")
+	if tex == null:
+		return panel_style(16, 2)
+	var sb := StyleBoxTexture.new()
+	sb.texture = tex
+	for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+		sb.set_texture_margin(side, 16.0 if dialogue else 42.0)
+	sb.set_content_margin_all(padding)
 	return sb
 
 
@@ -36,9 +52,9 @@ static func style_button(b: Button, text: String, px: int = 24) -> Button:
 		b.add_theme_color_override(c, Palette.INK)
 	b.add_theme_color_override("font_disabled_color", Color(Palette.INK, 0.35))
 	b.add_theme_stylebox_override("normal", panel_style(12, 3))
-	b.add_theme_stylebox_override("hover", panel_style(12, 3, Palette.SHADE.lerp(Palette.PAPER, 0.5)))
-	b.add_theme_stylebox_override("pressed", panel_style(12, 3, Palette.SHADE))
-	b.add_theme_stylebox_override("hover_pressed", panel_style(12, 3, Palette.SHADE))
+	b.add_theme_stylebox_override("hover", panel_style(12, 2, Palette.STONE.lerp(Palette.PAPER, 0.55)))
+	b.add_theme_stylebox_override("pressed", panel_style(12, 2, Palette.SEA.lerp(Palette.PAPER, 0.78)))
+	b.add_theme_stylebox_override("hover_pressed", panel_style(12, 2, Palette.SEA.lerp(Palette.PAPER, 0.78)))
 	b.add_theme_stylebox_override("disabled", panel_style(12, 2, Palette.PAPER.darkened(0.04)))
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	return b

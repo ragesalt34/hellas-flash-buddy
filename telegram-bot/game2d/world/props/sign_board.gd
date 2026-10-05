@@ -9,6 +9,8 @@ var text: InteractiveText
 var hit: Interactable
 var _post := 120.0
 var _board := Rect2()
+var _painted: Texture2D
+var _pole: Texture2D
 
 
 func setup(l: Array, post_height: float = 120.0) -> SignBoard:
@@ -19,6 +21,8 @@ func setup(l: Array, post_height: float = 120.0) -> SignBoard:
 
 
 func _ready() -> void:
+	_painted = ArtLibrary.tex("prop_sign_exit" if word_id == "exodos" else "prop_sign_harbor")
+	_pole = ArtLibrary.tex("prop_gate_post")
 	text = InteractiveText.new(44)
 	text.caps = true
 	text.object_word = word_id
@@ -36,6 +40,13 @@ func _layout() -> void:
 	var pad := Vector2(36, 20)
 	_board = Rect2(Vector2(-text.size.x / 2.0, -_post - text.size.y) - pad, text.size + pad * 2.0)
 	text.position = _board.position + pad
+	if _painted:
+		var wide := text.size.x + (132.0 if word_id == "exodos" else 86.0)
+		var tall := maxf(120.0, wide * _painted.get_height() / _painted.get_width())
+		_board = Rect2(Vector2(-wide / 2.0, -_post - tall + 20.0), Vector2(wide, tall))
+		text.position = _board.position + (_board.size - text.size) / 2.0
+		if word_id != "exodos":
+			text.position.y -= 9.0  # keep the caption above the carved wave border
 	hit.set_rect(_board)
 	queue_redraw()
 
@@ -44,6 +55,13 @@ const BOARD := Color("#F2E3C8")
 
 
 func _draw() -> void:
+	if _painted:
+		if _pole:
+			draw_texture_rect(_pole, Rect2(-16, -_post - 32, 32, _post + 32), false)
+		else:
+			Ink.rect(self, Rect2(-8, -_post, 16, _post), Palette.WOOD, 2.0)
+		draw_texture_rect(_painted, _board, false)
+		return
 	Ink.rect(self, Rect2(-8, -_post, 16, _post), Palette.WOOD)
 	draw_line(Vector2(-3, -_post + 4), Vector2(-3, -6), Color(1, 1, 1, 0.25), 2.0)
 	var g := GameState.lex.gender(word_id)

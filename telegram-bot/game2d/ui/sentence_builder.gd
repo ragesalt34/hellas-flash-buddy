@@ -43,7 +43,7 @@ class SlotBox extends PanelContainer:
 
 func _ready() -> void:
 	visible = false
-	add_theme_stylebox_override("panel", Ui.panel_style(18, 4))
+	add_theme_stylebox_override("panel", Ui.paper_style(26))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 16)
 	add_child(v)

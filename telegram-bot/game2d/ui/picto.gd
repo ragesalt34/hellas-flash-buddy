@@ -1,12 +1,13 @@
 @tool
 class_name Picto
 extends Control
-## Pictogram drawn in code (no image files) in a 100×100 design box scaled to the control.
+## Painted document icons; semantic pictograms use a 100×100 design box scaled to the control.
 ## Meanings in the notebook, inventory items, tooltips. sketch = faded hint-level-3 look.
 
 const ALL := ["port", "ship", "lighthouse", "boat", "sailor", "sack", "suitcase", "box", "guard",
 	"passport", "ticket", "exit", "be", "have", "yes", "no"]
 const GLYPHS := ["g_m", "g_f", "g_n", "p1", "p2", "p3", "unknown", "book"]
+const PAINTED := {"passport": "prop_icon_passport", "ticket": "prop_icon_ticket", "book": "prop_icon_book"}
 
 @export var picto_id := "":
 	set(v):
@@ -18,9 +19,21 @@ const GLYPHS := ["g_m", "g_f", "g_n", "p1", "p2", "p3", "unknown", "book"]
 		queue_redraw()
 
 var _c := Palette.INK
+var _image_id := ""
+var _image: Texture2D
 
 
 func _draw() -> void:
+	if _image_id != picto_id:
+		_image_id = picto_id
+		_image = ArtLibrary.tex(PAINTED[picto_id]) if PAINTED.has(picto_id) else null
+	if _image:
+		var available := size * 0.84
+		var image_size := Vector2(_image.get_width(), _image.get_height())
+		var fit := minf(available.x / image_size.x, available.y / image_size.y)
+		var fitted := image_size * fit
+		draw_texture_rect(_image, Rect2((size - fitted) / 2.0, fitted), false, Color(1, 1, 1, 0.38 if sketch else 1.0))
+		return
 	var s := minf(size.x, size.y) / 100.0
 	if s <= 0.0:
 		return

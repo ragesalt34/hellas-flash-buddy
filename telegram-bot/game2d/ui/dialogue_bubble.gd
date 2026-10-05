@@ -11,7 +11,7 @@ func _init() -> void:
 	z_index = 50
 	z_as_relative = false
 	_panel = PanelContainer.new()
-	_panel.add_theme_stylebox_override("panel", Ui.panel_style(18, 4))
+	_panel.add_theme_stylebox_override("panel", Ui.paper_style(18, true))
 	text = InteractiveText.new(32)
 	_panel.add_child(text)
 	add_child(_panel)
@@ -40,4 +40,4 @@ func _layout() -> void:
 
 func _draw() -> void:
 	draw_colored_polygon(Ink.pts([-14, -20, 14, -20, 0, 0]), Palette.PAPER)
-	draw_polyline(Ink.pts([-14, -20, 0, 0, 14, -20]), Palette.INK, 4.0, true)
+	draw_polyline(Ink.pts([-14, -20, 0, 0, 14, -20]), Color(Palette.INK, 0.58), 2.0, true)
