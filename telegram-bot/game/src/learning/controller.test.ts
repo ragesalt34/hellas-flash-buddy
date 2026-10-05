@@ -23,7 +23,7 @@ function setup(words: StudyItem[]) {
   c.start();
   const results: { requestId: string; correct: boolean }[] = [];
   bus.on('challenge:result', (r) => results.push(r));
-  const request = (requestId: string) => bus.emit('challenge:request', { requestId, source: 'altar', kind: 'word' });
+  const request = (requestId: string) => bus.emit('challenge:request', { requestId, source: 'historian', kind: 'word' });
   return { c, submit, results, request };
 }
 

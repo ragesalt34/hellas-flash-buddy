@@ -13,13 +13,13 @@ describe('Bus', () => {
   it('stops delivering after unsubscribe', () => {
     const b = new Bus();
     const fn = vi.fn();
-    const off = b.on('game:pause', fn);
+    const off = b.on('world:freeze', fn);
     off();
-    b.emit('game:pause', { paused: true });
+    b.emit('world:freeze', { frozen: true });
     expect(fn).not.toHaveBeenCalled();
   });
 
   it('ignores events nobody listens to', () => {
-    expect(() => new Bus().emit('game:pause', { paused: false })).not.toThrow();
+    expect(() => new Bus().emit('world:freeze', { frozen: false })).not.toThrow();
   });
 });

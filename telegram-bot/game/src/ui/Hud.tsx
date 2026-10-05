@@ -1,36 +1,38 @@
 import { useState, useSyncExternalStore } from 'react';
 import { getStoredLanguage } from '@shared/i18n';
-import type { HudState } from '../bus';
+import { SCENES } from '../content/chapter1';
 import type { Session } from '../session';
-import { ROOMS, type RoomId } from '../world/rooms';
+import { requestProgress } from '../story/requests';
+import type { StoryStore } from '../story/store';
+import { dayKey } from '../story/wordSrs';
 import { s } from './strings';
 import { useBusEvent } from './useBus';
 
-export function Hud({ session }: { session: Session }) {
-  const [hud, setHud] = useState<HudState | null>(null);
-  useBusEvent('hud:update', setHud);
-  const { controller } = session;
-  useSyncExternalStore(controller.subscribe, () => controller.version());
-  const { done, total } = controller.progress();
-  if (!hud) return null;
-  const room = ROOMS[hud.room as RoomId];
+export function Hud({ session, store }: { session: Session; store: StoryStore }) {
+  useSyncExternalStore(store.subscribe, store.version);
+  const [near, setNear] = useState<string | null>(null);
+  const [frozen, setFrozen] = useState(false);
+  useBusEvent('world:near', ({ npcId }) => setNear(npcId));
+  useBusEvent('world:freeze', ({ frozen: f }) => setFrozen(f));
+  const st = store.get();
+  const scene = SCENES.find((x) => x.id === st.scene);
+  const { done, total } = requestProgress(st.requests, dayKey());
   return (
-    <div className="hud">
-      <span className="hearts">
-        {'♥'.repeat(Math.max(0, hud.hp))}
-        {'♡'.repeat(Math.max(0, hud.maxHp - hud.hp))}
-      </span>
-      <span className="badge">{room ? room.name[getStoredLanguage()] : hud.room}</span>
-      {hud.dash && <span className="badge">{s('dash')}</span>}
-      {hud.doubleJump && <span className="badge">{s('doubleJump')}</span>}
-      <span className="spacer" />
-      <span className="badge">
-        {s('today')}: {done}/{total}
-      </span>
-      <span className="badge">
-        {s('streak')}: {session.streak}
-      </span>
-      {session.offline && <span className="badge off">{s('offline')}</span>}
-    </div>
+    <>
+      <div className="hud">
+        <span className="badge">{scene ? scene[getStoredLanguage()] : st.scene}</span>
+        <span className="spacer" />
+        {total > 0 && (
+          <span className="badge">
+            {s('today')}: {done}/{total}
+          </span>
+        )}
+        <span className="badge">
+          {s('streak')}: {session.streak}
+        </span>
+        {session.offline && <span className="badge off">{s('offline')}</span>}
+      </div>
+      {near && !frozen && <div className="talk-hint">{s('talk')}</div>}
+    </>
   );
 }

@@ -1,22 +1,7 @@
 import type { ChallengeKind } from './learning/types';
 
-export type ChallengeSource = 'altar' | 'shield' | 'amphora' | 'boss';
-export type ToastKey =
-  | 'abilityDash'
-  | 'abilityDoubleJump'
-  | 'altarProgress'
-  | 'heartUp'
-  | 'wallBroken'
-  | 'shieldDown'
-  | 'died';
-
-export interface HudState {
-  hp: number;
-  maxHp: number;
-  dash: boolean;
-  doubleJump: boolean;
-  room: string;
-}
+export type ChallengeSource = 'historian';
+export type ToastKey = 'newWords' | 'itemGot' | 'pageSolved' | 'pageWrong' | 'examDone';
 
 export interface BusEvents {
   'challenge:request': {
@@ -26,15 +11,22 @@ export interface BusEvents {
     preferTopics?: string[];
   };
   'challenge:result': { requestId: string; correct: boolean };
-  'hud:update': HudState;
-  'game:pause': { paused: boolean };
+  /** World → UI: the player pressed E next to an NPC or object. */
+  'npc:talk': { npcId: string };
+  /** World → UI: the closest talkable thing changed. */
+  'world:near': { npcId: string | null };
+  /** UI → world: stop/resume movement and E. */
+  'world:freeze': { frozen: boolean };
+  /** UI → world: story flags changed (re-check doors and bars). */
+  'world:flags': Record<string, never>;
+  /** World → UI: the player walked through the open gate. */
+  'chapter:end': Record<string, never>;
   toast: { key: ToastKey; value?: string };
-  'boss:defeated': { room: string };
 }
 
 type Handler<T> = (payload: T) => void;
 
-/** Tiny typed pub/sub — the only channel between the Phaser world and the React overlay. */
+/** Tiny typed pub/sub — the only channel between the 3D world and the React overlay. */
 export class Bus {
   private handlers = new Map<keyof BusEvents, Set<Handler<never>>>();
 
