@@ -136,7 +136,7 @@ export function DialogueBox({ store, world, onBusy, onExam, onWord }: Props) {
     <>
       {shown !== null && (
         <div ref={bubble} className="bubble" onClick={advance}>
-          <GreekLine text={shown} journal={journal} onWord={onWord} />
+          <GreekLine text={shown} journal={journal} onWord={onWord} highlight={v.kind === 'request' && !conv.answered ? v.lemma : undefined} />
         </div>
       )}
       {choosing && (

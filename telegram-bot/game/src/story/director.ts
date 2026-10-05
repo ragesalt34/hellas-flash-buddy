@@ -8,7 +8,7 @@ import { consolidated, enroll } from './wordSrs';
 
 export type DialogueView =
   | { kind: 'lines'; npcId: string; lines: string[]; replies: string[]; exam: boolean }
-  | { kind: 'request'; npcId: string; requestId: string; lines: string[]; options: LemmaId[] };
+  | { kind: 'request'; npcId: string; requestId: string; lemma: LemmaId; lines: string[]; options: LemmaId[] };
 
 function observeAll(s: StoryState, texts: string[]): StoryState {
   let journal = s.journal;
@@ -34,7 +34,7 @@ export function talk(
       const line = lemma(q.lemma).ask;
       st = observeAll(st, [line]);
       const options = requestOptions(q, st.journal.deciphered, rng);
-      return { state: st, view: { kind: 'request', npcId, requestId: q.id, lines: [line], options } };
+      return { state: st, view: { kind: 'request', npcId, requestId: q.id, lemma: q.lemma, lines: [line], options } };
     }
   }
   const rule = pickRule(npc, st.world);

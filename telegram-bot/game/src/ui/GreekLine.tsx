@@ -2,7 +2,18 @@ import { lemma, lemmaOf, tokenize, type LemmaId } from '../content/lexicon';
 import type { JournalState } from '../story/journal';
 
 /** A Greek line whose words are clickable; deciphered words show their meaning, others the player's note. */
-export function GreekLine({ text, journal, onWord }: { text: string; journal: JournalState; onWord: (id: LemmaId) => void }) {
+export function GreekLine({
+  text,
+  journal,
+  onWord,
+  highlight,
+}: {
+  text: string;
+  journal: JournalState;
+  onWord: (id: LemmaId) => void;
+  /** The word a review request is about. */
+  highlight?: LemmaId;
+}) {
   return (
     <span className="greek">
       {text.split(/(\s+)/).map((part, i) => {
@@ -13,7 +24,7 @@ export function GreekLine({ text, journal, onWord }: { text: string; journal: Jo
         return (
           <span
             key={i}
-            className="word"
+            className={id === highlight ? 'word target' : 'word'}
             onClick={(e) => {
               e.stopPropagation();
               onWord(id);

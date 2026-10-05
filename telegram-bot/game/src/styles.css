@@ -66,3 +66,23 @@ body { font-family: 'GFS Didot', Georgia, serif; }
 .dialog .options button.wrong { background: #d9826f; }
 .dialog > button { background: #1b1712; color: #fbf6ea; border-radius: 0; }
 .dialog .muted { color: #6b5a42; }
+.journal { width: min(1000px, calc(100% - 32px)); height: min(640px, calc(100vh - 32px)); background: #f4ead2; color: #1b1712; border: 3px solid #1b1712; display: grid; grid-template-columns: 300px 1fr; }
+.journal h2 { margin: 0 0 12px; letter-spacing: .08em; }
+.journal .entries { border-right: 2px solid #1b1712; padding: 18px; overflow-y: auto; }
+.journal .entries ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.journal .entries li { display: grid; gap: 4px; padding: 6px; }
+.journal .entries li.focus { outline: 2px solid #2557a8; }
+.journal .el { font-size: 22px; letter-spacing: .05em; }
+.journal .ru { color: #6b5a42; font-family: system-ui, sans-serif; }
+.journal input, .journal select { background: #fbf6ea; color: #1b1712; border: 1.5px solid #1b1712; border-radius: 0; font: 15px system-ui, sans-serif; padding: 6px; }
+.journal .pages { padding: 18px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+.journal nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.journal .tab { background: #fbf6ea; color: #1b1712; border: 2px solid #1b1712; border-radius: 0; width: 38px; padding: 6px 0; }
+.journal .tab.active { background: #1b1712; color: #fbf6ea; }
+.journal .tab.solved { background: #d9c79f; }
+.journal .page { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; align-items: start; }
+.journal .slot { border: 2px solid #1b1712; background: #fbf6ea; padding: 12px; display: grid; gap: 10px; justify-items: center; }
+.journal .slot .pic { font-size: 56px; line-height: 1; }
+.journal .page.solved .slot { background: #efe2bf; }
+.journal .check { grid-column: 1 / -1; justify-self: center; background: #1b1712; color: #fbf6ea; border-radius: 0; padding: 10px 28px; }
+.greek .word.target { color: #2557a8; border-bottom: 2px solid #2557a8; }
