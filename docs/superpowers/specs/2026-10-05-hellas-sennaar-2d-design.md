@@ -61,7 +61,8 @@ Scenes (one Godot scene each, connected by walking off-screen edges):
 2. **Conveyor (Ταινία).** Crates labelled with bare nouns (no article) roll in: σάκος, βαλίτσα, κουτί,
    plus repeats of φάρος/βάρκα/πλοίο-shaped cargo labels for recirculation. Three belts marked Ο / Η / ΤΟ
    with gender affordances. Grammar focus: gender by ending. 6 correct sorts in a row → ticket-free pass.
-3. **Customs (Τελωνείο).** Guard: `Εγώ είμαι ο φύλακας. Έχεις το διαβατήριο;` Player builds an answer
+3. **Customs (Τελωνείο).** Guard (hand to chest, then reaching to the player): `Είμαι ο φύλακας. Έχεις το διαβατήριο;`
+   (no `Εγώ`: Greek is pro-drop, the ending carries the person; keeps the budget at 15) Player builds an answer
    from tiles and drags an item to the window. Correct: `Ναι, έχω το διαβατήριο.` + passport.
    Grammar focus: person ending -ω vs -εις. Barrier opens; sign `ΕΞΟΔΟΣ`; level-complete card.
 
@@ -87,8 +88,10 @@ Never show a translation.
 - Each Greek word the player has *seen* gets a card in the notebook (auto-collected on first sight).
 - Player assigns a meaning by picking a **pictogram** from a palette (no typing). Palette = pictograms of
   all objects/actions the player has *seen in the world* this level (so the choice set grows naturally).
-- Two-click binding also works world-side: pick a card in the notebook → click the object in the world.
-  Correct object binds; wrong object flashes red (counts as an attempt for scaffolding).
+- Two-click binding also works world-side: pick a card (in the notebook via «в мир», or by clicking the word
+  in a speech bubble) → click an object in the world. This assigns that object's pictogram to the card as a
+  *hypothesis* with neutral feedback (ink stamp). It is NOT validated on the spot — validation happens only
+  at page level, otherwise the page check would be meaningless (Chants rule).
 - **Pages**: cards group into pages (e.g. «Λιμάνι» page = 4 cards). A page is checked only when *all* its
   cards are filled, all-or-nothing (Chants rule). Correct page → cards lock in gold, words become "known".
   Wrong → page shakes, no hint which card is wrong.
@@ -98,7 +101,8 @@ Tiles: words the player knows/has seen, including inflected variants (έχω/έ�
 Player drags tiles into slots. `ErrorClassifier` compares the built sentence to the target:
 - **Semantic**: a slot's lemma ≠ target lemma (e.g. εισιτήριο for διαβατήριο).
 - **Morphological**: lemma correct, form wrong (έχεις instead of έχω).
-- **Syntactic**: roles swapped (subject ↔ object lemmas exchanged).
+- **Syntactic**: all the right lemmas, wrong order/roles (same multiset of lemmas, different positions) —
+  covers subject↔object swaps in later levels and word salad like `Το διαβατήριο έχω ναι` here.
 Priority when several apply: syntactic > semantic > morphological (most meaning-breaking first).
 
 ### 4.5 Diegetic reactions
