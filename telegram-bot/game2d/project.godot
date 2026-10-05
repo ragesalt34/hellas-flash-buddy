@@ -19,3 +19,9 @@ window/stretch/aspect="keep"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.984, 0.969, 0.941, 1)
+
+[autoload]
+
+SignalBus="*res://autoload/signal_bus.gd"
+GameState="*res://autoload/game_state.gd"
+CursorManager="*res://autoload/cursor_manager.gd"

@@ -1,0 +1,38 @@
+{
+	"start_scene": "pier",
+	"start_inventory": ["diavatirio", "eisitirio"],
+	"scenes": {
+		"pier": "res://levels/level1/pier.tscn",
+		"conveyor": "res://levels/level1/conveyor.tscn",
+		"customs": "res://levels/level1/customs.tscn",
+		"end": "res://levels/level1/level_end.tscn"
+	},
+	"pages": {
+		"pier": ["limani", "ploio", "faros", "varka"],
+		"people": ["naftis", "fylakas", "eimai"],
+		"cargo": ["sakos", "valitsa", "kouti"],
+		"customs": ["diavatirio", "eisitirio", "echo", "nai", "ochi"],
+		"exit": ["exodos"]
+	},
+	"conveyor": {"goal": 6, "words": ["sakos", "valitsa", "kouti", "faros", "varka", "ploio"]},
+	"customs": {
+		"target": [{"w": "nai", "f": ""}, {"w": "echo", "f": "1s"}, {"w": "diavatirio", "f": "nom"}],
+		"tiles": [
+			{"w": "echo", "f": "2s"}, {"w": "nai", "f": ""}, {"w": "eisitirio", "f": "nom"},
+			{"w": "echo", "f": "1s"}, {"w": "ochi", "f": ""}, {"w": "diavatirio", "f": "nom"},
+			{"w": "echo", "f": "3s"}
+		],
+		"item": "diavatirio"
+	},
+	"lines": {
+		"sailor_intro": [["eimai", "1s"], " ", ["naftis", "nom"], "."],
+		"sailor_yes": [["nai", ""], "!"],
+		"sailor_no": [["ochi", ""], "."],
+		"worker_no": [["ochi", ""], "."],
+		"worker_yes": [["nai", ""], "!"],
+		"guard_question": [["eimai", "1s"], " ", ["fylakas", "nom"], ". ", ["echo", "2s"], " ", ["diavatirio", "nom"], ";"],
+		"guard_answer": [["nai", ""], ", ", ["echo", "1s"], " ", ["diavatirio", "nom"], "."],
+		"guard_yes": [["nai", ""], "!"],
+		"guard_syntactic": [["diavatirio", "nom"], " ", ["echo", "3s"], ";", " ", ["ochi", ""], "!"]
+	}
+}
