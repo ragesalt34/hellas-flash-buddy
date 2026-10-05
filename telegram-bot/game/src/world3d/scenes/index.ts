@@ -1,31 +1,10 @@
 import type { SceneId } from '../../content/chapter1';
 import type { SceneBuilder } from '../types';
-import { BOUNDS, WIDE, toLeft, toRight, town } from './common';
+import { bakery } from './bakery';
+import { fish } from './fish';
+import { gate } from './gate';
+import { lane } from './lane';
 import { pier } from './pier';
+import { square } from './square';
 
-const ORDER: SceneId[] = ['pier', 'fish', 'bakery', 'square', 'lane', 'gate'];
-
-/** Bare town square used until a scene gets its own builder. */
-const placeholder =
-  (id: SceneId): SceneBuilder =>
-  (kit) => {
-    town(kit);
-    const i = ORDER.indexOf(id);
-    return {
-      bounds: BOUNDS,
-      colliders: [],
-      blockers: [],
-      exits: [toLeft(ORDER[i - 1]), ...(i < ORDER.length - 1 ? [toRight(ORDER[i + 1])] : [])],
-      npcs: [],
-      shot: WIDE,
-    };
-  };
-
-export const SCENE_BUILDERS: Record<SceneId, SceneBuilder> = {
-  pier,
-  fish: placeholder('fish'),
-  bakery: placeholder('bakery'),
-  square: placeholder('square'),
-  lane: placeholder('lane'),
-  gate: placeholder('gate'),
-};
+export const SCENE_BUILDERS: Record<SceneId, SceneBuilder> = { pier, fish, bakery, square, lane, gate };
