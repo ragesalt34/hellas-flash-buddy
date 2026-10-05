@@ -21,11 +21,11 @@ var _status: Label
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	size = Vector2(1920, 1080)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_dimmer = ColorRect.new()
 	_dimmer.color = Color(Palette.INK, 0.25)
-	_dimmer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_dimmer.size = Vector2(1920, 1080)
 	_dimmer.visible = false
 	_dimmer.gui_input.connect(_on_dimmer_input)
 	add_child(_dimmer)
