@@ -1,0 +1,2 @@
+GFS Didot — Copyright (c) Greek Font Society. Licensed under the SIL Open Font License 1.1
+(https://openfontlicense.org). Greek-subset woff2 taken from the @fontsource/gfs-didot package.
