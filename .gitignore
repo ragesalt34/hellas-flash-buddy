@@ -42,3 +42,5 @@ telegram-bot/webapp/ios/
 # Local-only reference assets from a third-party game (personal use, never commit or deploy)
 telegram-bot/game/public/ref/
 reference/
+telegram-bot/game/ref.html
+telegram-bot/game/refviewer/

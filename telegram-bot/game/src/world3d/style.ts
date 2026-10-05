@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
+import { NO_EDGE_LAYER, type SennaarPipeline } from './pipeline';
 
 export const PAL = {
   horizon: 0xf8e6c4,
@@ -28,14 +29,7 @@ export const PAL = {
   brown: 0x5a4a3a,
 } as const;
 
-// Two-step toon ramp: lit / shadow, nothing in between — the comic-book look.
-const ramp = new THREE.DataTexture(new Uint8Array([120, 120, 255, 255]), 4, 1, THREE.RedFormat);
-ramp.minFilter = THREE.NearestFilter;
-ramp.magFilter = THREE.NearestFilter;
-ramp.needsUpdate = true;
-
 const lines = {
-  ink: new LineMaterial({ color: PAL.ink, linewidth: 3 }),
   thin: new LineMaterial({ color: PAL.ink, linewidth: 1.5 }),
   foam: new LineMaterial({ color: 0xeaf2fb, linewidth: 1.6 }),
 };
@@ -43,26 +37,6 @@ export function setLineResolution(w: number, h: number): void {
   for (const m of Object.values(lines)) m.resolution.set(w, h);
 }
 
-const hullMat = new THREE.MeshBasicMaterial({ color: PAL.ink, side: THREE.BackSide });
-const toonCache = new Map<number, THREE.MeshToonMaterial>();
-
-export function toon(color: number): THREE.MeshToonMaterial {
-  let m = toonCache.get(color);
-  if (!m) {
-    // polygonOffset pushes faces back so the ink lines on their edges always win the depth test.
-    m = new THREE.MeshToonMaterial({
-      color,
-      gradientMap: ramp,
-      polygonOffset: true,
-      polygonOffsetFactor: 1,
-      polygonOffsetUnits: 1,
-    });
-    toonCache.set(color, m);
-  }
-  return m;
-}
-
-export type Outline = 'ink' | 'hull' | 'none';
 type Animator = (t: number, dt: number) => void;
 
 /** Seeded RNG so a scene looks the same every time it loads. */
@@ -76,12 +50,16 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-/** Scene-building helpers: everything is primitives + toon + ink, Chants style. */
+/** Scene-building helpers: primitives in flat colours; the pipeline adds shade, hatching and outlines. */
 export class Kit {
   readonly animators: Animator[] = [];
   readonly rand: () => number;
 
-  constructor(readonly scene: THREE.Scene, seed: number) {
+  constructor(
+    readonly scene: THREE.Scene,
+    seed: number,
+    private readonly pipeline: SennaarPipeline,
+  ) {
     this.rand = mulberry32(seed);
   }
 
@@ -89,33 +67,25 @@ export class Kit {
     for (const a of this.animators) a(t, dt);
   }
 
-  mesh(source: THREE.BufferGeometry, color: number, outline: Outline = 'ink', flat = false, hullScale = 1.06): THREE.Mesh {
+  /** Flat-coloured mesh; outlines come from the pipeline's edge pass. `flat` gives faceted normals. */
+  mesh(source: THREE.BufferGeometry, color: number, flat = false, doubleSide = false): THREE.Mesh {
     let geo = source;
     if (flat) {
-      // Toon materials have no flatShading: split vertices so each face gets its own normal.
+      // Split vertices so each face gets its own normal (toon materials have no flatShading).
       if (geo.index) {
         geo = source.toNonIndexed();
         source.dispose();
       }
       geo.computeVertexNormals();
     }
-    const m = new THREE.Mesh(geo, toon(color));
+    const m = new THREE.Mesh(geo, this.pipeline.material(color, doubleSide));
     m.castShadow = true;
     m.receiveShadow = true;
-    if (outline === 'ink') {
-      const edges = new THREE.EdgesGeometry(geo, 25);
-      m.add(new LineSegments2(new LineSegmentsGeometry().fromEdgesGeometry(edges), lines.ink));
-      edges.dispose();
-    } else if (outline === 'hull') {
-      const h = new THREE.Mesh(geo, hullMat);
-      h.scale.setScalar(hullScale);
-      m.add(h);
-    }
     return m;
   }
 
-  add(geo: THREE.BufferGeometry, color: number, x: number, y: number, z: number, outline: Outline = 'ink', flat = false): THREE.Mesh {
-    const m = this.mesh(geo, color, outline, flat);
+  add(geo: THREE.BufferGeometry, color: number, x: number, y: number, z: number, flat = false): THREE.Mesh {
+    const m = this.mesh(geo, color, flat);
     m.position.set(x, y, z);
     this.scene.add(m);
     return m;
@@ -152,11 +122,12 @@ export class Kit {
     }
     g.fillText(spaced, cx, cy);
     const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 8;
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
     mat.userData.own = true; // disposed with the scene
-    return new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+    plane.layers.set(NO_EDGE_LAYER); // painted on the surface: no outline of its own
+    return plane;
   }
 
   /** Painted signboard; y is the bottom of the board, text faces +z. */
@@ -208,7 +179,7 @@ export class Kit {
     this.box(w + 0.3, 0.25, d + 0.3, PAL.wall, x, baseY + h, z);
     if (opts.dome) {
       const r = w * 0.34;
-      this.add(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), PAL.blue, x, baseY + h + 0.25, z, 'hull');
+      this.add(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), PAL.blue, x, baseY + h + 0.25, z);
       this.box(0.12, 0.9, 0.12, PAL.ink, x, baseY + h + 0.25 + r, z);
       this.box(0.6, 0.12, 0.12, PAL.ink, x, baseY + h + 0.85 + r, z);
     }
@@ -218,13 +189,13 @@ export class Kit {
   bougainvillea(x: number, y: number, z: number): void {
     for (let i = 0; i < 5; i++) {
       const r = 0.35 + this.rand() * 0.25;
-      this.add(new THREE.IcosahedronGeometry(r, 0), PAL.magenta, x + (this.rand() - 0.5) * 1.4, y + this.rand() * 0.9, z, 'hull', true);
+      this.add(new THREE.IcosahedronGeometry(r, 0), PAL.magenta, x + (this.rand() - 0.5) * 1.4, y + this.rand() * 0.9, z, true);
     }
   }
 
   pot(x: number, y: number, z: number): void {
-    this.add(new THREE.CylinderGeometry(0.32, 0.22, 0.55, 8), PAL.terracotta, x, y + 0.27, z, 'hull', true);
-    this.add(new THREE.IcosahedronGeometry(0.42, 0), PAL.green, x, y + 0.8, z, 'hull', true);
+    this.add(new THREE.CylinderGeometry(0.32, 0.22, 0.55, 8), PAL.terracotta, x, y + 0.27, z, true);
+    this.add(new THREE.IcosahedronGeometry(0.42, 0), PAL.green, x, y + 0.8, z, true);
   }
 
   crate(x: number, y: number, z: number): void {
@@ -232,34 +203,34 @@ export class Kit {
   }
 
   bollard(x: number, z: number): void {
-    this.add(new THREE.CylinderGeometry(0.25, 0.32, 0.8, 8), PAL.ink, x, 0.4, z, 'none');
+    this.add(new THREE.CylinderGeometry(0.25, 0.32, 0.8, 8), PAL.ink, x, 0.4, z);
   }
 
   olive(x: number, z: number): void {
-    const trunk = this.add(new THREE.CylinderGeometry(0.25, 0.4, 2.4, 6), PAL.wood, x, 1.2, z, 'hull', true);
+    const trunk = this.add(new THREE.CylinderGeometry(0.25, 0.4, 2.4, 6), PAL.wood, x, 1.2, z, true);
     trunk.rotation.z = 0.1;
     for (let i = 0; i < 4; i++) {
-      this.add(new THREE.IcosahedronGeometry(1 + this.rand() * 0.5, 0), PAL.olive, x + (this.rand() - 0.5) * 2, 2.8 + this.rand() * 0.8, z + (this.rand() - 0.5) * 1.5, 'hull', true);
+      this.add(new THREE.IcosahedronGeometry(1 + this.rand() * 0.5, 0), PAL.olive, x + (this.rand() - 0.5) * 2, 2.8 + this.rand() * 0.8, z + (this.rand() - 0.5) * 1.5, true);
     }
   }
 
   cypress(x: number, z: number): void {
-    this.add(new THREE.ConeGeometry(0.8, 5.5, 7), PAL.green, x, 2.75, z, 'hull', true);
+    this.add(new THREE.ConeGeometry(0.8, 5.5, 7), PAL.green, x, 2.75, z, true);
   }
 
   cat(x: number, y: number, z: number, rot: number): void {
     const g = new THREE.Group();
-    const body = this.mesh(new THREE.BoxGeometry(0.35, 0.3, 0.6), PAL.cat, 'ink', true);
+    const body = this.mesh(new THREE.BoxGeometry(0.35, 0.3, 0.6), PAL.cat, true);
     body.position.y = 0.15;
-    const head = this.mesh(new THREE.BoxGeometry(0.3, 0.26, 0.26), PAL.cat, 'ink', true);
+    const head = this.mesh(new THREE.BoxGeometry(0.3, 0.26, 0.26), PAL.cat, true);
     head.position.set(0, 0.42, 0.25);
     g.add(body, head);
     for (const sx of [-0.09, 0.09]) {
-      const ear = this.mesh(new THREE.ConeGeometry(0.06, 0.13, 4), PAL.cat, 'none', true);
+      const ear = this.mesh(new THREE.ConeGeometry(0.06, 0.13, 4), PAL.cat, true);
       ear.position.set(sx, 0.6, 0.25);
       g.add(ear);
     }
-    const tail = this.mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.5, 5), PAL.cat, 'none', true);
+    const tail = this.mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.5, 5), PAL.cat, true);
     tail.position.set(0.12, 0.25, -0.35);
     tail.rotation.x = 0.9;
     g.add(tail);
@@ -275,13 +246,10 @@ export class Kit {
     hull.position.y = 0.45;
     const rim = this.mesh(new THREE.BoxGeometry(5.1, 0.15, 1.9), PAL.wall);
     rim.position.y = 0.95;
-    const mast = this.mesh(new THREE.CylinderGeometry(0.08, 0.08, 4, 6), PAL.ink, 'none');
+    const mast = this.mesh(new THREE.CylinderGeometry(0.08, 0.08, 4, 6), PAL.ink);
     mast.position.y = 2.6;
     const sailShape = new THREE.Shape([new THREE.Vector2(0, 0), new THREE.Vector2(0, 3.3), new THREE.Vector2(2.2, 0)]);
-    const sail = this.mesh(new THREE.ShapeGeometry(sailShape), PAL.wall);
-    sail.material = toon(PAL.wall).clone();
-    (sail.material as THREE.Material).side = THREE.DoubleSide;
-    (sail.material as THREE.Material).userData.own = true;
+    const sail = this.mesh(new THREE.ShapeGeometry(sailShape), PAL.wall, false, true);
     sail.position.set(0.1, 1.1, 0);
     g.add(hull, rim, mast, sail);
     g.position.set(x, -1.75, z);
@@ -303,11 +271,11 @@ export class Kit {
     band.position.y = 2.4;
     const cabin = this.mesh(new THREE.BoxGeometry(4, 2, 2.6), PAL.wall);
     cabin.position.set(2, 3.6, 0);
-    const funnel = this.mesh(new THREE.CylinderGeometry(0.5, 0.6, 2, 10), PAL.red, 'hull');
+    const funnel = this.mesh(new THREE.CylinderGeometry(0.5, 0.6, 2, 10), PAL.red);
     funnel.position.set(3, 5.5, 0);
     g.add(hull, band, cabin, funnel);
     for (const wx of [0.8, 2, 3.2]) {
-      const win = this.mesh(new THREE.BoxGeometry(0.6, 0.6, 0.05), PAL.blue, 'none');
+      const win = this.mesh(new THREE.BoxGeometry(0.6, 0.6, 0.05), PAL.blue);
       win.position.set(wx, 3.8, 1.33);
       g.add(win);
     }
@@ -332,12 +300,11 @@ export class Kit {
     }
     const rope = new LineSegmentsGeometry();
     rope.setPositions(pts);
-    this.scene.add(new LineSegments2(rope, lines.thin));
+    const ropeLine = new LineSegments2(rope, lines.thin);
+    ropeLine.layers.set(NO_EDGE_LAYER);
+    this.scene.add(ropeLine);
     colors.forEach((col, i) => {
-      const cloth = this.mesh(new THREE.PlaneGeometry(1.1, 1.3).translate(0, -0.65, 0), col);
-      cloth.material = toon(col).clone();
-      (cloth.material as THREE.Material).side = THREE.DoubleSide;
-      (cloth.material as THREE.Material).userData.own = true;
+      const cloth = this.mesh(new THREE.PlaneGeometry(1.1, 1.3).translate(0, -0.65, 0), col, false, true);
       cloth.position.copy(sagAt((i + 1) / (colors.length + 1)));
       this.scene.add(cloth);
       this.animators.push((t) => (cloth.rotation.x = Math.sin(t * 1.6 + i) * 0.18));
@@ -345,8 +312,8 @@ export class Kit {
   }
 
   sea(): void {
-    this.add(new THREE.BoxGeometry(400, 1, 240), PAL.sea, 0, -2.2, 120, 'none');
-    this.add(new THREE.PlaneGeometry(600, 200).rotateX(-Math.PI / 2), PAL.seaFar, 0, -1.69, 160, 'none');
+    this.add(new THREE.BoxGeometry(400, 1, 240), PAL.sea, 0, -2.2, 120);
+    this.add(new THREE.PlaneGeometry(600, 200).rotateX(-Math.PI / 2), PAL.seaFar, 0, -1.69, 160);
     const pts: number[] = [];
     for (let i = 0; i < 90; i++) {
       const x = (this.rand() - 0.5) * 120;
@@ -357,6 +324,7 @@ export class Kit {
     const geo = new LineSegmentsGeometry();
     geo.setPositions(pts);
     const foam = new LineSegments2(geo, lines.foam);
+    foam.layers.set(NO_EDGE_LAYER);
     this.scene.add(foam);
     this.animators.push((t) => (foam.position.x = Math.sin(t * 0.3) * 1.5));
   }
@@ -396,7 +364,7 @@ export class Kit {
       [-85, -120, 30, 16, PAL.mountain],
       [80, -125, 34, 18, PAL.mountain],
     ];
-    for (const [x, z, r, h, c] of peaks) this.add(new THREE.ConeGeometry(r, h, 6), c, x, h / 2 - 2, z, 'none', true);
+    for (const [x, z, r, h, c] of peaks) this.add(new THREE.ConeGeometry(r, h, 6), c, x, h / 2 - 2, z, true);
     for (const [x, y, z, s] of [
       [-50, 40, -120, 1.4],
       [20, 52, -150, 1.8],
@@ -405,7 +373,7 @@ export class Kit {
     ] as const) {
       const g = new THREE.Group();
       for (let i = 0; i < 5; i++) {
-        const puff = this.mesh(new THREE.SphereGeometry(4 + this.rand() * 3, 10, 6), PAL.cloud, 'hull');
+        const puff = this.mesh(new THREE.SphereGeometry(4 + this.rand() * 3, 10, 6), PAL.cloud);
         puff.castShadow = false;
         puff.position.set((i - 2) * 5, this.rand() * 2, this.rand() * 2);
         puff.scale.y = 0.55;

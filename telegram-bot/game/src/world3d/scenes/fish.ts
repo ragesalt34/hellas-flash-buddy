@@ -22,7 +22,7 @@ export const fish: SceneBuilder = (kit) => {
   kit.box(5.2, 0.15, 2.6, PAL.red, -4, 3, -1.4);
   kit.signboard('ΨΑΡΙΑ', -4, 3.15, -0.2);
   for (let i = 0; i < 4; i++) {
-    const f = kit.add(new THREE.ConeGeometry(0.16, 0.7, 5), PAL.fishScale, -5.4 + i * 0.9, 1.05, -1.1, 'hull', true);
+    const f = kit.add(new THREE.ConeGeometry(0.16, 0.7, 5), PAL.fishScale, -5.4 + i * 0.9, 1.05, -1.1, true);
     f.rotation.z = Math.PI / 2;
   }
   kit.crate(-8, 0, -1.4);

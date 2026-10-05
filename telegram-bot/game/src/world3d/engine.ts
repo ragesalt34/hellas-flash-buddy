@@ -4,6 +4,8 @@ import type { Bus } from '../bus';
 import type { SceneId } from '../content/chapter1';
 import { animateFigure, figure, type Figure } from './figure';
 import { SCENE_BUILDERS } from './scenes';
+import { piraeusLook } from './looks';
+import { SennaarPipeline } from './pipeline';
 import { Kit, PAL, setLineResolution } from './style';
 import type { SceneBuild, Shot } from './types';
 
@@ -32,7 +34,6 @@ function skyTexture(): THREE.Texture {
   g.fillStyle = grad;
   g.fillRect(0, 0, 2, 256);
   const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
@@ -54,6 +55,7 @@ export class World {
   private readonly unsubs: (() => void)[] = [];
   private readonly resizeObserver: ResizeObserver;
   private sky: THREE.Texture;
+  private readonly pipeline: SennaarPipeline;
   private kit!: Kit;
   private build!: SceneBuild;
   private player!: Figure;
@@ -70,6 +72,8 @@ export class World {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // colours are display values (see pipeline)
+    this.pipeline = new SennaarPipeline(this.renderer, piraeusLook());
     parent.appendChild(this.renderer.domElement);
     this.sky = skyTexture();
     window.addEventListener('keydown', this.onKeyDown);
@@ -113,6 +117,7 @@ export class World {
     this.resizeObserver.disconnect();
     this.clearScene();
     this.sky.dispose();
+    this.pipeline.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
@@ -131,9 +136,9 @@ export class World {
   private loadScene(id: SceneId, x: number, z: number): void {
     this.clearScene();
     this.scene.background = this.sky;
-    this.scene.fog = new THREE.Fog(PAL.horizon, 70, 230);
+    this.scene.fog = null; // distance is handled by the pipeline's filter
     this.addLights();
-    this.kit = new Kit(this.scene, seedOf(id));
+    this.kit = new Kit(this.scene, seedOf(id), this.pipeline);
     this.build = SCENE_BUILDERS[id](this.kit);
     this.endSent = false;
     this.player = figure(this.kit, PAL.red, PAL.ochre);
@@ -153,13 +158,16 @@ export class World {
   }
 
   private addLights(): void {
-    this.scene.add(new THREE.HemisphereLight(0xfff0d6, 0x6f86b8, 1.4));
-    const sun = new THREE.DirectionalLight(0xffffff, 2.4);
+    const ambient = new THREE.AmbientLight();
+    const sun = new THREE.DirectionalLight();
+    this.pipeline.applyLights(ambient, sun);
+    this.scene.add(ambient);
     sun.position.set(-30, 45, 25);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, { left: -50, right: 50, top: 45, bottom: -30, near: 1, far: 160 });
-    sun.shadow.bias = -0.0008;
+    sun.shadow.bias = -0.0004;
+    sun.shadow.normalBias = 0.05;
     this.scene.add(sun);
   }
 
@@ -284,12 +292,13 @@ export class World {
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
     setLineResolution(this.width, this.height);
+    this.pipeline.setSize(this.width, this.height);
   }
 
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
     const dt = Math.min(this.clock.getDelta(), 0.05);
     this.update(dt, this.clock.elapsedTime);
-    this.renderer.render(this.scene, this.camera);
+    this.pipeline.render(this.scene, this.camera);
   };
 }

@@ -14,8 +14,7 @@ export function figure(kit: Kit, cloak: number, trim: number, scale = 1): Figure
   const root = new THREE.Group();
   const rig = new THREE.Group();
   root.add(rig);
-  const part = (geo: THREE.BufferGeometry, color: number, outline: 'hull' | 'none' = 'hull') =>
-    kit.mesh(geo, color, outline, true, 1.09);
+  const part = (geo: THREE.BufferGeometry, color: number) => kit.mesh(geo, color, true);
 
   const profile = [
     [0.01, 0.22],
@@ -26,7 +25,7 @@ export function figure(kit: Kit, cloak: number, trim: number, scale = 1): Figure
     [0.01, 1.48],
   ].map(([x, y]) => new THREE.Vector2(x, y));
   rig.add(part(new THREE.LatheGeometry(profile, 7), cloak));
-  const hem = part(new THREE.CylinderGeometry(0.53, 0.53, 0.08, 7, 1, true), trim, 'none');
+  const hem = part(new THREE.CylinderGeometry(0.53, 0.53, 0.08, 7, 1, true), trim);
   hem.position.y = 0.27;
   rig.add(hem);
 
@@ -34,7 +33,7 @@ export function figure(kit: Kit, cloak: number, trim: number, scale = 1): Figure
   for (const sx of [-0.16, 0.16]) {
     const hip = new THREE.Group();
     hip.position.set(sx, 0.5, 0);
-    const leg = part(new THREE.BoxGeometry(0.13, 0.5, 0.16), PAL.ink, 'none');
+    const leg = part(new THREE.BoxGeometry(0.13, 0.5, 0.16), PAL.ink);
     leg.position.y = -0.25;
     hip.add(leg);
     rig.add(hip);
@@ -46,7 +45,7 @@ export function figure(kit: Kit, cloak: number, trim: number, scale = 1): Figure
     shoulder.position.set(sx, 1.28, 0);
     const sleeve = part(new THREE.CylinderGeometry(0.09, 0.13, 0.62, 6), cloak);
     sleeve.position.y = -0.3;
-    const hand = part(new THREE.IcosahedronGeometry(0.08, 0), PAL.skin, 'none');
+    const hand = part(new THREE.IcosahedronGeometry(0.08, 0), PAL.skin);
     hand.position.y = -0.64;
     shoulder.add(sleeve, hand);
     shoulder.rotation.z = sx > 0 ? -0.12 : 0.12;
@@ -63,7 +62,7 @@ export function figure(kit: Kit, cloak: number, trim: number, scale = 1): Figure
   const eyes = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.035), new THREE.MeshBasicMaterial({ color: 0xf2e6c8 }));
   eyes.position.set(0, 1.71, 0.305);
   for (const m of [face, eyes]) (m.material as THREE.Material).userData.own = true;
-  const scarf = part(new THREE.TorusGeometry(0.28, 0.07, 5, 8), trim, 'none');
+  const scarf = part(new THREE.TorusGeometry(0.28, 0.07, 5, 8), trim);
   scarf.position.y = 1.43;
   scarf.rotation.x = Math.PI / 2;
   rig.add(hood, tip, face, eyes, scarf);

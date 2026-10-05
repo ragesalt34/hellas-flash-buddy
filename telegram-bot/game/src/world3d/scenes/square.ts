@@ -7,10 +7,10 @@ export const square: SceneBuilder = (kit) => {
   town(kit);
   const solids = new Solids();
   // Fountain: basin, water, column, carved ΝΕΡΟ on the front
-  kit.add(new THREE.CylinderGeometry(2.2, 2.3, 0.8, 16), PAL.stone, 0, 0.4, -1, 'hull');
-  kit.add(new THREE.CylinderGeometry(1.95, 1.95, 0.1, 16), PAL.sea, 0, 0.75, -1, 'none');
-  kit.add(new THREE.CylinderGeometry(0.3, 0.38, 2.2, 10), PAL.wall, 0, 1.6, -1, 'hull');
-  kit.add(new THREE.CylinderGeometry(0.8, 0.4, 0.3, 12), PAL.stone, 0, 2.8, -1, 'hull');
+  kit.add(new THREE.CylinderGeometry(2.2, 2.3, 0.8, 16), PAL.stone, 0, 0.4, -1);
+  kit.add(new THREE.CylinderGeometry(1.95, 1.95, 0.1, 16), PAL.sea, 0, 0.75, -1);
+  kit.add(new THREE.CylinderGeometry(0.3, 0.38, 2.2, 10), PAL.wall, 0, 1.6, -1);
+  kit.add(new THREE.CylinderGeometry(0.8, 0.4, 0.3, 12), PAL.stone, 0, 2.8, -1);
   kit.plaque('ΝΕΡΟ', 0, 0.5, 1.32, 1.4, 0.45);
   solids.add(0, -1, 4.6, 4.6);
   // Bench for the historian, olive trees, the church
