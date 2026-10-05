@@ -26,13 +26,29 @@ func _ready() -> void:
 
 
 func _extra() -> void:
-	var d := Node2D.new()
-	add_child(d)
-	var bd := Backdrop.new()
-	bd.style = "pier"
-	bd.scale = Vector2(0.45, 0.45)
-	bd.position = Vector2(40, 420)
-	d.add_child(bd)
-	var gl := Ui.greek_label("Το λιμάνι · ΕΞΟΔΟΣ · έχεις;", 40)
-	gl.position = Vector2(1000, 450)
-	add_child(gl)
+	var world := Node2D.new()
+	add_child(world)
+	var coats := [Palette.HAZE_DEEP, Color("#2F5D8A"), Color("#2E3A5C"), Color("#6B8E5A"), Color("#2F5D8A")]
+	var hats := ["beret", "cap", "peaked", "cap", "none"]
+	for i in 5:
+		var a := Actor.new()
+		a.coat = coats[i]
+		a.hat = hats[i]
+		a.position = Vector2(160 + i * 250, 1040)
+		world.add_child(a)
+		match i:
+			1:
+				a.arm_r.rotation = Actor.arm_rotation(a.arm_r.global_position, a.global_position + Vector2(220, -300))
+			2:
+				a.arm_r.rotation = Actor.arm_rotation(a.arm_r.global_position, a.global_position + Vector2(-10, -126))
+				a.say(GameState.line("guard_question"), 60.0)
+			3:
+				a.head.rotation = 0.28
+			4:
+				a.arm_l.rotation = Actor.arm_rotation(a.arm_l.global_position, a.global_position + Vector2(-220, -150))
+				a.arm_r.rotation = Actor.arm_rotation(a.arm_r.global_position, a.global_position + Vector2(-220, -150))
+	var signs := [[["limani", "nom"]], [["faros", "nom"]], [["varka", "nom"]]]
+	for i in 3:
+		var s := SignBoard.new().setup(signs[i], 110.0)
+		s.position = Vector2(1560, 560 + i * 240)
+		world.add_child(s)

@@ -78,6 +78,17 @@ func see_line(l: Array) -> void:
 		see(w)
 
 
+## Two-click binding: the card held on the cursor gets this object's pictogram as a hypothesis.
+func bind_held_card(object_word: String) -> void:
+	var w: String = CursorManager.held()
+	if w == "":
+		return
+	var p := lex.picto(object_word)
+	notebook.assign(w, p)
+	SignalBus.card_assigned.emit(w, p)
+	CursorManager.clear()
+
+
 func line(key: String) -> Array:
 	return level["lines"][key]
 

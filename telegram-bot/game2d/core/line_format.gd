@@ -6,7 +6,7 @@ extends RefCounted
 ## ending can show the class (noun) or person (verb) glyph. Article and ending carry the gender colour.
 
 const ARTICLE_COLORS := {"m": "#A8731A", "f": "#2A6FB5", "n": "#A84E2A"}
-const VERB_ENDING_COLOR := "#A0206E"
+const VERB_ENDING_COLOR := "#1E7F86"
 const _SENTENCE_END := [".", "!", ";", "?"]
 
 

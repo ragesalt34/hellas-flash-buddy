@@ -7,6 +7,8 @@ const SAVE_FOR_TESTS := "user://test_run_save.json"
 
 
 func _initialize() -> void:
+	# Wait one frame: before it the root is not ready, so nodes added by tests would not get _ready.
+	await process_frame
 	var gs := root.get_node_or_null("GameState")
 	if gs:
 		gs.save_path = SAVE_FOR_TESTS
