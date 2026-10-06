@@ -186,7 +186,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="fc-stage" key={i}>
-      <span className="fc-paper-topic pureplay-desktop">{t('topic.' + paperTopic)}</span>
+      <span className={`fc-paper-topic ft-${paperTopic} pureplay-desktop`}>{t('topic.' + paperTopic)}</span>
       <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>
         <VocabDecorImg slot="cardGreekCorner" className="fc-corner" />
         <VocabDecorImg slot="cardOliveBranch" className="fc-corner-olive" />

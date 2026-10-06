@@ -7187,20 +7187,30 @@ button.chip:active { transform: scale(0.95); }
     filter: drop-shadow(0 10px 18px rgba(92, 70, 38, 0.05));
   }
 
-  /* Terracotta paper tag with the card's real topic. The text sits on top of
-     the textured layer, so nothing masks the label itself. */
+  /* Topic tag: the delivered paper strip for the card's topic (label-<topic>-trim.webp,
+     the handoff PNG with its transparent margins removed), nine-slice so the torn
+     edges survive any width. The name is live i18n text on top; the paper layer is a
+     separate pseudo-element, so nothing is masked and the colour is never filtered. */
   [data-theme='soft'] .fc-screen .fc-paper-topic {
-    position: absolute; top: -11px; left: 22px; z-index: 2;
-    max-width: calc(100% - 44px); padding: 19px 42px 18px;
-    color: #fdeedd; font-size: 16px; font-weight: 500; line-height: 1; letter-spacing: 4px; text-transform: uppercase;
-    transform: rotate(-1.6deg); pointer-events: none; isolation: isolate;
+    position: absolute; top: -10px; left: 22px; z-index: 2;
+    max-width: calc(100% - 44px); min-width: 150px; padding: 19px 38px 18px; box-sizing: border-box;
+    text-align: center; white-space: nowrap;
+    color: #fff8eb; font-size: 13px; font-weight: 600; line-height: 1; letter-spacing: 2.5px; text-transform: uppercase;
+    /* will-change keeps the rotated nine-slice rasterised as one layer: without it the slice
+       boundaries show as hairlines through the paper */
+    transform: rotate(-1deg); will-change: transform; pointer-events: none; isolation: isolate;
   }
   [data-theme='soft'] .fc-screen .fc-paper-topic::before {
-    content: ''; position: absolute; inset: 0; z-index: -1;
-    background: #c17251 url('/assets/pureplay/paper-grain.svg');
-    -webkit-mask: url('/assets/pureplay/paper-strip-edge.svg') center / 100% 100% no-repeat;
-    mask: url('/assets/pureplay/paper-strip-edge.svg') center / 100% 100% no-repeat;
+    content: ''; display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    border: 0 solid transparent;
+    border-image: url('/assets/pureplay/topic-labels/label-mixed-trim.webp') 55 60 fill / 16px 18px stretch;
   }
+  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-history::before { border-image-source: url('/assets/pureplay/topic-labels/label-history-trim.webp'); }
+  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-culture::before { border-image-source: url('/assets/pureplay/topic-labels/label-culture-trim.webp'); }
+  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-laws::before { border-image-source: url('/assets/pureplay/topic-labels/label-laws-trim.webp'); }
+  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-geography::before { border-image-source: url('/assets/pureplay/topic-labels/label-geography-trim.webp'); }
+  /* the mixed (ochre) strip is light: dark text, as in the handoff manifest */
+  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-mixed { color: #25251e; }
 
   /* Topic collage: the whole picture, contained in a 470 x 225 box */
   [data-theme='soft'] .fc-screen .fc-paper-art {
