@@ -6,15 +6,21 @@
  *
  * Model and key come from the environment so they can change without a deploy:
  *   GEMINI_API_KEY   (Render env var — never commit it)
- *   GEMINI_MODEL     default gemini-3.8-flash
+ *   GEMINI_PARSE_MODEL  homework parsing, default gemini-3.1-pro-preview
+ *   GEMINI_MODEL        answer checking, default gemini-3.8-flash
  */
 import { MAX_ITEMS, MAX_TEXT, type HomeworkFile, type HomeworkItem, type Verdict } from './homework';
 
 const KEY = () => process.env.GEMINI_API_KEY;
-const MODEL = () => process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+// Parsing runs once per homework and must get facts and Greek right, so it uses
+// the pro model; checking runs on every answer and must be quick, so flash.
+const PARSE_MODELS = () => [process.env.GEMINI_PARSE_MODEL || 'gemini-3.1-pro-preview', 'gemini-3.8-flash', 'gemini-3.7-flash'];
+const CHECK_MODELS = () => [process.env.GEMINI_MODEL || 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.5-flash'];
 const BASE = 'https://generativelanguage.googleapis.com/v1beta';
-const TIMEOUT_MS = 15_000; // per model; up to three models are tried
-const FILE_TIMEOUT_MS = 45_000; // reading a PDF or a photo takes longer
+// Per model; up to three models are tried.
+const CHECK_TIMEOUT_MS = 15_000;
+const PARSE_TIMEOUT_MS = 45_000; // pro thinks before answering
+const FILE_TIMEOUT_MS = 60_000; // and reading a PDF or a photo takes longer still
 
 export const aiConfigured = (): boolean => !!KEY();
 
@@ -30,9 +36,9 @@ export interface AiCheck {
   mistakes: Mistake[];
 }
 
-/** Tried in order when a model is overloaded (503 "high demand"), rate limited or slow. */
-const FALLBACK_MODELS = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
-const RETRYABLE = new Set([429, 500, 503, 504]);
+/** The next model is tried when one is retired (404), overloaded (503 "high
+ * demand"), rate limited or slow. */
+const RETRYABLE = new Set([404, 429, 500, 503, 504]);
 
 class GeminiError extends Error {
   constructor(message: string, readonly retryable: boolean) {
@@ -71,11 +77,15 @@ async function callModel(model: string, parts: Part[], timeoutMs: number): Promi
   return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, ''));
 }
 
-async function callJson(prompt: string, file?: HomeworkFile): Promise<unknown> {
+async function callJson(
+  modelList: string[],
+  timeoutMs: number,
+  prompt: string,
+  file?: HomeworkFile
+): Promise<unknown> {
   const parts: Part[] = [{ text: prompt }];
   if (file) parts.push({ inlineData: { mimeType: file.mimeType, data: file.data } });
-  const timeoutMs = file ? FILE_TIMEOUT_MS : TIMEOUT_MS;
-  const models = [...new Set([MODEL(), ...FALLBACK_MODELS])];
+  const models = [...new Set(modelList)];
   let last: unknown;
   for (const model of models) {
     try {
@@ -111,7 +121,8 @@ TUTOR TEXT:
 """
 ${text.slice(0, MAX_TEXT) || '(no text, see the attached file)'}
 """`;
-  const j = (await callJson(prompt, file)) as { items?: unknown };
+  const timeout = file ? FILE_TIMEOUT_MS : PARSE_TIMEOUT_MS;
+  const j = (await callJson(PARSE_MODELS(), timeout, prompt, file)) as { items?: unknown };
   if (!Array.isArray(j.items)) throw new Error('bad shape');
   return j.items
     .slice(0, MAX_ITEMS)
@@ -141,7 +152,7 @@ Verdict: "correct" = right meaning and no mistakes that matter; "almost" = right
 Return ONLY JSON:
 {"verdict":"correct|almost|wrong","corrected":"<the student's answer fixed, in Greek, keeping their meaning>","comment_ru":"<one or two short sentences in Russian>","mistakes":[{"wrong":"<fragment>","right":"<fix>","why_ru":"<short Russian explanation of the rule>"}]}
 At most 4 mistakes, only real ones; empty array if none.`;
-  const j = (await callJson(prompt)) as Record<string, unknown>;
+  const j = (await callJson(CHECK_MODELS(), CHECK_TIMEOUT_MS, prompt)) as Record<string, unknown>;
   const verdict = j.verdict === 'correct' || j.verdict === 'almost' || j.verdict === 'wrong' ? j.verdict : null;
   if (!verdict) throw new Error('bad verdict');
   const mistakes = Array.isArray(j.mistakes)

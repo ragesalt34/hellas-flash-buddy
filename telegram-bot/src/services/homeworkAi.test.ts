@@ -46,6 +46,26 @@ test('aiParse sends an attached file to Gemini and asks for questions on topics'
   assert.match(String(parts[0].text), /topics/i, 'prompt must cover topic-only homework');
 });
 
+test('aiParse starts with the pro model, aiCheck with the fast flash model', async () => {
+  const calls = fakeGemini({ items: [{ question: 'Πού μένεις;', answer: '', note: '' }], verdict: 'correct', corrected: '', comment_ru: '', mistakes: [] });
+  await aiParse('Πού μένεις;');
+  await aiCheck({ question: 'Πού μένεις;', modelAnswer: '', note: '', answer: 'Στην Αθήνα' });
+  assert.match(calls[0], /gemini-3\.1-pro-preview:/);
+  assert.match(calls[1], /gemini-3\.8-flash:/);
+});
+
+test('a retired model (404) falls through to the next one', async () => {
+  const calls: string[] = [];
+  const text = JSON.stringify({ items: [{ question: 'Πού μένεις;', answer: '', note: '' }] });
+  globalThis.fetch = (async (url: string | URL) => {
+    calls.push(String(url));
+    if (calls.length === 1) return new Response('{"error":{"code":404}}', { status: 404 });
+    return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] }), { status: 200 });
+  }) as typeof fetch;
+  assert.equal((await aiParse('Πού μένεις;')).length, 1);
+  assert.equal(calls.length, 2);
+});
+
 test('aiParse moves to the next model when one is overloaded (503)', async () => {
   const calls: string[] = [];
   const text = JSON.stringify({ items: [{ question: 'Πού μένεις;', answer: '', note: '' }] });
