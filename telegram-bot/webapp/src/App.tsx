@@ -1,13 +1,13 @@
-import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react';
-import { X, ArrowLeft } from 'lucide-react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { X, ArrowLeft, LogIn } from 'lucide-react';
 import { Logo, LogoMark } from './components/Logo';
-import { ColumnChart, CycladicHome, Ostraka, Papyrus, WaxTablet } from './components/homeArt';
 import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
 import { getToken } from './auth';
 import { useLanguage } from './i18n';
 import { LanguageSwitch } from './components/LanguageSwitch';
 import { ThemeSwitch } from './components/ThemeSwitch';
+import { StudyIcon } from './components/StudyIcon';
 
 /** Load a code-split chunk, surviving a failed fetch instead of showing nothing.
  *
@@ -64,12 +64,12 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: View; icon: ComponentType<{ className?: string }>; key: string }[] = [
-  { id: 'home', icon: CycladicHome, key: 'nav.home' },
-  { id: 'quiz', icon: WaxTablet, key: 'nav.quiz' },
-  { id: 'flashcards', icon: Ostraka, key: 'nav.flashcards' },
-  { id: 'vocab', icon: Papyrus, key: 'nav.vocab' },
-  { id: 'stats', icon: ColumnChart, key: 'nav.stats' },
+const NAV: { id: Exclude<View, 'homework'>; key: string }[] = [
+  { id: 'home', key: 'nav.home' },
+  { id: 'quiz', key: 'nav.quiz' },
+  { id: 'flashcards', key: 'nav.flashcards' },
+  { id: 'vocab', key: 'nav.vocab' },
+  { id: 'stats', key: 'nav.stats' },
 ];
 
 export function App() {
@@ -243,7 +243,6 @@ export function App() {
           </div>
           <MeanderBand className="nav-meander" height={7} />
           {NAV.map((n) => {
-            const Icon = n.icon;
             const active = view === n.id;
             return (
               <button
@@ -254,7 +253,7 @@ export function App() {
               >
                 {active && <span className="nav-pill" aria-hidden="true" />}
                 <span className="nav-ic">
-                  <Icon className="nav-art" />
+                  <StudyIcon name={n.id} className="nav-art" />
                 </span>
                 <span className="nav-l">{t(n.key)}</span>
               </button>
@@ -262,6 +261,7 @@ export function App() {
           })}
           <LanguageSwitch />
           <ThemeSwitch />
+          {!getToken() && !tg && <button className="pureplay-header-login pureplay-desktop" onClick={() => { openGateAuth('login'); setEntered(false); }}><LogIn size={18} />{t('landing.enter')}</button>}
         </div>
       </nav>
     </>

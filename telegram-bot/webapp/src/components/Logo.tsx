@@ -16,11 +16,13 @@ export function LogoMark({ className = '' }: { className?: string }) {
 export function Logo({ variant = 'compact', className = '' }: { variant?: 'compact' | 'wide'; className?: string }) {
   const wide = variant === 'wide';
   return (
-    <img
+    <span
       className={`logo ${wide ? 'logo-wide' : 'logo-compact'} ${className}`}
-      src={src(wide ? 'hellas-study-logo' : 'hellas-study-wordmark')}
-      alt="Hellas Study"
-      draggable={false}
-    />
+      role="img"
+      aria-label="Hellas Study"
+    >
+      <img className="logo-art" src={src(wide ? 'hellas-study-logo' : 'hellas-study-wordmark')} alt="" draggable={false} />
+      <span className="logo-pureplay" aria-hidden="true">Hellas Study<span className="logo-el" lang="el">Ελ</span></span>
+    </span>
   );
 }

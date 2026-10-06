@@ -1,7 +1,7 @@
 // Visual theme: two complete looks the user picks between.
 //
-//   soft — the original. Warm sand ground, white cards, hairline borders,
-//          quiet ink shadows, 8/14/22px radii, Rubik + Onest.
+//   soft — Blue Pureplay. White ground, blue actions, cool hairline borders,
+//          6/8px radii, Inter for Latin, Cyrillic and Greek.
 //   brut — neo-brutalist, editorial. Near-white ground, 2px ink borders,
 //          square corners, hard offset shadows in Greek colours (saffron,
 //          terracotta, Aegean, olive), Aegean blue for the main action,
@@ -10,8 +10,7 @@
 // Everything visual in styles.css is already driven by custom properties, so a
 // theme is mostly a block of token overrides under [data-theme='brut'] plus a
 // few structural rules for things tokens cannot express (the sidebar shape, the
-// hero composition). `soft` stays the default: if the new look is rejected,
-// nothing has to be unwound.
+// hero composition). `soft` stays the default and keeps its stored identifier.
 
 export type Theme = 'soft' | 'brut';
 

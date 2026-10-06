@@ -7,7 +7,8 @@ import { countWord, useLanguage } from '../i18n';
 import { haptic } from '../telegram';
 import { MeanderBand } from '../components/greekArt';
 import { SectionLabel } from '../components/SectionLabel';
-import { Medallion, OliveCalendar, ParthenonProgress, TopicEmblem, type MedalKind } from '../components/statsArt';
+import { Medallion, OliveCalendar, ParthenonProgress, type MedalKind } from '../components/statsArt';
+import { StudyIcon, TopicIcon } from '../components/StudyIcon';
 import { OilLamp, Ostraka, Papyrus } from '../components/homeArt';
 
 const VERDICT_ICON: Record<ReadinessResponse['verdict'], LucideIcon> = {
@@ -64,6 +65,7 @@ function Criterion({
   return (
     <div className={`bar-row rd-crit${aid ? ' is-aid' : ''}`}>
       <Medallion kind={medal} />
+      <span className="pureplay-criterion-icon pureplay-desktop"><StudyIcon name={medal === 'greek' ? 'speech' : medal === 'words' ? 'vocab' : medal === 'memory' ? 'memory' : 'russian'} /></span>
       <div className="rd-crit-body">
         <div className="lab">
           <span>
@@ -153,8 +155,21 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         </div>
       </div>
 
+      <div className="card pureplay-blockers pureplay-desktop">
+        <h2>{t('rd.blockers')}</h2>
+        {data.blockers.length ? data.blockers.map((b) => (
+          <div className="pureplay-blocker-row" key={b.kind + (b.topic ?? '')}>
+            {b.kind === 'words' ? <StudyIcon name="vocab" /> : <TopicIcon topic={b.topic ?? ''} />}
+            <span>{b.kind === 'words' ? t('rd.blocker.words') : label(b.topic ?? '')}</span>
+            <small>{b.known}/{b.total}</small>
+          </div>
+        )) : <p>{t('rd.verdictHint.ready')}</p>}
+        <button className="btn btn-block" onClick={() => { haptic(); onNavigate('flashcards'); }}>{t('rd.repeatCards')}<ChevronRight size={19} /></button>
+      </div>
+
       <Label k="rd.criteria" />
       <div className="card rd-criteria">
+        <h2 className="pureplay-panel-title pureplay-desktop">{t('rd.criteria')}</h2>
         <Criterion
           medal="greek"
           title={t('rd.crit.greek')}
@@ -193,11 +208,12 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
 
       <Label k="rd.byTopic" />
       <div className="card rd-topics">
+        <h2 className="pureplay-panel-title pureplay-desktop">{t('rd.byTopic')}</h2>
         {data.topics.map((tp) => {
           const g = pct(tp.greek.known, tp.total);
           return (
             <div className="rd-topic" key={tp.topic}>
-              <TopicEmblem topic={tp.topic} />
+              <TopicIcon topic={tp.topic} className="rd-emblem" />
               <div className="rd-topic-main">
                 <div className="rd-topic-head">
                   <b>{label(tp.topic)}</b>
@@ -205,7 +221,8 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
                     {tp.total} {countWord(tp.total, 'question', language)}
                   </span>
                   <span className={`rd-topic-pct ${tone(g)}`}>
-                    {g}% <small>{t('rd.onGreek')}</small>
+                    <span className="rd-topic-percent">{g}% <small>{t('rd.onGreek')}</small></span>
+                    <span className="pureplay-desktop">{tp.greek.known}/{tp.total}</span>
                   </span>
                 </div>
                 <span className="tp-bar">
@@ -223,6 +240,8 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
 
       <Label k="rd.activity" />
       <div className="card rd-activity">
+        <div className="rd-activity-main">
+        <h2 className="pureplay-panel-title pureplay-desktop">{t('rd.activity')}</h2>
         <div className="rd-act-top">
           <span className="rd-streak">
             <OilLamp className="rd-act-ic c-lamp" />
@@ -253,19 +272,23 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         </div>
 
         <OliveCalendar days={grid} active={active} today={grid[grid.length - 1]} />
+        <div className="pureplay-calendar pureplay-desktop" aria-label={t('rd.activityHint')}>
+          {grid.map((day) => <span key={day} className={`${active.has(day) ? 'is-active' : ''}${day === grid[grid.length - 1] ? ' is-today' : ''}`} title={day} />)}
+        </div>
         <div className="rd-sub">
-          {t('rd.oliveHint')} · {activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}
+          <span className="rd-legacy-calendar-hint">{t('rd.oliveHint')} · </span>{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}
+        </div>
         </div>
 
         {data.history.length > 0 && (
-          <>
+          <div className="rd-history">
             <MeanderBand className="rd-act-rule" height={8} />
             <div className="rd-sublabel">{t('rd.recent')}</div>
             {history.map((s, i) => {
               const date = new Date(s.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
               return (
                 <div className={`rd-test${s.lang === 'el' ? ' is-el' : ''}`} key={i}>
-                  <TopicEmblem topic={s.topic} />
+                  <TopicIcon topic={s.topic} className="rd-emblem" />
                   <div className="rd-test-main">
                     <div className="rd-test-title">
                       {label(s.topic)}
@@ -290,7 +313,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
                 <ChevronDown size={16} strokeWidth={2.4} /> {t('rd.showMore')}
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
 

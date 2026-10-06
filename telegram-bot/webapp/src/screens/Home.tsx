@@ -6,7 +6,7 @@ import { Loading, useCached } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
-import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Owl, Papyrus, WaxTablet } from '../components/homeArt';
+import { StudyIcon } from '../components/StudyIcon';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
 import { PlanCard } from './PlanCard';
 import { WordOfDay } from './WordOfDay';
@@ -69,25 +69,33 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         <h1>
           <span className="highlight">{me.user.name}</span>
         </h1>
+        <div className="pureplay-welcome">
+          <h2>{t('home.pureplay.title')}</h2>
+          <p>{t('home.pureplay.sub')}</p>
+          <div className="pureplay-welcome-actions">
+            <button className="btn" onClick={() => nav('quiz')}>{t('home.pureplay.start')} <ArrowRight size={20} /></button>
+            <button className="pureplay-text-link" onClick={() => nav('flashcards')}>{t('home.pureplay.cards')}</button>
+          </div>
+        </div>
         <div className="hero-chips">
           {me.streak >= 2 && (
             <span className="chip">
-              <OilLamp className="chip-art c-lamp" />
+              <StudyIcon name="streak" className="chip-art c-lamp" />
               {me.streak} {countWord(me.streak, 'day', language)}
             </span>
           )}
           <span className="chip chip-acc">
-            <Aspis className="chip-art c-aspis" />
+            <StudyIcon name="accuracy" className="chip-art c-aspis" />
             {acc}%
             <span className="home-chip-label">{t('home.accuracy')}</span>
           </span>
           <span className="chip">
-            <WaxTablet className="chip-art c-tablet" />
+            <StudyIcon name="quiz" className="chip-art c-tablet" />
             {me.stats.total_sessions}
             <span className="home-chip-label">{t('home.sessions')}</span>
           </span>
           <span className="chip">
-            <LaurelSprig className="chip-art c-laurel" />
+            <StudyIcon name="words" className="chip-art c-laurel" />
             {me.vocab.mastered}/{me.vocab.total}
             <span className="home-chip-label">{t('home.wordsLearned')}</span>
           </span>
@@ -123,10 +131,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </div>
       </div>
 
-      {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
-
-      {me.wordOfDay && <WordOfDay word={me.wordOfDay} />}
-
+      <div className="home-workspace">
+      <section className="home-learning">
       <SectionLabel k="home.section.learn" />
       <div className="tiles stagger">
         <button
@@ -135,7 +141,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('quiz')}
         >
           <span className="tile-ic">
-            <WaxTablet />
+            <StudyIcon name="quiz" />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
@@ -152,7 +158,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
 
         <button className="tile t-cards" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
           <span className="tile-ic">
-            <Ostraka />
+            <StudyIcon name="flashcards" />
           </span>
           <span className="tile-t">{t('nav.flashcards')}</span>
           <span className="tile-d">{t('home.flashcards.desc')}</span>
@@ -163,7 +169,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="tile-ic">
-            <Papyrus />
+            <StudyIcon name="vocab" />
           </span>
           <span className="tile-t">{t('nav.vocab')}</span>
           <span className="tile-d">{t('home.vocab.desc')}</span>
@@ -179,7 +185,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('homework')}
         >
           <span className="tile-ic">
-            <Owl />
+            <StudyIcon name="homework" />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
@@ -199,7 +205,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('stats')}
         >
           <span className="tile-ic">
-            <ColumnChart />
+            <StudyIcon name="stats" />
           </span>
           <span className="grow">
             <span className="tile-t" style={{ display: 'block' }}>
@@ -212,6 +218,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             <ArrowRight size={20} strokeWidth={2.4} />
           </span>
         </button>
+      </div>
+      {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
+      </section>
+      {me.wordOfDay && <aside className="home-sidebar"><WordOfDay word={me.wordOfDay} /></aside>}
       </div>
 
       {showStreak && <StreakCelebration streak={me.streak} onDismiss={dismissStreak} />}

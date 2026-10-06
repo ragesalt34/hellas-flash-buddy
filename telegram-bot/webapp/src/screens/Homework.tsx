@@ -148,7 +148,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
   // ---------- list ----------
   if (phase === 'list') {
     return (
-      <div className="fade-in hw-screen">
+      <div className="fade-in hw-screen hw-list-screen">
         <TopicScene topic="homework" />
         <div className="topbar">
           <Meta>{t('nav.homework')}</Meta>
@@ -209,12 +209,15 @@ export function Homework({ onHome }: { onHome: () => void }) {
   // ---------- new ----------
   if (phase === 'new') {
     return (
-      <div className="fade-in hw-screen">
+      <div className="fade-in hw-screen hw-new-screen">
         <TopicScene topic="homework" />
         <div className="topbar">
           <Meta>{t('hw.new')}</Meta>
         </div>
         <div className="spacer" />
+        <h1 className="pureplay-desktop hw-new-title">{t('hw.new')}</h1>
+        <div className="hw-new-layout">
+        <div className="hw-new-form">
         <label className="field">
           <span className="field-label">{t('hw.titleLabel')}</span>
           <input
@@ -237,12 +240,20 @@ export function Homework({ onHome }: { onHome: () => void }) {
           />
         </label>
         {error && <div className="hw-err">{t('common.error')}</div>}
+        <div className="hw-new-actions">
         <button className="btn btn-block" disabled={!text.trim() || busy} onClick={parse}>
           {busy ? t('hw.parsing') : t('hw.parse')} <ArrowRight size={18} strokeWidth={2.6} />
         </button>
         <button className="btn btn-block secondary hw-gap" onClick={() => setPhase('list')}>
           {t('hw.back')}
         </button>
+        </div>
+        </div>
+        <aside className="hw-new-aside pureplay-desktop">
+          <div className="hw-new-preview" aria-hidden="true"><span lang="el">Α β γ</span></div>
+          <div className="card hw-new-help"><h2>{t('hw.pureplay.helpTitle')}</h2><p>{t('hw.pastePlaceholder')}</p><p>{t('hw.pureplay.reviewHint')}</p></div>
+        </aside>
+        </div>
       </div>
     );
   }

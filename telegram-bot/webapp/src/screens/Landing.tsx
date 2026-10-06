@@ -9,6 +9,7 @@ import { MeanderBand, OliveSprig } from '../components/greekArt';
 import { TopicGlyph } from '../components/statsArt';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
 import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre } from '../components/landingArt';
+import { StudyIcon } from '../components/StudyIcon';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -194,6 +195,11 @@ export function Landing({
       <nav className="lp-nav">
         <Logo className="lp-nav-logo" />
         <LogoMark className="lp-nav-mark" />
+        <div className="pureplay-landing-links">
+          <a href="#how-it-works">{t('landing.steps.title')}</a>
+          <a href="#features">{t('landing.features.title')}</a>
+          <a href="#faq">{t('landing.faq.title')}</a>
+        </div>
         <div className="lp-nav-right">
           <LanguageSwitch />
           <button className="lp-btn ghost" onClick={onLogin}>{t('landing.enter')}</button>
@@ -301,7 +307,7 @@ export function Landing({
       {/* Both sections sit in one wrapper so the pastel blobs behind them can
           bleed to the edges without widening the page. */}
       <div className="lp-learn">
-      <motion.h2 className="lp-steps-h lp-fun-h h-steps" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
+      <motion.h2 id="how-it-works" className="lp-steps-h lp-fun-h h-steps" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
         <Sparks className="lp-spark lead" size={30} />
         <span className="lp-fun-t">{t('landing.steps.title')}</span>
         <Sparks className="lp-spark tail" />
@@ -328,7 +334,8 @@ export function Landing({
             whileHover={{ y: -3 }}
           >
             <span className="lp-step-letter" aria-hidden="true">
-              {STEP_LETTERS[i] ?? i + 1}
+              <span className="pureplay-legacy-step">{STEP_LETTERS[i] ?? i + 1}</span>
+              <span className="pureplay-desktop">{i + 1}</span>
             </span>
             <span className="lp-step-kicker">
               {t('landing.step')} {i + 1}
@@ -346,6 +353,7 @@ export function Landing({
       </div>
 
       <motion.h2
+        id="features"
         className="lp-steps-h lp-fun-h h-features"
         variants={rise}
         initial="hidden"
@@ -376,7 +384,8 @@ export function Landing({
             >
               <Sparks className="lp-spark corner" size={36} />
               <span className="ic">
-                <Icon />
+                <span className="pureplay-legacy-feature"><Icon /></span>
+                <span className="pureplay-clean-feature"><StudyIcon name={(['quiz', 'flashcards', 'vocab', 'speech', 'streak', 'stats'] as const)[i]} /></span>
               </span>
               <h3>{t(f.titleKey)}</h3>
               <p>{t(f.textKey)}</p>
@@ -426,6 +435,7 @@ export function Landing({
           zero JS). Keep this count in sync with the landing.faq.* keys in i18n. */}
       <motion.section
         className="lp-faq"
+        id="faq"
         variants={rise}
         initial="hidden"
         whileInView="show"

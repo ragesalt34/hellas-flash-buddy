@@ -7,9 +7,11 @@ import {
   LayoutGrid,
   House,
   Volume2,
+  ArrowLeft,
 } from 'lucide-react';
 import { api, QuizQuestion, persistWrite } from '../api';
-import { MiniTemple, TopicEmblem } from '../components/statsArt';
+import { MiniTemple } from '../components/statsArt';
+import { TopicIcon } from '../components/StudyIcon';
 import { TopicDecor } from '../components/TopicDecor';
 import { SectionLabel } from '../components/SectionLabel';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
@@ -166,9 +168,11 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     return (
       <div className="fade-in tp-screen">
         <TopicDecor />
+        <button className="pureplay-back pureplay-desktop" onClick={onHome}><ArrowLeft size={18} />{t('nav.backHome')}</button>
         <SectionLabel k="quiz.chooseTopic">
           <Greek name="olive-branch-small" className="tp-label-olive" />
         </SectionLabel>
+        <p className="pureplay-topic-sub pureplay-desktop">{t('quiz.pureplay.sub')}</p>
         {startError && (
           <div className="card quiz-load-error" role="alert">
             <p>{t(startError === 'load' ? 'quiz.loadError' : 'quiz.noQuestions')}</p>
@@ -199,6 +203,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                     <span className="tile-d">{t('topic.mixed.desc')}</span>
                   </span>
                   <span className="arrow">
+                    <span className="pureplay-desktop">{t('home.pureplay.start')}</span>
                     <ArrowRight size={22} strokeWidth={2.6} />
                   </span>
                 </button>
@@ -213,7 +218,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(topicDef.id)}
               >
-                <TopicEmblem topic={topicDef.id} className="tp-emblem" />
+                <TopicIcon topic={topicDef.id} className="tp-emblem" />
                 <span className="tp-body">
                   {isWeak && <span className="tp-weak">{t('tp.weak')}</span>}
                   <span className="tile-t">{t(topicDef.key)}</span>
@@ -229,10 +234,12 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                     </>
                   )}
                 </span>
+                <span className="pureplay-topic-arrow pureplay-desktop" aria-hidden="true"><ArrowRight size={24} /></span>
               </button>
             );
           })}
         </div>
+        <p className="pureplay-topic-note pureplay-desktop">{t('quiz.pureplay.hint')}</p>
       </div>
     );
   }
@@ -290,7 +297,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       {hasTopicScene(topic) ? <TopicScene topic={topic} /> : <TopicDecor />}
       <div className="topbar">
         <span className="meta qz-topic">
-          <TopicEmblem topic={topic} className="qz-emblem" />
+          <TopicIcon topic={topic} className="qz-emblem" />
           {topicLabel}
         </span>
         <span className="counter">
