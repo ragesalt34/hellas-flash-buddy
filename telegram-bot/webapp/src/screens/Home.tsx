@@ -141,7 +141,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('quiz')}
         >
           <span className="editorial-only editorial-number" aria-hidden="true">01</span>
-          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/quiz.webp`} alt="" aria-hidden="true" />
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/shortcut-quiz.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="quiz" />
           </span>
@@ -160,7 +160,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
 
         <button className="tile t-cards" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
           <span className="editorial-only editorial-number" aria-hidden="true">02</span>
-          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/flashcards.webp`} alt="" aria-hidden="true" />
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/shortcut-flashcards.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="flashcards" />
           </span>
@@ -173,7 +173,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
           <span className="editorial-only editorial-number" aria-hidden="true">03</span>
-          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/vocab.webp`} alt="" aria-hidden="true" />
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/shortcut-vocab.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="vocab" />
           </span>
@@ -191,7 +191,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           onClick={() => nav('homework')}
         >
           <span className="editorial-only editorial-number" aria-hidden="true">04</span>
-          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/homework.webp`} alt="" aria-hidden="true" />
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/shortcut-homework.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="homework" />
           </span>

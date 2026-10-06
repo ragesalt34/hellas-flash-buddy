@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, CalendarDays, Check, Loader2 } from 'lucide-react';
+import { ArrowRight, Check, Loader2 } from 'lucide-react';
 import { ProgressBar } from '../ui';
 import { api, type StudyPlan } from '../api';
 import type { View } from '../App';
@@ -58,10 +58,20 @@ export function PlanCard({
     }
   }
 
+  // The calendar picture has a blank sheet; the real date (if there is one) is live text on it.
+  const calDate = plan.date ? fromKey(plan.date) : null;
   const head = (
     <div className="pc-head">
       <Hourglass className="pc-ic" />
-      <CalendarDays className="editorial-only pc-calendar" aria-hidden="true" />
+      <span className="editorial-only pc-cal" aria-hidden="true">
+        <img src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/plan-calendar.webp`} width={104} height={81} alt="" draggable={false} />
+        {calDate && (
+          <>
+            <b>{calDate.getDate()}</b>
+            <i>{calDate.toLocaleDateString(locale, { month: 'short' }).replace('.', '')}</i>
+          </>
+        )}
+      </span>
       <span className="pc-title">{t('plan.title')}</span>
     </div>
   );
@@ -174,9 +184,11 @@ export function PlanCard({
       <div className="pc-actions">
         <button className="btn pc-btn" onClick={() => { haptic(); onNavigate('flashcards'); }}>
           <Ostraka className="pc-btn-ic" /> {t('nav.flashcards')}
+          <ArrowRight className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
         </button>
         <button className="btn secondary pc-btn" onClick={() => { haptic(); onNavigate('vocab'); }}>
           <Papyrus className="pc-btn-ic" /> {t('nav.vocab')}
+          <ArrowRight className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
         </button>
         <button
           type="button"

@@ -6878,84 +6878,81 @@ button.chip:active { transform: scale(0.95); }
     --font-display: 'Inter', system-ui, sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
   }
+  /* ---- Home, side-plan layout (design-handoff/home-side-plan-assets-v1/reference.png) ----
+     Hero on top (title left, collage right); below it the four sections 2x2 on the left and,
+     on the right, the plan and a compact word of the day. Everything is live HTML; the pictures
+     are the delivered ones (hero = home-editorial/hero.webp, byte-identical to hero-greece.png;
+     the rest are alpha-trimmed copies in home-side-plan/). The tiles, the plan and the
+     word card keep their real states and data. The old stats strip is gone from here: it lives
+     on the Progress screen. Soft theme, wide screens only. */
   [data-theme='soft'] body:not(.focus) .app:has(.home-screen) {
-    max-width: 1448px; padding: 56px 32px 22px;
+    max-width: 1520px; padding: 56px max(48px, min(64px, 4vw)) 36px;
   }
   [data-theme='soft'] .home-screen {
-    display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 60%);
-    grid-template-rows: 360px auto auto; gap: 0; color: #08090b;
+    display: grid; grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+    grid-template-rows: minmax(388px, auto) auto; gap: 0; color: #08090b;
   }
   [data-theme='soft'] .home-screen .editorial-only { display: block; }
   [data-theme='soft'] .home-screen .hero { display: contents; }
   [data-theme='soft'] .home-screen .hero > :is(.sub, h1, .hero-badge, .hero-olive, .home-architecture) { display: none; }
   [data-theme='soft'] .home-screen .editorial-hero-art {
-    grid-column: 2; grid-row: 1; width: calc(100% + 32px); height: 360px;
-    max-width: none; object-fit: cover; object-position: center; pointer-events: none;
+    grid-column: 2; grid-row: 1; justify-self: end; width: calc(100% + 28px); margin-right: -28px; height: 388px;
+    max-width: none; object-fit: contain; object-position: right center; pointer-events: none;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome {
     grid-column: 1; grid-row: 1; position: relative; z-index: 1;
-    align-self: center; width: calc(100% + 60px); max-width: 620px; padding: 20px 0 22px;
+    align-self: center; width: calc(100% + 80px); max-width: 640px; padding: 44px 0 0;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome h2 {
-    font-size: clamp(52px, 4.7vw, 68px); font-weight: 800; line-height: 1.01; letter-spacing: -3.2px;
-    margin: 0 0 14px; color: #08090b; max-width: 620px;
+    font-size: clamp(50px, 4.5vw, 66px); font-weight: 800; line-height: 1.03; letter-spacing: -3.2px;
+    margin: 0 0 18px; color: #08090b; max-width: 640px;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome p {
-    max-width: 510px; color: #1b2337; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.28; font-weight: 400;
+    max-width: 540px; color: #1b2337; font-size: clamp(18px, 1.4vw, 21px); line-height: 1.4; font-weight: 400;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions {
-    display: flex; flex-direction: row; gap: 20px; margin-top: 24px; align-items: center;
+    display: flex; flex-direction: row; gap: 18px; margin-top: 28px; align-items: center;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .btn {
-    width: 272px; max-width: 52%; flex: 0 1 auto; min-height: 56px; padding: 14px 20px;
+    width: 278px; max-width: 54%; flex: 0 1 auto; min-height: 55px; padding: 13px 20px;
     background: #0862db; border: 1px solid #0862db; border-radius: 6px;
-    color: #fff; font-size: 20px; font-weight: 650; box-shadow: none;
+    color: #fff; font-size: 19px; font-weight: 650; box-shadow: none;
   }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .pureplay-text-link {
-    display: inline-flex; min-height: 56px; width: 220px; max-width: 42%; flex: 0 1 auto;
+    display: inline-flex; min-height: 55px; width: 222px; max-width: 42%; flex: 0 1 auto;
     align-items: center; justify-content: center; padding: 12px 16px;
     border: 1px solid #343746; border-radius: 6px; background: #faf7ef;
     color: #101629; text-decoration: none; font-size: clamp(14px, 1.2vw, 17px); font-weight: 650; white-space: nowrap;
   }
-  [data-theme='soft'] .home-screen .hero-chips {
-    grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin: 0 0 16px; padding: 14px 0 4px; gap: 0; min-height: 72px;
-    border: 0; border-top: 2px solid #ee5637; border-radius: 0; background: none; box-shadow: none;
-  }
-  [data-theme='soft'] .home-screen .hero-chips .chip {
-    display: block; position: relative; min-height: 50px; padding: 0 16px 0 74px;
-    font-size: 24px; line-height: 1.25; font-weight: 700; color: #101629; background: none;
-    border: 0; border-radius: 0;
-  }
-  [data-theme='soft'] .home-screen .hero-chips .chip + .chip { border-left: 1px solid #edd0c3; padding-left: 94px; }
-  [data-theme='soft'] .home-screen .hero-chips .chip.home-streak-low { display: block; }
-  [data-theme='soft'] .home-screen .hero-chips :is(.home-chip-label, .editorial-streak-label) {
-    display: block; margin-top: 2px; font-size: 14px; font-weight: 400; line-height: 1.25; color: #555e70;
-  }
-  [data-theme='soft'] .home-screen .hero-chips .chip-art {
-    position: absolute; top: 0; left: 10px; width: 48px; height: 48px; color: #e94720;
-  }
-  [data-theme='soft'] .home-screen .hero-chips .chip + .chip .chip-art { left: 36px; color: #2f7350; }
-  [data-theme='soft'] .home-screen .hero-chips .chip:nth-child(3) .chip-art { color: #0862db; }
-  [data-theme='soft'] .home-screen .hero-chips .chip:nth-child(4) .chip-art { color: #eb8c83; }
-  [data-theme='soft'] .home-screen .hero-chips .chip-art svg { width: 48px; height: 48px; }
+
+  /* The stats strip no longer lives on Home (see Progress). The sign-out button stays. */
+  [data-theme='soft'] .home-screen .hero-chips { display: contents; }
+  [data-theme='soft'] .home-screen .hero-chips > .chip:not(.home-session) { display: none; }
   [data-theme='soft'] .home-screen .hero-chips button.home-session-login { display: none; }
   [data-theme='soft'] .home-screen .hero-chips button.home-session-logout {
     position: fixed; z-index: 100; right: 32px; top: 8px; width: auto; min-height: 40px;
     padding: 8px 14px; border: 1px solid #0c55ae; border-radius: 5px;
     background: #0862db; color: #fff; font-size: 14px;
   }
+
+  /* Workspace: tiles (2 columns, ~71%) | plan + word (~29%) */
   [data-theme='soft'] .home-screen .home-workspace {
-    grid-column: 1 / -1; grid-row: 3; display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1.13fr)) minmax(0, 1fr);
-    grid-template-rows: 212px 212px auto; gap: 12px 16px; align-items: stretch;
+    grid-column: 1 / -1; grid-row: 2; display: grid; margin-top: 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr);
+    grid-template-rows: auto auto 1fr; column-gap: 18px; row-gap: 14px; align-items: start;
   }
-  [data-theme='soft'] .home-screen :is(.home-learning, .tiles) { display: contents; }
+  [data-theme='soft'] .home-screen :is(.home-learning, .home-sidebar) { display: contents; }
   [data-theme='soft'] .home-screen .home-learning > .section-label { display: none; }
+  [data-theme='soft'] .home-screen .tiles {
+    grid-column: 1 / 3; grid-row: 1 / 4; align-self: start;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 222px; gap: 16px;
+  }
+  [data-theme='soft'] .home-screen .tiles .tile.t-stats { display: none; }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) {
-    display: block; position: relative; isolation: isolate; overflow: hidden; height: 212px;
-    min-height: 212px !important; padding: 58px 16px 62px; background: #fbf8f0;
-    border: 1px solid #d5d5cd; border-radius: 8px; box-shadow: none; text-align: left;
+    display: block; position: relative; isolation: isolate; overflow: hidden; height: 100%;
+    min-height: 0 !important; padding: 58px 18px 62px; text-align: left;
+    background: #fbf8f0 url('/assets/pureplay/home-side-plan/surface-warm-paper.webp') center / cover no-repeat;
+    border: 1px solid #d5d5cd; border-radius: 8px; box-shadow: none;
   }
   [data-theme='soft'] .home-screen .tiles .t-quiz { grid-column: 1; grid-row: 1; }
   [data-theme='soft'] .home-screen .tiles .t-cards { grid-column: 2; grid-row: 1; }
@@ -6963,101 +6960,155 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen .tiles .t-homework { grid-column: 2; grid-row: 2; }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .tile-ic { display: none; }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .grow {
-    display: block; position: relative; z-index: 2; width: 51%; margin: 0;
+    display: block; position: relative; z-index: 2; width: 48%; margin: 0;
   }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .tile-t {
-    display: block; position: relative; z-index: 2; width: max-content; max-width: 64%;
-    font-size: clamp(28px, 2.76vw, 40px); font-weight: 750; letter-spacing: -1.8px; line-height: 1.08; margin-bottom: 6px;
+    display: block; position: relative; z-index: 2; width: max-content; max-width: 100%;
+    font-size: clamp(28px, 2.55vw, 40px); font-weight: 750; letter-spacing: -1.8px; line-height: 1.08; margin-bottom: 6px;
   }
-  [data-theme='soft'] .home-screen .tiles .tile .grow .tile-t { max-width: 100%; }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .tile-d {
-    position: relative; z-index: 2; display: block; max-width: 58%;
-    color: #121a30; font-size: 16px; line-height: 1.4;
+    position: relative; z-index: 2; display: block; max-width: 48%;
+    color: #121a30; font-size: 17px; line-height: 1.35;
   }
   [data-theme='soft'] .home-screen .tiles .tile .grow .tile-d { max-width: 100%; }
+  /* the picture: whole, contained, ~half of the tile, in its own right-hand column */
   [data-theme='soft'] .home-screen .editorial-card-art {
-    position: absolute; z-index: 0; right: -4px; bottom: -6px; width: 60%; height: 100%;
-    object-fit: contain; object-position: right bottom; pointer-events: none;
+    position: absolute; z-index: 0; right: 8px; top: 8px; bottom: 8px; width: 52%; height: auto;
+    object-fit: contain; object-position: right center; pointer-events: none;
   }
   [data-theme='soft'] .home-screen .editorial-number {
-    position: absolute; top: 13px; left: 14px; z-index: 2; width: 46px; height: 32px;
+    position: absolute; top: 14px; left: 16px; z-index: 2; width: 46px; height: 32px;
     border-radius: 4px; background: #1647d0; color: #fff;
     font-size: 14px; line-height: 32px; text-align: center;
   }
-  [data-theme='soft'] .home-screen :is(.t-cards, .t-homework) .editorial-card-art { width: 60%; }
   [data-theme='soft'] .home-screen .t-cards .editorial-number { background: #4c8061; }
   [data-theme='soft'] .home-screen .t-vocab .editorial-number { background: #a44339; }
   [data-theme='soft'] .home-screen .t-homework .editorial-number { background: #d93816; }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go) {
-    display: grid !important; position: absolute; z-index: 2; inset: auto auto 18px 17px;
-    transform: none; width: 46px; height: 46px; place-items: center;
+    display: grid !important; position: absolute; z-index: 2; inset: auto auto 18px 18px;
+    transform: none; width: 48px; height: 48px; place-items: center;
     border: 1px solid #101629; border-radius: 50%; background: #fbf8f0; color: #101629 !important;
   }
-  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):hover { background: #f4efe4; border-color: #8b9285 !important; }
-  [data-theme='soft'] .home-screen .home-sidebar { grid-column: 3; grid-row: 1 / 4; min-width: 0; display: flex; padding-bottom: 96px; }
-  [data-theme='soft'] .home-screen .wod {
-    display: flex; flex-direction: column; align-items: stretch; position: relative; overflow: hidden; height: auto; min-height: 460px; flex: 1;
-    padding: 24px 20px 16px; background: #0743b5; border: 0; border-radius: 8px; box-shadow: none; color: #fff9ee;
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):hover { border-color: #8b9285 !important; }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):hover :is(.arrow, .tile-go) { background: #101629; color: #fff !important; }
+
+  /* Plan to the interview: cream paper, thin olive frame; grows with its content */
+  [data-theme='soft'] .home-screen .plan-card {
+    grid-column: 3; grid-row: 1; margin: 0; padding: 22px 24px 24px; position: relative;
+    display: flex; flex-direction: column; gap: 0; color: #141b2d;
+    background: #f6f3e4 url('/assets/pureplay/home-side-plan/surface-warm-paper.webp') center / cover no-repeat;
+    border: 1px solid #7e8d69; border-radius: 8px; box-shadow: none;
+    --muted: #5a6150; --text-body: #141b2d; --good: #2d5a3a; --bad: #8a2b2b;
   }
+  [data-theme='soft'] .home-screen .plan-card .pc-head {
+    position: relative; display: block; min-height: 84px; margin: 0 0 14px; padding-right: 104px;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-ic { display: none; }
+  [data-theme='soft'] .home-screen .plan-card .pc-title {
+    display: block; font-size: clamp(25px, 1.8vw, 28px); font-weight: 750; line-height: 1.12; letter-spacing: -0.9px; color: #08090b; overflow-wrap: break-word; hyphens: auto;
+  }
+  /* calendar + hourglass; the sheet is blank, the real date is live text on it */
+  [data-theme='soft'] .home-screen .plan-card .pc-cal {
+    position: absolute; top: -8px; right: -8px; width: 104px; height: 81px; pointer-events: none;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-cal img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  [data-theme='soft'] .home-screen .plan-card .pc-cal b {
+    position: absolute; left: 11%; width: 57%; top: 32%; text-align: center;
+    font-size: 21px; line-height: 1; font-weight: 750; color: #1d2433; letter-spacing: -0.5px; transform: rotate(-3deg);
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-cal i {
+    position: absolute; left: 11%; width: 57%; top: 60%; text-align: center;
+    font: 600 10.5px/1 'EB Garamond', Georgia, serif; font-style: italic; color: #2b3345; transform: rotate(-3deg);
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-text { margin: 0 0 14px; font-size: 16px; line-height: 1.45; color: #141b2d; }
+  [data-theme='soft'] .home-screen .plan-card .pc-legacy-copy { display: none; }
+
+  /* configured state: flatten the legacy wrappers into one column of rows */
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 10px; align-content: start; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] > *,
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] :is(.pc-days, .pc-today, .pc-link) { grid-column: 1 / -1; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] :is(.pc-main, .pc-actions) { display: contents; }
+  /* reading order: title, date, change-date link, today, parts, progress, pace, note, buttons */
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-days { order: 1; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-link { order: 2; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-today { order: 3; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-parts { order: 4; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-progress { order: 5; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-pace { order: 6; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-note { order: 7; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-btn { order: 8; }
+  [data-theme='soft'] .home-screen .plan-card .pc-days { display: block; margin: 0; font-size: 17px; line-height: 1.35; color: #141b2d; }
+  [data-theme='soft'] .home-screen .plan-card .pc-days b { display: inline; margin-right: 0.3em; font-size: inherit; font-weight: 650; color: inherit; }
+  [data-theme='soft'] .home-screen .plan-card .pc-days span { display: inline; font-size: inherit; font-weight: 400; color: inherit; }
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-link {
+    justify-self: start; margin: 2px 0 16px; padding: 0;
+    color: #2f6b34; font-size: 17px; text-decoration: underline; text-underline-offset: 3px; background: none; border: 0;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-today {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0 0 6px; padding: 16px 0 0; border-top: 1px solid #d3d4c0;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-today span {
+    padding: 5px 11px; border-radius: 6px; background: #dfe3cc; color: #3d4a2b;
+    font-size: 12px; font-weight: 650; letter-spacing: 0.9px; text-transform: uppercase; line-height: 1.2;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-today b {
+    display: block; font-size: 38px; font-weight: 800; line-height: 1.05; letter-spacing: -1.2px; color: #08090b;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-today.is-done b { width: auto; height: auto; background: none; color: #2d5a3a; display: block; }
+  [data-theme='soft'] .home-screen .plan-card .pc-parts { margin: 0 0 14px; font-size: 15px; line-height: 1.4; color: #4d5547; }
+  [data-theme='soft'] .home-screen .plan-card .pc-progress { margin: 0 0 12px; gap: 10px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-progress span { font-size: 13px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-pace { margin: 0 0 8px; font-size: 14px; color: #4d5547; }
+  [data-theme='soft'] .home-screen .plan-card .pc-note { margin: 0 0 12px; font-size: 14px; color: #4d5547; }
+
+  /* buttons: olive primary, cream outlined secondary, compact, with a thin arrow */
+  [data-theme='soft'] .home-screen .plan-card .pc-btn {
+    min-height: 48px; padding: 10px 14px; justify-content: space-between; gap: 8px;
+    border-radius: 6px; font-size: 16px; font-weight: 650; letter-spacing: -0.2px; box-shadow: none; transform: none;
+  }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn:not(.secondary) { background: #4a6333; color: #fff8eb; border: 1px solid #4a6333; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn:not(.secondary):hover { background: #3f552b; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn.secondary { background: #f7f4e4; color: #141b2d; border: 1px solid #3f4a35; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn.secondary:hover { background: #eeebd6; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn:disabled { opacity: 0.45; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn-ic { display: none; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn-go { flex: none; }
+  /* guest / no date / past / editing: the same card, one column */
+  [data-theme='soft'] .home-screen .pc-guest { display: flex; }
+  [data-theme='soft'] .home-screen .plan-card:not([class*='pace-']) .pc-btn { width: 100%; justify-content: center; }
+  [data-theme='soft'] .home-screen .plan-card .pc-editor { display: flex; flex-direction: column; gap: 12px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-field span { font-size: 13px; color: #4d5547; }
+  [data-theme='soft'] .home-screen .plan-card .pc-field .input { width: 100%; border: 1px solid #7e8d69; border-radius: 6px; background: #fffdf4; }
+  [data-theme='soft'] .home-screen .plan-card .pc-actions { gap: 10px 14px; }
+  [data-theme='soft'] .home-screen .plan-card:not([class*='pace-']) .pc-link { color: #2f6b34; text-decoration: underline; text-underline-offset: 3px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-error { margin: 0; color: #8a2b2b; font-size: 14px; }
+
+  /* Word of the day: compact cobalt card, olive corner, round sound button */
+  [data-theme='soft'] .home-screen .wod {
+    grid-column: 3; grid-row: 2; display: block; position: relative; overflow: hidden; height: auto; min-height: 134px;
+    padding: 20px 86px 18px 24px; background: #0743b5; border: 0; border-radius: 8px; box-shadow: none; color: #fff9ee;
+  }
+  [data-theme='soft'] .home-screen .wod .wod-band,
+  [data-theme='soft'] .home-screen .wod .wod-sprig { display: none; }
+  [data-theme='soft'] .home-screen .wod .wod-corner { position: absolute; top: -10px; right: -6px; width: 86px; height: auto; pointer-events: none; }
   [data-theme='soft'] .home-screen .wod .wod-eyebrow {
-    order: 0; font-size: 16px; font-weight: 650; color: #fff9ee; letter-spacing: 0; line-height: 1.3;
-    text-transform: uppercase; margin: 0 58px 4px 2px; text-align: left;
+    margin: 0 0 6px; padding: 0; font-size: 14px; font-weight: 600; color: #fff9ee; letter-spacing: 0.3px;
+    line-height: 1.3; text-transform: uppercase; text-align: left; opacity: 0.92;
   }
   [data-theme='soft'] .home-screen .wod-eyebrow > span { display: none; }
-  [data-theme='soft'] .home-screen .editorial-word-art {
-    order: 1; width: calc(100% + 40px); max-width: none; height: 252px; flex: 0 0 252px;
-    margin: 0 -20px 4px; object-fit: cover; object-position: center 40%; pointer-events: none;
-  }
-  [data-theme='soft'] .home-screen .wod-row { order: 2; display: block; margin: 0; text-align: center; }
+  [data-theme='soft'] .home-screen .wod .wod-row { display: block; margin: 0; text-align: left; }
   [data-theme='soft'] .home-screen .wod .wod-word {
-    margin: 0; font: 600 clamp(40px, 4.2vw, 60px)/1.08 'EB Garamond', Georgia, serif;
-    color: #fff6e6; letter-spacing: -1px; overflow-wrap: anywhere;
+    margin: 0; font: 600 clamp(26px, 2.1vw, 32px)/1.12 'EB Garamond', Georgia, serif;
+    color: #fff6e6; letter-spacing: -0.3px; overflow-wrap: anywhere; text-wrap: balance;
     font-family: 'EB Garamond', Georgia, serif !important;
   }
   [data-theme='soft'] .home-screen .wod-speak {
-    position: absolute; top: 16px; right: 18px; width: 50px; height: 50px;
+    position: absolute; right: 18px; bottom: 16px; width: 52px; height: 52px;
     background: #fff9ef; color: #121a30; border: 0; border-radius: 50%;
   }
-  [data-theme='soft'] .home-screen .wod-speak svg { width: 26px; height: 26px; }
-  [data-theme='soft'] .home-screen .wod .wod-ru {
-    order: 3; margin-top: 12px; color: #fff9ef; font-size: 18px; font-weight: 400; text-align: center;
-  }
-  [data-theme='soft'] .home-screen .wod .wod-note {
-    order: 4; margin: 12px auto 0; max-width: 32ch; padding-top: 12px; border-top: 1px solid #ffffff38;
-    color: #fff9ef; font-size: 16px; line-height: 1.4; font-weight: 400; text-align: center;
-  }
-  [data-theme='soft'] .home-screen .tiles .tile.t-stats {
-    grid-column: 3; grid-row: 3; display: flex; align-self: end; height: 84px; min-height: 84px !important;
-    padding: 14px 58px 14px 18px; background: #fbf8f0; border: 1px solid #d5d5cd; border-radius: 8px;
-  }
-  [data-theme='soft'] .home-screen .tiles .tile.t-stats .tile-ic { width: 40px; color: #0862db !important; }
-  [data-theme='soft'] .home-screen .tiles .tile.t-stats .tile-t { font-size: 18px; }
-  [data-theme='soft'] .home-screen .tiles .tile.t-stats .tile-d { color: #515869; font-size: 13px; }
-  [data-theme='soft'] .home-screen .tiles .tile.t-stats .arrow {
-    top: 50%; right: 18px; width: 40px; height: 40px; border: 1px solid #121a30;
-    border-radius: 50%; place-items: center; transform: translateY(-50%);
-  }
-  [data-theme='soft'] .home-screen .plan-card {
-    grid-column: 1 / 3; grid-row: 3; margin: 0; padding: 22px 26px;
-    border: 0; border-radius: 8px; background: #ee8c77; box-shadow: none; color: #101629;
-    --muted: #493031; --text-body: #101629; --good: #194a32; --bad: #6d1f2e;
-  }
-  [data-theme='soft'] .home-screen .plan-card .pc-title { font-size: 24px; color: #08090b; }
-  [data-theme='soft'] .home-screen .plan-card .pc-ic { display: none; }
-  [data-theme='soft'] .home-screen .plan-card .pc-calendar { width: 42px; height: 42px; color: #101629; flex: none; }
-  [data-theme='soft'] .home-screen .plan-card .pc-text { font-size: 16px; color: #101629; }
-  [data-theme='soft'] .home-screen .plan-card .pc-legacy-copy { display: none; }
-  [data-theme='soft'] .home-screen .plan-card .pc-btn:not(.secondary) {
-    min-height: 52px; background: #fff8eb; color: #101629; border: 0; border-radius: 6px; font-size: 16px;
-  }
-  [data-theme='soft'] .home-screen .pc-guest {
-    display: grid; grid-template-columns: 50px minmax(0, 1fr) 176px; gap: 2px 28px; align-items: center; min-height: 108px;
-  }
-  [data-theme='soft'] .home-screen .pc-guest .pc-head { display: contents; }
-  [data-theme='soft'] .home-screen .pc-guest .pc-calendar { grid-column: 1; grid-row: 1 / 3; width: 46px; height: 46px; }
-  [data-theme='soft'] .home-screen .pc-guest .pc-title { grid-column: 2; grid-row: 1; }
-  [data-theme='soft'] .home-screen .pc-guest .pc-text { grid-column: 2; grid-row: 2; margin: 0; }
-  [data-theme='soft'] .home-screen .pc-guest .pc-btn { grid-column: 3; grid-row: 1 / 3; justify-content: center; }
+  [data-theme='soft'] .home-screen .wod-speak svg { width: 24px; height: 24px; }
+  [data-theme='soft'] .home-screen .wod .wod-ru { margin-top: 6px; color: #fff9ef; font-size: 17px; font-weight: 400; text-align: left; line-height: 1.3; }
+  [data-theme='soft'] .home-screen .wod .wod-note { display: none; }
   [data-theme='soft'] body:has(.home-screen) .bottomnav {
     height: 56px; padding-inline: 32px; background: #faf7ef; border: 0;
   }
@@ -7084,9 +7135,6 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen .wod-speak:focus-visible { outline-color: #fff; }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .btn:hover { background: #004eba; }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .pureplay-text-link:hover { background: #eee9dd; }
-  [data-theme='soft'] .home-screen :is(.tiles .tile:not(.t-stats), .wod, .plan-card) {
-    background-image: url('/assets/pureplay/home-editorial/paper-grain.svg');
-  }
 }
 
 @media (min-width: 900px) {
@@ -7319,4 +7367,28 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .app .fc-screen .answer-box { margin-top: 20px; }
   [data-theme='soft'] .app .fc-screen .explain { margin-top: 22px; }
   [data-theme='soft'] body.focus .app .fc-screen .actionbar { padding-top: 24px; }
+}
+
+/* Progress: accuracy and test count (moved off the desktop Home strip). Shown only where Home dropped them. */
+.rd-home-metric { display: none; }
+@media (min-width: 1100px) {
+  [data-theme='soft'] .rd-screen .rd-home-metric { display: inline-flex; align-items: baseline; gap: 5px; font-size: 13px; font-weight: 500; color: var(--muted); }
+  [data-theme='soft'] .rd-screen .rd-home-metric b { font-size: 17px; font-weight: 700; color: var(--text); }
+}
+
+/* Home side-plan, narrow desktops: the plan column is only ~240px wide, so the calendar
+   picture steps aside (the date is in the text anyway) and the title shrinks to fit. */
+@media (min-width: 1100px) and (max-width: 1279px) {
+  [data-theme='soft'] .home-screen .plan-card .pc-head { padding-right: 0; min-height: 0; }
+  [data-theme='soft'] .home-screen .plan-card .pc-cal { display: none; }
+  [data-theme='soft'] .home-screen .plan-card .pc-title { font-size: 22px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-today b { font-size: 32px; }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .tile-t { font-size: 27px; }
+  [data-theme='soft'] .home-screen .plan-card .pc-btn { padding: 10px 10px; font-size: 15px; }
+  [data-theme='soft'] .home-screen .pureplay-welcome { width: 100%; }
+  [data-theme='soft'] .home-screen .pureplay-welcome p { max-width: 100%; }
+  [data-theme='soft'] .home-screen .pureplay-welcome { padding-top: 16px; }
+  [data-theme='soft'] .home-screen .pureplay-welcome-actions { gap: 12px; }
+  [data-theme='soft'] .home-screen .pureplay-welcome-actions .btn { flex: 1 1 0; width: auto; max-width: none; font-size: 16px; padding-inline: 12px; }
+  [data-theme='soft'] .home-screen .pureplay-welcome-actions .pureplay-text-link { flex: 1 1 0; width: auto; max-width: none; font-size: 15px; padding-inline: 10px; white-space: normal; text-align: center; }
 }

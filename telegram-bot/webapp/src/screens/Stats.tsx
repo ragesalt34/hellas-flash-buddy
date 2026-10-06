@@ -97,6 +97,9 @@ function ScoreOlives({ score, total }: { score: number; total: number }) {
 export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
   const { data, err } = useCached(`readiness:${language}`, api.readiness);
+  // Accuracy and test count used to sit on Home; the desktop Home no longer shows them.
+  // Same cached /me response Home already loads, so no new request.
+  const { data: me } = useCached(`me:${language}`, api.me);
   const [allHistory, setAllHistory] = useState(false);
 
   if (err && !data) return <Empty icon={BarChart3} text={t('stats.error')} onHome={onHome} />;
@@ -247,6 +250,16 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
             <OilLamp className="rd-act-ic c-lamp" />
             <b>{streak}</b> {countWord(streak, 'day', language)} {t('rd.inRow')}
           </span>
+          {me && (
+            <>
+              <span className="rd-home-metric">
+                <b>{me.stats.total_questions > 0 ? Math.round((me.stats.total_correct / me.stats.total_questions) * 100) : 0}%</b> {t('home.accuracy')}
+              </span>
+              <span className="rd-home-metric">
+                <b>{me.stats.total_sessions}</b> {t('home.sessions')}
+              </span>
+            </>
+          )}
           <button
             className="rd-due-chip"
             onClick={() => {
