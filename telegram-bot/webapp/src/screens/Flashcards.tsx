@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, RotateCcw, House, Check, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
+import { Eye, CheckCircle2, RotateCcw, House, Check, Frown, Smile, Target, Volume2, WifiOff, ArrowRight, Info } from 'lucide-react';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
@@ -159,6 +159,11 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   }
 
   const wide = card.question.length + card.correct_answer.length > 120;
+  const paperTopic = ['history', 'culture', 'laws', 'geography'].includes(card.topic ?? '')
+    ? card.topic!
+    : 'mixed';
+  // Alpha-trimmed topic collages (laws = the Parliament collage), so the visible picture fills its box.
+  const paperArtwork = 'paper-art-' + paperTopic + '.webp';
 
   return (
     // Keyed on the card only (see Quiz): the decor and progress bar stay put.
@@ -173,7 +178,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           <Greek name="olive-branch-small" className="fc-meta-olive" />
         </span>
         <span className="counter">
-          {i + 1}/{cards.length}
+          {i + 1} / {cards.length}
         </span>
         <Greek name="olive-branch-small" className="fc-counter-olive" />
       </div>
@@ -181,9 +186,20 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
       <div className="spacer" />
 
       <div className="fc-stage" key={i}>
+      <span className="fc-paper-topic pureplay-desktop">{t('topic.' + paperTopic)}</span>
       <div className={`card fc-card${revealed ? ' is-revealed' : ''}`}>
         <VocabDecorImg slot="cardGreekCorner" className="fc-corner" />
         <VocabDecorImg slot="cardOliveBranch" className="fc-corner-olive" />
+        <img
+          className="fc-paper-art hs-deco pureplay-desktop"
+          src={import.meta.env.BASE_URL + 'assets/pureplay/' + paperArtwork}
+          width={470}
+          height={225}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          decoding="async"
+        />
         {/* Pronunciation only where there is Greek to pronounce (see hasGreek). */}
         <div className="speak-row">
           <div className="qtext">{card.question}</div>
@@ -220,7 +236,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
             </div>
             {card.explanation && (
               <div className="explain fc-explain">
-                <Owl className="qz-owl" />
+                <Owl className="qz-owl" /><Info className="fc-paper-info pureplay-desktop" size={22} aria-hidden="true" />
                 <span>{card.explanation}</span>
               </div>
             )}
@@ -238,6 +254,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
                 <Frown size={22} strokeWidth={2.2} />
               </span>
               {t('grade.hard')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
@@ -246,6 +263,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
                 <Smile size={22} strokeWidth={2.2} />
               </span>
               {t('grade.good')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
@@ -254,6 +272,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
                 <Target size={22} strokeWidth={2.2} />
               </span>
               {t('grade.easy')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 3, language)}</span>
             </button>
           </div>
