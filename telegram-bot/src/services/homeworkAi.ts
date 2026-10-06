@@ -28,42 +28,22 @@ export interface AiCheck {
   mistakes: Mistake[];
 }
 
-/** One JSON-returning model call. Uses the documented `interactions` endpoint and,
- * if the API says that route or shape is unknown, the classic generateContent. */
+/** One JSON-returning model call via generateContent. Not the Interactions API:
+ * its REST reply has no `output_text` (that is an SDK helper; text sits in
+ * steps[].content[]), and it stores every interaction by default. */
 async function callJson(prompt: string): Promise<unknown> {
-  const headers = { 'x-goog-api-key': KEY() as string, 'Content-Type': 'application/json' };
-  const signal = AbortSignal.timeout(TIMEOUT_MS);
-
-  let res = await fetch(`${BASE}/interactions`, {
+  const res = await fetch(`${BASE}/models/${MODEL()}:generateContent`, {
     method: 'POST',
-    headers,
-    signal,
+    headers: { 'x-goog-api-key': KEY() as string, 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
     body: JSON.stringify({
-      model: MODEL(),
-      input: prompt,
-      response_format: { type: 'text', mime_type: 'application/json' },
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
     }),
   });
-  let text: string | undefined;
-  if (res.ok) {
-    const j = (await res.json()) as { output_text?: string };
-    text = j.output_text;
-  } else if (res.status === 404 || res.status === 400) {
-    res = await fetch(`${BASE}/models/${MODEL()}:generateContent`, {
-      method: 'POST',
-      headers,
-      signal,
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
-      }),
-    });
-    if (!res.ok) throw new Error(`gemini ${res.status}`);
-    const j = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-    text = j.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('');
-  } else {
-    throw new Error(`gemini ${res.status}`);
-  }
+  if (!res.ok) throw new Error(`gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const j = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+  const text = j.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('');
   if (!text) throw new Error('gemini empty');
   return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, ''));
 }
