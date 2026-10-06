@@ -3,7 +3,7 @@ import { api, clearCache } from '../api';
 import { getToken, clearToken } from '../auth';
 import { haptic } from '../telegram';
 import { Loading, useCached } from '../ui';
-import { useLanguage } from '../i18n';
+import { countWord, useLanguage } from '../i18n';
 import { StreakCelebration, useStreakCelebration } from '../components/StreakCelebration';
 import type { View } from '../App';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Owl, Papyrus, WaxTablet } from '../components/homeArt';
@@ -11,6 +11,7 @@ import { HomeFrame, HomeDecorImg } from './homeDecor';
 import { PlanCard } from './PlanCard';
 import { WordOfDay } from './WordOfDay';
 import { SectionLabel } from '../components/SectionLabel';
+import { StudyArtwork } from '../components/StudyArtwork';
 
 export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   const { t, language } = useLanguage();
@@ -48,9 +49,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
   };
 
   return (
-    <div className="home fade-in">
+    <div className="home home-screen fade-in">
       <HomeFrame />
       <div className="hero">
+        <StudyArtwork kind="architecture" className="home-architecture" />
         <HomeDecorImg slot="oliveRight" className="hero-olive" />
         <span className="hero-badge" aria-hidden="true">
           {/* Greek key (meander) — square spiral motif */}
@@ -71,20 +73,23 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           {me.streak >= 2 && (
             <span className="chip">
               <OilLamp className="chip-art c-lamp" />
-              {me.streak} {t(me.streak === 1 ? 'home.streakDay' : 'home.streakDays')}
+              {me.streak} {countWord(me.streak, 'day', language)}
             </span>
           )}
           <span className="chip chip-acc">
             <Aspis className="chip-art c-aspis" />
             {acc}%
+            <span className="home-chip-label">{t('home.accuracy')}</span>
           </span>
           <span className="chip">
             <WaxTablet className="chip-art c-tablet" />
             {me.stats.total_sessions}
+            <span className="home-chip-label">{t('home.sessions')}</span>
           </span>
           <span className="chip">
             <LaurelSprig className="chip-art c-laurel" />
             {me.vocab.mastered}/{me.vocab.total}
+            <span className="home-chip-label">{t('home.wordsLearned')}</span>
           </span>
           {getToken() ? (
             <button

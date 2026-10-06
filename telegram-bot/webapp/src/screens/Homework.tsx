@@ -7,6 +7,7 @@ import { useLanguage } from '../i18n';
 import { ProgressBar } from '../ui';
 import { TopicBand, TopicScene } from './topicScenes';
 import { Owl } from '../components/homeArt';
+import { StudyArtwork } from '../components/StudyArtwork';
 import { VocabDecorImg } from './vocabularyDecor';
 import { loadSets, newId, saveSets, type HwItem, type HwSet, type HwStatus } from '../homework';
 
@@ -155,6 +156,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
         <div className="spacer" />
         {sets.length === 0 && (
           <div className="card hw-empty">
+            <StudyArtwork kind="notebook" className="hw-study-art" />
             <Owl className="hw-empty-owl" />
             <p>{t('hw.empty')}</p>
           </div>
@@ -351,6 +353,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
         <>
           <textarea
             className="input hw-answer"
+            aria-label={t('hw.answerPlaceholder')}
             lang="el"
             rows={3}
             autoFocus

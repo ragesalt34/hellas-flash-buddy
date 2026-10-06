@@ -135,6 +135,13 @@ function DemoCard() {
       onClick={tap}
       role="button"
       tabIndex={0}
+      aria-expanded={revealed}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          tap();
+        }
+      }}
       onPointerMove={onMove}
       onPointerLeave={reset}
       style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
@@ -151,7 +158,7 @@ function DemoCard() {
       </span>
       <div className="vocab-word">{w.word}</div>
       <div className={`spoiler${revealed ? '' : ' hidden'}`}>
-        <div className="reveal">
+        <div className="reveal" aria-hidden={!revealed}>
           <div className="ru">{w.ru}</div>
         </div>
         {!revealed && (
@@ -183,7 +190,7 @@ export function Landing({
     e.currentTarget.style.setProperty('--py', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
   };
   return (
-    <div className="landing">
+    <div className="landing landing-screen">
       <nav className="lp-nav">
         <Logo className="lp-nav-logo" />
         <LogoMark className="lp-nav-mark" />

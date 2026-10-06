@@ -32,6 +32,9 @@ const translations: Translations = {
   'home.streakDay': { ru: 'день', el: 'μέρα' },
   'home.streakDays': { ru: 'дней', el: 'μέρες' },
   'home.section.learn': { ru: 'Обучение', el: 'Μάθηση' },
+  'home.accuracy': { ru: 'точность', el: 'ακρίβεια' },
+  'home.sessions': { ru: 'тестов', el: 'κουίζ' },
+  'home.wordsLearned': { ru: 'слов выучено', el: 'λέξεις γνωστές' },
   'home.quiz.desc': { ru: '10 вопросов по теме', el: '10 ερωτήσεις ανά θέμα' },
   'home.flashcards.desc': { ru: 'Повторение по SRS', el: 'Επανάληψη με SRS' },
   'home.vocab.desc': { ru: '150 слов', el: '150 λέξεις' },
@@ -93,6 +96,8 @@ const translations: Translations = {
 
   // ---- Quiz ----
   'quiz.chooseTopic': { ru: 'Выбери тему', el: 'Διάλεξε θέμα' },
+  'quiz.loadError': { ru: 'Не удалось загрузить вопросы. Попробуй ещё раз.', el: 'Δεν ήταν δυνατή η φόρτωση των ερωτήσεων. Δοκίμασε ξανά.' },
+  'quiz.noQuestions': { ru: 'В этой теме пока нет вопросов. Выбери другую тему.', el: 'Δεν υπάρχουν ακόμη ερωτήσεις σε αυτό το θέμα. Διάλεξε άλλο θέμα.' },
   'quiz.next': { ru: 'Далее', el: 'Επόμενη' },
   'quiz.result': { ru: 'Результат', el: 'Αποτέλεσμα' },
   'quiz.result.great': { ru: 'Отлично!', el: 'Εξαιρετικά!' },
@@ -147,7 +152,7 @@ const translations: Translations = {
   'rd.unchecked': { ru: 'Не проверено', el: 'Δεν ελέγχθηκαν' },
   'rd.memoryHint': { ru: 'Помнишь неделю и дольше', el: 'Τα θυμάσαι μια εβδομάδα και πάνω' },
   'rd.byTopic': { ru: 'По темам', el: 'Ανά θέμα' },
-  'rd.daysActive': { ru: 'дней занятий за 5 недель', el: 'μέρες μελέτης σε 5 εβδομάδες' },
+  'rd.daysActive': { ru: 'занятий за 5 недель', el: 'μελέτης σε 5 εβδομάδες' },
   'rd.showMore': { ru: 'Показать ещё', el: 'Δείξε περισσότερα' },
   'tp.weak': { ru: 'Слабая тема', el: 'Αδύναμο θέμα' },
   'plan.title': { ru: 'План до собеседования', el: 'Πλάνο ως τη συνέντευξη' },

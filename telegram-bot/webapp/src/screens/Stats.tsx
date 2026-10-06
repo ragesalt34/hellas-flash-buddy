@@ -104,6 +104,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
   const VIcon = VERDICT_ICON[data.verdict];
   const active = new Set(data.activity.days);
   const grid = lastDays(35);
+  const activeDays = grid.filter((d) => active.has(d)).length;
   const history = allHistory ? data.history : data.history.slice(0, 5);
   const locale = language === 'ru' ? 'ru-RU' : 'el-GR';
   const streak = data.activity.streak;
@@ -253,7 +254,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
 
         <OliveCalendar days={grid} active={active} today={grid[grid.length - 1]} />
         <div className="rd-sub">
-          {t('rd.oliveHint')} · {grid.filter((d) => active.has(d)).length} {t('rd.daysActive')}
+          {t('rd.oliveHint')} · {activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}
         </div>
 
         {data.history.length > 0 && (

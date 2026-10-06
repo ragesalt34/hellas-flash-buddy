@@ -71,9 +71,10 @@ export function Loading() {
 }
 
 export function ProgressBar({ value, total }: { value: number; total: number }) {
-  const pct = total > 0 ? Math.min(100, (value / total) * 100) : 0;
+  const { t } = useLanguage();
+  const pct = total > 0 ? Math.max(0, Math.min(100, (value / total) * 100)) : 0;
   return (
-    <div className="progress">
+    <div className="progress" data-empty={pct === 0 ? 'true' : undefined} role="progressbar" aria-label={t('nav.stats')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
       <i style={{ width: `${pct}%` }} />
     </div>
   );

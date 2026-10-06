@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
-import { LogoMark } from './components/Logo';
+import { Logo, LogoMark } from './components/Logo';
 import { ColumnChart, CycladicHome, Ostraka, Papyrus, WaxTablet } from './components/homeArt';
 import { MeanderBand } from './components/greekArt';
 import { tg, haptic } from './telegram';
@@ -239,6 +239,7 @@ export function App() {
               paper, where white-on-white made the logo vanish. */}
           <div className="nav-brand" aria-hidden="true">
             <LogoMark />
+            <Logo className="nav-desktop-logo" />
           </div>
           <MeanderBand className="nav-meander" height={7} />
           {NAV.map((n) => {

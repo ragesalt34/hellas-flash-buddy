@@ -166,6 +166,17 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         </div>
         <div
           className={`spoiler${revealed ? '' : ' hidden'}`}
+          role={revealed ? undefined : 'button'}
+          tabIndex={revealed ? undefined : 0}
+          aria-label={revealed ? undefined : t('vocab.tapToReveal')}
+          onKeyDown={(e) => {
+            if (!revealed && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              haptic();
+              playTap();
+              setRevealed(true);
+            }
+          }}
           onClick={() => {
             if (!revealed) {
               haptic();
@@ -175,7 +186,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           }}
         >
           <VocabDecorImg slot="cardTemple" className="vc-panel-temple" />
-          <div className="reveal">
+          <div className="reveal" aria-hidden={!revealed}>
             <div className="ru">{card.ru}</div>
             {card.note && <div className="note">{card.note}</div>}
           </div>

@@ -57,7 +57,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
   }
 
   return (
-    <div className="fade-in center-col">
+    <div className="fade-in center-col auth-screen">
       <form className="card auth-card" onSubmit={submit}>
         <MeanderBand className="auth-meander" height={10} />
         <Greek name="temple" className="auth-temple" />
@@ -129,7 +129,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
           <span>{t('auth.remember')}</span>
         </label>
 
-        {err && <div className="auth-err">{err}</div>}
+        {err && <div className="auth-err" role="alert">{err}</div>}
 
         <button className="btn btn-block" type="submit" disabled={busy}>
           {busy ? (

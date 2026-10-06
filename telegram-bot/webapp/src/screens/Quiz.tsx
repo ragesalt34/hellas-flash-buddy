@@ -62,6 +62,9 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   // the other hooks — the phase branches below return early.
   const submitted = useRef(false);
   const [score, setScore] = useState(0);
+  const [startError, setStartError] = useState<'load' | 'empty' | null>(null);
+  const chosenRef = useRef<string | null>(null);
+  const startingRef = useRef(false);
 
   // Warm the current question + its options so tapping 🔊 is instant.
   useEffect(() => {
@@ -73,7 +76,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   }, [phase, idx, questions]);
 
   async function start(topicId: string) {
+    if (startingRef.current) return;
+    startingRef.current = true;
     haptic();
+    setStartError(null);
     setTopic(topicId);
     setPhase('loading');
     try {
@@ -82,19 +88,25 @@ export function Quiz({ onHome }: { onHome: () => void }) {
       setTopicLabel(r.topicLabel);
       setIdx(0);
       setChosen(null);
+      chosenRef.current = null;
       // A new session may be submitted again (retry / other topic used to stall
       // on the last question: the guard was still set from the previous one).
       submitted.current = false;
       setAnswers([]);
       setScore(0);
+      if (!r.questions.length) setStartError('empty');
       setPhase(r.questions.length ? 'play' : 'topic');
     } catch {
+      setStartError('load');
       setPhase('topic');
+    } finally {
+      startingRef.current = false;
     }
   }
 
   function choose(opt: string) {
-    if (chosen) return;
+    if (chosenRef.current !== null) return;
+    chosenRef.current = opt;
     const q = questions[idx];
     const correct = opt === q.correct_answer;
     setChosen(opt);
@@ -113,6 +125,8 @@ export function Quiz({ onHome }: { onHome: () => void }) {
   }
 
   function next() {
+    if (chosenRef.current === null) return;
+    chosenRef.current = null;
     haptic();
     if (idx + 1 >= questions.length) {
       // Two taps landing in the same frame would both see the old `idx` and
@@ -155,6 +169,16 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         <SectionLabel k="quiz.chooseTopic">
           <Greek name="olive-branch-small" className="tp-label-olive" />
         </SectionLabel>
+        {startError && (
+          <div className="card quiz-load-error" role="alert">
+            <p>{t(startError === 'load' ? 'quiz.loadError' : 'quiz.noQuestions')}</p>
+            {startError === 'load' && (
+              <button className="btn secondary" onClick={() => start(topic)}>
+                <RotateCcw size={18} /> {t('common.retry')}
+              </button>
+            )}
+          </div>
+        )}
         <div className="tiles stagger">
           {TOPICS.map((topicDef, i) => {
             if (topicDef.span)
@@ -222,7 +246,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     const ttlKey =
       pct >= 80 ? 'quiz.result.great' : pct >= 60 ? 'quiz.result.good' : pct >= 40 ? 'quiz.result.keepGoing' : 'quiz.result.tryHarder';
     return (
-      <div className="fade-in center-col">
+      <div className="fade-in center-col quiz-result-screen">
         <div className="result">
           <RewardSides />
           <div className="ring-wreath">
@@ -310,7 +334,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 aria-disabled={!!chosen}
                 onClick={() => choose(opt)}
                 onKeyDown={(e) => {
-                  if (!chosen && (e.key === 'Enter' || e.key === ' ')) {
+                  if (e.target === e.currentTarget && !chosen && (e.key === 'Enter' || e.key === ' ')) {
                     e.preventDefault();
                     choose(opt);
                   }
