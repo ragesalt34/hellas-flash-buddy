@@ -7,6 +7,7 @@ import { playGrade, playComplete, playTap } from '../sound';
 import { CountUp, Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
+import { QUESTION_HINTS, questionHintUrl } from '../questionHints';
 import { Ostraka, Owl } from '../components/homeArt';
 import { Greek } from '../components/greek';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
@@ -58,6 +59,9 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     if (!c) return;
     prefetchGreek(c.question, `q_${c.question_id}`);
     prefetchGreek(c.correct_answer, textKey(c.correct_answer, 'a'));
+    // The card's own illustration (if it has one) is warmed too, so it appears with no gap at reveal.
+    const hint = QUESTION_HINTS[c.question_id];
+    if (hint) new Image().src = questionHintUrl(hint.file);
   }, [cards, i]);
 
   function reset() {
@@ -162,8 +166,14 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   const paperTopic = ['history', 'culture', 'laws', 'geography'].includes(card.topic ?? '')
     ? card.topic!
     : 'mixed';
-  // Alpha-trimmed topic collages (laws = the Parliament collage), so the visible picture fills its box.
-  const paperArtwork = 'paper-art-' + paperTopic + '.webp';
+  // One picture in the art box: the card's own illustration when it has one and may show now
+  // (after-reveal ones wait for the answer), otherwise the topic collage (laws = the Parliament
+  // collage). Both are alpha-trimmed, so the visible picture fills the box.
+  const hint = QUESTION_HINTS[card.question_id];
+  const paperArtSrc =
+    hint && (hint.before || revealed)
+      ? questionHintUrl(hint.file)
+      : import.meta.env.BASE_URL + 'assets/pureplay/paper-art-' + paperTopic + '.webp';
 
   return (
     // Keyed on the card only (see Quiz): the decor and progress bar stay put.
@@ -192,7 +202,7 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
         <VocabDecorImg slot="cardOliveBranch" className="fc-corner-olive" />
         <img
           className="fc-paper-art hs-deco pureplay-desktop"
-          src={import.meta.env.BASE_URL + 'assets/pureplay/' + paperArtwork}
+          src={paperArtSrc}
           width={470}
           height={225}
           alt=""
