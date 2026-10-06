@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "reference": "approved-reference.png",
+  "status": "prepared; not integrated into application",
+  "sourceTool": "built-in image_gen",
+  "prompts": "../../../../../../docs/design/home-reference-v1/prompts.json",
+  "assets": [
+    {
+      "id": "hero",
+      "png": "hero.png",
+      "webp": "hero.webp",
+      "width": 2172,
+      "height": 724,
+      "transparent": false,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2489596,
+      "webpBytes": 1784454,
+      "sha256": "ec473a1b800daecb06e4c6b54dba3ac1bf71dbbbd8a003caa72a06dbf38a805d",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 0,
+        "visible": 6256,
+        "opaque": 6256
+      }
+    },
+    {
+      "id": "quiz",
+      "png": "quiz.png",
+      "webp": "quiz.webp",
+      "width": 1536,
+      "height": 1024,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2360753,
+      "webpBytes": 1225226,
+      "sha256": "749c8719b13eee771345a50595754b445ba72d0b282ba537cda7f50506b8a389",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 3118,
+        "visible": 3026,
+        "opaque": 0
+      }
+    },
+    {
+      "id": "flashcards",
+      "png": "flashcards.png",
+      "webp": "flashcards.webp",
+      "width": 1536,
+      "height": 1024,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2635366,
+      "webpBytes": 1413512,
+      "sha256": "52b9cd8241e9c60d92a22f7b993d30021e0fb1cb38803327208baf28491848d1",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 2659,
+        "visible": 3485,
+        "opaque": 0
+      }
+    },
+    {
+      "id": "vocab",
+      "png": "vocab.png",
+      "webp": "vocab.webp",
+      "width": 1448,
+      "height": 1086,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2166129,
+      "webpBytes": 1569266,
+      "sha256": "eb8805248ed920851158ac6cd77e1569ef717273a9ac46c18efe7067aab19067",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 2419,
+        "visible": 3769,
+        "opaque": 6
+      }
+    },
+    {
+      "id": "homework",
+      "png": "homework.png",
+      "webp": "homework.webp",
+      "width": 1536,
+      "height": 1024,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2449359,
+      "webpBytes": 1267880,
+      "sha256": "104af055753b98d163d19bfe2eec6295138eed0bdcb4ad2076c8c7235a45042a",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 2796,
+        "visible": 3348,
+        "opaque": 0
+      }
+    },
+    {
+      "id": "acropolis",
+      "png": "acropolis.png",
+      "webp": "acropolis.webp",
+      "width": 1774,
+      "height": 887,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 2482946,
+      "webpBytes": 1780620,
+      "sha256": "93a327bf343f824dc198816f8b15143e507014f9d1eacd4b8986d6491b1c5d03",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 2117,
+        "visible": 4099,
+        "opaque": 0
+      }
+    },
+    {
+      "id": "olive",
+      "png": "olive.png",
+      "webp": "olive.webp",
+      "width": 1448,
+      "height": 1086,
+      "transparent": true,
+      "encoding": "lossless WebP; original PNG preserved",
+      "pngBytes": 1275146,
+      "webpBytes": 844010,
+      "sha256": "341a4ecaa28c1030819dc8a76e359cc18d07a16a23d1231ef8b75797facaaf10",
+      "alphaSample": {
+        "step": 16,
+        "transparent": 4339,
+        "visible": 1849,
+        "opaque": 2
+      }
+    }
+  ],
+  "icons": [
+    "icons/book-open.svg",
+    "icons/streak.svg",
+    "icons/accuracy.svg",
+    "icons/tests.svg",
+    "icons/sound.svg",
+    "icons/arrow-right.svg",
+    "icons/help.svg",
+    "icons/progress.svg"
+  ],
+  "tokens": "tokens.json",
+  "elements": "elements.css",
+  "verification": "PNG dimensions and alpha sampling; WebP decoding; SVG XML; SHA-256"
+}

@@ -1,0 +1,95 @@
+/* Prepared element recipes. Not imported by the application.
+   Scope is opt-in; dimensions target the approved 1448px desktop reference. */
+[data-home-reference='v1'] {
+  --ref-page: #faf9f7;
+  --ref-surface: #fff;
+  --ref-ink: #08090b;
+  --ref-border: #ccc;
+  --ref-primary: #70adfc;
+  --ref-cobalt: #0741b8;
+  --ref-mint: #e4ede3;
+  --ref-sky: #d5eafe;
+  --ref-peach: #faebde;
+  --ref-lilac: #efedf8;
+  --ref-cream: #f8f3eb;
+  --ref-plan: #014389;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--ref-ink);
+}
+[data-home-reference='v1'] .ref-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 30px;
+  border: 1.5px solid var(--ref-ink);
+  border-radius: 4px;
+  background: var(--ref-primary);
+  color: var(--ref-ink);
+  font: 700 20px/1.2 Inter, system-ui, sans-serif;
+  cursor: pointer;
+}
+[data-home-reference='v1'] .ref-button--plain { background: var(--ref-surface); }
+[data-home-reference='v1'] .ref-button--cream { background: var(--ref-cream); }
+[data-home-reference='v1'] .ref-button--compact {
+  min-height: 40px;
+  padding: 0 20px;
+  font-size: 16px;
+}
+[data-home-reference='v1'] .ref-link {
+  color: #014389;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-home-reference='v1'] .ref-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1.5px solid var(--ref-ink);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ref-ink);
+  cursor: pointer;
+}
+[data-home-reference='v1'] .ref-circle--sound { width: 56px; height: 56px; }
+[data-home-reference='v1'] .ref-button:hover { background: #8dbdff; }
+[data-home-reference='v1'] .ref-button--plain:hover { background: #f4f3f0; }
+[data-home-reference='v1'] .ref-button--cream:hover { background: #f0e7da; }
+[data-home-reference='v1'] .ref-circle:hover { background: #ffffff80; }
+[data-home-reference='v1'] :is(.ref-button, .ref-circle, .ref-link):focus-visible {
+  outline: 3px solid var(--ref-cobalt);
+  outline-offset: 4px;
+}
+[data-home-reference='v1'] :is(.ref-button, .ref-circle):disabled {
+  opacity: .45;
+  cursor: default;
+}
+[data-home-reference='v1'] .ref-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 186px;
+  padding: 28px;
+  border-radius: 6px;
+}
+[data-home-reference='v1'] .ref-card--quiz { background: var(--ref-sky); }
+[data-home-reference='v1'] .ref-card--flashcards { background: var(--ref-peach); }
+[data-home-reference='v1'] .ref-card--vocab { background: var(--ref-mint); }
+[data-home-reference='v1'] .ref-card--homework { background: var(--ref-lilac); }
+[data-home-reference='v1'] .ref-divider { border: 0; border-top: 1px solid var(--ref-border); }
+[data-home-reference='v1'] .ref-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+/* Native SVG stroke is currentColor. Flame can use #e34314;
+   all other metric icons are near black. Keep interface text out of images. */
