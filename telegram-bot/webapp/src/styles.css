@@ -7113,14 +7113,14 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .tp-screen .tile.feature.warm .tile-d { font-size: 24px; color: #7b7899; }
   [data-theme='soft'] .tp-screen .tile.feature .arrow { position: relative; z-index: 1; margin-left: auto; min-width: 230px; width: 230px; height: 54px; padding: 12px 24px; background: #82c3ff; border: 1.5px solid #121117; border-radius: 5px; color: #121117; }
   [data-theme='soft'] .tp-screen .tile.feature .arrow span { font-size: 18px; }
-  [data-theme='soft'] .tp-screen .tiles .tp-tile { min-height: 154px; padding: 28px; background: #fff !important; border: 1px solid #dcdce5 !important; border-radius: 7px; overflow: hidden; isolation: isolate; }
+  [data-theme='soft'] .tp-screen .tiles .tp-tile { min-height: 192px; padding: 28px; background: #fff !important; border: 1px solid #dcdce5 !important; border-radius: 7px; overflow: hidden; isolation: isolate; }
   [data-theme='soft'] .tp-screen .tp-tile .tile-t { font-size: 32px; font-weight: 750; letter-spacing: -.8px; }
   [data-theme='soft'] .tp-screen .tp-tile .tp-body { position: relative; z-index: 1; width: 38%; gap: 4px; }
   [data-theme='soft'] .tp-screen .tp-tile :is(.tp-emblem, .tp-meta, .tp-bar) { display: none; }
   [data-theme='soft'] .tp-screen .pureplay-topic-arrow { position: relative; z-index: 1; margin-top: 24px; }
   [data-theme='soft'] .tp-screen .pureplay-topic-note { font-size: 16px; color: #7b7899; margin-top: 26px; }
-  [data-theme='soft'] .tp-screen .pureplay-topic-art { display: block; position: absolute; z-index: 0; pointer-events: none; right: 0; bottom: 0; width: 66%; height: 100%; object-fit: cover; object-position: center 25%; }
-  [data-theme='soft'] .tp-screen .t-mixed .pureplay-topic-art { right: 24%; width: 38%; height: 140%; bottom: -25%; }
+  [data-theme='soft'] .tp-screen .pureplay-topic-art { display: block; position: absolute; z-index: 0; pointer-events: none; right: 16px; bottom: 12px; width: calc(62% - 16px); height: calc(100% - 24px); object-fit: contain; object-position: right center; }
+  [data-theme='soft'] .tp-screen .t-mixed .pureplay-topic-art { right: 24%; width: 38%; height: calc(100% - 24px); bottom: 12px; object-position: center; }
   [data-theme='soft'] .tp-screen .tp-tile:hover { border-color: #193c72 !important; background: #fafcff !important; }
   [data-theme='soft'] .landing-screen .lp-demo-wrap { background: #aedacb url('/assets/pureplay/hero-collage.webp') center / cover no-repeat; }
   [data-theme='soft'] .landing-screen .lp-foot { background: #d6eaff; }
