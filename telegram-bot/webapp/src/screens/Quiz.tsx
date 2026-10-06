@@ -193,6 +193,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                   style={{ animationDelay: `${40 + i * 45}ms` }}
                   onClick={() => start(topicDef.id)}
                 >
+                  <img className="pureplay-topic-art pureplay-desktop" src={`${import.meta.env.BASE_URL}assets/pureplay/mixed-collage.webp`} alt="" aria-hidden="true" />
                   <span className="tile-ic tp-mini">
                     <MiniTemple />
                   </span>
@@ -218,6 +219,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                 style={{ animationDelay: `${40 + i * 45}ms` }}
                 onClick={() => start(topicDef.id)}
               >
+                <img className="pureplay-topic-art pureplay-desktop" src={`${import.meta.env.BASE_URL}assets/pureplay/${topicDef.id}-collage.webp`} alt="" aria-hidden="true" />
                 <TopicIcon topic={topicDef.id} className="tp-emblem" />
                 <span className="tp-body">
                   {isWeak && <span className="tp-weak">{t('tp.weak')}</span>}

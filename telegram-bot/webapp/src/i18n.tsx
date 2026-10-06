@@ -138,6 +138,8 @@ const translations: Translations = {
   // Grade sub-labels (the "come back in …" interval) are computed per card
   // level in src/srs.ts — static texts here would lie for most levels.
   'grade.hard': { ru: 'Сложно', el: 'Δύσκολο' },
+  'vocab.languagePair': { ru: 'Греческий → русский', el: 'Ελληνικά → Ρωσικά' },
+  'study.gradePrompt': { ru: 'Как хорошо ты помнишь?', el: 'Πόσο καλά το θυμάσαι;' },
   'grade.good': { ru: 'Хорошо', el: 'Καλά' },
   'grade.easy': { ru: 'Знаю', el: 'Το ξέρω' },
 

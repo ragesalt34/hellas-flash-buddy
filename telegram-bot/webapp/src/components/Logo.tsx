@@ -5,6 +5,8 @@
    - hellas-study-seal      the wax seal alone, for small squares and the favicon
    hellas-study-logo@master.png is the full-resolution cut-out for use elsewhere. */
 
+import { BookOpen } from 'lucide-react';
+
 const src = (name: string) => `${import.meta.env.BASE_URL}brand/${name}.webp`;
 
 /** The wax seal on its own. Decorative next to a visible name, so no alt text. */
@@ -22,7 +24,7 @@ export function Logo({ variant = 'compact', className = '' }: { variant?: 'compa
       aria-label="Hellas Study"
     >
       <img className="logo-art" src={src(wide ? 'hellas-study-logo' : 'hellas-study-wordmark')} alt="" draggable={false} />
-      <span className="logo-pureplay" aria-hidden="true">Hellas Study<span className="logo-el" lang="el">Ελ</span></span>
+      <span className="logo-pureplay" aria-hidden="true">Hellas Study<BookOpen className="logo-symbol" size={25} strokeWidth={1.6} /></span>
     </span>
   );
 }

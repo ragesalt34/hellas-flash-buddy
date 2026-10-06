@@ -9,7 +9,7 @@ import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
-import { Papyrus } from '../components/homeArt';
+import { StudyIcon } from '../components/StudyIcon';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
@@ -133,7 +133,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span className="vc-meta-ic">
-            <Papyrus />
+            <StudyIcon name="vocab" />
           </span>{' '}
           {t('nav.vocab')}
           <Greek name="olive-branch-small" className="vc-meta-olive" />
@@ -148,6 +148,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
       <Fragment key={i}>
       <div className="card vc-card swap-in">
+        <div className="study-card-label pureplay-desktop">{t('vocab.languagePair')}</div>
         <VocabDecorImg slot="cardGreekCorner" className="vc-corner tl" />
         <VocabDecorImg slot="cardOliveBranch" className="vc-corner-olive" />
         <div className="speak-row center">
@@ -201,6 +202,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
       {revealed && (
         <div className="actionbar">
+          <p className="study-grade-prompt pureplay-desktop">{t('study.gradePrompt')}</p>
           <div className="grade-row">
             <button className="grade g1" onClick={() => grade(1)}>
               <VocabDecorImg slot="buttonCorner" className="gr-key" />
