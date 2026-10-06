@@ -16,6 +16,19 @@ Talk to the owner in Russian.
   - `services/ttsService.ts` — ElevenLabs pronunciation, cached in Supabase storage `tts-audio`.
 - Root `src/`, `mobile/`, `supabase/migrations` — older/other projects. Do not edit unless asked.
 
+## Copies and folders on this PC
+
+Several copies of the project exist; check which one you are in before editing.
+
+- `C:/Users/user/Desktop/hellas-flash-buddy` — the main clone (remote `ragesalt34/hellas-flash-buddy`). Its branch is not always `main`: it was on `game/godot-2d` with unrelated uncommitted work (`mobile/`, game, homework AI) when this was written. Run `git branch --show-current` and `git status` first, and never mix that work into a commit for something else.
+- `C:/Users/user/.codex/worktrees/blue-pureplay/hellas-flash-buddy` — a git worktree with `main` checked out (a branch can only be checked out in one worktree). Web-app design work is committed here; its Vite dev server is `http://127.0.0.1:5173`.
+- `C:/Users/user/Desktop/Hellas Study Bot` — the owner's launcher (portable Node + autostart), not a git repo. Port 3001 is its; never kill it.
+- `C:/Users/user/Downloads/hellas-flash-buddy-main` — a scratch working directory for assistant sessions, not a repo. Real edits go to one of the copies above.
+- `design-handoff/` (main clone, untracked) — design packages from Codex. One folder per package (`<name>-v1`, with its README and CLAUDE_PROMPT.md); the original zips are in `design-handoff/_архив/`. Not part of any build.
+- `telegram-bot/game`, `telegram-bot/game2d` — separate game projects (branches `game/*`); not part of the web app or the API.
+- `telegram-bot/.git` is a stale nested repo ("Initial commit"). Commit from the repository root, not from inside `telegram-bot`.
+- Local-only files in `telegram-bot/` that `.gitignore` keeps out of git: `_tunnel.bat`, `_tunnel.vbs`, `cloudflared.exe`, `tunnel.log`, `vocab_progress.json`. They belong to the old temporary tunnel / bot setup; leave them where they are, since the scripts call each other by relative name.
+
 ## Run and check
 
 ```bash
