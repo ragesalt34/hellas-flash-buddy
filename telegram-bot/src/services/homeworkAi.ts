@@ -12,7 +12,7 @@ import { MAX_ITEMS, MAX_TEXT, type HomeworkItem, type Verdict } from './homework
 const KEY = () => process.env.GEMINI_API_KEY;
 const MODEL = () => process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const BASE = 'https://generativelanguage.googleapis.com/v1beta';
-const TIMEOUT_MS = 25_000;
+const TIMEOUT_MS = 15_000; // per model; up to three models are tried
 
 export const aiConfigured = (): boolean => !!KEY();
 
@@ -28,24 +28,58 @@ export interface AiCheck {
   mistakes: Mistake[];
 }
 
-/** One JSON-returning model call via generateContent. Not the Interactions API:
- * its REST reply has no `output_text` (that is an SDK helper; text sits in
+/** Tried in order when a model is overloaded (503 "high demand"), rate limited or slow. */
+const FALLBACK_MODELS = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+const RETRYABLE = new Set([429, 500, 503, 504]);
+
+class GeminiError extends Error {
+  constructor(message: string, readonly retryable: boolean) {
+    super(message);
+  }
+}
+
+/** One JSON-returning call to one model via generateContent. Not the Interactions
+ * API: its REST reply has no `output_text` (that is an SDK helper; text sits in
  * steps[].content[]), and it stores every interaction by default. */
-async function callJson(prompt: string): Promise<unknown> {
-  const res = await fetch(`${BASE}/models/${MODEL()}:generateContent`, {
-    method: 'POST',
-    headers: { 'x-goog-api-key': KEY() as string, 'Content-Type': 'application/json' },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-    body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
-    }),
-  });
-  if (!res.ok) throw new Error(`gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
+async function callModel(model: string, prompt: string): Promise<unknown> {
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'x-goog-api-key': KEY() as string, 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
+      }),
+    });
+  } catch (err) {
+    // timeout or network failure: worth trying another model
+    throw new GeminiError(`${model}: ${err instanceof Error ? err.message : err}`, true);
+  }
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 200);
+    throw new GeminiError(`gemini ${res.status} (${model}): ${body}`, RETRYABLE.has(res.status));
+  }
   const j = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
   const text = j.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('');
-  if (!text) throw new Error('gemini empty');
+  if (!text) throw new GeminiError(`gemini empty (${model})`, true);
   return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, ''));
+}
+
+async function callJson(prompt: string): Promise<unknown> {
+  const models = [...new Set([MODEL(), ...FALLBACK_MODELS])];
+  let last: unknown;
+  for (const model of models) {
+    try {
+      return await callModel(model, prompt);
+    } catch (err) {
+      last = err;
+      if (!(err instanceof GeminiError && err.retryable)) throw err;
+      console.warn('homework ai retry:', err.message);
+    }
+  }
+  throw last;
 }
 
 const str = (v: unknown, max: number): string => (typeof v === 'string' ? v.trim().slice(0, max) : '');
