@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { ArrowRight, MousePointerClick } from 'lucide-react';
+import { ArrowRight, MousePointerClick, LogIn, CircleHelp, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { Logo, LogoMark } from '../components/Logo';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -173,6 +173,21 @@ function DemoCard() {
   );
 }
 
+/** The small, usable word preview in the approved Pureplay hero. */
+function PureplayDemoCard() {
+  const { t } = useLanguage();
+  const [index, setIndex] = useState(0);
+  const word = DEMO_WORDS[index % DEMO_WORDS.length];
+  return (
+    <button className="lp-preview-card pureplay-desktop" onClick={() => setIndex((n) => n + 1)} aria-label={`${word.word} — ${word.ru}. ${t('landing.pureplay.demo.next')}`}>
+      <Volume2 className="lp-preview-sound" size={24} aria-hidden="true" />
+      <span className="lp-preview-word" lang="el">{word.word}</span>
+      <span className="lp-preview-translation">{word.ru}</span>
+      <span className="lp-preview-link">{t('landing.pureplay.demo.try')}<ArrowRight size={17} aria-hidden="true" /></span>
+    </button>
+  );
+}
+
 export function Landing({
   onStart,
   onLogin,
@@ -198,11 +213,12 @@ export function Landing({
         <div className="pureplay-landing-links">
           <a href="#how-it-works">{t('landing.steps.title')}</a>
           <a href="#features">{t('landing.features.title')}</a>
-          <a href="#faq">{t('landing.faq.title')}</a>
+          <a href="#faq">{t('landing.pureplay.nav.faq')}</a>
         </div>
         <div className="lp-nav-right">
           <LanguageSwitch />
-          <button className="lp-btn ghost" onClick={onLogin}>{t('landing.enter')}</button>
+          <a className="lp-nav-help pureplay-desktop" href="#faq" aria-label={t('landing.pureplay.nav.faq')}><CircleHelp size={23} /></a>
+          <button className="lp-btn ghost" onClick={onLogin}><LogIn className="pureplay-desktop" size={18} />{t('landing.enter')}</button>
         </div>
       </nav>
 
@@ -230,14 +246,15 @@ export function Landing({
                 <TempleMark size={13} strokeWidth={2.6} /> ΕΛΛΑΣ
               </span>
               <span className="lp-pill-text">
-                {t('landing.pill')} <b>{t('landing.pill.b')}</b>
+                <span className="lp-legacy-pill">{t('landing.pill')} </span><b>{t('landing.pill.b')}</b>
               </span>
             </motion.span>
             <motion.h1 initial="hidden" animate="show" variants={rise}>
               {t('landing.h1.line1')}<br /><span className="highlight">{t('landing.h1.highlight')}</span>
             </motion.h1>
             <motion.p initial="hidden" animate="show" custom={1} variants={rise}>
-              {t('landing.sub')}
+              <span className="lp-legacy-copy">{t('landing.sub')}</span>
+              <span className="pureplay-desktop">{t('landing.pureplay.sub')}</span>
             </motion.p>
             <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
               <button className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} /></button>
@@ -254,6 +271,7 @@ export function Landing({
             <HeroSun />
             <div className="lp-demo-label">{t('landing.demo.label')}</div>
             <DemoCard />
+            <PureplayDemoCard />
             {/* Floating product stickers — fill the side space, echo the app UI */}
             <motion.span
               className="lp-float f1"
@@ -341,7 +359,8 @@ export function Landing({
               {t('landing.step')} {i + 1}
             </span>
             <h3>{t(s.titleKey)}</h3>
-            <p>{t(s.textKey)}</p>
+            <p><span className="lp-legacy-copy">{t(s.textKey)}</span><span className="pureplay-desktop">{t(`landing.pureplay.step${i + 1}`)}</span></p>
+            <ArrowRight className="lp-step-arrow pureplay-desktop" size={23} aria-hidden="true" />
           </motion.div>
         ))}
       </section>
@@ -420,7 +439,8 @@ export function Landing({
           { n: 'SRS', l: 'landing.stat.srs', Icon: LaurelSprig },
         ].map(({ n, l, Icon }) => (
           <div className="lp-stat" key={l}>
-            <Icon className="lp-stat-ic" />
+            <span className="pureplay-legacy-feature"><Icon className="lp-stat-ic" /></span>
+            <span className="pureplay-clean-feature lp-stat-ic"><StudyIcon name={l === 'landing.stat.questions' ? 'quiz' : l === 'landing.stat.words' ? 'vocab' : l === 'landing.stat.topics' ? 'flashcards' : 'stats'} /></span>
             <div className="n">{n}</div>
             <div className="l">{t(l)}</div>
           </div>

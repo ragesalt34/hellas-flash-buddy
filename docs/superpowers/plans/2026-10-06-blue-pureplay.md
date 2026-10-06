@@ -39,3 +39,11 @@
 - Reviewer found an alternate-theme logo sizing regression and nested legacy icon styling; corrected both. Readiness supplementary counts remain visible.
 - Alternate-theme landing wordmark measured 270.66 × 56px after the correction. No browser console errors on the final pass.
 - New illustrations and mobile layout/QA remain deferred by the owner's explicit instruction.
+
+## Landing reference correction
+
+- Corrected the desktop landing against the owner's approved PNG: hero proportions, headline and short copy, compact word card, header, stats strip, step spacing, feature icons, FAQ and final CTA.
+- Added the supplied reference PNG unchanged as temporary artwork. CSS shows only the hero and footer illustration regions; interface text and controls remain native elements. Replace this temporary source when the final illustrations are chosen.
+- Desktop RU/EL at 1440px: no horizontal overflow or console errors; word-card cycling and FAQ expansion checked. TypeScript, production build and diff whitespace checks passed.
+- Reviewer found a static accessible name hiding the demo word/translation; the button now includes both in its accessible name.
+- The owner's narrow preview panel was 767px wide. Desktop comparison requires an expanded browser; mobile work remains deferred.
