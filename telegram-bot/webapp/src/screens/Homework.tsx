@@ -1,6 +1,13 @@
 import { Fragment, useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, CircleAlert, CircleX, House, Plus, RotateCcw, Trash2, X } from 'lucide-react';
-import { api, type HomeworkCheck, type HomeworkParsedItem } from '../api';
+import { ArrowRight, CheckCircle2, CircleAlert, CircleX, House, Paperclip, Plus, RotateCcw, Trash2, X } from 'lucide-react';
+import {
+  api,
+  HOMEWORK_FILE_MAX,
+  HOMEWORK_FILE_TYPES,
+  type HomeworkCheck,
+  type HomeworkFile,
+  type HomeworkParsedItem,
+} from '../api';
 import { haptic } from '../telegram';
 import { playComplete, playCorrect, playTap, playWrong } from '../sound';
 import { useLanguage } from '../i18n';
@@ -12,6 +19,16 @@ import { VocabDecorImg } from './vocabularyDecor';
 import { loadSets, newId, saveSets, type HwItem, type HwSet, type HwStatus } from '../homework';
 
 type Phase = 'list' | 'new' | 'review' | 'play' | 'done';
+
+/** Read a picked file as base64 (no data: prefix) for the parse request. */
+function readBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).replace(/^data:[^,]*,/, ''));
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
+}
 
 /** Title row: a tablet emblem (same tile as the quiz topic) + the label. */
 function Meta({ children }: { children: React.ReactNode }) {
@@ -38,6 +55,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
   const [source, setSource] = useState<'ai' | 'local'>('local');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  const [file, setFile] = useState<(HomeworkFile & { name: string }) | null>(null);
+  const [fileError, setFileError] = useState<'' | 'hw.fileType' | 'hw.fileBig'>('');
 
   // play
   const [setId, setSetId] = useState<string | null>(null);
@@ -59,13 +78,25 @@ export function Homework({ onHome }: { onHome: () => void }) {
     saveSets(next);
   }
 
+  async function pickFile(f: File | undefined) {
+    setFileError('');
+    if (!f) return;
+    if (!HOMEWORK_FILE_TYPES.includes(f.type)) return setFileError('hw.fileType');
+    if (f.size > HOMEWORK_FILE_MAX) return setFileError('hw.fileBig');
+    try {
+      setFile({ name: f.name, mimeType: f.type, data: await readBase64(f) });
+    } catch {
+      setFileError('hw.fileType');
+    }
+  }
+
   async function parse() {
-    if (!text.trim() || busy) return;
+    if ((!text.trim() && !file) || busy) return;
     haptic();
     setBusy(true);
     setError(false);
     try {
-      const r = await api.homeworkParse(text);
+      const r = await api.homeworkParse(text, file ? { mimeType: file.mimeType, data: file.data } : undefined);
       setItems(r.items);
       setSource(r.source);
       setPhase('review');
@@ -100,6 +131,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
     persist([set, ...sets]);
     setTitle('');
     setText('');
+    setFile(null);
     begin(set);
   }
 
@@ -239,9 +271,37 @@ export function Homework({ onHome }: { onHome: () => void }) {
             onChange={(e) => setText(e.target.value)}
           />
         </label>
+        <div className="field">
+          <span className="field-label">{t('hw.fileLabel')}</span>
+          {file ? (
+            <div className="hw-file">
+              <Paperclip size={16} strokeWidth={2.4} aria-hidden="true" />
+              <span className="hw-file-name">{file.name}</span>
+              <button className="hw-file-remove" aria-label={t('hw.fileRemove')} onClick={() => setFile(null)}>
+                <X size={16} strokeWidth={2.6} />
+              </button>
+            </div>
+          ) : ai ? (
+            <label className="btn btn-block secondary hw-file-pick">
+              <Paperclip size={16} strokeWidth={2.4} aria-hidden="true" /> {t('hw.filePick')}
+              <input
+                type="file"
+                accept={HOMEWORK_FILE_TYPES.join(',')}
+                hidden
+                onChange={(e) => {
+                  void pickFile(e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          ) : (
+            <div className="hw-hint">{t('hw.fileNeedsAi')}</div>
+          )}
+          {fileError && <div className="hw-err">{t(fileError)}</div>}
+        </div>
         {error && <div className="hw-err">{t('common.error')}</div>}
         <div className="hw-new-actions">
-        <button className="btn btn-block" disabled={!text.trim() || busy} onClick={parse}>
+        <button className="btn btn-block" disabled={(!text.trim() && !file) || busy} onClick={parse}>
           {busy ? t('hw.parsing') : t('hw.parse')} <ArrowRight size={18} strokeWidth={2.6} />
         </button>
         <button className="btn btn-block secondary hw-gap" onClick={() => setPhase('list')}>

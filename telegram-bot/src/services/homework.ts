@@ -16,6 +16,14 @@ export interface HomeworkItem {
 
 export type Verdict = 'correct' | 'almost' | 'wrong';
 
+/** A tutor's attachment, base64 without the data: prefix. Only the AI can read it. */
+export interface HomeworkFile {
+  mimeType: string;
+  data: string;
+}
+export const FILE_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+export const MAX_FILE_BYTES = 8 * 1024 * 1024;
+
 const GREEK = /[Ͱ-Ͽἀ-῿]/;
 const CYRILLIC = /[Ѐ-ӿ]/;
 // ";" is the Greek question mark; U+037E is its dedicated code point.

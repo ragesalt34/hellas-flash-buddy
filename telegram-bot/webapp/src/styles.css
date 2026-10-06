@@ -5381,6 +5381,10 @@ button.chip:active { transform: scale(0.95); }
 .hw-text { min-height: 220px; resize: vertical; line-height: 1.5; font-family: inherit; }
 .hw-answer { width: 100%; margin-top: 14px; resize: vertical; line-height: 1.45; font-family: inherit; font-size: 18px; }
 .hw-err { margin: 10px 0; color: var(--bad-text); font-weight: 700; }
+.hw-file-pick { display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.hw-file { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 2px solid var(--border); background: var(--surface); }
+.hw-file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.hw-file-remove { display: inline-flex; padding: 4px; border: 0; background: none; color: inherit; cursor: pointer; }
 .hw-hint { margin: 10px 2px 0; font-size: var(--t-meta); font-weight: 600; color: var(--muted); line-height: 1.45; }
 .hw-source { margin: 0 2px 12px; font-size: var(--t-meta); font-weight: 700; color: var(--muted); }
 .hw-item { position: relative; padding-right: 44px; margin-bottom: 10px; border-left: 5px solid color-mix(in srgb, var(--accent) 55%, transparent); }

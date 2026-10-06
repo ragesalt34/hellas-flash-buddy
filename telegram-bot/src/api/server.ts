@@ -35,7 +35,7 @@ import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 import { loadReadiness } from '../services/readinessService';
 import { loadPlan, setInterviewDate } from '../services/planService';
-import { parseHomeworkText, checkLocal, MAX_TEXT } from '../services/homework';
+import { parseHomeworkText, checkLocal, MAX_TEXT, FILE_TYPES, MAX_FILE_BYTES, type HomeworkFile } from '../services/homework';
 import { aiConfigured, aiParse, aiCheck } from '../services/homeworkAi';
 import { pickWordOfDay } from '../services/wordOfDay';
 import { sessionLangs } from '../services/readiness';
@@ -205,6 +205,9 @@ export function createApiApp(): express.Express {
   app.use(cors({ maxAge: 86400 }));
   // Largest legitimate body is a quiz-complete payload (~15KB) — 200kb leaves
   // headroom while capping junk uploads.
+  // Homework parse may carry a tutor's PDF or photo as base64 (8 MB file ≈ 11 MB
+  // JSON). Parsed here first; the general parser below then skips this body.
+  app.use('/api/homework/parse', express.json({ limit: '12mb' }));
   app.use(express.json({ limit: '200kb' }));
 
   // Public health check (no auth) — used by cloud host (Render) deploy probes.
@@ -695,18 +698,39 @@ export function createApiApp(): express.Express {
     res.json({ ai: canUseAi(req) });
   });
 
-  // POST /api/homework/parse { text } — tutor's notes -> question cards
+  // POST /api/homework/parse { text, file?: { mimeType, data(base64) } } — tutor's notes -> question cards
   api.post(
     '/homework/parse',
     wrap(async (req, res) => {
-      const text = (req.body as { text?: unknown })?.text;
-      if (typeof text !== 'string' || !text.trim() || text.length > MAX_TEXT) {
+      const body = (req.body ?? {}) as { text?: unknown; file?: { mimeType?: unknown; data?: unknown } };
+      const text = typeof body.text === 'string' ? body.text : '';
+      let file: HomeworkFile | undefined;
+      if (body.file) {
+        const { mimeType, data } = body.file;
+        if (
+          typeof mimeType !== 'string' ||
+          !FILE_TYPES.includes(mimeType) ||
+          typeof data !== 'string' ||
+          !/^[A-Za-z0-9+/]+=*$/.test(data) ||
+          data.length * 0.75 > MAX_FILE_BYTES
+        ) {
+          res.status(400).json({ error: 'invalid_file' });
+          return;
+        }
+        file = { mimeType, data };
+      }
+      if ((!text.trim() && !file) || text.length > MAX_TEXT) {
         res.status(400).json({ error: 'invalid_input' });
+        return;
+      }
+      // Only the AI can read a file; without it there is nothing to fall back to.
+      if (file && !canUseAi(req)) {
+        res.status(403).json({ error: 'ai_required' });
         return;
       }
       if (canUseAi(req) && aiAllowed(req.account!.id)) {
         try {
-          const items = await aiParse(text);
+          const items = await aiParse(text, file);
           if (items.length) {
             res.json({ items, source: 'ai' });
             return;

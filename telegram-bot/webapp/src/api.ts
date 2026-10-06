@@ -127,6 +127,14 @@ export interface HomeworkParsedItem {
   answer: string;
   note: string;
 }
+/** A tutor's PDF or photo, base64 without the data: prefix. */
+export interface HomeworkFile {
+  mimeType: string;
+  data: string;
+}
+export const HOMEWORK_FILE_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+export const HOMEWORK_FILE_MAX = 8 * 1024 * 1024;
+
 export interface HomeworkCheck {
   verdict: 'correct' | 'almost' | 'wrong';
   corrected: string;
@@ -168,10 +176,10 @@ export const api = {
   setInterviewDate: (date: string | null) =>
     request<{ plan: StudyPlan }>('/account/interview-date', { method: 'PUT', body: JSON.stringify({ date }) }),
   homeworkStatus: () => request<{ ai: boolean }>('/homework/status'),
-  homeworkParse: (text: string) =>
+  homeworkParse: (text: string, file?: HomeworkFile) =>
     request<{ items: HomeworkParsedItem[]; source: 'ai' | 'local' }>('/homework/parse', {
       method: 'POST',
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, file }),
     }),
   homeworkCheck: (body: { question: string; modelAnswer: string; note: string; answer: string }) =>
     request<HomeworkCheck>('/homework/check', { method: 'POST', body: JSON.stringify(body) }),

@@ -32,6 +32,20 @@ test('aiParse returns the cards Gemini sent', async () => {
   assert.deepEqual(items, [{ id: 'q1', question: 'Πού μένεις;', answer: 'Μένω στην Αθήνα.', note: '' }]);
 });
 
+test('aiParse sends an attached file to Gemini and asks for questions on topics', async () => {
+  let sent: { contents: { parts: Record<string, unknown>[] }[] } | undefined;
+  const text = JSON.stringify({ items: [{ question: 'Τι γιορτάζουμε στις 17 Νοεμβρίου;', answer: 'Το Πολυτεχνείο.', note: '' }] });
+  globalThis.fetch = (async (_url: string | URL, init?: RequestInit) => {
+    sent = JSON.parse(String(init?.body));
+    return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] }), { status: 200 });
+  }) as typeof fetch;
+  const items = await aiParse('Готовимся отвечать про праздники Греции', { mimeType: 'application/pdf', data: 'JVBERi0=' });
+  assert.equal(items.length, 1);
+  const parts = sent!.contents[0].parts;
+  assert.deepEqual(parts[1], { inlineData: { mimeType: 'application/pdf', data: 'JVBERi0=' } });
+  assert.match(String(parts[0].text), /topics/i, 'prompt must cover topic-only homework');
+});
+
 test('aiParse moves to the next model when one is overloaded (503)', async () => {
   const calls: string[] = [];
   const text = JSON.stringify({ items: [{ question: 'Πού μένεις;', answer: '', note: '' }] });
