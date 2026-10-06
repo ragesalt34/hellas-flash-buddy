@@ -16,6 +16,7 @@ export function WordOfDay({ word }: { word: Word }) {
   return (
     <section className="wod" aria-label={t('wod.title')}>
       <MeanderBand className="hs-deco wod-band" height={9} />
+      <img className="editorial-only editorial-word-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/word.webp`} alt="" aria-hidden="true" />
       <div className="wod-eyebrow">
         {t('wod.title')}
         {language === 'ru' && <span lang="el"> · {translate('wod.title', 'el')}</span>}

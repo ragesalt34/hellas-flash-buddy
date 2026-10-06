@@ -1,0 +1,30 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "exec-23017232-b5ce-4e01-9fef-6de875b5fe7d.png",
+  "jobs": [
+    {
+      "name": "hero",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only TOP-RIGHT hero illustration, wide roughly 2:1. A large cream Parthenon on terracotta cliff at upper left; layered cobalt-blue sea and mountain behind; tiny white Cycladic buildings with blue domes lower-center; vermilion round sun upper-right; olive branch with black olives far-right; dusty pink paper hand holding a cream tilted checklist lower-right. Checklist contains the handwritten Greek title 'Ελλάδα' and three black checkbox lines. Composition full and dense as the reference. Ragged paper outer edges, no mint area, no Russian headline or CTA."
+    },
+    {
+      "name": "quiz",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only illustration on FIRST card numbered01, not number itself: loose cream checklist tilted counterclockwise with three black squares and black scribble lines, cream-and-cobalt Greek flag overlapping upper-right of checklist, olive branch with black olives along right, layered cobalt and vermilion torn paper behind. No spiral notebook. Same grouping as reference, transparent complete silhouette."
+    },
+    {
+      "name": "flashcards",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only illustration on card numbered02: thick tilted stack of cream flashcards front, olive sprig and black olives at right, green, vermilion, blue torn-paper layers behind. Front card contains ONLY 'γλώσσα' and small 'язык' underneath, as reference. No numeralbadge, cardtitle, arrows or panel."
+    },
+    {
+      "name": "vocab",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only illustration on card numbered03: thick tilted closed cobalt book with cream page edges, cover decorated with six handwritten white Greek capitals Α Β Γ Δ Ε Ζ in two rows, layered dusty pink and cream paper behind, olive sprig with black olives to the right. NO HAND on this book. Same diagonal position as reference."
+    },
+    {
+      "name": "homework",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only illustration on card numbered04: cream loose worksheet tilted counterclockwise, three black checkbox squares and black scribble lines, slender vermilion fountain pen with navy tip diagonally along right edge, olive branch with black olives upper-right, rough blue and vermilion paper behind. No blue star, no numeralbadge, no title, no frame."
+    },
+    {
+      "name": "word",
+      "prompt": "Input: approved EDITORIAL Hellas Study dashboard reference. Extract and reconstruct only the specified illustration, not UI, at high resolution. Match this exact reference object's composition, angles and colors as closely as possible. Handmade paper collage, rough torn and scissor-cut cream, cobalt, vermilion, dusty pink and olive card, visible fibers and little physical shadows. No photorealism, watercolor, gradient background, extra UI, text labels, buttons, frames or page. Transparent background with entire object silhouette visible. Only temple landscape in blue WORD OF DAY card on right: cream Parthenon on layered terracotta rock, dark green cypresses to left, olive branch with black olives sprawling toward lower-left, cream torn-paper mountains behind. Compact landscape roughly 4:3 for overlay on cobalt CSS panel. No vermilion sun, no opaque blue rectangle, no Greek/Russian word labels or buttons."
+    }
+  ]
+}

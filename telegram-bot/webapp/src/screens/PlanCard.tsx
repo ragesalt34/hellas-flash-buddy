@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { ArrowRight, CalendarDays, Check, Loader2 } from 'lucide-react';
 import { ProgressBar } from '../ui';
 import { api, type StudyPlan } from '../api';
 import type { View } from '../App';
@@ -61,15 +61,16 @@ export function PlanCard({
   const head = (
     <div className="pc-head">
       <Hourglass className="pc-ic" />
+      <CalendarDays className="editorial-only pc-calendar" aria-hidden="true" />
       <span className="pc-title">{t('plan.title')}</span>
     </div>
   );
 
   if (isGuest)
     return (
-      <div className="card plan-card">
+      <div className="card plan-card pc-guest">
         {head}
-        <p className="pc-text">{t('plan.guest')}</p>
+        <p className="pc-text"><span className="pc-legacy-copy">{t('plan.guest')}</span><span className="editorial-only">{t('plan.editorial.guest')}</span></p>
         <button
           className="btn pc-btn"
           onClick={() => {

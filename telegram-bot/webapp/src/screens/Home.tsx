@@ -52,6 +52,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
     <div className="home home-screen fade-in">
       <HomeFrame />
       <div className="hero">
+        <img className="editorial-only editorial-hero-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/hero.webp`} alt="" aria-hidden="true" />
         <StudyArtwork kind="architecture" className="home-architecture" />
         <HomeDecorImg slot="oliveRight" className="hero-olive" />
         <span className="hero-badge" aria-hidden="true">
@@ -78,12 +79,11 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </div>
         </div>
         <div className="hero-chips">
-          {me.streak >= 2 && (
-            <span className="chip">
+            <span className={`chip home-streak${me.streak < 2 ? ' home-streak-low' : ''}`}>
               <StudyIcon name="streak" className="chip-art c-lamp" />
               {me.streak} {countWord(me.streak, 'day', language)}
+              <span className="editorial-only editorial-streak-label">{t('home.editorial.streak')}</span>
             </span>
-          )}
           <span className="chip chip-acc">
             <StudyIcon name="accuracy" className="chip-art c-aspis" />
             {acc}%
@@ -101,7 +101,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           {getToken() ? (
             <button
-              className="chip"
+              className="chip home-session home-session-logout"
               onClick={() => {
                 haptic();
                 clearToken();
@@ -116,7 +116,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             </button>
           ) : (
             <button
-              className="chip"
+              className="chip home-session home-session-login"
               onClick={() => {
                 haptic();
                 // Guests have no token, so reloading re-derives entered=false and
@@ -136,10 +136,12 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
       <SectionLabel k="home.section.learn" />
       <div className="tiles stagger">
         <button
-          className="tile feature"
+          className="tile feature t-quiz"
           style={{ animationDelay: '40ms' }}
           onClick={() => nav('quiz')}
         >
+          <span className="editorial-only editorial-number" aria-hidden="true">01</span>
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/quiz.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="quiz" />
           </span>
@@ -157,6 +159,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
         </button>
 
         <button className="tile t-cards" style={{ animationDelay: '90ms' }} onClick={() => nav('flashcards')}>
+          <span className="editorial-only editorial-number" aria-hidden="true">02</span>
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/flashcards.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="flashcards" />
           </span>
@@ -168,6 +172,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
+          <span className="editorial-only editorial-number" aria-hidden="true">03</span>
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/vocab.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="vocab" />
           </span>
@@ -184,6 +190,8 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           style={{ animationDelay: '160ms', flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 'auto' }}
           onClick={() => nav('homework')}
         >
+          <span className="editorial-only editorial-number" aria-hidden="true">04</span>
+          <img className="editorial-only editorial-card-art" src={`${import.meta.env.BASE_URL}assets/pureplay/home-editorial/homework.webp`} alt="" aria-hidden="true" />
           <span className="tile-ic">
             <StudyIcon name="homework" />
           </span>
