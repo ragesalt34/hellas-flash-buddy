@@ -1,5 +1,5 @@
-// Hand-made paper illustrations for specific flashcards (geography 16 + culture 22 pictures).
-// Generated from the delivered manifests (geography-all-16, culture-question-hints-v1): the link is the question id
+// Hand-made paper illustrations for specific flashcards (geography 16 + culture 22 + laws 17 pictures).
+// Generated from the delivered manifests (geography-all-16, culture-question-hints-v1, laws-question-hints-v1): the link is the question id
 // and nothing else. NN is the manifest order; the files are alpha-trimmed WebP copies of
 // the delivered PNGs. `before` = the picture may show while the answer is hidden; the
 // others (manifest recommendedVisibility 'after-reveal') appear only once it is open.
@@ -49,6 +49,24 @@ export const QUESTION_HINTS: Record<string, QuestionHint> = {
   '3a89fd76-9a4e-482f-ae39-49fde21ebb34': { file: 'culture-20.webp', before: true },
   'b902e07e-10d9-46cf-88be-472251f955f8': { file: 'culture-21.webp', before: true },
   'd8cb973e-9d49-481c-a889-6be194e4d2cc': { file: 'culture-22.webp', before: true },
+  // laws (laws-question-hints-v1, 17 pictures; all may show before the answer)
+  'd2010467-bad4-4cc8-86d4-fba1e5805f3e': { file: 'laws-01.webp', before: true },
+  'b3fc201e-1890-48ea-8bcf-f4d26f9aaa1d': { file: 'laws-02.webp', before: true },
+  'b8f66c49-46c2-4bd4-be5f-601ab2ab164b': { file: 'laws-03.webp', before: true },
+  'ea914529-05ab-4fcf-bc48-d30b8964033c': { file: 'laws-04.webp', before: true },
+  '7d78b707-3a04-450d-9887-17b19def9bbf': { file: 'laws-05.webp', before: true },
+  'e2440a2e-0efe-40e4-bbac-b5188d8e7c1c': { file: 'laws-06.webp', before: true },
+  '18958906-22ab-42eb-a793-8b2751882542': { file: 'laws-07.webp', before: true },
+  '6b952e54-376c-48e2-8629-c34efdb8a24a': { file: 'laws-08.webp', before: true },
+  '5567f840-a46c-413d-a0a8-306cb075158a': { file: 'laws-09.webp', before: true },
+  '4d2c5633-77a1-4727-bf28-d0abcd94d701': { file: 'laws-10.webp', before: true },
+  '00841b1e-cba6-408e-9e54-ee9d0e7774b4': { file: 'laws-11.webp', before: true },
+  '585c4d02-c037-4008-b3a3-7dd93d0ecfc3': { file: 'laws-12.webp', before: true },
+  'ebf48c1e-a8c1-43d6-b083-c04d29e5dde0': { file: 'laws-13.webp', before: true },
+  'aef1b0d7-4f4d-481f-97bc-630606144229': { file: 'laws-14.webp', before: true },
+  '69bb6d47-d7c4-42dd-abb7-1ff6af947502': { file: 'laws-15.webp', before: true },
+  '6301c464-7fe0-4ae4-883c-357a4f4864fd': { file: 'laws-16.webp', before: true },
+  '79d1ba3f-ee95-4c87-9d0d-a11678a74bcf': { file: 'laws-17.webp', before: true },
 };
 
 export const questionHintUrl = (file: string) => `${import.meta.env.BASE_URL}assets/pureplay/question-hints/${file}`;
