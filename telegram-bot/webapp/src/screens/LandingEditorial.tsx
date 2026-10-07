@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { mountLandingMotion } from './landingMotion.js';
 import { ArrowRight, CircleHelp, LogIn, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { speakGreek } from '../speech';
@@ -65,10 +65,11 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
   const { t } = useLanguage();
   const [wordIndex, setWordIndex] = useState(0);
   const word = DEMO_WORDS[wordIndex % DEMO_WORDS.length];
-  const reduce = useReducedMotion();
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => mountLandingMotion(root.current), []);
 
   return (
-    <div className="landing landing-screen le-page">
+    <div ref={root} className="landing landing-screen le-page">
       <div className="le-wrap">
         {/* ---- header ---- */}
         <header className="le-nav">
@@ -94,9 +95,9 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
 
         {/* ---- hero ---- */}
         <section className="le-hero" id="top">
-          <motion.div className="le-hero-copy" initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="le-hero-copy">
             <p className="le-eyebrow">{t('landing.pill.b')}</p>
-            <h1>{t('le.h1')}</h1>
+            <h1 data-motion-title>{t('le.h1')}</h1>
             <p className="le-sub">{t('landing.pureplay.sub')}</p>
             <div className="le-cta">
               <button className="le-btn primary" onClick={onStart}>
@@ -106,9 +107,9 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
                 {t('landing.cta.see')}
               </button>
             </div>
-          </motion.div>
+          </div>
           <Art name="hero-collage" vw={840} className="le-hero-art" />
-          <div className="le-demo">
+          <div className="le-demo" data-motion-card>
             <Art name="surface-word-card" vw={320} className="le-demo-paper" />
             {word.speak ? (
               <button
@@ -150,7 +151,7 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
 
         {/* ---- how it works ---- */}
         <section className="le-steps" id="how-it-works">
-          <h2>{t('landing.steps.title')}</h2>
+          <h2 data-motion-title>{t('landing.steps.title')}</h2>
           <ol>
             {STEPS.map((s, i) => (
               <li key={s.art} className={`s${i + 1}`}>
@@ -166,11 +167,11 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
 
         {/* ---- everything for the preparation ---- */}
         <section className="le-features" id="features">
-          <h2>{t('le.features.title')}</h2>
+          <h2 data-motion-title>{t('le.features.title')}</h2>
           <p className="le-features-sub">{t('le.features.sub')}</p>
           <ul>
             {FEATURES.map((f) => (
-              <li key={f.art} className={'plan' in f ? 'is-plan' : undefined}>
+              <li key={f.art} data-motion-card className={'plan' in f ? 'is-plan' : undefined}>
                 {'plan' in f && <Art name="surface-plan-wash" className="le-plan-wash" />}
                 <Art name={f.art} className="le-feature-art" />
                 <div className="le-feature-text">
@@ -186,7 +187,7 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
         {/* ---- FAQ ---- */}
         <section className="le-faq" id="faq">
           <div className="le-faq-side">
-            <h2>{t('le.faq.title')}</h2>
+            <h2 data-motion-title>{t('le.faq.title')}</h2>
             <Art name="faq-column-olive" className="le-faq-art" />
           </div>
           <div className="le-faq-list">
@@ -206,7 +207,7 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
         <section className="le-close">
           <Art name="closing-banner" className="le-close-art" />
           <div className="le-close-copy">
-            <h2>{t('le.close.title')}</h2>
+            <h2 data-motion-title>{t('le.close.title')}</h2>
             <p>{t('le.close.sub')}</p>
             <button className="le-btn primary" onClick={onStart}>
               {t('le.close.cta')} <ArrowRight size={22} strokeWidth={2} aria-hidden="true" />

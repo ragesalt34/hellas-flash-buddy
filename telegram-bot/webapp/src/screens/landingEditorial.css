@@ -223,3 +223,13 @@
   font-family: 'Noto Sans', 'Inter', system-ui, sans-serif;
   font-weight: 400;
 }
+/* Content remains visible when JavaScript or a CDN is unavailable. */
+html.hs-landing-motion.lenis,
+html.hs-landing-motion.lenis body { height: auto; }
+html.hs-landing-motion.lenis.lenis-smooth { scroll-behavior: auto !important; }
+html.hs-landing-motion.lenis.lenis-stopped { overflow: clip; }
+html.hs-landing-motion.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+[data-motion-title] { transform-origin: left center; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+}
