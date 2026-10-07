@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, MousePointerClick, LogIn, CircleHelp, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
@@ -10,6 +10,7 @@ import { TopicGlyph } from '../components/statsArt';
 import { Aspis, ColumnChart, LaurelSprig, OilLamp, Ostraka, Papyrus, WaxTablet } from '../components/homeArt';
 import { HeroPanorama, HeroSun, FallingLeaves, SoundLyre } from '../components/landingArt';
 import { StudyIcon } from '../components/StudyIcon';
+import { LandingEditorial } from './LandingEditorial';
 
 // Each card's hue only tints its background and colours its icon, so all six
 // keep ink text and no contrast juggling is needed. (Aegean blue took the slot
@@ -188,6 +189,20 @@ function PureplayDemoCard() {
   );
 }
 
+/** True while the viewport is at least `px` wide; follows resizes. */
+function useMinWidth(px: number): boolean {
+  const query = `(min-width: ${px}px)`;
+  return useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener('change', cb);
+      return () => mq.removeEventListener('change', cb);
+    },
+    () => window.matchMedia(query).matches,
+    () => false
+  );
+}
+
 export function Landing({
   onStart,
   onLogin,
@@ -198,6 +213,9 @@ export function Landing({
   onGuest: () => void;
 }) {
   const { t } = useLanguage();
+  // Wide screens get the editorial desktop landing; narrower ones keep this layout unchanged.
+  const wide = useMinWidth(1100);
+  if (wide) return <LandingEditorial onStart={onStart} onLogin={onLogin} onGuest={onGuest} />;
   // Pointer position over the hero, -1..1, read by CSS to shift the scene layers.
   const onHeroMove = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse') return;
