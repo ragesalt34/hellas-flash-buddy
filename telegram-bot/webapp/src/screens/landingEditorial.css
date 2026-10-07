@@ -8,7 +8,7 @@
 :is([data-theme='soft'], [data-theme='brut']) .landing-screen.le-page {
   max-width: none; margin: 0; padding: 0; overflow-x: clip;
   background: #fefdf9; color: #07080f;
-  font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --le-ink: #07080f; --le-violet: #5662b0; --le-blue: #0b4ff0; --le-cta: #7dbffd; --le-line: #1b1d3a;
 }
 :is([data-theme='soft'], [data-theme='brut']) body:has(.le-page) { background: #fefdf9; --bg: #fefdf9; }
@@ -54,14 +54,14 @@
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-login {
   display: inline-flex; align-items: center; gap: calc(10 * var(--u)); height: calc(55 * var(--u)); min-height: 38px; padding: 0 calc(22 * var(--u));
   background: #fff; color: var(--le-ink); border: 1.5px solid var(--le-line); border-radius: 5px; cursor: pointer;
-  font: 700 max(14px, calc(17.5 * var(--u))) / 1 'Manrope', sans-serif;
+  font: 700 max(14px, calc(17.5 * var(--u))) / 1 'Inter', sans-serif;
 }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-login:hover { background: #f1f4ff; }
 
 /* ---- buttons: light-blue primary, outlined secondary ---- */
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-btn {
   display: flex; align-items: center; justify-content: center; gap: calc(12 * var(--u)); width: 100%; cursor: pointer;
-  font: 600 max(16px, calc(23 * var(--u))) / 1.1 'Manrope', sans-serif; color: var(--le-ink);
+  font: 600 max(16px, calc(23 * var(--u))) / 1.1 'Inter', sans-serif; color: var(--le-ink);
   border: 2px solid var(--le-line); border-radius: 5px; box-shadow: none; transition: background-color 0.15s ease, transform 0.15s ease;
 }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-btn.primary { background: var(--le-cta); border-color: #1c2a6b; }
@@ -94,7 +94,7 @@
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-ru { position: absolute; left: calc(35 * var(--u)); top: calc(68 * var(--u)); font-size: max(13px, calc(17.5 * var(--u))); color: var(--le-violet); }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-try {
   position: absolute; left: calc(35 * var(--u)); top: calc(100 * var(--u)); display: inline-flex; align-items: center; gap: calc(7 * var(--u)); padding: 0;
-  background: none; border: 0; cursor: pointer; font: 600 max(13px, calc(17.5 * var(--u))) / 1 'Manrope', sans-serif; color: var(--le-blue);
+  background: none; border: 0; cursor: pointer; font: 600 max(13px, calc(17.5 * var(--u))) / 1 'Inter', sans-serif; color: var(--le-blue);
 }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-sound {
   position: absolute; left: calc(232 * var(--u)); top: calc(22 * var(--u)); display: grid; place-items: center; width: calc(42 * var(--u)); height: calc(42 * var(--u)); min-width: 32px; min-height: 32px;
