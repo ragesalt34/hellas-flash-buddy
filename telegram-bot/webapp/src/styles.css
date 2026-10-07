@@ -7218,26 +7218,6 @@ button.chip:active { transform: scale(0.95); }
     background: #ebe7dd; transform: rotate(0.55deg); pointer-events: none;
   }
 
-  /* Flashcards rest on two deckled sheets, rather than a flat outlined panel.
-     Reuse the card's real paper raster so exposed edges share its material. */
-  [data-theme='soft'] .fc-screen .fc-stage::before,
-  [data-theme='soft'] .fc-screen .fc-stage::after {
-    content: ''; display: block; position: absolute; pointer-events: none;
-    border: 0 solid transparent; border-radius: 0; background: none;
-    border-image: url('/assets/pureplay/paper-card-trim.webp') 100 fill / 48px stretch;
-    transform-origin: center; opacity: 1; mask: none;
-  }
-  [data-theme='soft'] .fc-screen .fc-stage::before {
-    inset: 10px -14px -8px -10px; z-index: -2;
-    transform: rotate(-0.65deg);
-    filter: brightness(0.91) drop-shadow(1px 6px 6px rgba(74, 55, 30, 0.12));
-  }
-  [data-theme='soft'] .fc-screen .fc-stage::after {
-    inset: 18px -7px -15px -16px; z-index: -1;
-    transform: rotate(0.45deg);
-    filter: brightness(0.97) drop-shadow(0 3px 3px rgba(74, 55, 30, 0.09));
-  }
-  [data-theme='soft'] .fc-screen .fc-stage { margin-bottom: 16px; }
 
   /* The sheet: paper-card-trim.webp, nine-slice (100px corners, drawn at 67px) */
   [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card) {
@@ -7388,6 +7368,27 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-box { margin-top: 20px; }
   [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .explain { margin-top: 22px; }
   [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar { padding-top: 24px; }
+}
+
+@media (min-width: 900px) {
+  /* Approved flashcard reference: one delivered PNG includes both paper leaves.
+     Nine-slice preserves the torn rim as revealed answers grow the sheet.
+     Insets compensate the PNG's transparent margins; its shadows are baked in. */
+  [data-theme='soft'] .fc-screen .fc-stage::before,
+  [data-theme='soft'] .fc-screen .fc-stage::after { content: none; display: none; }
+  [data-theme='soft'] .fc-screen .fc-stage { margin-bottom: 16px; }
+  [data-theme='soft'] .fc-screen .fc-card::after {
+    inset: -41px -29px -35px -31px;
+    border-image: url('/assets/pureplay/flashcard-backing-v1.png') 170 160 130 130 fill / 82px 78px 64px 64px stretch;
+    filter: none;
+  }
+  [data-theme='soft'] .app .fc-screen .fc-card { min-height: 430px; padding: 30px 60px 38px; }
+  [data-theme='soft'] .fc-screen .fc-paper-art { width: 360px; height: 220px; margin: 0 auto 18px; }
+  [data-theme='soft'] .fc-screen .fc-paper-topic { top: 12px; left: 28px; min-width: 180px; padding: 18px 30px; font-size: 14px; }
+  [data-theme='soft'] .app .fc-screen .fc-card .speak-row .qtext { font-size: clamp(32px, 3.05vw, 44px); }
+  [data-theme='soft'] body.focus .app .fc-screen .actionbar .fc-reveal {
+    width: 420px; max-width: min(100%, 420px) !important; min-height: 64px; font-size: 20px;
+  }
 }
 
 /* ---- Vocabulary: the parts of the paper design that differ from Flashcards ----
