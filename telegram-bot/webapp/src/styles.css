@@ -7177,7 +7177,7 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .hw-new-screen .hw-new-preview > span { display: none; }
 }
 
-/* ---- Flashcards, desktop: the approved paper reference ----
+/* ---- Flashcards and Vocabulary, desktop: the approved paper reference ----
    design-handoff/flashcards-paper-v1/reference.png, laid out on the 1110px sheet.
    Every material is the delivered raster, never a CSS imitation:
      - the sheet   paper-card-trim.webp   (nine-slice border-image on ::after, so it grows with the text)
@@ -7189,45 +7189,45 @@ button.chip:active { transform: scale(0.95); }
    Grade colours are the owner's: hard terracotta, good sand, know olive.
    Desktop soft theme only. */
 @media (min-width: 900px) {
-  [data-theme='soft'] body.focus:has(.fc-screen),
-  [data-theme='soft'] body.focus:has(.fc-screen) .aurora { background: #faf7ef !important; }
-  [data-theme='soft'] body.focus:has(.fc-screen) .app,
-  [data-theme='soft'] body.focus:has(.fc-screen.fc-wide) .app { max-width: 1190px; padding: 123px 40px 40px; }
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen)),
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen)) .aurora { background: #faf7ef !important; }
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen)) .app,
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen).fc-wide) .app { max-width: 1190px; padding: 123px 40px 40px; }
 
   /* Header: terracotta mark + title, thin cobalt progress, counter */
-  [data-theme='soft'] .fc-screen { position: relative; }
-  [data-theme='soft'] .app .fc-screen .topbar { min-height: 48px; margin-bottom: 35px; padding: 0 8px 0 5px; }
-  [data-theme='soft'] .app .fc-screen .topbar .meta { font-size: 40px; font-weight: 700; letter-spacing: -1.2px; color: #101214; gap: 19px !important; }
-  [data-theme='soft'] .fc-screen .fc-meta-ic { width: 38px; height: 38px; padding: 0; border: 0; background: none; color: #bd553c; box-shadow: none; display: grid; place-items: center; overflow: visible; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) { position: relative; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .topbar { min-height: 48px; margin-bottom: 35px; padding: 0 8px 0 5px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .topbar .meta { font-size: 40px; font-weight: 700; letter-spacing: -1.2px; color: #101214; gap: 19px !important; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) :is(.fc-meta-ic, .vc-meta-ic) { width: 38px; height: 38px; padding: 0; border: 0; background: none; color: #bd553c; box-shadow: none; display: grid; place-items: center; overflow: visible; }
   /* the Ostraka drawing sits inside generous margins: scale the svg so the drawing itself is ~38px */
-  [data-theme='soft'] .fc-screen .fc-meta-ic svg { width: 50px; height: 50px; flex: none; }
-  [data-theme='soft'] .app .fc-screen .topbar .counter { min-width: 0; padding: 0; border: 0; background: none; box-shadow: none; font-size: 22px; font-weight: 400; letter-spacing: 0.2px; color: #55584f; text-align: right; }
-  [data-theme='soft'] .app .fc-screen .progress.progress {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) :is(.fc-meta-ic, .vc-meta-ic) svg { width: 50px; height: 50px; flex: none; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .topbar .counter { min-width: 0; padding: 0; border: 0; background: none; box-shadow: none; font-size: 22px; font-weight: 400; letter-spacing: 0.2px; color: #55584f; text-align: right; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .progress.progress {
     position: absolute; top: 33px; right: 90px; width: 230px; height: 4px; margin: 0;
     background: #e2dfd5; border-radius: 4px; overflow: hidden;
   }
-  [data-theme='soft'] .app .fc-screen .progress.progress > i { min-width: 0; background: #0862db !important; background-image: none !important; border-radius: 4px; }
-  [data-theme='soft'] .app .fc-screen .progress.progress > i::after { display: none; }
-  [data-theme='soft'] .fc-screen .spacer { height: 0; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .progress.progress > i { min-width: 0; background: #0862db !important; background-image: none !important; border-radius: 4px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .progress.progress > i::after { display: none; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .spacer { height: 0; }
 
   /* The second sheet underneath */
-  [data-theme='soft'] .fc-screen .fc-stage { position: relative; isolation: isolate; margin: 0; }
-  [data-theme='soft'] .fc-screen .fc-stage::before {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-stage { position: relative; isolation: isolate; margin: 0; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-stage::before {
     content: ''; position: absolute; inset: 22px -24px 34px -14px; z-index: -1;
     border: 1px solid rgba(38, 34, 28, 0.72); border-radius: 6px;
     background: #ebe7dd; transform: rotate(0.55deg); pointer-events: none;
   }
 
   /* The sheet: paper-card-trim.webp, nine-slice (100px corners, drawn at 67px) */
-  [data-theme='soft'] .app .fc-screen .fc-card {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card) {
     position: relative; isolation: isolate; overflow: visible;
     min-height: 400px; padding: 15px 60px 24px;
     background: none; border: 0; border-radius: 0; box-shadow: none;
     justify-content: flex-start; animation: none;
   }
-  [data-theme='soft'] .app .fc-screen .fc-card.is-revealed { animation: none; }
-  [data-theme='soft'] .fc-screen .fc-card::before { display: none; }
-  [data-theme='soft'] .fc-screen .fc-card::after {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card).is-revealed { animation: none; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card)::before { display: none; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card)::after {
     content: ''; display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none;
     background: none; mask: none; opacity: 1; transform: none; box-shadow: none; border-radius: 0;
     border: 0 solid transparent;
@@ -7239,7 +7239,7 @@ button.chip:active { transform: scale(0.95); }
      the handoff PNG with its transparent margins removed), nine-slice so the torn
      edges survive any width. The name is live i18n text on top; the paper layer is a
      separate pseudo-element, so nothing is masked and the colour is never filtered. */
-  [data-theme='soft'] .fc-screen .fc-paper-topic {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic {
     position: absolute; top: -10px; left: 22px; z-index: 2;
     max-width: calc(100% - 44px); min-width: 150px; padding: 19px 38px 18px; box-sizing: border-box;
     text-align: center; white-space: nowrap;
@@ -7248,125 +7248,176 @@ button.chip:active { transform: scale(0.95); }
        boundaries show as hairlines through the paper */
     transform: rotate(-1deg); will-change: transform; pointer-events: none; isolation: isolate;
   }
-  [data-theme='soft'] .fc-screen .fc-paper-topic::before {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic::before {
     content: ''; display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none;
     border: 0 solid transparent;
     border-image: url('/assets/pureplay/topic-labels/label-mixed-trim.webp') 55 60 fill / 16px 18px stretch;
   }
-  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-history::before { border-image-source: url('/assets/pureplay/topic-labels/label-history-trim.webp'); }
-  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-culture::before { border-image-source: url('/assets/pureplay/topic-labels/label-culture-trim.webp'); }
-  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-laws::before { border-image-source: url('/assets/pureplay/topic-labels/label-laws-trim.webp'); }
-  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-geography::before { border-image-source: url('/assets/pureplay/topic-labels/label-geography-trim.webp'); }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic.ft-history::before { border-image-source: url('/assets/pureplay/topic-labels/label-history-trim.webp'); }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic.ft-culture::before { border-image-source: url('/assets/pureplay/topic-labels/label-culture-trim.webp'); }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic.ft-laws::before { border-image-source: url('/assets/pureplay/topic-labels/label-laws-trim.webp'); }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic.ft-geography::before { border-image-source: url('/assets/pureplay/topic-labels/label-geography-trim.webp'); }
   /* the mixed (ochre) strip is light: dark text, as in the handoff manifest */
-  [data-theme='soft'] .fc-screen .fc-paper-topic.ft-mixed { color: #25251e; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-topic.ft-mixed { color: #25251e; }
 
   /* Topic collage: the whole picture, contained in a 470 x 225 box */
-  [data-theme='soft'] .fc-screen .fc-paper-art {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-art {
     flex: none; display: block !important; width: 470px; max-width: 100%; height: 225px;
     object-fit: contain; margin: 0 auto 16px; pointer-events: none;
   }
 
   /* Question */
-  [data-theme='soft'] .app .fc-screen .fc-card > .speak-row {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card) > .speak-row {
     justify-content: center; align-items: center; gap: 14px; margin: 0 auto; width: 100%; max-width: 900px;
   }
-  [data-theme='soft'] .app .fc-screen .fc-card .speak-row .qtext {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card) .speak-row .qtext {
     font-size: clamp(34px, 3.6vw, 48px); font-weight: 700; line-height: 1.2;
     letter-spacing: -1.1px; color: #0d0f12; max-width: 100%; text-align: center; text-wrap: balance;
   }
 
   /* Long cards (the screen's own fc-wide rule: question + answer over 120 characters):
      the sheet and the strip grow, and the type steps down so they stay compact. */
-  [data-theme='soft'] .app .fc-screen.fc-wide .fc-card .speak-row .qtext { font-size: clamp(28px, 2.9vw, 38px); letter-spacing: -0.8px; }
-  [data-theme='soft'] .app .fc-screen.fc-wide .answer-text { font-size: clamp(28px, 2.5vw, 36px); letter-spacing: -0.6px; line-height: 1.15; }
-  [data-theme='soft'] .app .fc-screen.fc-wide .explain { font-size: 18px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen).fc-wide :is(.fc-card, .vc-card) .speak-row .qtext { font-size: clamp(28px, 2.9vw, 38px); letter-spacing: -0.8px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen).fc-wide .answer-text { font-size: clamp(28px, 2.5vw, 36px); letter-spacing: -0.6px; line-height: 1.15; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen).fc-wide .explain { font-size: 18px; }
 
   /* Answer: answer-strip-trim.webp, nine-slice, behind live text */
-  [data-theme='soft'] .app .fc-screen .answer-box {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-box {
     position: relative; isolation: isolate;
     margin: 26px 0 0; padding: 23px 80px 19px 82px; text-align: left;
     border: 0; border-radius: 0; box-shadow: none; background: none; mask: none; -webkit-mask: none;
     color: #fff8eb;
   }
-  [data-theme='soft'] .fc-screen .answer-box::before {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .answer-box::before {
     content: ''; display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none;
     background: none; border: 0 solid transparent;
     border-image: url('/assets/pureplay/answer-strip-trim.webp') 70 150 fill / 33px 70px stretch;
   }
-  [data-theme='soft'] .fc-screen .answer-box .fc-panel-temple { display: none; }
-  [data-theme='soft'] .app .fc-screen .answer-tag {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .answer-box .fc-panel-temple { display: none; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-tag {
     display: block; padding: 0; margin: 0 0 3px; border: 0; border-radius: 0; background: none; box-shadow: none; color: #f2ecd9;
     font-size: 14px; font-weight: 500; line-height: 1; letter-spacing: 3.4px; text-transform: uppercase;
   }
-  [data-theme='soft'] .fc-screen .answer-tag svg { display: none; }
-  [data-theme='soft'] .app .fc-screen .answer-box .speak-row { justify-content: flex-start !important; align-items: center !important; gap: 16px; margin: 0; }
-  [data-theme='soft'] .app .fc-screen .answer-text {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .answer-tag svg { display: none; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-box .speak-row { justify-content: flex-start !important; align-items: center !important; gap: 16px; margin: 0; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-text {
     color: #fff8eb; font-size: clamp(36px, 3.2vw, 50px); font-weight: 700; line-height: 1.1; letter-spacing: -1.1px; text-align: left;
   }
-  [data-theme='soft'] .app .fc-screen .answer-box .speak-btn { border-color: rgba(255, 248, 235, 0.5); background: rgba(255, 248, 235, 0.12); color: #fff8eb; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-box .speak-btn { border-color: rgba(255, 248, 235, 0.5); background: rgba(255, 248, 235, 0.12); color: #fff8eb; }
 
   /* Explanation: on the sheet, under a hairline — Info icon, short rule, text */
-  [data-theme='soft'] .app .fc-screen .explain {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .explain {
     margin: 28px 2px 0; padding: 17px 0 0; gap: 0; align-items: center;
     color: #25272a; border: 0; border-top: 1px solid #cfcabb;
     border-radius: 0; background: none; box-shadow: none; font-size: 19.5px; line-height: 1.45;
   }
-  [data-theme='soft'] .fc-screen .explain .qz-owl { display: none; }
-  [data-theme='soft'] .fc-screen .fc-paper-info { flex: none; width: 29px; height: 29px; margin-left: 3px; color: #2c2e29; }
-  [data-theme='soft'] .fc-screen .explain > span { margin-left: 30px; padding: 2px 0 2px 36px; border-left: 1px solid #b9b4a5; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .explain .qz-owl { display: none; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-info { flex: none; width: 29px; height: 29px; margin-left: 3px; color: #2c2e29; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .explain > span { margin-left: 30px; padding: 2px 0 2px 36px; border-left: 1px solid #b9b4a5; }
 
   /* Grades: three equal flat buttons inset 8px from the sheet */
-  [data-theme='soft'] body.focus .app .fc-screen .actionbar {
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar {
     position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: center; padding: 35px 8px 0; border: 0;
     /* sticky, so a long card keeps its grades on screen; invisible when everything fits */
     background: linear-gradient(to top, #faf7ef 76%, rgba(250, 247, 239, 0));
   }
-  [data-theme='soft'] body.focus .app .fc-screen .actionbar > .grade-row { width: 100%; max-width: none; }
-  [data-theme='soft'] .app .fc-screen .grade-row { gap: 34px; }
-  [data-theme='soft'] .app .fc-screen .grade {
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar > .grade-row { width: 100%; max-width: none; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade-row { gap: 34px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade {
     position: relative; min-height: 92px; padding: 14px 70px 14px 45px; gap: 7px;
     align-items: flex-start; justify-content: center; text-align: left;
     border: 1px solid; border-radius: 8px; box-shadow: none !important; transform: none !important;
     font-size: 27px; font-weight: 700; line-height: 1.1; letter-spacing: -0.6px;
     transition: background-color 0.15s ease, border-color 0.15s ease;
   }
-  [data-theme='soft'] .app .fc-screen .grade::before,
-  [data-theme='soft'] .app .fc-screen .grade .gr-key { display: none; }
-  [data-theme='soft'] .app .fc-screen .grade.g1 { background: #b8493d !important; color: #fff8eb !important; border-color: #9c3b30 !important; }
-  [data-theme='soft'] .app .fc-screen .grade.g2 { background: #faeacb !important; color: #25251e !important; border-color: #c2ae86 !important; }
-  [data-theme='soft'] .app .fc-screen .grade.g3 { background: #567346 !important; color: #fff8eb !important; border-color: #46603a !important; }
-  [data-theme='soft'] .app .fc-screen .grade.g1:hover { background: #a53e33 !important; }
-  [data-theme='soft'] .app .fc-screen .grade.g2:hover { background: #f2dfb8 !important; }
-  [data-theme='soft'] .app .fc-screen .grade.g3:hover { background: #49663b !important; }
-  [data-theme='soft'] .app .fc-screen .grade .gsub {
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade::before,
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade .gr-key { display: none; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g1 { background: #b8493d !important; color: #fff8eb !important; border-color: #9c3b30 !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g2 { background: #faeacb !important; color: #25251e !important; border-color: #c2ae86 !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g3 { background: #567346 !important; color: #fff8eb !important; border-color: #46603a !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g1:hover { background: #a53e33 !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g2:hover { background: #f2dfb8 !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.g3:hover { background: #49663b !important; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade .gsub {
     font-size: 16px; font-weight: 500; line-height: 1.2; letter-spacing: 2px; text-transform: none;
     color: inherit; opacity: 0.8;
   }
-  [data-theme='soft'] .fc-screen .fc-grade-arrow { position: absolute; right: 28px; top: 50%; width: 27px; height: 27px; transform: translateY(-50%); pointer-events: none; }
-  [data-theme='soft'] .fc-screen .grade:focus-visible,
-  [data-theme='soft'] .fc-screen .fc-reveal:focus-visible { outline: 3px solid #0862db; outline-offset: 4px; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-grade-arrow { position: absolute; right: 28px; top: 50%; width: 27px; height: 27px; transform: translateY(-50%); pointer-events: none; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .grade:focus-visible,
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-reveal:focus-visible { outline: 3px solid #0862db; outline-offset: 4px; }
 
   /* Hidden answer: the existing reveal button, cobalt, centred */
-  [data-theme='soft'] body.focus .app .fc-screen .actionbar .fc-reveal {
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar .fc-reveal {
     width: 360px; max-width: 360px; min-height: 58px; margin: 0 auto;
     background: #0862db !important; color: #fff8eb !important; border: 1px solid #0756c2 !important;
     border-radius: 7px; box-shadow: none !important; font-size: 17px; font-weight: 650;
   }
-  [data-theme='soft'] body.focus .app .fc-screen .actionbar .fc-reveal:hover { background: #0756c2 !important; transform: none; }
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar .fc-reveal:hover { background: #0756c2 !important; transform: none; }
 }
 
 /* Shorter windows (laptops, ~900px tall): the same sheet with a smaller collage and
    tighter header, so the three grades still fit without scrolling. */
 @media (min-width: 900px) and (max-height: 960px) {
-  [data-theme='soft'] body.focus:has(.fc-screen) .app,
-  [data-theme='soft'] body.focus:has(.fc-screen.fc-wide) .app { padding-top: 100px; padding-bottom: 24px; }
-  [data-theme='soft'] .app .fc-screen .topbar { margin-bottom: 26px; }
-  [data-theme='soft'] .app .fc-screen .progress.progress { top: 33px; }
-  [data-theme='soft'] .fc-screen .fc-paper-art { width: 392px; height: 186px; margin-bottom: 12px; }
-  [data-theme='soft'] .app .fc-screen .fc-card .speak-row .qtext { font-size: clamp(32px, 3.2vw, 42px); }
-  [data-theme='soft'] .app .fc-screen .answer-box { margin-top: 20px; }
-  [data-theme='soft'] .app .fc-screen .explain { margin-top: 22px; }
-  [data-theme='soft'] body.focus .app .fc-screen .actionbar { padding-top: 24px; }
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen)) .app,
+  [data-theme='soft'] body.focus:has(:is(.fc-screen, .vc-screen).fc-wide) .app { padding-top: 100px; padding-bottom: 24px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .topbar { margin-bottom: 26px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .progress.progress { top: 33px; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .fc-paper-art { width: 392px; height: 186px; margin-bottom: 12px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) :is(.fc-card, .vc-card) .speak-row .qtext { font-size: clamp(32px, 3.2vw, 42px); }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .answer-box { margin-top: 20px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .explain { margin-top: 22px; }
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar { padding-top: 24px; }
+}
+
+/* ---- Vocabulary: the parts of the paper design that differ from Flashcards ----
+   The sheet, tag, collage, header and grade buttons come from the shared block above. Here: the
+   Greek word, the hidden state (a cobalt "show translation" button), the olive strip carrying the
+   translation, and the note under a hairline with the Info icon. Desktop soft theme only. */
+@media (min-width: 900px) {
+  [data-theme='soft'] .vc-screen .vc-card .study-card-label { display: none; }
+  [data-theme='soft'] .app .vc-screen .vc-card .speak-row.center { justify-content: center; align-items: center; gap: 18px; margin: 0 auto; width: 100%; }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word {
+    font-size: clamp(46px, 4.4vw, 64px); font-weight: 750; line-height: 1.1; letter-spacing: -1.6px; color: #0d0f12; text-align: center;
+  }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word.long { font-size: clamp(38px, 3.6vw, 52px); }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word.xlong { font-size: clamp(30px, 2.9vw, 42px); }
+  [data-theme='soft'] .vc-screen .study-grade-prompt { display: none; }
+
+  /* hidden: the whole spoiler is one cobalt button */
+  [data-theme='soft'] .app .vc-screen .spoiler { position: relative; display: block; min-height: 0; margin: 26px 0 0; padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; text-align: left; }
+  [data-theme='soft'] .app .vc-screen .spoiler.hidden {
+    display: flex; align-items: center; justify-content: center; width: 360px; max-width: 100%; min-height: 58px; margin: 28px auto 0; cursor: pointer;
+    background: #0862db; border: 1px solid #0756c2; border-radius: 7px;
+  }
+  [data-theme='soft'] .app .vc-screen .spoiler.hidden:hover { background: #0756c2; }
+  [data-theme='soft'] .vc-screen .spoiler.hidden .reveal { display: none; }
+  [data-theme='soft'] .vc-screen .spoiler.hidden .tap { position: static; justify-content: center; color: #fff8eb; font: 650 17px/1 var(--font-body); gap: 9px !important; }
+  [data-theme='soft'] .vc-screen .spoiler .vc-panel-temple { display: none; }
+  [data-theme='soft'] .vc-screen .spoiler:focus-visible { outline: 3px solid #0862db; outline-offset: 4px; }
+
+  /* revealed: the translation on the olive strip (answer-strip-trim.webp, nine-slice) */
+  [data-theme='soft'] .app .vc-screen .spoiler:not(.hidden) .reveal { display: block; }
+  [data-theme='soft'] .app .vc-screen .spoiler:not(.hidden) .ru {
+    position: relative; isolation: isolate; margin: 0; padding: 23px 80px 19px 82px; text-align: left;
+    color: #fff8eb; font-size: clamp(36px, 3.2vw, 50px); font-weight: 700; line-height: 1.1; letter-spacing: -1.1px;
+  }
+  [data-theme='soft'] .vc-screen .spoiler:not(.hidden) .ru::before {
+    content: ''; display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: none; border: 0 solid transparent;
+    border-image: url('/assets/pureplay/answer-strip-trim.webp') 70 150 fill / 33px 70px stretch;
+  }
+  [data-theme='soft'] .vc-screen .vc-ru-tag {
+    display: block; margin: 0 0 3px; font-size: 14px; font-weight: 500; line-height: 1; letter-spacing: 3.4px; text-transform: uppercase; color: #f2ecd9;
+  }
+  /* the note: on the sheet, under a hairline, Info icon + short rule + text */
+  [data-theme='soft'] .app .vc-screen .spoiler:not(.hidden) .note {
+    display: flex; align-items: center; max-width: none; margin: 28px 2px 0; padding: 17px 0 0; gap: 0;
+    color: #25272a; border-top: 1px solid #cfcabb; font-size: 19.5px; line-height: 1.45; text-align: left;
+  }
+  [data-theme='soft'] .vc-screen .vc-note-info { flex: none; width: 29px; height: 29px; margin-left: 3px; color: #2c2e29; }
+  [data-theme='soft'] .vc-screen .note > span { margin-left: 30px; padding: 2px 0 2px 36px; border-left: 1px solid #b9b4a5; }
+  /* the legacy icon beside the title: same size as the flashcards' mark */
+  [data-theme='soft'] .vc-screen .vc-meta-ic :is(svg, .study-icon, img) { width: 38px; height: 38px; }
 }
 
 /* Progress: accuracy and test count (moved off the desktop Home strip). Shown only where Home dropped them. */

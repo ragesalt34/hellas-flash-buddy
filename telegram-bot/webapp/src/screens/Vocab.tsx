@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
-import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff, ArrowRight, Info } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
@@ -110,6 +110,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   }
 
   const card = cards[i];
+  // The card's topic picks the paper tag and the collage (anything unknown falls back to 'mixed').
+  const paperTopic = ['history', 'culture', 'laws', 'geography'].includes(card.topic) ? card.topic : 'mixed';
 
   function grade(g: number) {
     if (gradedRef.current === String(card.id)) return;
@@ -139,15 +141,26 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           <Greek name="olive-branch-small" className="vc-meta-olive" />
         </span>
         <span className="counter">
-          {i + 1}/{cards.length}
+          {i + 1} / {cards.length}
         </span>
         <Greek name="olive-branch-small" className="vc-counter-olive" />
       </div>
       <ProgressBar value={i} total={cards.length} />
       <div className="spacer" />
 
-      <Fragment key={i}>
+      <div className="fc-stage" key={i}>
+      <span className={`fc-paper-topic ft-${paperTopic} pureplay-desktop`}>{t('topic.' + paperTopic)}</span>
       <div className="card vc-card swap-in">
+        <img
+          className="fc-paper-art hs-deco pureplay-desktop"
+          src={`${import.meta.env.BASE_URL}assets/pureplay/paper-art-${paperTopic}.webp`}
+          width={470}
+          height={225}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          decoding="async"
+        />
         <div className="study-card-label pureplay-desktop">{t('vocab.languagePair')}</div>
         <VocabDecorImg slot="cardGreekCorner" className="vc-corner tl" />
         <VocabDecorImg slot="cardOliveBranch" className="vc-corner-olive" />
@@ -188,8 +201,13 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         >
           <VocabDecorImg slot="cardTemple" className="vc-panel-temple" />
           <div className="reveal" aria-hidden={!revealed}>
-            <div className="ru">{card.ru}</div>
-            {card.note && <div className="note">{card.note}</div>}
+            <div className="ru"><span className="vc-ru-tag pureplay-desktop">{t('vocab.translation')}</span>{card.ru}</div>
+            {card.note && (
+              <div className="note">
+                <Info className="vc-note-info pureplay-desktop" size={22} aria-hidden="true" />
+                <span>{card.note}</span>
+              </div>
+            )}
           </div>
           {!revealed && (
             <div className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
@@ -198,7 +216,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
           )}
         </div>
       </div>
-      </Fragment>
+      </div>
 
       {revealed && (
         <div className="actionbar">
@@ -210,6 +228,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Frown size={22} strokeWidth={2.2} />
               </span>
               {t('grade.hard')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
@@ -218,6 +237,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Smile size={22} strokeWidth={2.2} />
               </span>
               {t('grade.good')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
@@ -226,6 +246,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Target size={22} strokeWidth={2.2} />
               </span>
               {t('grade.easy')}
+              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 3, language)}</span>
             </button>
           </div>
