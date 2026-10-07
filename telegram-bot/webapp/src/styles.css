@@ -6986,7 +6986,7 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen .t-homework .editorial-number { background: #d93816; }
   /* The round arrow button. On hover (or keyboard focus) of the tile: the thin ink ring shrinks and
      fades, an olive ring grows in, and the arrow slides out to the right while a second one slides in
-     (a two-arrow strip moving 48px). Reduced motion: the ring just changes colour. */
+     from the left (a two-arrow strip moving 48px to the right). Reduced motion: the ring just changes colour. */
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go) {
     display: block !important; position: absolute; z-index: 2; inset: auto auto 18px 18px;
     transform: none; width: 48px; height: 48px; overflow: hidden;
@@ -7005,7 +7005,8 @@ button.chip:active { transform: scale(0.95); }
     transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .go-box {
-    position: absolute; top: 0; left: 0; display: flex; width: 96px; height: 48px;
+    /* the strip starts one arrow to the left; on hover it moves right, so the arrow travels forward */
+    position: absolute; top: 0; left: -48px; display: flex; width: 96px; height: 48px;
     transition: transform 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955);
   }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .go-box > svg {
@@ -7020,7 +7021,7 @@ button.chip:active { transform: scale(0.95); }
     opacity: 1; transform: scale(1);
     transition: opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms, transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms;
   }
-  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) .go-box { transform: translateX(-48px); }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) .go-box { transform: translateX(48px); }
   @media (prefers-reduced-motion: reduce) {
     [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::before,
     [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::after,
