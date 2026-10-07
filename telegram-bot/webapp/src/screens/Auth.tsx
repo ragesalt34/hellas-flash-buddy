@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
-import { UserRound, KeyRound, ArrowRight, Loader2 } from 'lucide-react';
+import { UserRound, KeyRound, ArrowRight, Loader2, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { setToken } from '../auth';
 import { haptic, notify } from '../telegram';
 import { useLanguage } from '../i18n';
 import { Greek } from '../components/greek';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
+import { LanguageSwitch } from '../components/LanguageSwitch';
+import './authPersonalSeal.css';
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 
@@ -17,6 +19,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
   const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -57,7 +60,16 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
   }
 
   return (
-    <div className="fade-in center-col auth-screen">
+    <div className="fade-in center-col auth-screen auth-personal-seal">
+      <header className="auth-editorial-header">
+        <div className="auth-editorial-brand"><BookOpen aria-hidden="true" /><span>Hellas Study</span></div>
+        <LanguageSwitch />
+      </header>
+      <aside className="auth-seal-visual hs-deco" aria-hidden="true">
+        <img src={`${import.meta.env.BASE_URL}assets/auth-personal-seal-v1/auth-seal-collage.png`} width={1374} height={1145} alt="" draggable={false} />
+        <h2>{t('auth.journey')}</h2>
+      </aside>
+      <div className="auth-form-column">
       <form className="card auth-card" onSubmit={submit}>
         <MeanderBand className="auth-meander" height={10} />
         <Greek name="temple" className="auth-temple" />
@@ -109,14 +121,20 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
           <span className="field-label">
             <KeyRound size={14} strokeWidth={2.6} /> {t('auth.password')}
           </span>
+          <span className="auth-password-wrap">
           <input
             className="input"
-            type="password"
+            aria-label={t('auth.password')}
+            type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
           />
+          <button className="auth-password-toggle" type="button" aria-label={t(showPassword ? 'auth.hidePassword' : 'auth.showPassword')} aria-pressed={showPassword} onClick={() => setShowPassword((shown) => !shown)}>
+            {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
+          </button>
+          </span>
           {mode === 'register' && <span className="field-hint">{t('auth.passwordHint')}</span>}
         </label>
 
@@ -146,6 +164,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
       <button className="btn btn-block secondary" onClick={onDone}>
         {t('auth.guest')}
       </button>
+      </div>
     </div>
   );
 }
