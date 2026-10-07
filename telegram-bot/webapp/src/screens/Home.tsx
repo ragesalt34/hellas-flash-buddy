@@ -154,7 +154,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <HomeDecorImg slot="oliveMid" className="tile-olive" />
           <HomeDecorImg slot="columnTilted" className="tile-column" />
           <span className="arrow">
+            <span className="go-box">
             <ArrowRight size={22} strokeWidth={2.6} />
+            <ArrowRight size={22} strokeWidth={2.6} aria-hidden="true" />
+          </span>
           </span>
         </button>
 
@@ -168,7 +171,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <span className="tile-d">{t('home.flashcards.desc')}</span>
           <HomeDecorImg slot="oliveSmall" className="tile-olive" />
           <span className="hs-deco tile-go" aria-hidden="true">
+            <span className="go-box">
             <ArrowRight size={22} strokeWidth={2.4} />
+            <ArrowRight size={22} strokeWidth={2.4} aria-hidden="true" />
+          </span>
           </span>
         </button>
         <button className="tile t-vocab" style={{ animationDelay: '130ms' }} onClick={() => nav('vocab')}>
@@ -181,7 +187,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <span className="tile-d">{t('home.vocab.desc')}</span>
           <HomeDecorImg slot="oliveMid" className="tile-olive" />
           <span className="hs-deco tile-go" aria-hidden="true">
+            <span className="go-box">
             <ArrowRight size={22} strokeWidth={2.4} />
+            <ArrowRight size={22} strokeWidth={2.4} aria-hidden="true" />
+          </span>
           </span>
         </button>
 
@@ -203,7 +212,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <HomeDecorImg slot="oliveSmall" className="tile-olive" />
           <span className="arrow" style={{ color: 'var(--muted)' }}>
+            <span className="go-box">
             <ArrowRight size={20} strokeWidth={2.4} />
+            <ArrowRight size={20} strokeWidth={2.4} aria-hidden="true" />
+          </span>
           </span>
         </button>
 
@@ -223,7 +235,10 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
           <HomeDecorImg slot="lilacBranch" className="tile-olive" />
           <span className="arrow" style={{ color: 'var(--muted)' }}>
+            <span className="go-box">
             <ArrowRight size={20} strokeWidth={2.4} />
+            <ArrowRight size={20} strokeWidth={2.4} aria-hidden="true" />
+          </span>
           </span>
         </button>
       </div>

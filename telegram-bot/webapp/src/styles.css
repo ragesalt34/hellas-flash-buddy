@@ -6984,13 +6984,51 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen .t-cards .editorial-number { background: #4c8061; }
   [data-theme='soft'] .home-screen .t-vocab .editorial-number { background: #a44339; }
   [data-theme='soft'] .home-screen .t-homework .editorial-number { background: #d93816; }
+  /* The round arrow button. On hover (or keyboard focus) of the tile: the thin ink ring shrinks and
+     fades, an olive ring grows in, and the arrow slides out to the right while a second one slides in
+     (a two-arrow strip moving 48px). Reduced motion: the ring just changes colour. */
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go) {
-    display: grid !important; position: absolute; z-index: 2; inset: auto auto 18px 18px;
-    transform: none; width: 48px; height: 48px; place-items: center;
-    border: 1px solid #101629; border-radius: 50%; background: #fbf8f0; color: #101629 !important;
+    display: block !important; position: absolute; z-index: 2; inset: auto auto 18px 18px;
+    transform: none; width: 48px; height: 48px; overflow: hidden;
+    border: 0; border-radius: 50%; background: transparent; color: #101629 !important;
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::before,
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::after {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::before {
+    border: 1.5px solid #101629;
+    transition: opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms, transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms;
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::after {
+    border: 2.5px solid #4a6333; opacity: 0; transform: scale(1.3);
+    transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .go-box {
+    position: absolute; top: 0; left: 0; display: flex; width: 96px; height: 48px;
+    transition: transform 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .go-box > svg {
+    display: block; flex: none; width: 48px; height: 48px; padding: 13px; stroke-width: 2;
   }
   [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):hover { border-color: #8b9285 !important; }
-  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):hover :is(.arrow, .tile-go) { background: #101629; color: #fff !important; }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) :is(.arrow, .tile-go)::before {
+    opacity: 0; transform: scale(0.7);
+    transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) :is(.arrow, .tile-go)::after {
+    opacity: 1; transform: scale(1);
+    transition: opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms, transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms;
+  }
+  [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) .go-box { transform: translateX(-48px); }
+  @media (prefers-reduced-motion: reduce) {
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::before,
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) :is(.arrow, .tile-go)::after,
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats) .go-box { transition: none !important; }
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) :is(.arrow, .tile-go)::before { opacity: 0; transform: none; }
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) :is(.arrow, .tile-go)::after { opacity: 1; transform: none; }
+    [data-theme='soft'] .home-screen .tiles .tile:not(.t-stats):is(:hover, :focus-visible) .go-box { transform: none; }
+  }
 
   /* Plan to the interview: cream paper, thin olive frame; grows with its content */
   [data-theme='soft'] .home-screen .plan-card {
@@ -7441,6 +7479,10 @@ button.chip:active { transform: scale(0.95); }
   /* the legacy icon beside the title: same size as the flashcards' mark */
   [data-theme='soft'] .vc-screen .vc-meta-ic :is(svg, .study-icon, img) { width: 38px; height: 38px; }
 }
+
+/* The tile arrow strip holds two arrows for the desktop hover animation; everywhere else only the first shows. */
+.go-box { display: contents; }
+.go-box > svg:nth-child(2) { display: none; }
 
 /* Progress: accuracy and test count (moved off the desktop Home strip). Shown only where Home dropped them. */
 .rd-home-metric { display: none; }
