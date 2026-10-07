@@ -216,3 +216,9 @@
 @media (prefers-reduced-motion: reduce) {
   :is([data-theme='soft'], [data-theme='brut']) .le-page * { transition: none !important; }
 }
+
+/* Descriptive copy uses Noto Sans; display headings retain Inter. */
+:is([data-theme='soft'], [data-theme='brut']) .le-page :is(.le-sub, .le-features-sub, .le-features li p, .le-steps p, .le-faq details p, .le-close p) {
+  font-family: 'Noto Sans', 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+}
