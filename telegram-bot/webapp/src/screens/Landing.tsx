@@ -207,15 +207,17 @@ export function Landing({
   onStart,
   onLogin,
   onGuest,
+  accountEntry = false,
 }: {
   onStart: () => void;
   onLogin: () => void;
   onGuest: () => void;
+  accountEntry?: boolean;
 }) {
   const { t } = useLanguage();
   // Wide screens get the editorial desktop landing; narrower ones keep this layout unchanged.
   const wide = useMinWidth(1100);
-  if (wide) return <LandingEditorial onStart={onStart} onLogin={onLogin} onGuest={onGuest} />;
+  if (wide) return <LandingEditorial onStart={onStart} onLogin={onLogin} onGuest={onGuest} accountEntry={accountEntry} />;
   // Pointer position over the hero, -1..1, read by CSS to shift the scene layers.
   const onHeroMove = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse') return;
@@ -236,7 +238,7 @@ export function Landing({
         <div className="lp-nav-right">
           <LanguageSwitch />
           <a className="lp-nav-help pureplay-desktop" href="#faq" aria-label={t('landing.pureplay.nav.faq')}><CircleHelp size={23} /></a>
-          <button className="lp-btn ghost" onClick={onLogin}><LogIn className="pureplay-desktop" size={18} />{t('landing.enter')}</button>
+          <button className="lp-btn ghost" onClick={onLogin}><LogIn className="pureplay-desktop" size={18} />{t(accountEntry ? 'nav.dashboard' : 'landing.enter')}</button>
         </div>
       </nav>
 

@@ -61,7 +61,7 @@ const FEATURES = [
 // Existing FAQ entries, the four the reference shows (landing.faq.q1/q4/q2/q6).
 const FAQ = [1, 4, 2, 6];
 
-export function LandingEditorial({ onStart, onLogin, onGuest }: { onStart: () => void; onLogin: () => void; onGuest: () => void }) {
+export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = false }: { onStart: () => void; onLogin: () => void; onGuest: () => void; accountEntry?: boolean }) {
   const { t } = useLanguage();
   const [wordIndex, setWordIndex] = useState(0);
   const word = DEMO_WORDS[wordIndex % DEMO_WORDS.length];
@@ -87,7 +87,7 @@ export function LandingEditorial({ onStart, onLogin, onGuest }: { onStart: () =>
             </a>
             <button className="le-login" onClick={onLogin}>
               <LogIn size={20} strokeWidth={2} aria-hidden="true" />
-              {t('landing.enter')}
+              {t(accountEntry ? 'nav.dashboard' : 'landing.enter')}
             </button>
           </div>
         </header>

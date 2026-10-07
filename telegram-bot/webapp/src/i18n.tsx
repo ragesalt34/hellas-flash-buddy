@@ -7,13 +7,14 @@ type Translations = Record<string, { ru: string; el: string }>;
 const translations: Translations = {
   // ---- Nav ----
   'nav.home': { ru: 'Главная', el: 'Αρχική' },
+  'nav.dashboard': { ru: 'Личный кабинет', el: 'Προσωπικός χώρος' },
   'nav.quiz': { ru: 'Тест', el: 'Κουίζ' },
   'nav.flashcards': { ru: 'Карточки', el: 'Κάρτες' },
   'nav.vocab': { ru: 'Словарь', el: 'Λεξιλόγιο' },
   'nav.stats': { ru: 'Прогресс', el: 'Πρόοδος' },
   'nav.aria': { ru: 'Главная навигация', el: 'Κύρια πλοήγηση' },
   'nav.close': { ru: 'Закрыть', el: 'Κλείσιμο' },
-  'nav.menu': { ru: 'Меню', el: 'Μενού' },
+  'nav.menu': { ru: 'В личный кабинет', el: 'Στον προσωπικό χώρο' },
 
   // ---- Theme (visual style, not light/dark — see src/theme.ts) ----
   'theme.aria': { ru: 'Оформление', el: 'Εμφάνιση' },
@@ -24,7 +25,7 @@ const translations: Translations = {
   'home.pureplay.cards': { ru: 'Повторить карточки', el: 'Επανάληψη καρτών' },
   'home.editorial.streak': { ru: 'серия', el: 'σερί' },
   'plan.editorial.guest': { ru: 'Войди, чтобы составить план подготовки.', el: 'Συνδέσου για να φτιάξεις το πλάνο προετοιμασίας σου.' },
-  'nav.backHome': { ru: 'На главную', el: 'Στην αρχική' },
+  'nav.backHome': { ru: 'В личный кабинет', el: 'Στον προσωπικό χώρο' },
   'quiz.pureplay.sub': { ru: '10 вопросов за один подход.', el: '10 ερωτήσεις σε κάθε κουίζ.' },
   'quiz.pureplay.hint': { ru: 'Выбери тему и проверь себя.', el: 'Διάλεξε θέμα και δοκίμασε τις γνώσεις σου.' },
   'hw.pureplay.reviewHint': { ru: 'Проверь вопросы перед началом.', el: 'Έλεγξε τις ερωτήσεις πριν ξεκινήσεις.' },

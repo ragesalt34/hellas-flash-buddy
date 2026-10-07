@@ -40,8 +40,8 @@ function lazyWithRetry<T>(load: () => Promise<T>): Promise<T> {
   );
 }
 
-// The landing page is the only user of Motion (~40KB gzip) and is never
-// shown to signed-in users — split it into its own chunk so the app shell
+// The landing page is the only user of Motion (~40KB gzip). Load it
+// on demand in its own chunk so the app shell
 // doesn't pay for it.
 const Landing = lazy(() =>
   lazyWithRetry(() => import('./screens/Landing')).then((m) => ({ default: m.Landing }))
@@ -64,8 +64,9 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: Exclude<View, 'homework'>; key: string }[] = [
-  { id: 'home', key: 'nav.home' },
+const NAV: { id: Exclude<View, 'homework'> | 'landing'; key: string }[] = [
+  { id: 'landing', key: 'nav.home' },
+  { id: 'home', key: 'nav.dashboard' },
   { id: 'quiz', key: 'nav.quiz' },
   { id: 'flashcards', key: 'nav.flashcards' },
   { id: 'vocab', key: 'nav.vocab' },
@@ -76,6 +77,7 @@ export function App() {
   const { t } = useLanguage();
   const [entered, setEntered] = useState(() => !!tg || isStandalonePWA || !!getToken());
   const [view, setView] = useState<View>('home');
+  const [showLanding, setShowLanding] = useState(false);
   // Pre-entry flow: landing page first, then the sign-in/sign-up screen.
   const [gate, setGate] = useState<'landing' | 'auth'>('landing');
   const [gateMode, setGateMode] = useState<'login' | 'register'>('register');
@@ -87,7 +89,7 @@ export function App() {
   // the sidebar is hidden and the content is centred full-width with a bottom
   // action bar (Duolingo-style).
   const focus =
-    (entered && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')) ||
+    (entered && !showLanding && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')) ||
     (!entered && gate === 'auth');
   useEffect(() => {
     document.body.classList.toggle('focus', focus);
@@ -134,7 +136,12 @@ export function App() {
 
   // Guest entry is intentionally in-memory only (not persisted): reloading the
   // site drops back to the landing page unless a real session was created.
-  const enter = () => setEntered(true);
+  const enter = () => {
+    setView('home');
+    setShowLanding(false);
+    setEntered(true);
+    window.scrollTo(0, 0);
+  };
 
   const openGateAuth = (mode: 'login' | 'register') => {
     setGateMode(mode);
@@ -145,7 +152,13 @@ export function App() {
   // and after the re-render play the new pill from that box back to its own.
   const navRef = useRef<HTMLElement>(null);
   const pillFrom = useRef<DOMRect | null>(null);
-  const goTab = (v: View) => {
+  const goTab = (v: View | 'landing') => {
+    if (v === 'landing') {
+      setGate('landing');
+      setShowLanding(true);
+      window.scrollTo(0, 0);
+      return;
+    }
     haptic('light');
     if (v === view) {
       setNavKey((k) => k + 1);
@@ -180,14 +193,14 @@ export function App() {
   useEffect(() => {
     const bb = tg?.BackButton;
     if (!bb) return;
-    const onBack = () => navigate('home');
+    const onBack = () => { setShowLanding(false); navigate('home'); };
     bb.onClick(onBack);
-    if (view === 'home') bb.hide();
+    if (view === 'home' && !showLanding) bb.hide();
     else bb.show();
     return () => bb.offClick(onBack);
-  }, [view]);
+  }, [view, showLanding]);
 
-  if (!entered) {
+  if (!entered || showLanding) {
     // Welcome flow: landing → sign-up/sign-in (or explicit guest entry) → app.
     return (
       <>
@@ -206,9 +219,10 @@ export function App() {
         ) : (
           <Suspense fallback={null}>
             <Landing
-              onStart={() => openGateAuth('register')}
-              onLogin={() => openGateAuth('login')}
+              onStart={() => entered ? enter() : openGateAuth('register')}
+              onLogin={() => entered ? enter() : openGateAuth('login')}
               onGuest={enter}
+              accountEntry={entered}
             />
           </Suspense>
         )}
@@ -253,7 +267,7 @@ export function App() {
               >
                 {active && <span className="nav-pill" aria-hidden="true" />}
                 <span className="nav-ic">
-                  <StudyIcon name={n.id} className="nav-art" />
+                  <StudyIcon name={n.id === 'landing' ? 'home' : n.id} className="nav-art" />
                 </span>
                 <span className="nav-l">{t(n.key)}</span>
               </button>
