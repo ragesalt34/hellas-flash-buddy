@@ -1,3 +1,4 @@
+import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
 import { ArrowRight, Volume2 } from 'lucide-react';
@@ -78,12 +79,12 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
             <h1 data-motion-title>{t('le.h1')}</h1>
             <p className="le-sub">{t('landing.pureplay.sub')}</p>
             <div className="le-cta">
-              <button className="le-btn primary" onClick={onStart}>
+              <LiquidMetalButton className="le-btn primary" onClick={onStart}>
                 {t('landing.cta.start')} <ArrowRight size={22} strokeWidth={2} aria-hidden="true" />
-              </button>
-              <button className="le-btn ghost" onClick={onGuest}>
+              </LiquidMetalButton>
+              <LiquidMetalButton className="le-btn ghost" variant="secondary" onClick={onGuest}>
                 {t('landing.cta.see')}
-              </button>
+              </LiquidMetalButton>
             </div>
           </div>
           <Art name="hero-collage" vw={840} className="le-hero-art" />

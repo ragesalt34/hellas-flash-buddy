@@ -170,3 +170,16 @@ press and return in 220ms on release; fine-pointer hover lifts only 2px. Reduced
 motion retains shadow feedback with no spatial movement. Focus uses the existing
 Aegean ring. These controls apply on desktop and mobile; brut keeps its native
 square controls and hides the decorative paper layers.
+### Hero liquid-metal feedback (2026-10-08)
+
+The two hero CTAs share `components/ui/liquid-metal-button.tsx` on desktop and
+mobile. The primary retains its light blue face with a restrained Paper liquid-metal
+shader; the secondary keeps ivory with a faint reflection. Native button labels,
+RU/EL copy, focus and navigation callbacks are unchanged. Fine-pointer hover lifts
+2px; press compresses in 90ms and begins a 560ms wave at the contact point. Navigation
+is immediate. The library is lazy loaded, limited to 120,000 pixels per canvas,
+and pauses outside the viewport or while the document is hidden. Reduced motion
+uses a static surface and shadow feedback without a shader or spatial movement.
+Brut retains its existing CTA presentation. WebGL/import failure leaves usable
+CSS-backed native buttons. There is no Tailwind or shadcn setup for this effect;
+it uses the app's existing React/TypeScript and scoped CSS.

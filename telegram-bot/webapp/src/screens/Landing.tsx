@@ -1,3 +1,4 @@
+import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, MousePointerClick, Volume2 } from 'lucide-react';
@@ -257,8 +258,8 @@ export function Landing({
               <span className="pureplay-desktop">{t('landing.pureplay.sub')}</span>
             </motion.p>
             <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
-              <button className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} /></button>
-              <button className="lp-btn ghost" onClick={onGuest}>{t('landing.cta.see')}</button>
+              <LiquidMetalButton className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} aria-hidden="true" /></LiquidMetalButton>
+              <LiquidMetalButton className="lp-btn ghost" variant="secondary" onClick={onGuest}>{t('landing.cta.see')}</LiquidMetalButton>
             </motion.div>
           </div>
 
