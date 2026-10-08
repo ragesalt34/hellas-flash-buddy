@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { ArrowRight, MousePointerClick, LogIn, CircleHelp, Volume2 } from 'lucide-react';
+import { ArrowRight, MousePointerClick, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
-import { Logo, LogoMark } from '../components/Logo';
-import { LanguageSwitch } from '../components/LanguageSwitch';
+import { Logo } from '../components/Logo';
 import { TempleMark, MeanderRule, Sparks } from '../components/icons';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
 import { TopicGlyph } from '../components/statsArt';
@@ -205,19 +204,15 @@ function useMinWidth(px: number): boolean {
 
 export function Landing({
   onStart,
-  onLogin,
   onGuest,
-  accountEntry = false,
 }: {
   onStart: () => void;
-  onLogin: () => void;
   onGuest: () => void;
-  accountEntry?: boolean;
 }) {
   const { t } = useLanguage();
   // Wide screens get the editorial desktop landing; narrower ones keep this layout unchanged.
   const wide = useMinWidth(1100);
-  if (wide) return <LandingEditorial onStart={onStart} onLogin={onLogin} onGuest={onGuest} accountEntry={accountEntry} />;
+  if (wide) return <LandingEditorial onStart={onStart} onGuest={onGuest} />;
   // Pointer position over the hero, -1..1, read by CSS to shift the scene layers.
   const onHeroMove = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse') return;
@@ -227,21 +222,6 @@ export function Landing({
   };
   return (
     <div className="landing landing-screen">
-      <nav className="lp-nav">
-        <Logo className="lp-nav-logo" />
-        <LogoMark className="lp-nav-mark" />
-        <div className="pureplay-landing-links">
-          <a href="#how-it-works">{t('landing.steps.title')}</a>
-          <a href="#features">{t('landing.features.title')}</a>
-          <a href="#faq">{t('landing.pureplay.nav.faq')}</a>
-        </div>
-        <div className="lp-nav-right">
-          <LanguageSwitch />
-          <a className="lp-nav-help pureplay-desktop" href="#faq" aria-label={t('landing.pureplay.nav.faq')}><CircleHelp size={23} /></a>
-          <button className="lp-btn ghost" onClick={onLogin}><LogIn className="pureplay-desktop" size={18} />{t(accountEntry ? 'nav.dashboard' : 'landing.enter')}</button>
-        </div>
-      </nav>
-
       <header className="lp-hero" onPointerMove={onHeroMove}>
         {/* Watercolour panorama: Acropolis, the Saronic gulf, cypresses and olives.
             Its sky is transparent, so the headline sits on open air above it. */}

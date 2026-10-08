@@ -1,13 +1,8 @@
-import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { X, ArrowLeft, LogIn } from 'lucide-react';
-import { Logo, LogoMark } from './components/Logo';
-import { MeanderBand } from './components/greekArt';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { tg, haptic } from './telegram';
-import { getToken } from './auth';
-import { useLanguage } from './i18n';
-import { LanguageSwitch } from './components/LanguageSwitch';
-import { ThemeSwitch } from './components/ThemeSwitch';
-import { StudyIcon } from './components/StudyIcon';
+import { getToken, clearToken } from './auth';
+import { clearCache } from './api';
+import { SiteHeader } from './components/SiteHeader';
 
 /** Load a code-split chunk, surviving a failed fetch instead of showing nothing.
  *
@@ -64,17 +59,7 @@ const isStandalonePWA =
   (window.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as unknown as { standalone?: boolean }).standalone === true);
 
-const NAV: { id: Exclude<View, 'homework'> | 'landing'; key: string }[] = [
-  { id: 'landing', key: 'nav.home' },
-  { id: 'home', key: 'nav.dashboard' },
-  { id: 'quiz', key: 'nav.quiz' },
-  { id: 'flashcards', key: 'nav.flashcards' },
-  { id: 'vocab', key: 'nav.vocab' },
-  { id: 'stats', key: 'nav.stats' },
-];
-
 export function App() {
-  const { t } = useLanguage();
   const [entered, setEntered] = useState(() => !!tg || isStandalonePWA || !!getToken());
   const [view, setView] = useState<View>('home');
   const [showLanding, setShowLanding] = useState(false);
@@ -85,9 +70,7 @@ export function App() {
   const [navKey, setNavKey] = useState(0);
   const home = () => navigate('home');
 
-  // Focus mode (quiz/flashcards/vocab, or the pre-entry auth gate): on desktop
-  // the sidebar is hidden and the content is centred full-width with a bottom
-  // action bar (Duolingo-style).
+  // Focus mode keeps the study column centred beneath the persistent header.
   const focus =
     (entered && !showLanding && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')) ||
     (!entered && gate === 'auth');
@@ -95,23 +78,6 @@ export function App() {
     document.body.classList.toggle('focus', focus);
     return () => document.body.classList.remove('focus');
   }, [focus]);
-
-  // On narrow screens the language/style switches float at the top; they hide
-  // while the page is scrolled so they never sit on top of card text. A 24px
-  // marker at the top of the document says when: no scroll listener at all.
-  useEffect(() => {
-    const mark = document.createElement('div');
-    mark.className = 'scroll-mark';
-    mark.setAttribute('aria-hidden', 'true');
-    document.body.prepend(mark);
-    const io = new IntersectionObserver(([e]) => document.body.classList.toggle('scrolled', !e.isIntersecting));
-    io.observe(mark);
-    return () => {
-      io.disconnect();
-      mark.remove();
-      document.body.classList.remove('scrolled');
-    };
-  }, []);
 
   // Depth for the decorative scenes: the backdrop layers drift a few pixels
   // against a mouse pointer (CSS reads --px/--py on <body>, -1..1). Mouse only,
@@ -148,10 +114,6 @@ export function App() {
     setGate('auth');
   };
 
-  // The ink pill slides from the old tab to the new one: remember where it was,
-  // and after the re-render play the new pill from that box back to its own.
-  const navRef = useRef<HTMLElement>(null);
-  const pillFrom = useRef<DOMRect | null>(null);
   const goTab = (v: View | 'landing') => {
     if (v === 'landing') {
       setGate('landing');
@@ -160,6 +122,8 @@ export function App() {
       return;
     }
     haptic('light');
+    setShowLanding(false);
+    window.scrollTo(0, 0);
     if (v === view) {
       setNavKey((k) => k + 1);
       return;
@@ -167,29 +131,9 @@ export function App() {
     navigate(v);
   };
   function navigate(v: View) {
-    pillFrom.current = navRef.current?.querySelector('.nav-pill')?.getBoundingClientRect() ?? null;
     setView(v);
   }
-  useLayoutEffect(() => {
-    const from = pillFrom.current;
-    pillFrom.current = null;
-    const pill = navRef.current?.querySelector<HTMLElement>('.nav-pill');
-    if (!from || !pill || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const to = pill.getBoundingClientRect();
-    if (!to.width || !to.height || !from.width) return;
-    pill.animate(
-      [
-        {
-          transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`,
-        },
-        { transform: 'none' },
-      ],
-      { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-    );
-  }, [view]);
-
   // Telegram BackButton mirrors in-app navigation back to the menu.
-  // (All hooks must run unconditionally — the landing early-return is below.)
   useEffect(() => {
     const bb = tg?.BackButton;
     if (!bb) return;
@@ -200,84 +144,44 @@ export function App() {
     return () => bb.offClick(onBack);
   }, [view, showLanding]);
 
-  if (!entered || showLanding) {
-    // Welcome flow: landing → sign-up/sign-in (or explicit guest entry) → app.
-    return (
-      <>
-        <div className="aurora" />
-        {gate === 'auth' ? (
-          <>
-            <div className="app gate-app">
-              <Auth initialMode={gateMode} onDone={enter} />
-            </div>
-            {/* Always-visible back to the welcome page (the desktop-only
-                focus-close X leaves mobile users with no way back). */}
-            <button className="gate-back" onClick={() => setGate('landing')}>
-              <ArrowLeft size={18} strokeWidth={2.6} /> {t('auth.back')}
-            </button>
-          </>
-        ) : (
-          <Suspense fallback={null}>
-            <Landing
-              onStart={() => entered ? enter() : openGateAuth('register')}
-              onLogin={() => entered ? enter() : openGateAuth('login')}
-              onGuest={enter}
-              accountEntry={entered}
-            />
-          </Suspense>
-        )}
-      </>
-    );
-  }
+  const welcome = !entered || showLanding;
+  const page = welcome ? gate : view;
+  const login = () => { openGateAuth('login'); setEntered(false); setShowLanding(false); window.scrollTo(0, 0); };
+  const account = () => {
+    if (page === 'auth') { setGate('landing'); window.scrollTo(0, 0); }
+    else if (entered) enter();
+    else login();
+  };
 
   return (
-    <>
+    <div className="hs-shell">
+      <SiteHeader
+        page={page}
+        accountEntry={entered}
+        onNavigate={goTab}
+        onAccount={account}
+        onLogin={entered && !getToken() && !tg ? login : undefined}
+        onLogout={getToken() ? () => { haptic(); clearToken(); clearCache(); window.location.reload(); } : undefined}
+      />
       <div className="aurora" />
-      <div className="app">
-        {view === 'home' && <Home key={navKey} onNavigate={navigate} />}
-        {view === 'quiz' && <Quiz key={navKey} onHome={home} />}
-        {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
-        {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
-        {view === 'homework' && <Homework key={navKey} onHome={home} />}
-        {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={navigate} />}
-      </div>
-
-      <button className="focus-close" aria-label={t('nav.close')} onClick={home}>
-        <X size={22} strokeWidth={2.6} />
-      </button>
-
-      <nav ref={navRef} className="bottomnav" aria-label={t('nav.aria')}>
-        <div className="bottomnav-inner glass">
-          {/* Colour lives in CSS, not inline: the mark is white on the round
-              theme's coral badge, but the square theme draws the block as bare
-              paper, where white-on-white made the logo vanish. */}
-          <div className="nav-brand" aria-hidden="true">
-            <LogoMark />
-            <Logo className="nav-desktop-logo" />
-          </div>
-          <MeanderBand className="nav-meander" height={7} />
-          {NAV.map((n) => {
-            const active = view === n.id;
-            return (
-              <button
-                key={n.id}
-                className={`navbtn${active ? ' active' : ''}`}
-                aria-current={active ? 'page' : undefined}
-                onClick={() => goTab(n.id)}
-              >
-                {active && <span className="nav-pill" aria-hidden="true" />}
-                <span className="nav-ic">
-                  <StudyIcon name={n.id === 'landing' ? 'home' : n.id} className="nav-art" />
-                </span>
-                <span className="nav-l">{t(n.key)}</span>
-              </button>
-            );
-          })}
-          <LanguageSwitch />
-          <ThemeSwitch />
-          {!getToken() && !tg && <button className="pureplay-header-login pureplay-desktop" onClick={() => { openGateAuth('login'); setEntered(false); }}><LogIn size={18} />{t('landing.enter')}</button>}
+      {welcome ? gate === 'auth' ? (
+        <div className="app hs-content gate-app">
+          <Auth initialMode={gateMode} onDone={enter} />
         </div>
-      </nav>
-    </>
+      ) : (
+        <Suspense fallback={null}>
+          <Landing onStart={() => entered ? enter() : openGateAuth('register')} onGuest={enter} />
+        </Suspense>
+      ) : (
+        <div className="app hs-content">
+          {view === 'home' && <Home key={navKey} onNavigate={navigate} />}
+          {view === 'quiz' && <Quiz key={navKey} onHome={home} />}
+          {view === 'flashcards' && <Flashcards key={navKey} onHome={home} />}
+          {view === 'vocab' && <Vocab key={navKey} onHome={home} />}
+          {view === 'homework' && <Homework key={navKey} onHome={home} />}
+          {view === 'stats' && <Stats key={navKey} onHome={home} onNavigate={navigate} />}
+        </div>
+      )}
+    </div>
   );
 }

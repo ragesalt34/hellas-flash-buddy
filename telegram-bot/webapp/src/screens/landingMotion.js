@@ -99,7 +99,7 @@ export function mountLandingMotion(root, { minWidth = 1100 } = {}) {
         lerp: 0.1,
         smoothWheel: true,
         syncTouch: false,
-        anchors: { offset: -24 },
+        anchors: { offset: -104 },
         autoRaf: false,
       });
       lenis.on('scroll', ScrollTrigger.update);

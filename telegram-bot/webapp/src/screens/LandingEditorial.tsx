@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
-import { ArrowRight, ArrowUpRight, CircleHelp, Volume2 } from 'lucide-react';
+import { ArrowRight, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { speakGreek } from '../speech';
 import { Logo } from '../components/Logo';
@@ -61,7 +61,7 @@ const FEATURES = [
 // Existing FAQ entries, the four the reference shows (landing.faq.q1/q4/q2/q6).
 const FAQ = [1, 4, 2, 6];
 
-export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = false }: { onStart: () => void; onLogin: () => void; onGuest: () => void; accountEntry?: boolean }) {
+export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; onGuest: () => void }) {
   const { t } = useLanguage();
   const [wordIndex, setWordIndex] = useState(0);
   const word = DEMO_WORDS[wordIndex % DEMO_WORDS.length];
@@ -71,28 +71,6 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
   return (
     <div ref={root} className="landing landing-screen le-page">
       <div className="le-wrap">
-        {/* ---- header ---- */}
-        <header className="le-nav">
-          <a className="le-brand" href="#top" aria-label="Hellas Study">
-            <Logo className="le-logo" />
-          </a>
-          <nav className="le-links" aria-label="Hellas Study">
-            <a href="#how-it-works">{t('landing.steps.title')}</a>
-            <a href="#features">{t('landing.features.title')}</a>
-            <a href="#faq">{t('landing.pureplay.nav.faq')}</a>
-          </nav>
-          <div className="le-nav-right">
-            <LanguageSwitch />
-            <a className="le-help" href="#faq" aria-label={t('landing.pureplay.nav.faq')}>
-              <CircleHelp size={26} strokeWidth={1.7} />
-            </a>
-            <button className="le-login" onClick={onLogin}>
-              <span className="le-login-label">{t(accountEntry ? 'nav.dashboard' : 'landing.enter')}</span>
-              <ArrowUpRight size={21} strokeWidth={1.6} aria-hidden="true" />
-            </button>
-          </div>
-        </header>
-
         {/* ---- hero ---- */}
         <section className="le-hero" id="top">
           <div className="le-hero-copy">

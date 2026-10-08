@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { UserRound, KeyRound, ArrowRight, Loader2, BookOpen, Eye, EyeOff } from 'lucide-react';
+import { UserRound, KeyRound, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 import { api, clearCache } from '../api';
 import { setToken } from '../auth';
 import { haptic, notify } from '../telegram';
 import { useLanguage } from '../i18n';
 import { Greek } from '../components/greek';
 import { MeanderBand, OliveSprig } from '../components/greekArt';
-import { LanguageSwitch } from '../components/LanguageSwitch';
 import './authPersonalSeal.css';
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
@@ -61,10 +60,6 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
 
   return (
     <div className="fade-in center-col auth-screen auth-personal-seal">
-      <header className="auth-editorial-header">
-        <div className="auth-editorial-brand"><BookOpen aria-hidden="true" /><span>Hellas Study</span></div>
-        <LanguageSwitch />
-      </header>
       <aside className="auth-seal-visual hs-deco" aria-hidden="true">
         <img src={`${import.meta.env.BASE_URL}assets/auth-personal-seal-v1/auth-seal-collage.png`} width={1374} height={1145} alt="" draggable={false} />
         <h2>{t('auth.journey')}</h2>

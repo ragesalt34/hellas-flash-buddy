@@ -89,7 +89,23 @@ The coloured word inside a headline: terracotta block, white text, tier-A border
 Quiz bar: track `#e5ddcd`, fill terracotta with a Greek-key (meander) pattern and an olive leaf at the tip. Rings use the same track colour.
 
 ### Navigation
-Desktop: left sidebar pill with the logo mark and hand-drawn nav icons (Cycladic house, wax tablet, ostraka, papyrus, column chart), active item = ink block with white label. Phone: bottom pill bar with the same icons.
+
+All screens use the persistent `components/SiteHeader.tsx` shell and `siteHeader.css`.
+The desktop bar is 80px high; below 600px it is 68px (plus the device safe-area inset).
+The same ivory background, navy text, terracotta book tile, 32px EB Garamond brand,
+14px Inter navigation, language controls and account action appear across both themes.
+The mobile brand is 25px. Header layout never depends on the current study screen.
+
+From 1280px the links sit inline. Narrower widths use an accessible menu with Escape,
+outside-click dismissal and focus return. Landing links target page sections; study
+links target the landing, quiz, flashcards, vocabulary, homework and progress. The
+account action returns to the dashboard. Appearance and session actions share one
+settings menu. The header is owned by App, not by individual screens; there is no
+second sidebar, bottom navigation, auth header or fixed sign-out control.
+
+Motion: 180ms color feedback, 220–260ms menu/underline movement with exponential
+settling, reduced-motion support. The bar never changes height on navigation or scroll.
+Native anchors reserve header clearance; Lenis anchors use the matching desktop offset.
 
 ### Topic Scene (quiz backdrop)
 Per-topic illustration pack behind the question card: wide vignette top-left, object pair bottom-left, object pair top-right, one object lower right, olive branches in the top corners, a long ornamental band under the card, two tiny accents in the corner. One 40px outer margin on every side, upper pieces share a top line, pieces are sized from the free gutter so they never touch the card. Hidden below 900px (only the band stays). Marked `.hs-deco` and hidden in `brut`.

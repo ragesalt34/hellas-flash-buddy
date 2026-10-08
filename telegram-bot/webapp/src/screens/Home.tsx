@@ -1,6 +1,5 @@
-import { ArrowRight, WifiOff, UserRound, LogOut, RotateCcw } from 'lucide-react';
-import { api, clearCache } from '../api';
-import { getToken, clearToken } from '../auth';
+import { ArrowRight, WifiOff, RotateCcw } from 'lucide-react';
+import { api } from '../api';
 import { haptic } from '../telegram';
 import { Loading, useCached } from '../ui';
 import { countWord, useLanguage } from '../i18n';
@@ -99,35 +98,6 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
             {me.vocab.mastered}/{me.vocab.total}
             <span className="home-chip-label">{t('home.wordsLearned')}</span>
           </span>
-          {getToken() ? (
-            <button
-              className="chip home-session home-session-logout"
-              onClick={() => {
-                haptic();
-                clearToken();
-                clearCache();
-                // Reloading with no token now re-derives entered=false, landing on
-                // the welcome page (see App.tsx).
-                window.location.reload();
-              }}
-            >
-              <LogOut size={14} strokeWidth={2.4} />
-              {t('auth.logout')}
-            </button>
-          ) : (
-            <button
-              className="chip home-session home-session-login"
-              onClick={() => {
-                haptic();
-                // Guests have no token, so reloading re-derives entered=false and
-                // lands on the welcome page (login / register / continue).
-                window.location.reload();
-              }}
-            >
-              <UserRound size={14} strokeWidth={2.4} />
-              {t('auth.loginChip')}
-            </button>
-          )}
         </div>
       </div>
 
