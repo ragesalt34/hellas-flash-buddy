@@ -1,0 +1,65 @@
+[
+  {
+    "id": "home",
+    "label": "Главная",
+    "file": "home.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "quiz",
+    "label": "Тест",
+    "file": "quiz.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "flashcards",
+    "label": "Карточки",
+    "file": "flashcards.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "vocab",
+    "label": "Словарь",
+    "file": "vocab.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "homework",
+    "label": "Домашка",
+    "file": "homework.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "stats",
+    "label": "Прогресс",
+    "file": "stats.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "steps",
+    "label": "Как это работает",
+    "file": "steps.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "features",
+    "label": "Что внутри",
+    "file": "features.webp",
+    "width": 192,
+    "height": 192
+  },
+  {
+    "id": "faq",
+    "label": "Вопросы",
+    "file": "faq.webp",
+    "width": 192,
+    "height": 192
+  }
+]

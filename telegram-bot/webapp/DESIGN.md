@@ -100,13 +100,15 @@ From 1280px the links sit inline. Narrower widths use an accessible menu with Es
 outside-click dismissal and focus return. Landing links target page sections; study
 links target the landing, quiz, flashcards, vocabulary, homework and progress. The
 account action returns to the dashboard. The compact RU/EL disclosure groups language, labeled appearance choices and session
-actions; a single navy account button remains the primary header action. Active links
-use a pale blue inset surface instead of an underline. Mobile disclosures are compact
+actions; a single navy account button remains the primary header action. Navigation links pair live RU/EL labels with generated paper miniatures from
+`public/assets/header-paper-v1/` (nine transparent WebP assets, 192px each).
+Active links use a terracotta shared underline; mobile links retain a pale blue selected surface. Mobile disclosures are compact
 panels with gentle elevation, and close when keyboard focus leaves the header. The header is owned by App, not by individual screens; there is no
 second sidebar, bottom navigation, auth header or fixed sign-out control.
 
-Motion: 180ms color feedback, 220–240ms menu/active-state movement with exponential
-settling, reduced-motion support. The bar never changes height on navigation or scroll.
+Motion: Motion for React provides short spring lifts/tilts on hover, press compression
+and a shared-layout active underline. Desktop and mobile have separate indicator IDs;
+the fixed header uses layoutRoot. Reduced motion disables transforms and shared travel. The bar never changes height on navigation or scroll.
 Native anchors reserve header clearance; Lenis anchors use the matching desktop offset.
 
 ### Topic Scene (quiz backdrop)

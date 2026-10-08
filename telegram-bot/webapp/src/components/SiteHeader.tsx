@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowUpRight, BookOpen, ChevronDown, Menu, X } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { ThemeSwitch } from './ThemeSwitch';
+import { motion } from 'motion/react';
+import { HeaderNavLink } from './HeaderNavLink';
 import './siteHeader.css';
+import './header-paper.css';
 
 export type HeaderPage = 'landing' | 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'homework' | 'auth';
 type Props = {
@@ -17,6 +20,8 @@ const STUDY_LINKS = [
   ['landing', 'nav.home'], ['quiz', 'nav.quiz'], ['flashcards', 'nav.flashcards'],
   ['vocab', 'nav.vocab'], ['homework', 'nav.homework'], ['stats', 'nav.stats'],
 ] as const;
+const STUDY_ART = { landing: 'home', quiz: 'quiz', flashcards: 'flashcards', vocab: 'vocab', homework: 'homework', stats: 'stats' } as const;
+const LANDING_ART = { 'how-it-works': 'steps', features: 'features', faq: 'faq' } as const;
 const LANDING_LINKS = [
   ['how-it-works', 'landing.steps.title'], ['features', 'landing.features.title'],
   ['faq', 'landing.pureplay.nav.faq'],
@@ -67,18 +72,19 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
   const account = () => { closeMenu(); onAccount(); };
   const accountKey = page === 'auth' ? 'auth.back' : accountEntry ? 'nav.dashboard' : 'landing.enter';
 
-  const links = page === 'landing'
+  const renderLinks = (surface: 'desktop' | 'menu') => page === 'landing'
     ? LANDING_LINKS.map(([id, key]) => (
-      <a key={id} className="hs-header-link" href={`#${id}`} aria-current={section === id ? 'location' : undefined}
-        onClick={() => { setSection(id); closeMenu(); }}>{t(key)}</a>
+      <HeaderNavLink key={id} icon={LANDING_ART[id]} label={t(key)} surface={surface}
+        href={`#${id}`} current={section === id ? 'location' : undefined}
+        onClick={() => { setSection(id); closeMenu(); }} />
     ))
     : (page === 'auth' ? STUDY_LINKS.slice(0, 1) : STUDY_LINKS).map(([id, key]) => (
-      <button key={id} type="button" className="hs-header-link" aria-current={page === id ? 'page' : undefined}
-        onClick={() => navigate(id)}>{t(key)}</button>
+      <HeaderNavLink key={id} icon={STUDY_ART[id]} label={t(key)} surface={surface}
+        current={page === id ? 'page' : undefined} onClick={() => navigate(id)} />
     ));
 
   return (
-    <header ref={root} className="hs-site-header" data-page={page}
+    <motion.header layoutRoot ref={root} className="hs-site-header" data-page={page}
       onBlur={(event) => {
         if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) {
           setOpen(false);
@@ -90,7 +96,7 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
           <span className="hs-header-mark"><BookOpen size={24} strokeWidth={1.7} aria-hidden="true" /></span>
           <span>Hellas Study</span>
         </button>
-        <nav className="hs-header-nav" aria-label={t('nav.aria')}>{links}</nav>
+        <nav className="hs-header-nav" aria-label={t('nav.aria')}>{renderLinks('desktop')}</nav>
         <div className="hs-header-actions">
           <details ref={settings} className="hs-header-settings">
             <summary onClick={() => setOpen(false)} aria-label={`${t('header.language')}: ${language.toUpperCase()}. ${t('header.settings')}`}>
@@ -118,13 +124,13 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
         </div>
       </div>
       {open && <nav id="hs-header-menu" className="hs-header-menu" aria-label={t('nav.aria')}>
-        {links}
+        {renderLinks('menu')}
         <button type="button" className="hs-header-account" aria-current={page === 'home' ? 'page' : undefined} onClick={account}>
           {t(accountKey)}<ArrowUpRight size={18} aria-hidden="true" />
         </button>
         {onLogin && <button type="button" className="hs-header-link" onClick={() => { closeMenu(); onLogin(); }}>{t('landing.enter')}</button>}
         {onLogout && <button type="button" className="hs-header-link" onClick={onLogout}>{t('auth.logout')}</button>}
       </nav>}
-    </header>
+    </motion.header>
   );
 }
