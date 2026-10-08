@@ -140,6 +140,7 @@ const translations: Translations = {
   },
   'flashcards.done': { ru: 'Сессия завершена!', el: 'Η συνεδρία ολοκληρώθηκε!' },
   'flashcards.showAnswer': { ru: 'Показать ответ', el: 'Δείξε απάντηση' },
+  'flashcards.gradePrompt': { ru: 'Насколько легко вспомнил?', el: 'Πόσο εύκολα το θυμήθηκες;' },
   'flashcards.answerLabel': { ru: 'Ответ', el: 'Απάντηση' },
 
   // ---- Vocab ----

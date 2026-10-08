@@ -1,0 +1,20 @@
+{
+  "hard": {
+    "file": "hard.webp",
+    "width": 1200,
+    "height": 400,
+    "bytes": 59024
+  },
+  "good": {
+    "file": "good.webp",
+    "width": 1200,
+    "height": 440,
+    "bytes": 72672
+  },
+  "easy": {
+    "file": "easy.webp",
+    "width": 1200,
+    "height": 400,
+    "bytes": 49746
+  }
+}

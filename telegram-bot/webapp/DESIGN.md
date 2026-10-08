@@ -157,3 +157,16 @@ Not borrowed (conflicts with the existing system, which takes priority):
 - **Duolingo** — game-like feedback (sounds, streak, progress) around a study loop.
 - **Preply** — display-type-led hero with sticker labels and a calm catalog beneath.
 - **Babbel** — restrained product UI with one brand colour doing the talking.
+
+### Paper flashcard ratings (approved 2026-10-08)
+
+Soft-theme Flashcards use three generated, text-free paper faces in
+`public/assets/rating-buttons-v1/`. Labels and per-card SRS intervals remain live
+RU/EL text, centered on native buttons. Terracotta means difficult; sand means
+good; ivory with forest-green ink means known. The olive filled answer strip
+remains distinct from the known action. There are no arrows or decorative icons.
+An ivory base stays still while the face and copy travel down 7px in 80ms on
+press and return in 220ms on release; fine-pointer hover lifts only 2px. Reduced
+motion retains shadow feedback with no spatial movement. Focus uses the existing
+Aegean ring. These controls apply on desktop and mobile; brut keeps its native
+square controls and hides the decorative paper layers.

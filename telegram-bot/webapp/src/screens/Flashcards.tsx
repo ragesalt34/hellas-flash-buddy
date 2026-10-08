@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, RotateCcw, House, Check, Frown, Smile, Target, Volume2, WifiOff, ArrowRight, Info } from 'lucide-react';
+import { Eye, CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from 'lucide-react';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
@@ -257,34 +257,20 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
       <div className="actionbar">
         {revealed ? (
-          <div className="grade-row">
-            <button className="grade g1" onClick={() => grade(1)}>
-              <VocabDecorImg slot="buttonCorner" className="gr-key" />
-              <span className="e">
-                <Frown size={22} strokeWidth={2.2} />
-              </span>
-              {t('grade.hard')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
-              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
-            </button>
-            <button className="grade g2" onClick={() => grade(2)}>
-              <VocabDecorImg slot="buttonCorner" className="gr-key" />
-              <span className="e">
-                <Smile size={22} strokeWidth={2.2} />
-              </span>
-              {t('grade.good')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
-              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
-            </button>
-            <button className="grade g3" onClick={() => grade(3)}>
-              <VocabDecorImg slot="buttonCorner" className="gr-key" />
-              <span className="e">
-                <Target size={22} strokeWidth={2.2} />
-              </span>
-              {t('grade.easy')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
-              <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 3, language)}</span>
-            </button>
+          <div className="fc-grade-controls">
+            <p className="fc-grade-prompt" id="fc-grade-prompt">{t('flashcards.gradePrompt')}</p>
+            <div className="grade-row" role="group" aria-labelledby="fc-grade-prompt">
+              {([1, 2, 3] as const).map((g) => (
+                <button key={g} type="button" className={`grade g${g} paper-grade`} onClick={() => grade(g)}>
+                  <span className="paper-grade-base hs-deco" aria-hidden="true" />
+                  <span className="paper-grade-face hs-deco" aria-hidden="true" />
+                  <span className="paper-grade-copy">
+                    <span className="paper-grade-label">{t(g === 1 ? 'grade.hard' : g === 2 ? 'grade.good' : 'grade.easy')}</span>
+                    <span className="gsub">{gradeIntervalLabel(card.level ?? 0, g, language)}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <button className="btn btn-block fc-reveal" onClick={() => { haptic(); playTap(); setRevealed(true); }}>
