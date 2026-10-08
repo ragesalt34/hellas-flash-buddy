@@ -6,6 +6,10 @@ type Translations = Record<string, { ru: string; el: string }>;
 
 const translations: Translations = {
   // ---- Nav ----
+  'header.theme.soft': { ru: 'Мягкое', el: 'Απαλό' },
+  'header.theme.brut': { ru: 'Контрастное', el: 'Έντονο' },
+  'header.language.ru': { ru: 'Русский', el: 'Русский' },
+  'header.language.el': { ru: 'Ελληνικά', el: 'Ελληνικά' },
   'header.language': { ru: 'Язык интерфейса', el: 'Γλώσσα διεπαφής' },
   'header.settings': { ru: 'Настройки и аккаунт', el: 'Ρυθμίσεις και λογαριασμός' },
   'header.openMenu': { ru: 'Открыть меню', el: 'Άνοιγμα μενού' },

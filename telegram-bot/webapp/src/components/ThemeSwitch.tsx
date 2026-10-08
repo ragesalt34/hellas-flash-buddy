@@ -13,7 +13,7 @@ import { getStoredTheme, setStoredTheme, type Theme } from '../theme';
  * stylesheet, and an icon that looks like one would promise something the app
  * cannot do. This switches between two complete looks — see src/theme.ts.
  */
-export function ThemeSwitch() {
+export function ThemeSwitch({ labeled = false }: { labeled?: boolean }) {
   const { t } = useLanguage();
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
 
@@ -32,7 +32,8 @@ export function ThemeSwitch() {
         aria-pressed={theme === 'soft'}
         title={t('theme.soft')}
       >
-        <Feather size={15} strokeWidth={2.2} />
+        <Feather size={15} strokeWidth={2.2} aria-hidden="true" />
+        {labeled && <span>{t('header.theme.soft')}</span>}
       </button>
       <button
         className={theme === 'brut' ? 'active' : ''}
@@ -40,7 +41,8 @@ export function ThemeSwitch() {
         aria-pressed={theme === 'brut'}
         title={t('theme.brut')}
       >
-        <Square size={15} strokeWidth={2.6} />
+        <Square size={15} strokeWidth={2.6} aria-hidden="true" />
+        {labeled && <span>{t('header.theme.brut')}</span>}
       </button>
     </div>
   );

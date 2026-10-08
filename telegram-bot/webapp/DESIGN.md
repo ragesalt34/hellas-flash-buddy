@@ -92,18 +92,20 @@ Quiz bar: track `#e5ddcd`, fill terracotta with a Greek-key (meander) pattern an
 
 All screens use the persistent `components/SiteHeader.tsx` shell and `siteHeader.css`.
 The desktop bar is 80px high; below 600px it is 68px (plus the device safe-area inset).
-The same ivory background, navy text, terracotta book tile, 32px EB Garamond brand,
+The same ivory background, navy text, terracotta book tile, 30px EB Garamond brand,
 14px Inter navigation, language controls and account action appear across both themes.
-The mobile brand is 25px. Header layout never depends on the current study screen.
+The mobile brand is 26px. Header layout never depends on the current study screen.
 
 From 1280px the links sit inline. Narrower widths use an accessible menu with Escape,
 outside-click dismissal and focus return. Landing links target page sections; study
 links target the landing, quiz, flashcards, vocabulary, homework and progress. The
-account action returns to the dashboard. Appearance and session actions share one
-settings menu. The header is owned by App, not by individual screens; there is no
+account action returns to the dashboard. The compact RU/EL disclosure groups language, labeled appearance choices and session
+actions; a single navy account button remains the primary header action. Active links
+use a pale blue inset surface instead of an underline. Mobile disclosures are compact
+panels with gentle elevation, and close when keyboard focus leaves the header. The header is owned by App, not by individual screens; there is no
 second sidebar, bottom navigation, auth header or fixed sign-out control.
 
-Motion: 180ms color feedback, 220–260ms menu/underline movement with exponential
+Motion: 180ms color feedback, 220–240ms menu/active-state movement with exponential
 settling, reduced-motion support. The bar never changes height on navigation or scroll.
 Native anchors reserve header clearance; Lenis anchors use the matching desktop offset.
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, BookOpen, Menu, Settings2, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, BookOpen, ChevronDown, Menu, X } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { ThemeSwitch } from './ThemeSwitch';
 import './siteHeader.css';
@@ -78,23 +78,32 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
     ));
 
   return (
-    <header ref={root} className="hs-site-header">
+    <header ref={root} className="hs-site-header" data-page={page}
+      onBlur={(event) => {
+        if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) {
+          setOpen(false);
+          if (settings.current) settings.current.open = false;
+        }
+      }}>
       <div className="hs-header-inner">
         <button type="button" className="hs-header-brand" aria-label={`Hellas Study — ${t('nav.home')}`} onClick={() => navigate('landing')}>
-          <span className="hs-header-mark"><BookOpen size={25} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className="hs-header-mark"><BookOpen size={24} strokeWidth={1.7} aria-hidden="true" /></span>
           <span>Hellas Study</span>
         </button>
         <nav className="hs-header-nav" aria-label={t('nav.aria')}>{links}</nav>
         <div className="hs-header-actions">
-          <div className="hs-header-language" role="group" aria-label={t('header.language')}>
-            {(['ru', 'el'] as const).map((lang) => <button type="button" key={lang} lang={lang}
-              aria-pressed={language === lang} onClick={() => setLanguage(lang)}>{lang.toUpperCase()}</button>)}
-          </div>
           <details ref={settings} className="hs-header-settings">
-            <summary onClick={() => setOpen(false)} aria-label={t('header.settings')} title={t('header.settings')}><Settings2 size={20} aria-hidden="true" /></summary>
+            <summary onClick={() => setOpen(false)} aria-label={`${t('header.language')}: ${language.toUpperCase()}. ${t('header.settings')}`}>
+              <span>{language.toUpperCase()}</span><ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" />
+            </summary>
             <div className="hs-header-popover">
+              <span className="hs-header-setting-label">{t('header.language')}</span>
+              <div className="hs-header-language" role="group" aria-label={t('header.language')}>
+                {(['ru', 'el'] as const).map((lang) => <button type="button" key={lang} lang={lang}
+                  aria-pressed={language === lang} onClick={() => setLanguage(lang)}>{t(`header.language.${lang}`)}</button>)}
+              </div>
               <span className="hs-header-setting-label">{t('theme.aria')}</span>
-              <ThemeSwitch />
+              <ThemeSwitch labeled />
               {onLogin && <button type="button" className="hs-header-session" onClick={onLogin}>{t('landing.enter')}<ArrowUpRight size={16} aria-hidden="true" /></button>}
               {onLogout && <button type="button" className="hs-header-session" onClick={onLogout}>{t('auth.logout')}<ArrowUpRight size={16} aria-hidden="true" /></button>}
             </div>
