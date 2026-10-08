@@ -29,35 +29,81 @@
   width: calc(var(--vw) * var(--u)); aspect-ratio: var(--ar); }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-art img { position: absolute; display: block; max-width: none; height: auto; user-select: none; }
 
-/* ---- header ---- */
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav { display: flex; align-items: center; height: 64px; }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-brand { display: flex; color: inherit; text-decoration: none; }
+/* Shared footer brand and language controls retain their existing treatment. */
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-logo .logo-art { display: none; }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-logo .logo-pureplay {
   display: inline-flex; flex-direction: row; align-items: center; gap: calc(10 * var(--u));
-  font-size: 25px; font-weight: 800; letter-spacing: -0.045em; color: var(--le-ink); /* = the app header's logo */
+  font-size: 25px; font-weight: 800; letter-spacing: -0.045em; color: var(--le-ink);
 }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-logo .logo-symbol { order: -1; width: 30px; height: 30px; color: var(--le-blue); }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links { display: flex; align-items: center; gap: calc(52 * var(--u)); margin-left: calc(60 * var(--u)); }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links a {
-  font-size: 15px; font-weight: 500; color: var(--le-ink); text-decoration: none; white-space: nowrap;
-}
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links a:hover { color: var(--le-blue); }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav-right { display: flex; align-items: center; gap: calc(18 * var(--u)); margin-left: auto; margin-right: calc(-20 * var(--u)); }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .lang-switch { display: flex; gap: calc(8 * var(--u)); background: none; border: 0; box-shadow: none; padding: 0; position: static; }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .lang-switch button {
   padding: 4px calc(5 * var(--u)); background: none; border: 0; box-shadow: none; border-radius: 4px;
   font-size: 13px; font-weight: 600; color: var(--le-violet); letter-spacing: 0;
 }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .lang-switch button.active { background: none; color: var(--le-blue); font-weight: 800; }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-help { display: grid; place-items: center; color: var(--le-ink); }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-help svg { width: 24px; height: 24px; }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login {
-  display: inline-flex; align-items: center; gap: calc(10 * var(--u)); height: 40px; padding: 0 16px;
-  background: #fff; color: var(--le-ink); border: 1.5px solid var(--le-line); border-radius: 5px; cursor: pointer;
-  font: 700 14px / 1 'Inter', sans-serif;
+
+/* Approved publisher header: Garamond, clay book tile, ink-blue navigation. */
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav {
+  --header-ink: #15374c; --header-clay: #bd6448; --header-accent-ink: #9f4e36;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center; column-gap: clamp(18px, 2.8vw, 44px);
+  min-height: 106px; padding: 22px 0 21px; border-bottom: 1px solid #ddd8cc;
+  font-family: 'EB Garamond', Georgia, serif; color: var(--header-ink);
 }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login:hover { background: #f1f4ff; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-brand { display: flex; color: inherit; text-decoration: none; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .logo-pureplay {
+  gap: clamp(12px, 1.15vw, 18px); font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(32px, 2.7vw, 42px); font-weight: 600; line-height: 1;
+  letter-spacing: -0.025em; white-space: nowrap; color: var(--header-ink);
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .logo-symbol {
+  flex: none; width: clamp(42px, 3.5vw, 54px); height: clamp(46px, 3.8vw, 58px);
+  padding: 8px; color: #fffaf1; background: var(--header-clay); border-radius: 2px;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links {
+  display: flex; align-items: center; justify-content: center; gap: clamp(22px, 2.75vw, 43px);
+  min-width: 0; margin: 0;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: clamp(18px, 1.45vw, 23px); font-weight: 400; line-height: 1.2;
+  color: var(--header-ink); white-space: nowrap; text-decoration: none;
+  text-underline-offset: 7px; text-decoration-thickness: 1px;
+  transition: color 160ms ease;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-links a:hover { color: var(--header-accent-ink); text-decoration: underline; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav-right {
+  display: flex; align-items: center; gap: clamp(16px, 1.8vw, 28px); margin: 0;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .lang-switch { gap: 0; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .lang-switch button {
+  padding: 4px 3px; min-height: 44px; font-family: inherit;
+  font-size: clamp(18px, 1.45vw, 23px); font-weight: 400; color: #6e716d;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .lang-switch button.active { color: var(--header-ink); font-weight: 500; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-nav .lang-switch button + button::before {
+  content: '/'; margin-right: 7px; color: #b8afa1; font-weight: 400;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-help {
+  display: grid; place-items: center; width: 36px; min-height: 44px; color: var(--header-ink);
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-help svg { width: 30px; height: 30px; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-help:hover { color: var(--header-accent-ink); }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0;
+  border: 0; border-radius: 0; background: transparent; box-shadow: none;
+  color: var(--header-ink); cursor: pointer; white-space: nowrap;
+  font: 400 clamp(18px, 1.45vw, 23px) / 1.2 'EB Garamond', Georgia, serif;
+  transition: color 160ms ease;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login-label {
+  text-decoration: underline; text-decoration-color: var(--header-clay);
+  text-decoration-thickness: 1.5px; text-underline-offset: 8px;
+}
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login svg { flex: none; width: 21px; height: 21px; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-login:hover { background: transparent; color: var(--header-accent-ink); }
+
 
 /* ---- buttons: light-blue primary, outlined secondary ---- */
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-btn {

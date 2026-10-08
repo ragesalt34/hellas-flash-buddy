@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
-import { ArrowRight, CircleHelp, LogIn, Volume2 } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CircleHelp, Volume2 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { speakGreek } from '../speech';
 import { Logo } from '../components/Logo';
@@ -87,8 +87,8 @@ export function LandingEditorial({ onStart, onLogin, onGuest, accountEntry = fal
               <CircleHelp size={26} strokeWidth={1.7} />
             </a>
             <button className="le-login" onClick={onLogin}>
-              <LogIn size={20} strokeWidth={2} aria-hidden="true" />
-              {t(accountEntry ? 'nav.dashboard' : 'landing.enter')}
+              <span className="le-login-label">{t(accountEntry ? 'nav.dashboard' : 'landing.enter')}</span>
+              <ArrowUpRight size={21} strokeWidth={1.6} aria-hidden="true" />
             </button>
           </div>
         </header>
