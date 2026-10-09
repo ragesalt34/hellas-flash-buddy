@@ -192,6 +192,8 @@ export function Homework({ onHome }: { onHome: () => void }) {
             <StudyArtwork kind="notebook" className="hw-study-art" />
             <Owl className="hw-empty-owl" />
             <p>{t('hw.empty')}</p>
+            {/* desktop: the same paper illustration as the Homework tile on Home */}
+            <img className="hw-empty-art pureplay-desktop" src={`${import.meta.env.BASE_URL}assets/pureplay/home-side-plan/shortcut-homework.webp`} alt="" aria-hidden="true" draggable={false} />
           </div>
         )}
         {sets.map((s) => {

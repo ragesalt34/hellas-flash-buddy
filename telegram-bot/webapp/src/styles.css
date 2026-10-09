@@ -7664,3 +7664,51 @@ button.chip:active { transform: scale(0.95); }
   .slide-arrow .sa-strip { transition: none; }
   :is(button:not(:disabled), a, [role='button'], li, .tile):is(:hover, :focus-visible) .slide-arrow .sa-strip { transform: none; }
 }
+
+/* ---- Design pass (2026-10-09): consistency and legibility fixes found in a full-site review ---- */
+
+/* Quiz: the letter badge of the answered options was a coloured square with text of almost the same
+   colour (B on red, Г on green) — the letter disappeared. Filled badge, white letter. */
+[data-theme='soft'] .qz-play .option.correct .lt { background: var(--good); border-color: var(--good); color: #fff; }
+[data-theme='soft'] .qz-play .option.wrong .lt { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+@media (min-width: 900px) {
+  /* One paper ground for every app screen. Home, Cards, Vocabulary and sign-in were cream while
+     Quiz, results, Progress and Homework were stark white, so moving between tabs flashed. */
+  [data-theme='soft'] body:has(.app) { background: #faf7ef; }
+  [data-theme='soft'] body:has(.app) .aurora { background: #faf7ef !important; }
+  /* the bottom action bar (Quiz «Next», Homework) faded from white: fade from the same paper */
+  [data-theme='soft'] body.focus .actionbar { background: linear-gradient(to top, #faf7ef 62%, rgba(250, 247, 239, 0)); }
+
+  /* Cards / Vocabulary: the sticky grade bar faded in over its own prompt, so "How easy was it?"
+     sat on top of the explanation text. Only a short fade above the bar; the prompt is on solid paper. */
+  [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar {
+    background: linear-gradient(to top, #faf7ef calc(100% - 26px), rgba(250, 247, 239, 0));
+  }
+
+  /* Quiz topics: the "weak topic" tag pushed its title down, so titles in a row did not line up. */
+  /* the tag hangs above the title (absolute in .tp-body) instead of taking a line */
+  [data-theme='soft'] .tp-screen .tp-tile .tp-body { position: relative; }
+  [data-theme='soft'] .tp-screen .tp-tile .tp-weak { position: absolute; top: auto; bottom: calc(100% + 8px); left: 0; margin: 0; }
+
+  /* Progress: the "Recent tests" title was grey while every other panel title is ink, and
+     "Show more" was a pale blue that barely read on white. */
+  [data-theme='soft'] .rd-screen .rd-sublabel { color: var(--text); }
+  [data-theme='soft'] .rd-screen .rd-more { color: #1d56c4; font-weight: 650; }
+  [data-theme='soft'] .rd-screen .rd-more:hover { color: #123f99; }
+
+  /* Homework list: the title was a 14px grey label while every other screen has a real heading,
+     and the empty state was a bare white strip. Heading like Cards/Vocabulary; the empty state is a
+     paper panel with the Homework illustration from Home. */
+  [data-theme='soft'] .hw-list-screen .topbar { margin-bottom: 8px; }
+  [data-theme='soft'] .app .hw-list-screen .hw-meta { font-size: 40px; font-weight: 750; letter-spacing: -1.2px; color: #101214; gap: 16px !important; }
+  [data-theme='soft'] .hw-list-screen .hw-meta .hw-emblem { width: 40px; height: 40px; border-radius: 8px; }
+  [data-theme='soft'] .hw-list-screen .hw-meta .hw-emblem svg { width: 26px; height: 26px; }
+  [data-theme='soft'] .app .hw-list-screen .hw-empty {
+    display: grid; grid-template-columns: minmax(0, 1fr) 200px; align-items: center; gap: 24px;
+    padding: 28px 28px 28px 36px; text-align: left; border: 1px solid #d5d5cd; border-radius: 8px; box-shadow: none;
+    background: #fbf8f0 url('/assets/pureplay/home-side-plan/surface-warm-paper.webp') center / cover no-repeat;
+  }
+  [data-theme='soft'] .app .hw-list-screen .hw-empty p { margin: 0; font-size: 19px; line-height: 1.5; color: #1b2337; }
+  [data-theme='soft'] .hw-list-screen .hw-empty-art { display: block; width: 200px; height: auto; object-fit: contain; pointer-events: none; }
+}
