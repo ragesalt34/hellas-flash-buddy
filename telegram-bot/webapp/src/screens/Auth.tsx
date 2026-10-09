@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { UserRound, KeyRound, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { UserRound, KeyRound, Loader2, Eye, EyeOff } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { api, clearCache } from '../api';
 import { setToken } from '../auth';
 import { haptic, notify } from '../telegram';
@@ -150,7 +151,7 @@ export function Auth({ onDone, initialMode = 'register' }: { onDone: () => void;
           ) : (
             <>
               {mode === 'register' ? t('auth.submit.register') : t('auth.submit.login')}
-              <ArrowRight size={20} strokeWidth={2.6} />
+              <SlideArrow size={20} strokeWidth={2.6} />
             </>
           )}
         </button>

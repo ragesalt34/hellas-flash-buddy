@@ -2,13 +2,13 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Check,
   X,
-  ArrowRight,
   RotateCcw,
   LayoutGrid,
   House,
   Volume2,
   ArrowLeft,
 } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple } from '../components/statsArt';
 import { TopicIcon } from '../components/StudyIcon';
@@ -205,7 +205,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                   </span>
                   <span className="arrow">
                     <span className="pureplay-desktop">{t('home.pureplay.start')}</span>
-                    <ArrowRight size={22} strokeWidth={2.6} />
+                    <SlideArrow size={22} strokeWidth={2.6} />
                   </span>
                 </button>
               );
@@ -236,7 +236,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
                     </>
                   )}
                 </span>
-                <span className="pureplay-topic-arrow pureplay-desktop" aria-hidden="true"><ArrowRight size={24} /></span>
+                <span className="pureplay-topic-arrow pureplay-desktop" aria-hidden="true"><SlideArrow size={24} /></span>
               </button>
             );
           })}
@@ -390,7 +390,7 @@ export function Quiz({ onHome }: { onHome: () => void }) {
         <div className="actionbar">
           <button className="btn btn-block" onClick={next}>
             {idx + 1 >= questions.length ? t('quiz.result') : t('quiz.next')}
-            <ArrowRight size={20} strokeWidth={2.6} />
+            <SlideArrow size={20} strokeWidth={2.6} />
           </button>
         </div>
       )}

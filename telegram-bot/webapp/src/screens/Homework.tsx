@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, CircleAlert, CircleX, House, Paperclip, Plus, RotateCcw, Trash2, X } from 'lucide-react';
+import { CheckCircle2, CircleAlert, CircleX, House, Paperclip, Plus, RotateCcw, Trash2, X } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import {
   api,
   HOMEWORK_FILE_MAX,
@@ -302,7 +303,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
         {error && <div className="hw-err">{t('common.error')}</div>}
         <div className="hw-new-actions">
         <button className="btn btn-block" disabled={(!text.trim() && !file) || busy} onClick={parse}>
-          {busy ? t('hw.parsing') : t('hw.parse')} <ArrowRight size={18} strokeWidth={2.6} />
+          {busy ? t('hw.parsing') : t('hw.parse')} <SlideArrow size={18} strokeWidth={2.6} />
         </button>
         <button className="btn btn-block secondary hw-gap" onClick={() => setPhase('list')}>
           {t('hw.back')}
@@ -345,7 +346,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
           </div>
         ))}
         <button className="btn btn-block" disabled={!items.length} onClick={saveAndStart}>
-          {t('hw.save')} <ArrowRight size={18} strokeWidth={2.6} />
+          {t('hw.save')} <SlideArrow size={18} strokeWidth={2.6} />
         </button>
         <button className="btn btn-block secondary hw-gap" onClick={() => setPhase('new')}>
           {t('hw.back')}
@@ -503,7 +504,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
           </button>
         ) : (
           <button className="btn btn-block" onClick={next}>
-            {idx + 1 >= queue.length ? t('hw.finish') : t('hw.next')} <ArrowRight size={18} strokeWidth={2.6} />
+            {idx + 1 >= queue.length ? t('hw.finish') : t('hw.next')} <SlideArrow size={18} strokeWidth={2.6} />
           </button>
         )}
       </div>

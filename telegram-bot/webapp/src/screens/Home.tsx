@@ -1,4 +1,5 @@
 import { ArrowRight, WifiOff, RotateCcw } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { api } from '../api';
 import { haptic } from '../telegram';
 import { Loading, useCached } from '../ui';
@@ -73,7 +74,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           <h2>{t('home.pureplay.title')}</h2>
           <p>{t('home.pureplay.sub')}</p>
           <div className="pureplay-welcome-actions">
-            <button className="btn" onClick={() => nav('quiz')}>{t('home.pureplay.start')} <ArrowRight size={20} /></button>
+            <button className="btn" onClick={() => nav('quiz')}>{t('home.pureplay.start')} <SlideArrow size={20} /></button>
             <button className="pureplay-text-link" onClick={() => nav('flashcards')}>{t('home.pureplay.cards')}</button>
           </div>
         </div>

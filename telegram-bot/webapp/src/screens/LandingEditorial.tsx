@@ -1,7 +1,8 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
-import { ArrowRight, Volume2 } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
 import { speakGreek } from '../speech';
 import { Logo } from '../components/Logo';
@@ -80,7 +81,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
             <p className="le-sub">{t('landing.pureplay.sub')}</p>
             <div className="le-cta">
               <LiquidMetalButton className="le-btn primary" onClick={onStart}>
-                {t('landing.cta.start')} <ArrowRight size={22} strokeWidth={2} aria-hidden="true" />
+                {t('landing.cta.start')} <SlideArrow size={22} strokeWidth={2} aria-hidden="true" />
               </LiquidMetalButton>
               <LiquidMetalButton className="le-btn ghost" variant="secondary" onClick={onGuest}>
                 {t('landing.cta.see')}
@@ -112,7 +113,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
               onClick={() => setWordIndex((n) => n + 1)}
               aria-label={`${word.word} — ${word.ru}. ${t('landing.pureplay.demo.next')}`}
             >
-              {t('landing.pureplay.demo.try')} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+              {t('landing.pureplay.demo.try')} <SlideArrow size={18} strokeWidth={2} aria-hidden="true" />
             </button>
           </div>
         </section>
@@ -138,7 +139,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
                 <h3>{t(s.title)}</h3>
                 <p>{t(s.text)}</p>
                 <Art name={s.art} className="le-step-art" />
-                {i < 2 && <ArrowRight className="le-step-go" size={26} strokeWidth={1.8} aria-hidden="true" />}
+                {i < 2 && <SlideArrow className="le-step-go" size={26} strokeWidth={1.8} aria-hidden="true" />}
               </li>
             ))}
           </ol>
@@ -157,7 +158,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
                   <h3>{t(f.title)}</h3>
                   <p>{t(f.text)}</p>
                 </div>
-                <ArrowRight className="le-feature-go" size={26} strokeWidth={1.8} aria-hidden="true" />
+                <SlideArrow className="le-feature-go" size={26} strokeWidth={1.8} aria-hidden="true" />
               </li>
             ))}
           </ul>
@@ -189,7 +190,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
             <h2 data-motion-title>{t('le.close.title')}</h2>
             <p>{t('le.close.sub')}</p>
             <button className="le-btn primary" onClick={onStart}>
-              {t('le.close.cta')} <ArrowRight size={22} strokeWidth={2} aria-hidden="true" />
+              {t('le.close.cta')} <SlideArrow size={22} strokeWidth={2} aria-hidden="true" />
             </button>
           </div>
         </section>

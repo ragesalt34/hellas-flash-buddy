@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff, ArrowRight, Info } from 'lucide-react';
+import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff, Info } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
@@ -228,7 +229,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Frown size={22} strokeWidth={2.2} />
               </span>
               {t('grade.hard')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
+              <SlideArrow className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 1, language)}</span>
             </button>
             <button className="grade g2" onClick={() => grade(2)}>
@@ -237,7 +238,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Smile size={22} strokeWidth={2.2} />
               </span>
               {t('grade.good')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
+              <SlideArrow className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 2, language)}</span>
             </button>
             <button className="grade g3" onClick={() => grade(3)}>
@@ -246,7 +247,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
                 <Target size={22} strokeWidth={2.2} />
               </span>
               {t('grade.easy')}
-              <ArrowRight className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
+              <SlideArrow className="fc-grade-arrow pureplay-desktop" size={24} strokeWidth={1.6} aria-hidden="true" />
               <span className="gsub">{gradeIntervalLabel(card.level ?? 0, 3, language)}</span>
             </button>
           </div>

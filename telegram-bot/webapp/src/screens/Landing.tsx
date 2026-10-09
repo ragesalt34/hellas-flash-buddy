@@ -1,7 +1,8 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { ArrowRight, MousePointerClick, Volume2 } from 'lucide-react';
+import { MousePointerClick, Volume2 } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
 import { Logo } from '../components/Logo';
 import { TempleMark, MeanderRule, Sparks } from '../components/icons';
@@ -184,7 +185,7 @@ function PureplayDemoCard() {
       <Volume2 className="lp-preview-sound" size={24} aria-hidden="true" />
       <span className="lp-preview-word" lang="el">{word.word}</span>
       <span className="lp-preview-translation">{word.ru}</span>
-      <span className="lp-preview-link">{t('landing.pureplay.demo.try')}<ArrowRight size={17} aria-hidden="true" /></span>
+      <span className="lp-preview-link">{t('landing.pureplay.demo.try')}<SlideArrow size={17} aria-hidden="true" /></span>
     </button>
   );
 }
@@ -258,7 +259,7 @@ export function Landing({
               <span className="pureplay-desktop">{t('landing.pureplay.sub')}</span>
             </motion.p>
             <motion.div className="lp-cta" initial="hidden" animate="show" custom={2} variants={rise}>
-              <LiquidMetalButton className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <ArrowRight size={19} strokeWidth={2.6} aria-hidden="true" /></LiquidMetalButton>
+              <LiquidMetalButton className="lp-btn primary" onClick={onStart}>{t('landing.cta.start')} <SlideArrow size={19} strokeWidth={2.6} aria-hidden="true" /></LiquidMetalButton>
               <LiquidMetalButton className="lp-btn ghost" variant="secondary" onClick={onGuest}>{t('landing.cta.see')}</LiquidMetalButton>
             </motion.div>
           </div>
@@ -361,7 +362,7 @@ export function Landing({
             </span>
             <h3>{t(s.titleKey)}</h3>
             <p><span className="lp-legacy-copy">{t(s.textKey)}</span><span className="pureplay-desktop">{t(`landing.pureplay.step${i + 1}`)}</span></p>
-            <ArrowRight className="lp-step-arrow pureplay-desktop" size={23} aria-hidden="true" />
+            <SlideArrow className="lp-step-arrow pureplay-desktop" size={23} aria-hidden="true" />
           </motion.div>
         ))}
       </section>
@@ -484,7 +485,7 @@ export function Landing({
         <HeroPanorama className="at-dusk" />
         <h2>{t('landing.foot.title')}</h2>
         <p className="lp-foot-sub">{t('landing.foot.sub')}</p>
-        <button className="lp-btn primary" onClick={onStart}>{t('landing.foot.cta')} <ArrowRight size={19} strokeWidth={2.6} /></button>
+        <button className="lp-btn primary" onClick={onStart}>{t('landing.foot.cta')} <SlideArrow size={19} strokeWidth={2.6} /></button>
       </motion.section>
 
       <footer className="lp-footer">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
+import { SlideArrow } from '../components/SlideArrow';
 import { ProgressBar } from '../ui';
 import { api, type StudyPlan } from '../api';
 import type { View } from '../App';
@@ -89,7 +90,7 @@ export function PlanCard({
             window.location.reload();
           }}
         >
-          {t('auth.loginChip')} <ArrowRight size={18} strokeWidth={2.4} />
+          {t('auth.loginChip')} <SlideArrow size={18} strokeWidth={2.4} />
         </button>
       </div>
     );
@@ -184,11 +185,11 @@ export function PlanCard({
       <div className="pc-actions">
         <button className="btn pc-btn" onClick={() => { haptic(); onNavigate('flashcards'); }}>
           <Ostraka className="pc-btn-ic" /> {t('nav.flashcards')}
-          <ArrowRight className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
+          <SlideArrow className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
         </button>
         <button className="btn secondary pc-btn" onClick={() => { haptic(); onNavigate('vocab'); }}>
           <Papyrus className="pc-btn-ic" /> {t('nav.vocab')}
-          <ArrowRight className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
+          <SlideArrow className="editorial-only pc-btn-go" size={18} strokeWidth={2} aria-hidden="true" />
         </button>
         <button
           type="button"
