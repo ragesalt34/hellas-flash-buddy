@@ -176,7 +176,9 @@ The two hero CTAs share `components/ui/liquid-metal-button.tsx` on desktop and
 mobile. The primary retains its light blue face with a restrained Paper liquid-metal
 shader; the secondary keeps ivory with a faint reflection. Native button labels,
 RU/EL copy, focus and navigation callbacks are unchanged. Fine-pointer hover lifts
-2px; press compresses in 90ms and begins a 560ms wave at the contact point. Navigation
+2px and reveals the liquid-metal surface; cursor exit hides it and stops the shader.
+Idle, keyboard focus and touch do not start the shader (hover-only update 2026-10-10).
+Press compresses in 90ms; a 560ms contact wave is restricted to pointer hover. Navigation
 is immediate. The library is lazy loaded, limited to 120,000 pixels per canvas,
 and pauses outside the viewport or while the document is hidden. Reduced motion
 uses a static surface and shadow feedback without a shader or spatial movement.

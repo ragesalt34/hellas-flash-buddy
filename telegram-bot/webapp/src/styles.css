@@ -7614,14 +7614,14 @@ button.chip:active { transform: scale(0.95); }
 [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-surface {
   inset: 0; z-index: -1; opacity: 0; transition: opacity 280ms ease;
 }
-[data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-surface[data-ready='true'] { opacity: .22; }
+[data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-surface[data-ready='true'] { opacity: 0; }
 [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-surface canvas {
   display: block; width: 100% !important; height: 100% !important;
   position: absolute; inset: 0; border-radius: inherit;
 }
-[data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button--secondary .liquid-metal-surface[data-ready='true'] { opacity: .025; }
+[data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button--secondary .liquid-metal-surface[data-ready='true'] { opacity: 0; }
 [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-light {
-  inset: 0; z-index: 0;
+  inset: 0; z-index: 0; opacity: 0; transition: opacity 220ms ease;
   background: linear-gradient(160deg, #ffffff47, #ffffff00 43%, #ffffff00 68%, #ffffff1a);
 }
 [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-ripple {
@@ -7633,11 +7633,12 @@ button.chip:active { transform: scale(0.95); }
   to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 @media (hover: hover) and (pointer: fine) {
-  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button:hover {
+  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button[data-hovered='true'] .liquid-metal-light { opacity: 1; }
+  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button[data-hovered='true'] {
     transform: translateY(-2px); box-shadow: 0 9px 16px -10px #1b365866, inset 0 1px 0 #ffffffb8;
   }
-  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button:hover .liquid-metal-surface[data-ready='true'] { opacity: .32; }
-  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button--secondary:hover .liquid-metal-surface[data-ready='true'] { opacity: .11; }
+  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button[data-hovered='true'] .liquid-metal-surface[data-ready='true'] { opacity: .32; }
+  [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button--secondary[data-hovered='true'] .liquid-metal-surface[data-ready='true'] { opacity: .11; }
 }
 [data-theme='soft'] .landing-screen :is(.le-cta, .lp-cta) .liquid-metal-button:focus-visible {
   outline: 3px solid #0b4ff0; outline-offset: 4px;

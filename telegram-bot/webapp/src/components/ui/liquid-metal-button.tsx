@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ShaderMount } from '@paper-design/shaders';
 
 type Props = {
@@ -13,12 +13,13 @@ export function LiquidMetalButton({ children, onClick, className, variant = 'pri
   const button = useRef<HTMLButtonElement>(null);
   const surface = useRef<HTMLSpanElement>(null);
   const mount = useRef<ShaderMount | null>(null);
-  const engaged = useRef({ hovered: false, focused: false });
+  const engaged = useRef({ hovered: false });
   const burstTimer = useRef<ReturnType<typeof setTimeout>>();
   const rippleTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
   const nextRipple = useRef(0);
   const [enabled, setEnabled] = useState(false);
   const [pressed, setPressed] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export function LiquidMetalButton({ children, onClick, className, variant = 'pri
           u_offsetX: 0, u_offsetY: 0, u_originX: 0.5, u_originY: 0.5,
           u_worldWidth: 0, u_worldHeight: 0,
         }, { alpha: true, antialias: false },
-        engaged.current.hovered || engaged.current.focused ? 0.7 : variant === 'primary' ? 0.16 : 0,
+        engaged.current.hovered ? 0.7 : 0,
         4000, 1, 120_000);
         mount.current = shader;
         host.dataset.ready = 'true';
@@ -74,13 +75,13 @@ export function LiquidMetalButton({ children, onClick, className, variant = 'pri
     };
   }, [enabled, variant]);
 
-  const restSpeed = () => engaged.current.hovered || engaged.current.focused ? 0.7 : variant === 'primary' ? 0.16 : 0;
+  const restSpeed = () => engaged.current.hovered ? 0.7 : 0;
   const updateSpeed = () => {
     clearTimeout(burstTimer.current);
     mount.current?.setSpeed(restSpeed());
   };
   const playFeedback = (element: HTMLButtonElement, clientX?: number, clientY?: number) => {
-    if (enabled) {
+    if (enabled && engaged.current.hovered) {
       const rect = element.getBoundingClientRect();
       const id = nextRipple.current++;
       // Keyboard activation has no pointer coordinates: start the wave in the middle.
@@ -97,10 +98,6 @@ export function LiquidMetalButton({ children, onClick, className, variant = 'pri
       burstTimer.current = setTimeout(() => mount.current?.setSpeed(restSpeed()), 280);
     }
   };
-  const activate = (event: MouseEvent<HTMLButtonElement>) => {
-    if (event.detail === 0) playFeedback(event.currentTarget);
-    onClick();
-  };
 
   return (
     <button
@@ -108,25 +105,33 @@ export function LiquidMetalButton({ children, onClick, className, variant = 'pri
       type="button"
       className={`${className} liquid-metal-button liquid-metal-button--${variant}`}
       data-pressed={pressed || undefined}
-      onClick={activate}
+      data-hovered={hovered || undefined}
+      onClick={onClick}
       onPointerEnter={(event) => {
-        if (event.pointerType !== 'mouse') return;
+        if (event.pointerType !== 'mouse' || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         engaged.current.hovered = true;
+        setHovered(true);
         updateSpeed();
       }}
-      onPointerLeave={() => { engaged.current.hovered = false; setPressed(false); updateSpeed(); }}
+      onPointerLeave={() => {
+        engaged.current.hovered = false;
+        setHovered(false);
+        setPressed(false);
+        rippleTimers.current.forEach(clearTimeout);
+        rippleTimers.current.clear();
+        setRipples([]);
+        updateSpeed();
+      }}
       onPointerDown={(event) => {
         setPressed(true);
         playFeedback(event.currentTarget, event.clientX, event.clientY);
       }}
       onPointerUp={() => setPressed(false)}
       onPointerCancel={() => setPressed(false)}
-      onFocus={() => { engaged.current.focused = true; updateSpeed(); }}
-      onBlur={() => { engaged.current.focused = false; setPressed(false); updateSpeed(); }}
+      onBlur={() => setPressed(false)}
       onKeyDown={(event) => {
         if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
           setPressed(true);
-          playFeedback(event.currentTarget);
         }
       }}
       onKeyUp={() => setPressed(false)}
