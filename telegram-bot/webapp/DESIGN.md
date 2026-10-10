@@ -198,3 +198,15 @@ Soft theme shows these pictures above the word on desktop and phones, using
 existing paper artwork. Words without a mapped asset keep their topic collage.
 The original PNGs and generation prompts are preserved in the main clone's
 `design-handoff/vocabulary-hints-01-10-v1/`; deployed WebP files are 960×640.
+
+### Vocabulary translation reveal (approved 2026-10-10)
+
+Soft-theme vocabulary uses the first approved terracotta paper cover with a small
+cream corner fold. Its generated text-free surface lives in
+`public/assets/vocab-reveal-v1/`; the native button carries centered live RU/EL
+copy, with no arrows or click icon. A short 2px press and corner lift run once
+for 160ms, then the existing olive translation strip appears in 220ms. Repeated
+activation is guarded; timers cancel on unmount; keyboard focus moves into the
+revealed translation region so the next Tab reaches the SRS actions. Reduced
+motion and brut reveal immediately. Decorative layers are hidden in brut;
+translation, notes, pronunciation and grading keep their existing data.

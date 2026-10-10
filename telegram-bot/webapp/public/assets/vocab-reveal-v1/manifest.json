@@ -1,0 +1,14 @@
+{
+  "file": "terracotta-paper.webp",
+  "width": 1440,
+  "height": 248,
+  "sourceAlphaBounds": [
+    54,
+    202,
+    2065,
+    549
+  ],
+  "source": "Built-in ImageGen",
+  "liveText": true,
+  "reference": "variant-01.png"
+}

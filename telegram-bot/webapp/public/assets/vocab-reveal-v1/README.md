@@ -1,0 +1,1 @@
+Text-free terracotta paper face based on the approved first reference. Transparent generated PNG preserved in design-handoff/vocab-reveal-terracotta-v1/button-source.png. The complete face keeps its original continuous paper texture; label is live RU/EL HTML.

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, RotateCcw, House, MousePointerClick, Frown, Smile, Target, Volume2, WifiOff, Info } from 'lucide-react';
+import { CheckCircle2, RotateCcw, House, Frown, Smile, Target, Volume2, WifiOff, Info } from 'lucide-react';
 import { SlideArrow } from '../components/SlideArrow';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
-import { playGrade, playComplete, playTap } from '../sound';
+import { playGrade, playComplete } from '../sound';
 import { CountUp, Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
@@ -13,6 +13,7 @@ import { RewardSides, RewardWreath } from '../components/RewardArt';
 import { StudyIcon } from '../components/StudyIcon';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 import { VOCABULARY_HINTS } from '../data/vocabularyHints';
+import { VocabularyRevealButton } from '../components/VocabularyRevealButton';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
@@ -27,6 +28,15 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   // See Flashcards: same double-tap guard, and it must sit with the other hooks
   // rather than after the early returns further down.
   const gradedRef = useRef<string | null>(null);
+  const translationRef = useRef<HTMLDivElement>(null);
+  const revealFocusRef = useRef(false);
+
+  useEffect(() => {
+    if (revealed && revealFocusRef.current) {
+      translationRef.current?.focus({ preventScroll: true });
+      revealFocusRef.current = false;
+    }
+  }, [revealed]);
 
   // Warm the current word's audio, and the next one's, so tapping 🔊 is instant.
   useEffect(() => {
@@ -183,43 +193,34 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             <Volume2 size={17} strokeWidth={2.3} />
           </button>
         </div>
-        <div
-          className={`spoiler${revealed ? '' : ' hidden'}`}
-          role={revealed ? undefined : 'button'}
-          tabIndex={revealed ? undefined : 0}
-          aria-label={revealed ? undefined : t('vocab.tapToReveal')}
-          onKeyDown={(e) => {
-            if (!revealed && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault();
-              haptic();
-              playTap();
-              setRevealed(true);
-            }
-          }}
-          onClick={() => {
-            if (!revealed) {
-              haptic();
-              playTap();
-              setRevealed(true);
-            }
-          }}
-        >
-          <VocabDecorImg slot="cardTemple" className="vc-panel-temple" />
-          <div className="reveal" aria-hidden={!revealed}>
-            <div className="ru"><span className="vc-ru-tag pureplay-desktop">{t('vocab.translation')}</span>{card.ru}</div>
-            {card.note && (
-              <div className="note">
-                <Info className="vc-note-info pureplay-desktop" size={22} aria-hidden="true" />
-                <span>{card.note}</span>
-              </div>
-            )}
-          </div>
-          {!revealed && (
-            <div className="tap" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-              <MousePointerClick size={14} strokeWidth={2.4} /> {t('vocab.tapToReveal')}
+        {revealed ? (
+          <div
+            className="spoiler vc-translation-revealed"
+            ref={translationRef}
+            role="region"
+            aria-label={t('vocab.translation')}
+            tabIndex={-1}
+          >
+            <VocabDecorImg slot="cardTemple" className="vc-panel-temple" />
+            <div className="reveal">
+              <div className="ru"><span className="vc-ru-tag pureplay-desktop">{t('vocab.translation')}</span>{card.ru}</div>
+              {card.note && (
+                <div className="note">
+                  <Info className="vc-note-info pureplay-desktop" size={22} aria-hidden="true" />
+                  <span>{card.note}</span>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <VocabularyRevealButton
+            label={t('vocab.openTranslation')}
+            onReveal={(moveFocus) => {
+              revealFocusRef.current = moveFocus;
+              setRevealed(true);
+            }}
+          />
+        )}
       </div>
       </div>
 

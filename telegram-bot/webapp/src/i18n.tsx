@@ -150,6 +150,7 @@ const translations: Translations = {
   },
   'vocab.done': { ru: 'Готово!', el: 'Ολοκληρώθηκε!' },
   'vocab.tapToReveal': { ru: 'Нажми, чтобы увидеть перевод', el: 'Πάτησε για μετάφραση' },
+  'vocab.openTranslation': { ru: 'Открыть перевод', el: 'Δες τη μετάφραση' },
 
   // ---- Grade buttons (flashcards + vocab) ----
   // Grade sub-labels (the "come back in …" interval) are computed per card

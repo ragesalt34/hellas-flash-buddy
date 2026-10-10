@@ -7745,3 +7745,94 @@ button.chip:active { transform: scale(0.95); }
     bottom: env(safe-area-inset-bottom, 0px);
   }
 }
+
+/* ---- Vocabulary: approved terracotta paper translation cover ---- */
+.vc-reveal-trigger {
+  display: block;
+  width: 100%;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+.vc-reveal-label { position: relative; display: block; }
+[data-theme='soft'] .app .vc-screen .spoiler.hidden.vc-reveal-trigger {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: min(480px, 100%);
+  min-height: 76px;
+  margin: 28px auto 4px;
+  padding: 17px 32px 23px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-theme='soft'] .vc-screen .vc-reveal-paper {
+  position: absolute;
+  inset: 0;
+  display: block !important;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 3px rgb(84 49 26 / 15%));
+  transition: transform 100ms cubic-bezier(.16, 1, .3, 1), filter 100ms ease-out;
+}
+[data-theme='soft'] .vc-screen :is(.vc-reveal-face, .vc-reveal-corner) {
+  position: absolute;
+  inset: 0;
+  background: url('/assets/vocab-reveal-v1/terracotta-paper.webp') center / 100% 100% no-repeat;
+}
+[data-theme='soft'] .vc-screen .vc-reveal-face {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) calc(100% - 28px), calc(100% - 28px) 100%, 0 100%);
+}
+[data-theme='soft'] .vc-screen .vc-reveal-corner {
+  clip-path: inset(calc(100% - 28px) 0 0 calc(100% - 28px));
+  transform-origin: calc(100% - 28px) calc(100% - 28px);
+  transition: transform 140ms cubic-bezier(.16, 1, .3, 1);
+}
+[data-theme='soft'] .vc-screen .vc-reveal-trigger .vc-reveal-label {
+  color: #fff8eb;
+  font: 700 clamp(20px, 2vw, 28px)/1.25 var(--font-body);
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  transition: transform 100ms cubic-bezier(.16, 1, .3, 1);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-theme='soft'] .vc-screen .vc-reveal-trigger:not(.is-opening):hover .vc-reveal-paper {
+    transform: translateY(-1px);
+    filter: drop-shadow(0 4px 4px rgb(84 49 26 / 18%));
+  }
+  [data-theme='soft'] .vc-screen .vc-reveal-trigger:not(.is-opening):hover .vc-reveal-label { transform: translateY(-1px); }
+}
+[data-theme='soft'] .vc-screen .vc-reveal-trigger:is(:active, .is-opening) .vc-reveal-paper {
+  transform: translateY(2px);
+  filter: drop-shadow(0 1px 1px rgb(84 49 26 / 12%));
+}
+[data-theme='soft'] .vc-screen .vc-reveal-trigger:is(:active, .is-opening) .vc-reveal-label { transform: translateY(2px); }
+[data-theme='soft'] .vc-screen .vc-reveal-trigger.is-opening .vc-reveal-corner { transform: translateY(-2px) rotate(-5deg); }
+[data-theme='soft'] .vc-screen .vc-reveal-trigger:focus-visible {
+  outline: 3px solid #2f5d92;
+  outline-offset: 5px;
+}
+[data-theme='soft'] .vc-screen .vc-translation-revealed { cursor: default; }
+[data-theme='soft'] .vc-screen .vc-translation-revealed .reveal { animation: vc-translation-uncover 220ms cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes vc-translation-uncover {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 899px) {
+  [data-theme='soft'] .app .vc-screen .spoiler.hidden.vc-reveal-trigger {
+    min-height: 64px;
+    margin-top: 24px;
+    padding: 14px 24px 20px;
+  }
+  [data-theme='soft'] .vc-screen .vc-reveal-trigger .vc-reveal-label { font-size: 20px; }
+  [data-theme='soft'] .vc-screen .vc-translation-revealed .ru { color: #3c5632; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .vc-screen :is(.vc-reveal-paper, .vc-reveal-corner, .vc-reveal-label) { transition: none; transform: none !important; }
+  [data-theme='soft'] .vc-screen .vc-translation-revealed .reveal { animation: none; }
+}
