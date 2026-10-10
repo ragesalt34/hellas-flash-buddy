@@ -85,7 +85,11 @@ export function VocabularyRevealButton({ label, children, onReveal }: Props) {
             const button = event.currentTarget.getBoundingClientRect();
             const target = strip.getBoundingClientRect();
             const bounds = slot.getBoundingClientRect();
-            durationRef.current = parseFloat(getComputedStyle(slot).getPropertyValue('--vc-peel-duration')) || 620;
+            // Production CSS minification can rewrite 620ms as .62s.
+            const cssDuration = getComputedStyle(slot).getPropertyValue('--vc-peel-duration').trim();
+            const duration = parseFloat(cssDuration)
+              * (cssDuration.endsWith('ms') ? 1 : cssDuration.endsWith('s') ? 1000 : NaN);
+            durationRef.current = Number.isFinite(duration) && duration > 0 ? duration : 620;
             slot.style.height = `${bounds.height}px`;
             slot.style.setProperty('--vc-cover-x', `${button.left - target.left}px`);
             slot.style.setProperty('--vc-cover-sx', `${button.width / target.width}`);
