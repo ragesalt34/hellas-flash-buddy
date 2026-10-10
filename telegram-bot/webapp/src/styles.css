@@ -7347,9 +7347,9 @@ button.chip:active { transform: scale(0.95); }
 
   /* Grades: three equal flat buttons inset 8px from the sheet */
   [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar {
-    position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: center; padding: 35px 8px 0; border: 0;
-    /* sticky, so a long card keeps its grades on screen; invisible when everything fits */
-    background: linear-gradient(to top, #faf7ef 76%, rgba(250, 247, 239, 0));
+    position: static; bottom: auto; z-index: auto; display: flex; justify-content: center; padding: 24px 8px 0; border: 0;
+    /* Keep controls after the complete explanation; sticky controls covered long copy. */
+    background: transparent;
   }
   [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar > .grade-row { width: 100%; max-width: none; }
   [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade-row { gap: 34px; }
@@ -7411,10 +7411,21 @@ button.chip:active { transform: scale(0.95); }
     border-image: url('/assets/pureplay/flashcard-backing-v1.png') 170 160 130 130 fill / 82px 78px 64px 64px stretch;
     filter: none;
   }
-  [data-theme='soft'] .app .fc-screen .fc-card { min-height: 430px; padding: 30px 60px 38px; }
-  [data-theme='soft'] .fc-screen .fc-paper-art { width: 360px; height: 220px; margin: 0 auto 18px; }
+  [data-theme='soft'] .app .fc-screen .fc-card { min-height: 320px; padding: 24px 48px 32px; }
+  [data-theme='soft'] .fc-screen .fc-paper-art { width: 320px; height: clamp(120px, 17vh, 180px); margin: 0 auto 12px; }
+  [data-theme='soft'] .fc-screen.fc-wide .fc-paper-art { width: 280px; height: clamp(100px, 14vh, 140px); }
   [data-theme='soft'] .fc-screen .fc-paper-topic { top: 12px; left: 28px; min-width: 180px; padding: 18px 30px; font-size: 14px; }
-  [data-theme='soft'] .app .fc-screen .fc-card .speak-row .qtext { font-size: clamp(32px, 3.05vw, 44px); }
+  [data-theme='soft'] .app .fc-screen .fc-card .speak-row .qtext { min-width: 0; font-size: clamp(28px, 2.5vw, 36px); letter-spacing: -0.02em; }
+  [data-theme='soft'] .app .fc-screen.fc-wide .fc-card .speak-row .qtext { font-size: clamp(26px, 2.2vw, 32px); letter-spacing: -0.02em; }
+  [data-theme='soft'] .app .fc-screen .topbar { margin-bottom: 24px; }
+  [data-theme='soft'] .app .fc-screen .answer-box { margin-top: 18px; padding: 16px 36px 18px; }
+  [data-theme='soft'] .app .fc-screen .answer-text { min-width: 0; font-size: clamp(28px, 2.5vw, 36px); line-height: 1.2; letter-spacing: -0.02em; }
+  [data-theme='soft'] .app .fc-screen.fc-wide .answer-text { font-size: clamp(26px, 2.1vw, 30px); line-height: 1.2; }
+  [data-theme='soft'] .app .fc-screen .explain { display: flex; align-items: flex-start; margin-top: 20px; padding-top: 14px; font-size: 18px; line-height: 1.5; }
+  [data-theme='soft'] .fc-screen .explain > span { min-width: 0; margin-left: 16px; padding-left: 20px; overflow-wrap: anywhere; }
+  [data-theme='soft'] .fc-screen .fc-paper-info { width: 24px; height: 24px; margin-top: 3px; }
+  [data-theme='soft'] body.focus .app .fc-screen .actionbar { padding-top: 20px; }
+  [data-theme='soft'] body.focus:has(.fc-screen) .app { padding-bottom: 24px; }
   [data-theme='soft'] body.focus .app .fc-screen .actionbar .fc-reveal {
     width: 420px; max-width: min(100%, 420px) !important; min-height: 64px; font-size: 20px;
   }
@@ -7661,6 +7672,24 @@ button.chip:active { transform: scale(0.95); }
   :is(button:not(:disabled), a, [role='button'], li, .tile):is(:hover, :focus-visible) .slide-arrow .sa-strip { transform: none; }
 }
 
+/* Laptop-height study sheets: spend the space on copy, not the illustration.
+   All text stays in normal flow; unusually long notes use page scrolling. */
+@media (min-width: 900px) and (max-height: 960px) {
+  [data-theme='soft'] body.focus .hs-shell > .app:has(.fc-screen) { padding-top: 24px !important; }
+  [data-theme='soft'] .app .fc-screen .topbar { margin-bottom: 16px; }
+  [data-theme='soft'] .app .fc-screen .fc-card { padding-top: 20px; }
+  [data-theme='soft'] .fc-screen .fc-paper-art { height: clamp(110px, 14.5vh, 150px); }
+  [data-theme='soft'] .fc-screen.fc-wide .fc-paper-art { width: 250px; height: clamp(88px, 11vh, 106px); }
+  [data-theme='soft'] .app .fc-screen .fc-card > .speak-row { max-width: none; }
+  [data-theme='soft'] .app .fc-screen.fc-wide .fc-card .speak-row .qtext { font-size: 28px; }
+  [data-theme='soft'] .app .fc-screen .answer-box { padding-block: 14px; }
+  [data-theme='soft'] .app .fc-screen.fc-wide .answer-text { font-size: 28px; }
+  [data-theme='soft'] .app .fc-screen .explain { margin-top: 12px; padding-top: 12px; }
+  [data-theme='soft'] body.focus .app .fc-screen .actionbar { padding-top: 12px; }
+  [data-theme='soft'] .app .fc-screen .fc-grade-prompt { margin-bottom: 10px; font-size: 14px; }
+  [data-theme='soft'] body.focus .app .fc-screen .grade.paper-grade { min-height: 100px; }
+}
+
 /* ---- Design pass (2026-10-09): consistency and legibility fixes found in a full-site review ---- */
 
 /* Quiz: the letter badge of the answered options was a coloured square with text of almost the same
@@ -7676,8 +7705,8 @@ button.chip:active { transform: scale(0.95); }
   /* the bottom action bar (Quiz «Next», Homework) faded from white: fade from the same paper */
   [data-theme='soft'] body.focus .actionbar { background: linear-gradient(to top, #faf7ef 62%, rgba(250, 247, 239, 0)); }
 
-  /* Cards / Vocabulary: the sticky grade bar faded in over its own prompt, so "How easy was it?"
-     sat on top of the explanation text. Only a short fade above the bar; the prompt is on solid paper. */
+  /* Cards / Vocabulary: controls follow the sheet in normal flow.
+     Keep their prompt on solid paper and the short fade inside the reserved action spacing. */
   [data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar {
     background: linear-gradient(to top, #faf7ef calc(100% - 26px), rgba(250, 247, 239, 0));
   }

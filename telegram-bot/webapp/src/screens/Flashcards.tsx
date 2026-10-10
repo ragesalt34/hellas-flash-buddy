@@ -162,7 +162,8 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     }
   }
 
-  const wide = card.question.length + card.correct_answer.length > 120;
+  // Reserve room for the complete explanation as well as the question and answer.
+  const wide = card.question.length + card.correct_answer.length > 120 || (card.explanation?.length ?? 0) > 180;
   const paperTopic = ['history', 'culture', 'laws', 'geography'].includes(card.topic ?? '')
     ? card.topic!
     : 'mixed';

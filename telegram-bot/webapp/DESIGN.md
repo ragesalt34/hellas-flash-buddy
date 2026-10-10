@@ -216,3 +216,7 @@ activation is guarded; timers cancel on unmount; keyboard focus moves into the
 revealed translation region so the next Tab reaches the SRS actions. Reduced
 motion and brut reveal immediately. Decorative layers are hidden in brut;
 translation, notes, pronunciation and grading keep their existing data.
+
+### Study card content fit (2026-10-10)
+
+On desktop, rating controls follow the entire sheet in normal page flow: they must never cover the explanation. Flashcard density considers the explanation length too. In laptop-height windows, illustrations and display type become smaller, while explanation text stays at 18px with a 32px bottom inset. Keep complete text visible; exceptionally long copy scrolls with the page rather than being clipped or given an internal scrollbar.
