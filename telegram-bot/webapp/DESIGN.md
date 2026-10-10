@@ -185,3 +185,16 @@ uses a static surface and shadow feedback without a shader or spatial movement.
 Brut retains its existing CTA presentation. WebGL/import failure leaves usable
 CSS-backed native buttons. There is no Tailwind or shadcn setup for this effect;
 it uses the app's existing React/TypeScript and scoped CSS.
+
+### Individual vocabulary hints (2026-10-10)
+
+The first ten vocabulary IDs have unique handmade paper collages in
+`public/assets/vocabulary-hints-v1/`. The mapping lives in
+`src/data/vocabularyHints.ts` and uses the permanent word ID, never the shuffled
+SRS session index. All hints are text-free associative scenes; Greek words,
+hidden translations, notes, pronunciation and grading remain unchanged.
+Soft theme shows these pictures above the word on desktop and phones, using
+`object-fit: contain` with reserved image space. Brut hides them as it does the
+existing paper artwork. Words without a mapped asset keep their topic collage.
+The original PNGs and generation prompts are preserved in the main clone's
+`design-handoff/vocabulary-hints-01-10-v1/`; deployed WebP files are 960×640.

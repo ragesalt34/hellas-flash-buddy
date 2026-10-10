@@ -7713,3 +7713,35 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .app .hw-list-screen .hw-empty p { margin: 0; font-size: 19px; line-height: 1.5; color: #1b2337; }
   [data-theme='soft'] .hw-list-screen .hw-empty-art { display: block; width: 200px; height: auto; object-fit: contain; pointer-events: none; }
 }
+
+
+/* ---- Individual vocabulary hints: approved words 1–10 ---- */
+[data-theme='soft'] .app .vc-screen .vc-word-hint {
+  display: block !important;
+  flex: none;
+  width: min(100%, 300px);
+  height: 200px;
+  object-fit: contain;
+  margin: 0 auto 24px;
+  pointer-events: none;
+}
+@media (min-width: 900px) {
+  [data-theme='soft'] .app .vc-screen .vc-word-hint {
+    width: min(100%, 420px);
+    height: 280px;
+    margin-bottom: 20px;
+  }
+}
+@media (min-width: 900px) and (max-height: 960px) {
+  [data-theme='soft'] .app .vc-screen .vc-word-hint {
+    width: min(100%, 360px);
+    height: 240px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 899px) {
+  [data-theme='soft'] body.focus .app .vc-screen:has(.vc-word-hint) .actionbar {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
+}

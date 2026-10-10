@@ -12,6 +12,7 @@ import { Greek } from '../components/greek';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
 import { StudyIcon } from '../components/StudyIcon';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
+import { VOCABULARY_HINTS } from '../data/vocabularyHints';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
@@ -111,7 +112,8 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   }
 
   const card = cards[i];
-  // The card's topic picks the paper tag and the collage (anything unknown falls back to 'mixed').
+  // Topic art remains the fallback until a word-specific hint is available.
+  const wordHint = VOCABULARY_HINTS[card.id];
   const paperTopic = ['history', 'culture', 'laws', 'geography'].includes(card.topic) ? card.topic : 'mixed';
 
   function grade(g: number) {
@@ -153,10 +155,12 @@ export function Vocab({ onHome }: { onHome: () => void }) {
       <span className={`fc-paper-topic ft-${paperTopic} pureplay-desktop`}>{t('topic.' + paperTopic)}</span>
       <div className="card vc-card swap-in">
         <img
-          className="fc-paper-art hs-deco pureplay-desktop"
-          src={`${import.meta.env.BASE_URL}assets/pureplay/paper-art-${paperTopic}.webp`}
-          width={470}
-          height={225}
+          className={`fc-paper-art hs-deco${wordHint ? " vc-word-hint" : " pureplay-desktop"}`}
+          src={wordHint
+            ? `${import.meta.env.BASE_URL}assets/vocabulary-hints-v1/${wordHint}`
+            : `${import.meta.env.BASE_URL}assets/pureplay/paper-art-${paperTopic}.webp`}
+          width={wordHint ? 960 : 470}
+          height={wordHint ? 640 : 225}
           alt=""
           aria-hidden="true"
           draggable={false}
