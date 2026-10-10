@@ -7959,3 +7959,43 @@ html[data-theme='soft']:has(.vc-screen) { scrollbar-gutter: stable; }
 
 /* A fast next-word reveal must not compete with the old whole-card slide. */
 [data-theme='soft'] .app .vc-screen .vc-card.swap-in { animation: hs-fade 140ms ease-out backwards; }
+/* Desktop vocabulary: keep the revealed sheet and ratings in the same view.
+   Height, rather than monitor width, sets the illustration budget. Copy remains
+   in normal flow so zoom or unusually long content can still scroll safely. */
+@media (min-width: 900px) and (max-height: 1150px) {
+  [data-theme='soft'] body.focus .hs-shell > .app:has(.vc-screen) {
+    padding-top: 20px !important;
+    padding-bottom: 16px;
+  }
+  [data-theme='soft'] .app .vc-screen .topbar { margin-bottom: 16px; }
+  [data-theme='soft'] .app .vc-screen .fc-stage { margin-bottom: 8px; }
+  [data-theme='soft'] .app .vc-screen .vc-card { min-height: 0; padding: 16px 48px 38px; }
+  [data-theme='soft'] .app .vc-screen .vc-word-hint {
+    width: min(100%, 330px);
+    height: clamp(100px, calc(100dvh - 680px), 220px);
+    margin-bottom: 12px;
+  }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word {
+    font-size: clamp(38px, 5.2vh, 54px);
+    overflow-wrap: anywhere;
+  }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word.long { font-size: clamp(34px, 4.6vh, 46px); }
+  [data-theme='soft'] .app .vc-screen .vc-card .vocab-word.xlong { font-size: clamp(30px, 4vh, 40px); }
+  [data-theme='soft'] .app .vc-screen .vc-reveal-slot { margin: 16px 0 0; }
+  [data-theme='soft'] .app .vc-screen .vc-reveal-answer .spoiler:not(.hidden) .ru {
+    padding: 16px 24px;
+    font-size: clamp(30px, 4.4vh, 42px);
+    overflow-wrap: anywhere;
+  }
+  [data-theme='soft'] .app .vc-screen .spoiler:not(.hidden) .note {
+    margin-top: 16px; padding-top: 12px; font-size: 17px; line-height: 1.4;
+  }
+  [data-theme='soft'] .app .vc-screen .note > span { margin-left: 18px; padding-left: 22px; }
+  [data-theme='soft'] body.focus .app .vc-screen .actionbar { padding-top: 12px; }
+  [data-theme='soft'] .app .vc-screen .fc-grade-prompt { margin-bottom: 10px; }
+  [data-theme='soft'] .app .vc-screen .grade.paper-grade {
+    min-height: 88px; padding: 10px 10px 20px; font-size: 24px;
+  }
+  [data-theme='soft'] .vc-screen .paper-grade-copy { gap: 5px; }
+  [data-theme='soft'] .vc-screen .paper-grade-label { padding-bottom: 6px; }
+}
