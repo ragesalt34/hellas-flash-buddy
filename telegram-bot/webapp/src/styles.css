@@ -7738,7 +7738,7 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .hw-list-screen .hw-empty-art { display: block; width: 200px; height: auto; object-fit: contain; pointer-events: none; }
 }
 
-/* ---- Individual vocabulary hints: approved words 1–10 ---- */
+/* ---- Individual vocabulary hints: all 150 words ---- */
 [data-theme='soft'] .app .vc-screen .vc-word-hint {
   display: block !important;
   flex: none;

@@ -1,0 +1,1206 @@
+{
+  "version": 2,
+  "mapping": "Stable vocabulary ID, never shuffled session index.",
+  "items": [
+    {
+      "vocabularyId": 1,
+      "word": "ιθαγένεια",
+      "translation": "гражданство",
+      "topic": "history",
+      "webp": "vocab-001-citizenship.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 2,
+      "word": "πολιτογράφηση",
+      "translation": "натурализация",
+      "topic": "history",
+      "webp": "vocab-002-naturalization.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 3,
+      "word": "Επανάσταση",
+      "translation": "революция",
+      "topic": "history",
+      "webp": "vocab-003-revolution.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 4,
+      "word": "ανεξαρτησία",
+      "translation": "независимость",
+      "topic": "history",
+      "webp": "vocab-004-independence.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 5,
+      "word": "Σύνταγμα",
+      "translation": "конституция",
+      "topic": "history",
+      "webp": "vocab-005-constitution.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 6,
+      "word": "κατοχή",
+      "translation": "оккупация",
+      "topic": "history",
+      "webp": "vocab-006-occupation.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 7,
+      "word": "αντίσταση",
+      "translation": "сопротивление",
+      "topic": "history",
+      "webp": "vocab-007-resistance.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 8,
+      "word": "Εμφύλιος πόλεμος",
+      "translation": "гражданская война",
+      "topic": "history",
+      "webp": "vocab-008-civil-war.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 9,
+      "word": "δικτατορία",
+      "translation": "диктатура",
+      "topic": "history",
+      "webp": "vocab-009-dictatorship.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 10,
+      "word": "μεταπολίτευση",
+      "translation": "демократизация (после хунты)",
+      "topic": "history",
+      "webp": "vocab-010-democratization.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 11,
+      "word": "Βυζάντιο",
+      "translation": "Византия",
+      "topic": "history",
+      "webp": "vocab-011-byzantium.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 12,
+      "word": "Οθωμανική Αυτοκρατορία",
+      "translation": "Османская империя",
+      "topic": "history",
+      "webp": "vocab-012-ottoman-empire.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 13,
+      "word": "Β΄ Παγκόσμιος Πόλεμος",
+      "translation": "Вторая мировая война",
+      "topic": "history",
+      "webp": "vocab-013-world-war-two.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 14,
+      "word": "απελευθέρωση",
+      "translation": "освобождение",
+      "topic": "history",
+      "webp": "vocab-014-liberation.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 15,
+      "word": "γενοκτονία",
+      "translation": "геноцид",
+      "topic": "history",
+      "webp": "vocab-015-genocide-remembrance.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 16,
+      "word": "μοναρχία",
+      "translation": "монархия",
+      "topic": "history",
+      "webp": "vocab-016-monarchy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 17,
+      "word": "εθνικισμός",
+      "translation": "национализм",
+      "topic": "history",
+      "webp": "vocab-017-nationalism.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 18,
+      "word": "Ολοκαύτωμα",
+      "translation": "Холокост",
+      "topic": "history",
+      "webp": "vocab-018-holocaust-remembrance.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 19,
+      "word": "μεταρρύθμιση",
+      "translation": "реформа",
+      "topic": "history",
+      "webp": "vocab-019-reform.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 20,
+      "word": "εξέγερση",
+      "translation": "восстание",
+      "topic": "history",
+      "webp": "vocab-020-uprising.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 21,
+      "word": "ανακωχή",
+      "translation": "перемирие",
+      "topic": "history",
+      "webp": "vocab-021-armistice.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 22,
+      "word": "συνθήκη",
+      "translation": "договор",
+      "topic": "history",
+      "webp": "vocab-022-treaty.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 23,
+      "word": "κατάκτηση",
+      "translation": "завоевание",
+      "topic": "history",
+      "webp": "vocab-023-conquest.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 24,
+      "word": "Βαλκάνια",
+      "translation": "Балканы",
+      "topic": "history",
+      "webp": "vocab-024-balkans.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 25,
+      "word": "Μικρασιατική Καταστροφή",
+      "translation": "Малоазийская катастрофа",
+      "topic": "history",
+      "webp": "vocab-025-asia-minor-catastrophe.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 26,
+      "word": "ανταλλαγή πληθυσμών",
+      "translation": "обмен населением",
+      "topic": "history",
+      "webp": "vocab-026-population-exchange.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 27,
+      "word": "Ψυχρός Πόλεμος",
+      "translation": "Холодная война",
+      "topic": "history",
+      "webp": "vocab-027-cold-war.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 28,
+      "word": "αποικία",
+      "translation": "колония",
+      "topic": "history",
+      "webp": "vocab-028-colony.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 29,
+      "word": "Μεγάλη Ιδέα",
+      "translation": "Великая идея",
+      "topic": "history",
+      "webp": "vocab-029-great-idea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 30,
+      "word": "Βαλκανικοί Πόλεμοι",
+      "translation": "Балканские войны",
+      "topic": "history",
+      "webp": "vocab-030-balkan-wars.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 31,
+      "word": "αρχαιότητα",
+      "translation": "древность, античность",
+      "topic": "history",
+      "webp": "vocab-031-antiquity.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 32,
+      "word": "Μεσαίωνας",
+      "translation": "средние века",
+      "topic": "history",
+      "webp": "vocab-032-middle-ages.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 33,
+      "word": "Γ΄ Ελληνική Δημοκρατία",
+      "translation": "Третья Греческая Республика",
+      "topic": "history",
+      "webp": "vocab-033-third-republic.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 34,
+      "word": "Φασισμός",
+      "translation": "фашизм",
+      "topic": "history",
+      "webp": "vocab-034-fascism.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 35,
+      "word": "εθνική μνήμη",
+      "translation": "национальная память",
+      "topic": "history",
+      "webp": "vocab-035-national-memory.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 36,
+      "word": "Βουλή",
+      "translation": "парламент",
+      "topic": "laws",
+      "webp": "vocab-036-parliament.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 37,
+      "word": "Πρόεδρος της Δημοκρατίας",
+      "translation": "Президент Республики",
+      "topic": "laws",
+      "webp": "vocab-037-president.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 38,
+      "word": "Πρωθυπουργός",
+      "translation": "Премьер-министр",
+      "topic": "laws",
+      "webp": "vocab-038-prime-minister.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 39,
+      "word": "Υπουργός",
+      "translation": "министр",
+      "topic": "laws",
+      "webp": "vocab-039-minister.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 40,
+      "word": "Κυβέρνηση",
+      "translation": "правительство",
+      "topic": "laws",
+      "webp": "vocab-040-government.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 41,
+      "word": "Υπουργείο",
+      "translation": "министерство",
+      "topic": "laws",
+      "webp": "vocab-041-ministry.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 42,
+      "word": "εκλογές",
+      "translation": "выборы",
+      "topic": "laws",
+      "webp": "vocab-042-elections.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 43,
+      "word": "ψηφοφορία",
+      "translation": "голосование",
+      "topic": "laws",
+      "webp": "vocab-043-voting.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 44,
+      "word": "Βουλευτής",
+      "translation": "депутат",
+      "topic": "laws",
+      "webp": "vocab-044-member-of-parliament.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 45,
+      "word": "νόμος",
+      "translation": "закон",
+      "topic": "laws",
+      "webp": "vocab-045-law.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 46,
+      "word": "Δικαστήριο",
+      "translation": "суд",
+      "topic": "laws",
+      "webp": "vocab-046-court.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 47,
+      "word": "Δικαστής",
+      "translation": "судья",
+      "topic": "laws",
+      "webp": "vocab-047-judge.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 48,
+      "word": "Εισαγγελέας",
+      "translation": "прокурор",
+      "topic": "laws",
+      "webp": "vocab-048-prosecutor.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 49,
+      "word": "Δήμος",
+      "translation": "муниципалитет",
+      "topic": "laws",
+      "webp": "vocab-049-municipality.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 50,
+      "word": "Δήμαρχος",
+      "translation": "мэр",
+      "topic": "laws",
+      "webp": "vocab-050-mayor.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 51,
+      "word": "Περιφέρεια",
+      "translation": "регион",
+      "topic": "laws",
+      "webp": "vocab-051-region.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 52,
+      "word": "Περιφερειάρχης",
+      "translation": "губернатор региона",
+      "topic": "laws",
+      "webp": "vocab-052-regional-governor.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 53,
+      "word": "κόμμα",
+      "translation": "партия",
+      "topic": "laws",
+      "webp": "vocab-053-political-party.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 54,
+      "word": "αντιπολίτευση",
+      "translation": "оппозиция",
+      "topic": "laws",
+      "webp": "vocab-054-opposition.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 55,
+      "word": "δικαίωμα",
+      "translation": "право",
+      "topic": "laws",
+      "webp": "vocab-055-right.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 56,
+      "word": "υποχρέωση",
+      "translation": "обязанность",
+      "topic": "laws",
+      "webp": "vocab-056-obligation.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 57,
+      "word": "ελευθερία",
+      "translation": "свобода",
+      "topic": "laws",
+      "webp": "vocab-057-freedom.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 58,
+      "word": "ισότητα",
+      "translation": "равенство",
+      "topic": "laws",
+      "webp": "vocab-058-equality.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 59,
+      "word": "αίτηση",
+      "translation": "заявление",
+      "topic": "laws",
+      "webp": "vocab-059-application.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 60,
+      "word": "ψηφοδέλτιο",
+      "translation": "бюллетень",
+      "topic": "laws",
+      "webp": "vocab-060-ballot.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 61,
+      "word": "πλειοψηφία",
+      "translation": "большинство",
+      "topic": "laws",
+      "webp": "vocab-061-majority.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 62,
+      "word": "μειοψηφία",
+      "translation": "меньшинство",
+      "topic": "laws",
+      "webp": "vocab-062-minority.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 63,
+      "word": "υποψήφιος",
+      "translation": "кандидат",
+      "topic": "laws",
+      "webp": "vocab-063-candidate.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 64,
+      "word": "ψηφοφόρος",
+      "translation": "избиратель",
+      "topic": "laws",
+      "webp": "vocab-064-voter.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 65,
+      "word": "ανθρώπινα δικαιώματα",
+      "translation": "права человека",
+      "topic": "laws",
+      "webp": "vocab-065-human-rights.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 66,
+      "word": "κράτος δικαίου",
+      "translation": "правовое государство",
+      "topic": "laws",
+      "webp": "vocab-066-rule-of-law.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 67,
+      "word": "αρμοδιότητα",
+      "translation": "компетенция, полномочие",
+      "topic": "laws",
+      "webp": "vocab-067-authority-scope.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 68,
+      "word": "αναλογική αντιπροσώπευση",
+      "translation": "пропорциональная система",
+      "topic": "laws",
+      "webp": "vocab-068-proportional-representation.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 69,
+      "word": "αρχηγός κράτους",
+      "translation": "глава государства",
+      "topic": "laws",
+      "webp": "vocab-069-head-of-state.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 70,
+      "word": "δημοκρατία",
+      "translation": "демократия",
+      "topic": "laws",
+      "webp": "vocab-070-democracy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 71,
+      "word": "Αττική",
+      "translation": "Аттика",
+      "topic": "geography",
+      "webp": "71-attica.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 72,
+      "word": "Θεσσαλονίκη",
+      "translation": "Салоники",
+      "topic": "geography",
+      "webp": "72-thessaloniki.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 73,
+      "word": "Κρήτη",
+      "translation": "Крит",
+      "topic": "geography",
+      "webp": "73-crete.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 74,
+      "word": "Δωδεκάνησα",
+      "translation": "Додеканесские острова",
+      "topic": "geography",
+      "webp": "74-dodecanese.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 75,
+      "word": "Αιγαίο πέλαγος",
+      "translation": "Эгейское море",
+      "topic": "geography",
+      "webp": "75-aegean-sea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 76,
+      "word": "Ιόνιο πέλαγος",
+      "translation": "Ионическое море",
+      "topic": "geography",
+      "webp": "76-ionian-sea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 77,
+      "word": "Μεσόγειος θάλασσα",
+      "translation": "Средиземное море",
+      "topic": "geography",
+      "webp": "77-mediterranean-sea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 78,
+      "word": "Πελοπόννησος",
+      "translation": "Пелопоннес",
+      "topic": "geography",
+      "webp": "78-peloponnese.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 79,
+      "word": "Μακεδονία",
+      "translation": "Македония",
+      "topic": "geography",
+      "webp": "79-macedonia.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 80,
+      "word": "Θράκη",
+      "translation": "Фракия",
+      "topic": "geography",
+      "webp": "80-thrace.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 81,
+      "word": "Επτάνησα",
+      "translation": "Ионические острова",
+      "topic": "geography",
+      "webp": "81-ionian-islands.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 82,
+      "word": "Ήπειρος",
+      "translation": "Эпир",
+      "topic": "geography",
+      "webp": "82-epirus.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 83,
+      "word": "Θεσσαλία",
+      "translation": "Фессалия",
+      "topic": "geography",
+      "webp": "83-thessaly.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 84,
+      "word": "Ρόδος",
+      "translation": "Родос",
+      "topic": "geography",
+      "webp": "84-rhodes.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 85,
+      "word": "Κέρκυρα",
+      "translation": "Корфу",
+      "topic": "geography",
+      "webp": "85-corfu.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 86,
+      "word": "Σπάρτη",
+      "translation": "Спарта",
+      "topic": "geography",
+      "webp": "86-sparta.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 87,
+      "word": "Κόρινθος",
+      "translation": "Коринф",
+      "topic": "geography",
+      "webp": "87-corinth.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 88,
+      "word": "Δελφοί",
+      "translation": "Дельфы",
+      "topic": "geography",
+      "webp": "88-delphi.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 89,
+      "word": "Όλυμπος",
+      "translation": "Олимп",
+      "topic": "geography",
+      "webp": "89-olympus.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 90,
+      "word": "πρωτεύουσα",
+      "translation": "столица",
+      "topic": "geography",
+      "webp": "90-capital.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 91,
+      "word": "νησί",
+      "translation": "остров",
+      "topic": "geography",
+      "webp": "91-island.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 92,
+      "word": "χερσόνησος",
+      "translation": "полуостров",
+      "topic": "geography",
+      "webp": "92-peninsula.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 93,
+      "word": "σύνορο",
+      "translation": "граница",
+      "topic": "geography",
+      "webp": "93-border.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 94,
+      "word": "Εύβοια",
+      "translation": "Эвбея",
+      "topic": "geography",
+      "webp": "94-euboea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 95,
+      "word": "Πάτρα",
+      "translation": "Патры",
+      "topic": "geography",
+      "webp": "95-patras.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 96,
+      "word": "Λάρισα",
+      "translation": "Лариса",
+      "topic": "geography",
+      "webp": "96-larissa.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 97,
+      "word": "Λέσβος",
+      "translation": "Лесбос",
+      "topic": "geography",
+      "webp": "97-lesbos.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 98,
+      "word": "Διώρυγα Κορίνθου",
+      "translation": "Коринфский канал",
+      "topic": "geography",
+      "webp": "98-corinth-canal.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 99,
+      "word": "ηπειρωτικός",
+      "translation": "материковый",
+      "topic": "geography",
+      "webp": "99-mainland.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 100,
+      "word": "γειτονικές χώρες",
+      "translation": "соседние страны",
+      "topic": "geography",
+      "webp": "100-neighboring-countries.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 101,
+      "word": "Χίος",
+      "translation": "Хиос",
+      "topic": "geography",
+      "webp": "vocab-101-chios.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 102,
+      "word": "Σάμος",
+      "translation": "Самос",
+      "topic": "geography",
+      "webp": "vocab-102-samos.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 103,
+      "word": "Κεντρική Μακεδονία",
+      "translation": "Центральная Македония",
+      "topic": "geography",
+      "webp": "vocab-103-central-macedonia.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 104,
+      "word": "Βόρεια Ελλάδα",
+      "translation": "Северная Греция",
+      "topic": "geography",
+      "webp": "vocab-104-northern-greece.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 105,
+      "word": "Κρητική Θάλασσα",
+      "translation": "Критское море",
+      "topic": "geography",
+      "webp": "vocab-105-cretan-sea.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 106,
+      "word": "Παρθενώνας",
+      "translation": "Парфенон",
+      "topic": "culture",
+      "webp": "vocab-106-parthenon.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 107,
+      "word": "Ακρόπολη",
+      "translation": "Акрополь",
+      "topic": "culture",
+      "webp": "vocab-107-acropolis.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 108,
+      "word": "Ολυμπία",
+      "translation": "Олимпия",
+      "topic": "culture",
+      "webp": "vocab-108-olympia.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 109,
+      "word": "Ολυμπιακοί Αγώνες",
+      "translation": "Олимпийские игры",
+      "topic": "culture",
+      "webp": "vocab-109-olympic-games.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 110,
+      "word": "Ορθοδοξία",
+      "translation": "Православие",
+      "topic": "culture",
+      "webp": "vocab-110-orthodoxy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 111,
+      "word": "Πάσχα",
+      "translation": "Пасха",
+      "topic": "culture",
+      "webp": "vocab-111-easter.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 112,
+      "word": "Απόκριες",
+      "translation": "Карнавал",
+      "topic": "culture",
+      "webp": "vocab-112-carnival.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 113,
+      "word": "Χριστούγεννα",
+      "translation": "Рождество",
+      "topic": "culture",
+      "webp": "vocab-113-christmas.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 114,
+      "word": "φιλοσοφία",
+      "translation": "философия",
+      "topic": "culture",
+      "webp": "vocab-114-philosophy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 115,
+      "word": "θέατρο",
+      "translation": "театр",
+      "topic": "culture",
+      "webp": "vocab-115-theatre.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 116,
+      "word": "τραγωδία",
+      "translation": "трагедия",
+      "topic": "culture",
+      "webp": "vocab-116-tragedy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 117,
+      "word": "κωμωδία",
+      "translation": "комедия",
+      "topic": "culture",
+      "webp": "vocab-117-comedy.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 118,
+      "word": "μυθολογία",
+      "translation": "мифология",
+      "topic": "culture",
+      "webp": "vocab-118-mythology.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 119,
+      "word": "ποίηση",
+      "translation": "поэзия",
+      "topic": "culture",
+      "webp": "vocab-119-poetry.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 120,
+      "word": "αρχαιολογία",
+      "translation": "археология",
+      "topic": "culture",
+      "webp": "vocab-120-archaeology.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 121,
+      "word": "μουσείο",
+      "translation": "музей",
+      "topic": "culture",
+      "webp": "vocab-121-museum.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 122,
+      "word": "εικόνα (αγιογραφία)",
+      "translation": "икона",
+      "topic": "culture",
+      "webp": "vocab-122-icon.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 123,
+      "word": "Εκκλησία",
+      "translation": "церковь",
+      "topic": "culture",
+      "webp": "vocab-123-church.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 124,
+      "word": "σημαία",
+      "translation": "флаг",
+      "topic": "culture",
+      "webp": "vocab-124-flag.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 125,
+      "word": "εθνική εορτή",
+      "translation": "национальный праздник",
+      "topic": "culture",
+      "webp": "vocab-125-national-holiday.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 126,
+      "word": "γλώσσα",
+      "translation": "язык",
+      "topic": "culture",
+      "webp": "vocab-126-language.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 127,
+      "word": "τέχνη",
+      "translation": "искусство",
+      "topic": "culture",
+      "webp": "vocab-127-art.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 128,
+      "word": "αρχιτεκτονική",
+      "translation": "архитектура",
+      "topic": "culture",
+      "webp": "vocab-128-architecture.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 129,
+      "word": "γλυπτική",
+      "translation": "скульптура",
+      "topic": "culture",
+      "webp": "vocab-129-sculpture.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 130,
+      "word": "παράδοση",
+      "translation": "традиция",
+      "topic": "culture",
+      "webp": "vocab-130-tradition.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 131,
+      "word": "πολιτισμός",
+      "translation": "культура, цивилизация",
+      "topic": "culture",
+      "webp": "vocab-131-civilization.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 132,
+      "word": "25η Μαρτίου",
+      "translation": "25 марта",
+      "topic": "culture",
+      "webp": "vocab-132-march-independence-day.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 133,
+      "word": "28η Οκτωβρίου",
+      "translation": "28 октября",
+      "topic": "culture",
+      "webp": "vocab-133-ohi-day.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 134,
+      "word": "Πρωτοχρονιά",
+      "translation": "Новый год",
+      "topic": "culture",
+      "webp": "vocab-134-new-year.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 135,
+      "word": "Αρχαία Ελλάδα",
+      "translation": "Древняя Греция",
+      "topic": "culture",
+      "webp": "vocab-135-ancient-greece.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 136,
+      "word": "Βυζαντινή τέχνη",
+      "translation": "Византийское искусство",
+      "topic": "culture",
+      "webp": "vocab-136-byzantine-art.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 137,
+      "word": "Αρχιεπίσκοπος",
+      "translation": "архиепископ",
+      "topic": "culture",
+      "webp": "vocab-137-archbishop.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 138,
+      "word": "Οικουμενικό Πατριαρχείο",
+      "translation": "Вселенский патриархат",
+      "topic": "culture",
+      "webp": "vocab-138-ecumenical-patriarchate.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 139,
+      "word": "αρχαιολογικός χώρος",
+      "translation": "археологический объект",
+      "topic": "culture",
+      "webp": "vocab-139-archaeological-site.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 140,
+      "word": "Εθνικό Αρχαιολογικό Μουσείο",
+      "translation": "Нац. археологический музей",
+      "topic": "culture",
+      "webp": "vocab-140-national-archaeological-museum.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 141,
+      "word": "μουσική",
+      "translation": "музыка",
+      "topic": "culture",
+      "webp": "vocab-141-music.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 142,
+      "word": "χορός",
+      "translation": "танец",
+      "topic": "culture",
+      "webp": "vocab-142-dance.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 143,
+      "word": "Αρχαία Ολυμπία",
+      "translation": "Древняя Олимпия",
+      "topic": "culture",
+      "webp": "vocab-143-ancient-olympia.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 144,
+      "word": "Ελληνική Δημοκρατία",
+      "translation": "Греческая Республика",
+      "topic": "culture",
+      "webp": "vocab-144-hellenic-republic.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 145,
+      "word": "εθνόσημο",
+      "translation": "герб",
+      "topic": "culture",
+      "webp": "vocab-145-national-emblem.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 146,
+      "word": "εθνικός ύμνος",
+      "translation": "государственный гимн",
+      "topic": "culture",
+      "webp": "vocab-146-national-anthem.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 147,
+      "word": "ζωγραφική",
+      "translation": "живопись",
+      "topic": "culture",
+      "webp": "vocab-147-painting.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 148,
+      "word": "λογοτεχνία",
+      "translation": "литература",
+      "topic": "culture",
+      "webp": "vocab-148-literature.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 149,
+      "word": "ποιητής",
+      "translation": "поэт",
+      "topic": "culture",
+      "webp": "vocab-149-poet.webp",
+      "transparent": true
+    },
+    {
+      "vocabularyId": 150,
+      "word": "Μεγάλη Εβδομάδα",
+      "translation": "Страстная неделя",
+      "topic": "culture",
+      "webp": "vocab-150-holy-week.webp",
+      "transparent": true
+    }
+  ]
+}
