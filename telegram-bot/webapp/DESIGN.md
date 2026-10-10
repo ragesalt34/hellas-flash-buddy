@@ -204,8 +204,14 @@ The original PNGs and generation prompts are preserved in the main clone's
 Soft-theme vocabulary uses the first approved terracotta paper cover with a small
 cream corner fold. Its generated text-free surface lives in
 `public/assets/vocab-reveal-v1/`; the native button carries centered live RU/EL
-copy, with no arrows or click icon. A short 2px press and corner lift run once
-for 160ms, then the existing olive translation strip appears in 220ms. Repeated
+copy, with no arrows or click icon. The approved v2 storyboard uses a single 620ms paper peel: immediate 2px press,
+corner lift, right-to-left removal of the cover, then the olive translation.
+The real translation stays mounted beneath a matching reveal mask. A generated
+cream fold (`paper-fold.webp`) follows the moving edge. Cover expansion uses
+measured transforms; one bounded height tween accommodates the existing note,
+leaving the Greek word and hint stationary. Short-word and long-word answers
+remain centered. Next-card motion is opacity-only to avoid competing with
+the peel. No animation runs while idle. Repeated
 activation is guarded; timers cancel on unmount; keyboard focus moves into the
 revealed translation region so the next Tab reaches the SRS actions. Reduced
 motion and brut reveal immediately. Decorative layers are hidden in brut;

@@ -193,7 +193,13 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             <Volume2 size={17} strokeWidth={2.3} />
           </button>
         </div>
-        {revealed ? (
+        <VocabularyRevealButton
+          label={t('vocab.openTranslation')}
+          onReveal={(moveFocus) => {
+            revealFocusRef.current = moveFocus;
+            setRevealed(true);
+          }}
+        >
           <div
             className="spoiler vc-translation-revealed"
             ref={translationRef}
@@ -212,15 +218,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               )}
             </div>
           </div>
-        ) : (
-          <VocabularyRevealButton
-            label={t('vocab.openTranslation')}
-            onReveal={(moveFocus) => {
-              revealFocusRef.current = moveFocus;
-              setRevealed(true);
-            }}
-          />
-        )}
+        </VocabularyRevealButton>
       </div>
       </div>
 

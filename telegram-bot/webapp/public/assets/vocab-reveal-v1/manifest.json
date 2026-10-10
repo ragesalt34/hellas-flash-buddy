@@ -10,5 +10,13 @@
   ],
   "source": "Built-in ImageGen",
   "liveText": true,
-  "reference": "variant-01.png"
+  "reference": "variant-01.png",
+  "motionFold": {
+    "file": "paper-fold.webp",
+    "width": 71,
+    "height": 512,
+    "source": "Built-in ImageGen",
+    "transparent": true,
+    "bytes": 15056
+  }
 }

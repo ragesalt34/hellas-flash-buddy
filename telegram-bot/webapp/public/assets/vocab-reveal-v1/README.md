@@ -1,1 +1,3 @@
 Text-free terracotta paper face based on the approved first reference. Transparent generated PNG preserved in design-handoff/vocab-reveal-terracotta-v1/button-source.png. The complete face keeps its original continuous paper texture; label is live RU/EL HTML.
+
+Paper-peel v2 adds paper-fold.webp (71x512, 15 KB), a generated transparent cream paper reverse. It loads before activation and follows the moving cover edge. Original PNG and exact built-in ImageGen prompt are in the main clone design-handoff/vocab-reveal-motion-v2/paper-fold-source.png and fold-prompt.txt. No text is baked into either material.
