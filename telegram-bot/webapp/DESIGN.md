@@ -160,7 +160,7 @@ Not borrowed (conflicts with the existing system, which takes priority):
 
 ### Paper flashcard ratings (approved 2026-10-08)
 
-Soft-theme Flashcards use three generated, text-free paper faces in
+Soft-theme Flashcards and Vocabulary use the same three generated, text-free paper faces in
 `public/assets/rating-buttons-v1/`. Labels and per-card SRS intervals remain live
 RU/EL text, centered on native buttons. Terracotta means difficult; sand means
 good; ivory with forest-green ink means known. The olive filled answer strip

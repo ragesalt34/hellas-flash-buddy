@@ -7506,9 +7506,9 @@ button.chip:active { transform: scale(0.95); }
 .fc-grade-prompt { margin: 0 0 14px; text-align: center; font-size: 15px; line-height: 1.4; color: var(--muted); }
 .paper-grade-copy { display: flex; flex-direction: column; align-items: center; gap: 7px; }
 
-[data-theme='soft'] body.focus .app .fc-screen .actionbar > .fc-grade-controls { width: 100%; max-width: none; padding-bottom: 10px; }
-[data-theme='soft'] .app .fc-screen .fc-grade-controls .grade-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; animation: none; }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade {
+[data-theme='soft'] body.focus .app :is(.fc-screen, .vc-screen) .actionbar > .fc-grade-controls { width: 100%; max-width: none; padding-bottom: 10px; }
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .fc-grade-controls .grade-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; animation: none; }
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade {
   --grade-ink: #fff8eb;
   --grade-paper: url('/assets/rating-buttons-v1/hard.webp');
   --grade-fallback: #b8493d;
@@ -7520,20 +7520,20 @@ button.chip:active { transform: scale(0.95); }
   letter-spacing: -0.02em; text-align: center; cursor: pointer; touch-action: manipulation;
   -webkit-tap-highlight-color: transparent; transition: none;
 }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade.g2 {
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade.g2 {
   --grade-paper: url('/assets/rating-buttons-v1/good.webp'); --grade-fallback: #f3deb0; --grade-ink: #26231c;
 }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade.g3 {
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade.g3 {
   --grade-paper: url('/assets/rating-buttons-v1/easy.webp'); --grade-fallback: #f8f2e6; --grade-ink: #214c37;
 }
-[data-theme='soft'] .fc-screen .paper-grade-base {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-base {
   position: absolute; z-index: -2; display: block !important; inset: 12px -4px 0; border-radius: 15px;
   background: #efe5d2 url('/assets/rating-buttons-v1/easy.webp') center / 115% 160% no-repeat;
   border: 1px solid #d2c4aa;
   box-shadow: 0 3px 0 #ccbea4, 0 7px 12px -5px rgba(68, 45, 22, 0.3);
   pointer-events: none;
 }
-[data-theme='soft'] .fc-screen .paper-grade-face {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-face {
   position: absolute; z-index: -1; display: block !important; inset: 0 0 12px; border-radius: 13px;
   background-color: var(--grade-fallback); background-image: var(--grade-paper);
   background-position: center; background-size: 115% 160%; background-repeat: no-repeat;
@@ -7543,51 +7543,51 @@ button.chip:active { transform: scale(0.95); }
   pointer-events: none;
 }
 /* A quiet ink wash keeps the small ivory interval legible over red fibers. */
-[data-theme='soft'] .fc-screen .paper-grade.g1 .paper-grade-face {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade.g1 .paper-grade-face {
   background-image: linear-gradient(rgba(65,13,6,0.19),rgba(65,13,6,0.19)), var(--grade-paper);
 }
-[data-theme='soft'] .fc-screen .paper-grade-copy {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-copy {
   position: relative; width: 100%; color: inherit; pointer-events: none;
   transition: transform 220ms cubic-bezier(0.16,1,0.3,1);
 }
-[data-theme='soft'] .fc-screen .paper-grade-label { position: relative; padding-bottom: 9px; }
-[data-theme='soft'] .fc-screen .paper-grade-label::after {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-label { position: relative; padding-bottom: 9px; }
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-label::after {
   content: ''; position: absolute; bottom: 0; width: 100%; max-width: 94px; height: 1px;
   left: 50%; transform: translateX(-50%); background: currentColor; opacity: 0.24;
 }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade .gsub {
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade .gsub {
   color: inherit; font-size: 17px; font-weight: 500; line-height: 1.2;
   letter-spacing: 0; text-transform: none; opacity: 1;
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  [data-theme='soft'] .fc-screen .paper-grade:hover .paper-grade-face {
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:hover .paper-grade-face {
     transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 6px rgba(57,37,16,0.18);
   }
-  [data-theme='soft'] .fc-screen .paper-grade:hover .paper-grade-copy { transform: translateY(-2px); }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:hover .paper-grade-copy { transform: translateY(-2px); }
 }
-[data-theme='soft'] .fc-screen .paper-grade:active .paper-grade-face {
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:active .paper-grade-face {
   transform: translateY(7px); box-shadow: inset 0 1px 2px rgba(57,37,16,0.15), 0 1px 1px rgba(57,37,16,0.12); transition-duration: 80ms;
 }
-[data-theme='soft'] .fc-screen .paper-grade:active .paper-grade-copy { transform: translateY(7px); transition-duration: 80ms; }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade:focus-visible { outline: 3px solid #0862db; outline-offset: 6px; }
-[data-theme='soft'] .app .fc-screen .grade.paper-grade:disabled { opacity: 0.6; cursor: not-allowed; }
-[data-theme='soft'] .fc-screen .paper-grade:disabled :is(.paper-grade-face,.paper-grade-copy) { transform: none; }
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:active .paper-grade-copy { transform: translateY(7px); transition-duration: 80ms; }
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade:focus-visible { outline: 3px solid #0862db; outline-offset: 6px; }
+[data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade:disabled { opacity: 0.6; cursor: not-allowed; }
+[data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:disabled :is(.paper-grade-face,.paper-grade-copy) { transform: none; }
 @media (max-width: 899px) {
-  [data-theme='soft'] .app .fc-screen .fc-grade-controls .grade-row { gap: 12px; }
-  [data-theme='soft'] .app .fc-screen .grade.paper-grade { min-height: 94px; padding: 10px 5px 20px; font-size: 19px; }
-  [data-theme='soft'] .app .fc-screen .grade.paper-grade .gsub { font-size: 13px; }
-  [data-theme='soft'] .fc-screen .paper-grade-base { inset: 10px -2px 0; }
-  [data-theme='soft'] .fc-screen .paper-grade-face { bottom: 10px; }
-  [data-theme='soft'] .fc-screen .paper-grade-copy { gap: 6px; }
-  [data-theme='soft'] .fc-screen .paper-grade-label { padding-bottom: 7px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .fc-grade-controls .grade-row { gap: 12px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade { min-height: 94px; padding: 10px 5px 20px; font-size: 19px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade .gsub { font-size: 13px; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-base { inset: 10px -2px 0; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-face { bottom: 10px; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-copy { gap: 6px; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade-label { padding-bottom: 7px; }
   .fc-grade-prompt { font-size: 13px; margin-bottom: 12px; }
 }
 @media (max-width: 420px) {
-  [data-theme='soft'] .app .fc-screen .grade.paper-grade { font-size: 16px; }
+  [data-theme='soft'] .app :is(.fc-screen, .vc-screen) .grade.paper-grade { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-theme='soft'] .fc-screen .paper-grade :is(.paper-grade-face,.paper-grade-copy) { transition: none; transform: none !important; }
-  [data-theme='soft'] .fc-screen .paper-grade:active .paper-grade-face { box-shadow: inset 0 0 0 2px currentColor; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade :is(.paper-grade-face,.paper-grade-copy) { transition: none; transform: none !important; }
+  [data-theme='soft'] :is(.fc-screen, .vc-screen) .paper-grade:active .paper-grade-face { box-shadow: inset 0 0 0 2px currentColor; }
 }
 
 /* Liquid-metal is an interaction material for hero actions; it never changes their layout. */
