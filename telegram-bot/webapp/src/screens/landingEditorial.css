@@ -156,7 +156,6 @@
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-feature-text { position: relative; z-index: 1; padding-right: 0; }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features h3 { font-size: max(17px, calc(25 * var(--u))); font-weight: 700; line-height: 1.2; color: var(--le-ink); }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features li p { margin-top: calc(8 * var(--u)); font-size: max(14px, calc(19 * var(--u))); line-height: 1.35; color: var(--le-violet); }
-:is([data-theme='soft'], [data-theme='brut']) .le-page .le-feature-go { position: relative; z-index: 1; justify-self: center; width: calc(30 * var(--u)); height: auto; min-width: 18px; color: #061173; }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-plan-wash { position: absolute; left: calc(-7 * var(--u)); top: calc(10 * var(--u)); }
 
 /* ---- FAQ ---- */

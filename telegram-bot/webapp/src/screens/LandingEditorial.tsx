@@ -158,7 +158,6 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
                   <h3>{t(f.title)}</h3>
                   <p>{t(f.text)}</p>
                 </div>
-                <SlideArrow className="le-feature-go" size={26} strokeWidth={1.8} aria-hidden="true" />
               </li>
             ))}
           </ul>
