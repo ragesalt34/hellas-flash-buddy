@@ -7118,31 +7118,35 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen .plan-card:not([class*='pace-']) .pc-link { color: #2f6b34; text-decoration: underline; text-underline-offset: 3px; }
   [data-theme='soft'] .home-screen .plan-card .pc-error { margin: 0; color: #8a2b2b; font-size: 14px; }
 
-  /* Word of the day: compact cobalt card, olive corner, round sound button */
+  /* Word of the day shares the workspace paper and keeps audio beside the word. */
   [data-theme='soft'] .home-screen .wod {
-    grid-column: 3; grid-row: 2; display: block; position: relative; overflow: hidden; height: auto; min-height: 134px;
-    padding: 20px 86px 18px 24px; background: #0743b5; border: 0; border-radius: 8px; box-shadow: none; color: #fff9ee;
+    grid-column: 3; grid-row: 2; display: block; position: relative; overflow: hidden;
+    height: auto; min-height: 0; padding: 20px 24px;
+    background: #fbf8f0 url('/assets/pureplay/home-side-plan/surface-warm-paper.webp') center / cover no-repeat;
+    border: 1px solid #d5d5cd; border-radius: 8px; box-shadow: none; color: #193b4b;
   }
-  [data-theme='soft'] .home-screen .wod .wod-band,
-  [data-theme='soft'] .home-screen .wod .wod-sprig { display: none; }
-  [data-theme='soft'] .home-screen .wod .wod-corner { position: absolute; top: -10px; right: -6px; width: 86px; height: auto; pointer-events: none; }
+  [data-theme='soft'] .home-screen .wod :is(.wod-band, .wod-sprig, .wod-corner) { display: none; }
   [data-theme='soft'] .home-screen .wod .wod-eyebrow {
-    margin: 0 0 6px; padding: 0; font-size: 14px; font-weight: 600; color: #fff9ee; letter-spacing: 0.3px;
-    line-height: 1.3; text-transform: uppercase; text-align: left; opacity: 0.92;
+    margin: 0 0 8px; padding: 0; font-size: 12px; font-weight: 650; color: #975139;
+    letter-spacing: 0.5px; line-height: 1.3; text-transform: uppercase; text-align: left; opacity: 1;
   }
   [data-theme='soft'] .home-screen .wod-eyebrow > span { display: none; }
-  [data-theme='soft'] .home-screen .wod .wod-row { display: block; margin: 0; text-align: left; }
+  [data-theme='soft'] .home-screen .wod .wod-row { display: flex; align-items: center; gap: 16px; margin: 0; text-align: left; }
   [data-theme='soft'] .home-screen .wod .wod-word {
-    margin: 0; font: 600 clamp(26px, 2.1vw, 32px)/1.12 'EB Garamond', Georgia, serif;
-    color: #fff6e6; letter-spacing: -0.3px; overflow-wrap: anywhere; text-wrap: balance;
+    flex: 1; min-width: 0; margin: 0;
+    font: 600 clamp(26px, 2.1vw, 32px)/1.15 'EB Garamond', Georgia, serif;
+    color: #193b4b; letter-spacing: -0.3px; overflow-wrap: anywhere; text-wrap: balance;
     font-family: 'EB Garamond', Georgia, serif !important;
   }
   [data-theme='soft'] .home-screen .wod-speak {
-    position: absolute; right: 18px; bottom: 16px; width: 52px; height: 52px;
-    background: #fff9ef; color: #121a30; border: 0; border-radius: 50%;
+    position: static; flex: none; width: 44px; height: 44px;
+    background: #f6f3e8; color: #4a6333; border: 1px solid #cbcfc2; border-radius: 50%;
+    box-shadow: none; transform: none; transition: background 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out;
   }
-  [data-theme='soft'] .home-screen .wod-speak svg { width: 24px; height: 24px; }
-  [data-theme='soft'] .home-screen .wod .wod-ru { margin-top: 6px; color: #fff9ef; font-size: 17px; font-weight: 400; text-align: left; line-height: 1.3; }
+  [data-theme='soft'] .home-screen .wod-speak:hover { background: #e7ebdc; border-color: #7e8d69; transform: none; }
+  [data-theme='soft'] .home-screen .wod-speak:active { transform: scale(0.95); }
+  [data-theme='soft'] .home-screen .wod-speak svg { width: 20px; height: 20px; }
+  [data-theme='soft'] .home-screen .wod .wod-ru { margin-top: 4px; color: #5b6258; font-size: 16px; font-weight: 400; text-align: left; line-height: 1.35; }
   [data-theme='soft'] .home-screen .wod .wod-note { display: none; }
   [data-theme='soft'] body:has(.home-screen) .bottomnav {
     height: 56px; padding-inline: 32px; background: #faf7ef; border: 0;
@@ -7167,7 +7171,7 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .home-screen :is(button, a):focus-visible {
     outline: 3px solid #101629; outline-offset: 4px;
   }
-  [data-theme='soft'] .home-screen .wod-speak:focus-visible { outline-color: #fff; }
+  [data-theme='soft'] .home-screen .wod-speak:focus-visible { outline-color: #193b4b; }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .btn:hover { background: #004eba; }
   [data-theme='soft'] .home-screen .pureplay-welcome-actions .pureplay-text-link:hover { background: #eee9dd; }
 }
