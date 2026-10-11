@@ -9,7 +9,6 @@ import type { View } from '../App';
 import { StudyIcon } from '../components/StudyIcon';
 import { HomeFrame, HomeDecorImg } from './homeDecor';
 import { PlanCard } from './PlanCard';
-import { WordOfDay } from './WordOfDay';
 import { SectionLabel } from '../components/SectionLabel';
 import { StudyArtwork } from '../components/StudyArtwork';
 
@@ -215,7 +214,6 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
       </div>
       {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
       </section>
-      {me.wordOfDay && <aside className="home-sidebar"><WordOfDay word={me.wordOfDay} /></aside>}
       </div>
 
       {showStreak && <StreakCelebration streak={me.streak} onDismiss={dismissStreak} />}
