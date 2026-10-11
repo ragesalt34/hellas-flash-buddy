@@ -1,0 +1,11 @@
+/* Approved rocks/path identity; lettering is artwork, independent of UI fonts. */
+:is([data-theme='soft'], [data-theme='brut']) .logo.logo-rocks {
+  display: inline-block; width: 232px; max-width: 100%; height: auto;
+  flex: none; line-height: 0; vertical-align: middle; user-select: none;
+}
+:is([data-theme='soft'], [data-theme='brut']) .logo.logo-rocks.logo-wide { width: min(280px, 100%); }
+.logo.logo-rocks .logo-rocks-art { display: block; width: 100%; height: auto; object-fit: contain; pointer-events: none; }
+:is([data-theme='soft'], [data-theme='brut']) .le-page .le-footer .logo.logo-rocks { width: clamp(200px, 17vw, 250px); }
+@media (max-width: 599px) {
+  :is([data-theme='soft'], [data-theme='brut']) .hs-site-header .logo.logo-rocks { width: 184px; }
+}

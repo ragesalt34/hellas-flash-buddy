@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, BookOpen, ChevronDown, Menu, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import { ThemeSwitch } from './ThemeSwitch';
 import { motion } from 'motion/react';
 import { HeaderNavLink } from './HeaderNavLink';
+import { Logo } from './Logo';
 import './siteHeader.css';
 import './header-paper.css';
 
@@ -93,8 +94,7 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
       }}>
       <div className="hs-header-inner">
         <button type="button" className="hs-header-brand" aria-label={`Hellas Study — ${t('nav.home')}`} onClick={() => navigate('landing')}>
-          <span className="hs-header-mark"><BookOpen size={24} strokeWidth={1.7} aria-hidden="true" /></span>
-          <span>Hellas Study</span>
+          <Logo />
         </button>
         <nav className="hs-header-nav" aria-label={t('nav.aria')}>{renderLinks('desktop')}</nav>
         <div className="hs-header-actions">

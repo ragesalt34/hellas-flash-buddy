@@ -1,30 +1,17 @@
-/* Hellas Study brand artwork (public/brand/), cut from the supplied logo onto a
-   transparent background:
-   - hellas-study-logo      branch · seal · wordmark · branch, with the gold swash
-   - hellas-study-wordmark  seal + wordmark, for navs
-   - hellas-study-seal      the wax seal alone, for small squares and the favicon
-   hellas-study-logo@master.png is the full-resolution cut-out for use elsewhere. */
+import './logo.css';
 
-import { BookOpen } from 'lucide-react';
+const brand = (name: string) => `${import.meta.env.BASE_URL}brand/hellas-rocks-v1/${name}.webp`;
 
-const src = (name: string) => `${import.meta.env.BASE_URL}brand/${name}.webp`;
-
-/** The wax seal on its own. Decorative next to a visible name, so no alt text. */
+/** Decorative emblem when used beside a visible brand name. */
 export function LogoMark({ className = '' }: { className?: string }) {
-  return <img className={`logo-mark ${className}`} src={src('hellas-study-seal')} alt="" draggable={false} />;
+  return <img className={`logo-mark ${className}`} src={brand('mark')} alt="" width={256} height={268} draggable={false} />;
 }
 
-/** Brand lockup. `compact`: seal + wordmark, for navs. `wide`: the full crest. */
+/** One approved identity for the shared header and landing footer. */
 export function Logo({ variant = 'compact', className = '' }: { variant?: 'compact' | 'wide'; className?: string }) {
-  const wide = variant === 'wide';
   return (
-    <span
-      className={`logo ${wide ? 'logo-wide' : 'logo-compact'} ${className}`}
-      role="img"
-      aria-label="Hellas Study"
-    >
-      <img className="logo-art" src={src(wide ? 'hellas-study-logo' : 'hellas-study-wordmark')} alt="" draggable={false} />
-      <span className="logo-pureplay" aria-hidden="true">Hellas Study<BookOpen className="logo-symbol" size={25} strokeWidth={1.6} /></span>
+    <span className={`logo logo-rocks logo-${variant} ${className}`} role="img" aria-label="Hellas Study">
+      <img className="logo-rocks-art" src={brand('horizontal')} alt="" width={1152} height={232} draggable={false} />
     </span>
   );
 }

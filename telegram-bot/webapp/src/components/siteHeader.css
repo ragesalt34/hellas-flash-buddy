@@ -37,12 +37,7 @@
 .hs-site-header .hs-header-brand {
   display: inline-flex; align-items: center; flex: none; gap: 10px; padding: 0;
   min-height: 44px; border-radius: 6px; white-space: nowrap;
-  font: 600 30px/1 'EB Garamond', Georgia, serif; letter-spacing: -.025em;
-}
-.hs-site-header .hs-header-mark {
-  display: grid; place-items: center; width: 36px; height: 40px;
-  background: #b45f43; color: #fffaf1; border-radius: 5px;
-  transition: background-color 160ms ease;
+  line-height: 0;
 }
 .hs-site-header .hs-header-nav {
   display: flex; justify-content: center; align-items: center; gap: 2px; flex: 1; min-width: 0;
@@ -113,7 +108,6 @@
 .hs-site-header .hs-header-toggle { display: none; }
 .hs-site-header .hs-header-menu { display: none; }
 @media (hover: hover) {
-  .hs-site-header .hs-header-brand:hover .hs-header-mark { background: var(--hs-nav-clay); }
   .hs-site-header .hs-header-link:hover { color: var(--hs-nav-ink); background: #f3f0e9; }
   .hs-site-header .hs-header-link[aria-current]:hover { background: transparent; }
   .hs-site-header .hs-header-account:hover { background: #28566d; }
@@ -157,9 +151,7 @@
 @media (max-width: 599px) {
   .hs-shell { --hs-header-height: calc(68px + env(safe-area-inset-top, 0px)); }
   .hs-site-header .hs-header-inner { width: calc(100% - 32px); gap: 12px; }
-  .hs-site-header .hs-header-brand { font-size: 26px; gap: 8px; }
-  .hs-site-header .hs-header-mark { width: 30px; height: 34px; border-radius: 4px; }
-  .hs-site-header .hs-header-mark svg { width: 21px; }
+  .hs-site-header .hs-header-brand { gap: 0; }
   .hs-site-header .hs-header-actions { gap: 4px; }
   .hs-site-header .hs-header-settings summary { min-width: 52px; padding-inline: 4px; }
   .hs-site-header .hs-header-menu { right: 16px; width: calc(100% - 32px); }
