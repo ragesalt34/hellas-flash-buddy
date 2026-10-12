@@ -6685,15 +6685,10 @@ button.chip:active { transform: scale(0.95); }
   [data-theme='soft'] .rd-screen .rd-crit .progress { height: 7px; margin-top: 9px; }
   [data-theme='soft'] .rd-screen .rd-activity { display: contents; }
   [data-theme='soft'] .rd-screen :is(.rd-activity-main, .rd-history) { grid-column: span 3; padding: 20px; border: 1px solid var(--hair); border-radius: 8px; min-width: 0; background: #fff; }
-  [data-theme='soft'] .rd-screen .rd-activity-main :is(.rd-olives, .rd-legacy-calendar-hint) { display: none; }
   [data-theme='soft'] .rd-screen .rd-act-top { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; margin: 0 0 16px; }
   [data-theme='soft'] .rd-screen .rd-act-ic { display: none; }
   [data-theme='soft'] .rd-screen .rd-streak { font-size: 12px; }
   [data-theme='soft'] .rd-screen .rd-due-chip { padding: 5px 7px; font-size: 11px; background: #edf7ff; border: 1px solid var(--hair); box-shadow: none; }
-  [data-theme='soft'] .rd-screen .pureplay-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
-  [data-theme='soft'] .rd-screen .pureplay-calendar span { height: 15px; border-radius: 3px; background: #e9edf3; }
-  [data-theme='soft'] .rd-screen .pureplay-calendar .is-active { background: #4e9eff; }
-  [data-theme='soft'] .rd-screen .pureplay-calendar .is-today { outline: 1px solid var(--blue); outline-offset: 1px; }
   [data-theme='soft'] .rd-screen .rd-activity-main > .rd-sub { margin-top: 12px; }
   [data-theme='soft'] .rd-screen .rd-history .rd-act-rule { display: none; }
   [data-theme='soft'] .rd-screen .rd-sublabel { margin: 0 0 10px; font: 750 26px var(--font-display); text-transform: none; letter-spacing: -.7px; }

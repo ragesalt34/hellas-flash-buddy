@@ -285,11 +285,8 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         </div>
 
         <OliveCalendar days={grid} active={active} today={grid[grid.length - 1]} />
-        <div className="pureplay-calendar pureplay-desktop" aria-label={t('rd.activityHint')}>
-          {grid.map((day) => <span key={day} className={`${active.has(day) ? 'is-active' : ''}${day === grid[grid.length - 1] ? ' is-today' : ''}`} title={day} />)}
-        </div>
         <div className="rd-sub">
-          <span className="rd-legacy-calendar-hint">{t('rd.oliveHint')} · </span>{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}
+          <span>{t('rd.oliveHint')} · </span>{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}
         </div>
         </div>
 
