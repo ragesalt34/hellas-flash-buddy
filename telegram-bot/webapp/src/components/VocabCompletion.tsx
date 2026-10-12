@@ -42,7 +42,7 @@ export function VocabCompletion({ count, onRepeat, onHome }: Props) {
           </div>
         </div>
         <img className="vc-complete-art hs-deco"
-          src={`${import.meta.env.BASE_URL}assets/vocab-completion-v1/study-folder.webp`}
+          src={`${import.meta.env.BASE_URL}assets/vocab-completion-v2/mosaic.webp`}
           width={1254} height={1254} alt="" aria-hidden="true"
           draggable={false} decoding="async" />
       </section>
