@@ -12,7 +12,7 @@ import { VocabCompletion } from '../components/VocabCompletion';
 import { StudyIcon } from '../components/StudyIcon';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 import { VOCABULARY_HINTS } from '../data/vocabularyHints';
-import { VocabularyRevealButton } from '../components/VocabularyRevealButton';
+import { StudyRevealButton } from '../components/StudyRevealButton';
 
 export function Vocab({ onHome }: { onHome: () => void }) {
   const { t, language } = useLanguage();
@@ -119,7 +119,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
 
   return (
     // Keyed on the card only (see Quiz): the frame and progress bar stay put.
-    <div className="fade-in vc-screen">
+    <div className="fade-in vc-screen study-reveal-screen">
       <VocabularyFrame />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -169,7 +169,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
             <Volume2 size={17} strokeWidth={2.3} />
           </button>
         </div>
-        <VocabularyRevealButton
+        <StudyRevealButton
           label={t('vocab.openTranslation')}
           onReveal={(moveFocus) => {
             revealFocusRef.current = moveFocus;
@@ -194,7 +194,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
               )}
             </div>
           </div>
-        </VocabularyRevealButton>
+        </StudyRevealButton>
       </div>
       </div>
 

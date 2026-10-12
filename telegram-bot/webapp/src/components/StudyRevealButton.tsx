@@ -8,8 +8,8 @@ type Props = {
   onReveal: (moveFocus: boolean) => void;
 };
 
-/** Keep the real translation mounted underneath its material cover. */
-export function VocabularyRevealButton({ label, children, onReveal }: Props) {
+/** Keep the real answer mounted underneath its material cover. */
+export function StudyRevealButton({ label, children, onReveal }: Props) {
   const [phase, setPhase] = useState<'idle' | 'opening' | 'revealed'>('idle');
   const slotRef = useRef<HTMLDivElement>(null);
   const answerRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export function VocabularyRevealButton({ label, children, onReveal }: Props) {
             const animate = document.documentElement.dataset.theme === 'soft'
               && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const slot = slotRef.current;
-            const strip = answerRef.current?.querySelector<HTMLElement>('.ru');
+            const strip = answerRef.current?.querySelector<HTMLElement>('.ru, .answer-box');
             if (!animate || !slot || !strip || typeof slot.animate !== 'function') {
               finish();
               return;

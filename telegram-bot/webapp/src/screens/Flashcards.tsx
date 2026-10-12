@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from '../components/HellasIcons';
+import { CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from '../components/HellasIcons';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
-import { playGrade, playComplete, playTap } from '../sound';
+import { playGrade, playComplete } from '../sound';
 import { CountUp, Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { QUESTION_HINTS, questionHintUrl } from '../questionHints';
-import { Ostraka, Owl } from '../components/homeArt';
+import { Owl } from '../components/homeArt';
 import { Greek } from '../components/greek';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
+import { StudyIcon } from '../components/StudyIcon';
+import { StudyRevealButton } from '../components/StudyRevealButton';
 import { VocabDecorImg } from './vocabularyDecor';
 
 /* Round-theme frame for this screen, matched to the Vocabulary screen's look
@@ -51,6 +53,15 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
   // +2 for a single answer. Declared with the other hooks, above the early
   // returns below: a hook after a conditional return breaks React's hook order.
   const gradedRef = useRef<string | null>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
+  const revealFocusRef = useRef(false);
+
+  useEffect(() => {
+    if (revealed && revealFocusRef.current) {
+      answerRef.current?.focus({ preventScroll: true });
+      revealFocusRef.current = false;
+    }
+  }, [revealed]);
 
   // Warm the current card's question and answer so 🔊 is instant — the answer
   // before it is revealed, so it is ready by the time it shows.
@@ -178,12 +189,12 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
 
   return (
     // Keyed on the card only (see Quiz): the decor and progress bar stay put.
-    <div className={`fade-in fc-screen${wide ? ' fc-wide' : ''}`}>
+    <div className={`fade-in fc-screen study-reveal-screen${wide ? ' fc-wide' : ''}`}>
       <FcDecor />
       <div className="topbar">
         <span className="meta" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span className="fc-meta-ic">
-            <Ostraka />
+            <StudyIcon name="flashcards" />
           </span>{' '}
           {t('nav.flashcards')}
           <Greek name="olive-branch-small" className="fc-meta-olive" />
@@ -225,8 +236,14 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
           )}
         </div>
 
-        {revealed && (
-          <div className="fade-in">
+        <StudyRevealButton
+          label={t('flashcards.showAnswer')}
+          onReveal={(moveFocus) => {
+            revealFocusRef.current = moveFocus;
+            setRevealed(true);
+          }}
+        >
+          <div ref={answerRef} role="region" aria-label={t('flashcards.answerLabel')} tabIndex={-1}>
             <div className="answer-box">
               <VocabDecorImg slot="cardTemple" className="fc-panel-temple" />
               <span className="answer-tag">
@@ -252,12 +269,12 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               </div>
             )}
           </div>
-        )}
+        </StudyRevealButton>
       </div>
       </div>
 
-      <div className="actionbar">
-        {revealed ? (
+      {revealed && (
+        <div className="actionbar">
           <div className="fc-grade-controls">
             <p className="fc-grade-prompt" id="fc-grade-prompt">{t('flashcards.gradePrompt')}</p>
             <div className="grade-row" role="group" aria-labelledby="fc-grade-prompt">
@@ -273,12 +290,8 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
               ))}
             </div>
           </div>
-        ) : (
-          <button className="btn btn-block fc-reveal" onClick={() => { haptic(); playTap(); setRevealed(true); }}>
-            <Eye size={20} strokeWidth={2.4} /> {t('flashcards.showAnswer')}
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
