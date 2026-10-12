@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { StatsEditorial } from './StatsEditorial';
 import { BarChart3, BadgeCheck, TrendingUp, Sprout, House, ChevronDown, ChevronRight, type LucideIcon } from 'lucide-react';
 import { api, type ReadinessResponse } from '../api';
 import type { View } from '../App';
@@ -126,7 +127,9 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
   };
 
   return (
-    <div className="fade-in rd-screen">
+    <>
+      <StatsEditorial data={data} me={me} onNavigate={navigate} onCheckGreek={checkGreek} onHome={onHome} />
+      <div className="fade-in rd-screen rd-legacy-screen">
       <Label k="rd.title" />
       <div className={`card rd-verdict v-${data.verdict}`}>
         <figure className="rd-temple-wrap">
@@ -346,5 +349,6 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
       </button>
     </div>
+    </>
   );
 }
