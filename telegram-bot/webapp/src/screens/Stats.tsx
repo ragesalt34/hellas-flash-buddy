@@ -95,7 +95,7 @@ function ScoreOlives({ score, total }: { score: number; total: number }) {
 }
 
 export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: (v: View) => void }) {
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { data, err } = useCached(`readiness:${language}`, api.readiness);
   // Accuracy and test count used to sit on Home; the desktop Home no longer shows them.
   // Same cached /me response Home already loads, so no new request.
@@ -113,6 +113,17 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
   const history = allHistory ? data.history : data.history.slice(0, 5);
   const locale = language === 'ru' ? 'ru-RU' : 'el-GR';
   const streak = data.activity.streak;
+  const needsWords = data.blockers.some((b) => b.kind === 'words');
+  const needsQuestions = data.blockers.some((b) => b.kind === 'topic');
+  const navigate = (view: View) => {
+    haptic();
+    onNavigate(view);
+    window.scrollTo(0, 0);
+  };
+  const checkGreek = () => {
+    setLanguage('el');
+    navigate('quiz');
+  };
 
   return (
     <div className="fade-in rd-screen">
@@ -154,7 +165,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
               ))}
             </div>
           )}
-          <div className="rd-note">{t('rd.greekOnly')}</div>
+          <div className="rd-note">{t('rd.scoreHint')}</div>
         </div>
       </div>
 
@@ -167,7 +178,11 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
             <small>{b.known}/{b.total}</small>
           </div>
         )) : <p>{t('rd.verdictHint.ready')}</p>}
-        <button className="btn btn-block" onClick={() => { haptic(); onNavigate('flashcards'); }}>{t('rd.repeatCards')}<ChevronRight size={19} /></button>
+        <p className="rd-next-hint">{t('rd.nextHint')}</p>
+        <div className="rd-next-actions">
+          {(needsQuestions || !needsWords) && <button className="btn btn-block" onClick={checkGreek}>{t('rd.checkGreek')}</button>}
+          {needsWords && <button className={`btn btn-block${needsQuestions ? ' secondary' : ''}`} onClick={() => navigate('vocab')}>{t('rd.studyWords')}</button>}
+        </div>
       </div>
 
       <Label k="rd.criteria" />
@@ -179,7 +194,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
           tag={t('rd.decides')}
           value={data.greek.known}
           total={data.greek.total}
-          sub={`${t('rd.unchecked')}: ${data.greek.total - data.greek.checked}`}
+          sub={`${t('rd.unchecked')}: ${Math.max(0, data.greek.total - data.greek.checked)} · ${t('rd.questionsTarget')}`}
         />
         <Criterion
           medal="words"
@@ -187,7 +202,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
           tag={t('rd.decides')}
           value={data.words.learned}
           total={data.words.total}
-          sub={`${t('stats.reviewed')}: ${data.words.seen}/${data.words.total}`}
+          sub={`${t('stats.reviewed')}: ${data.words.seen}/${data.words.total} · ${t('rd.wordsTarget')}`}
         />
         <Criterion
           medal="memory"
@@ -228,7 +243,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
                     <span className="pureplay-desktop">{tp.greek.known}/{tp.total}</span>
                   </span>
                 </div>
-                <span className="tp-bar">
+                <span className="tp-bar" data-empty={g === 0 ? 'true' : undefined}>
                   <i className={tone(g)} style={{ width: `${g}%` }} />
                 </span>
                 <div className="rd-sub">
@@ -260,11 +275,12 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
               </span>
             </>
           )}
+        </div>
+        <div className="rd-due-actions">
           <button
             className="rd-due-chip"
             onClick={() => {
-              haptic();
-              onNavigate('flashcards');
+              navigate('flashcards');
             }}
           >
             <Ostraka className="rd-act-ic" />
@@ -274,8 +290,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
           <button
             className="rd-due-chip"
             onClick={() => {
-              haptic();
-              onNavigate('vocab');
+              navigate('vocab');
             }}
           >
             <Papyrus className="rd-act-ic" />
@@ -290,10 +305,10 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
         </div>
         </div>
 
-        {data.history.length > 0 && (
-          <div className="rd-history">
+        <div className="rd-history">
             <MeanderBand className="rd-act-rule" height={8} />
             <div className="rd-sublabel">{t('rd.recent')}</div>
+            {history.length === 0 && <p className="rd-history-empty">{t('rd.historyEmpty')}</p>}
             {history.map((s, i) => {
               const date = new Date(s.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
               return (
@@ -323,8 +338,7 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
                 <ChevronDown size={16} strokeWidth={2.4} /> {t('rd.showMore')}
               </button>
             )}
-          </div>
-        )}
+        </div>
       </div>
 
       <div className="spacer" />
