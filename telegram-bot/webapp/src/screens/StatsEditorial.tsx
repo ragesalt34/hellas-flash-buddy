@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import { Flame, Target, ClipboardCheck, BookOpen, AudioLines, Brain, Languages, RotateCcw } from 'lucide-react';
 import type { MeResponse, ReadinessResponse } from '../api';
 import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
 import { OliveCalendar } from '../components/statsArt';
-import { TopicIcon } from '../components/StudyIcon';
 import { PaperParthenon } from '../components/PaperParthenon';
 
 const percentage = (value: number, total: number) => total > 0 ? Math.round(value / total * 100) : 0;
 const ART: Record<string, string> = { history: 'helmet', culture: 'masks', laws: 'book', geography: 'map' };
+type ProgressArtworkKind = 'greek' | 'words' | 'memory' | 'russian' | 'precision' | 'repeat' | 'streak' | 'quiz';
+
+function ProgressArtwork({ kind }: { kind: ProgressArtworkKind }) {
+  return <img className="pe-art-icon" src={`${import.meta.env.BASE_URL}assets/progress-artwork-v1/${kind}.webp`} width="48" height="48" alt="" aria-hidden="true" />;
+}
+
+function TopicArtwork({ topic }: { topic: string }) {
+  return ART[topic]
+    ? <img className="pe-art-icon" src={`${import.meta.env.BASE_URL}assets/topics/${topic}/${ART[topic]}.webp`} width="48" height="48" alt="" aria-hidden="true" />
+    : <ProgressArtwork kind="quiz" />;
+}
 
 function Meter({ value, label }: { value: number; label: string }) {
   const safe = Math.max(0, Math.min(100, value));
@@ -37,10 +46,10 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
   const history = allHistory ? data.history : data.history.slice(0, 5);
   const accuracy = me ? percentage(me.stats.total_correct, me.stats.total_questions) : null;
   const criteria = [
-    { key: 'greek', icon: AudioLines, title: t('rd.crit.greek'), value: data.greek.known, total: data.greek.total, detail: `${t('rd.unchecked')}: ${data.greek.total - data.greek.checked}`, aid: false },
-    { key: 'words', icon: BookOpen, title: t('nav.vocab'), value: data.words.learned, total: data.words.total, detail: `${t('stats.reviewed')}: ${data.words.seen}/${data.words.total} · ${t('rd.wordsTarget')}`, aid: false },
-    { key: 'memory', icon: Brain, title: t('rd.crit.memory'), value: data.memory.strong, total: data.memory.total, detail: t('rd.memoryHint'), aid: true },
-    { key: 'russian', icon: Languages, title: t('rd.crit.russian'), value: data.russian.known, total: data.russian.total, detail: `${t('rd.unchecked')}: ${data.russian.total - data.russian.checked}`, aid: true },
+    { key: 'greek', art: 'greek' as const, title: t('rd.crit.greek'), value: data.greek.known, total: data.greek.total, detail: `${t('rd.unchecked')}: ${data.greek.total - data.greek.checked}`, aid: false },
+    { key: 'words', art: 'words' as const, title: t('nav.vocab'), value: data.words.learned, total: data.words.total, detail: `${t('stats.reviewed')}: ${data.words.seen}/${data.words.total} · ${t('rd.wordsTarget')}`, aid: false },
+    { key: 'memory', art: 'memory' as const, title: t('rd.crit.memory'), value: data.memory.strong, total: data.memory.total, detail: t('rd.memoryHint'), aid: true },
+    { key: 'russian', art: 'russian' as const, title: t('rd.crit.russian'), value: data.russian.known, total: data.russian.total, detail: `${t('rd.unchecked')}: ${data.russian.total - data.russian.checked}`, aid: true },
   ];
   return (
     <div className="rd-screen pe-screen">
@@ -60,7 +69,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
           <h3>{t(`rd.verdict.${data.verdict}`)}</h3>
           <p>{t(`rd.verdictHint.${data.verdict}`)}</p>
           <p className="pe-score-note">{t('rd.scoreHint')}</p>
-          <div className="pe-goal"><Target size={25} /><span>{t('rd.questionsTarget')}<br />{t('rd.wordsTarget')}</span></div>
+          <div className="pe-goal"><ProgressArtwork kind="precision" /><span>{t('rd.questionsTarget')}<br />{t('rd.wordsTarget')}</span></div>
           {data.plan?.date && (data.plan.phase === 'learn' || data.plan.phase === 'final') && <p className="pe-plan">{t(data.plan.pace === 'behind' ? 'plan.offTrack' : 'plan.onTrack').replace('{date}', new Date(`${data.plan.date}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long' }))}</p>}
         </div>
       </section>
@@ -71,8 +80,8 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
         </article>)}
       </section>
       <section className="pe-criteria" aria-label={t('rd.criteria')}>
-        {criteria.map(({ key, icon: Icon, title, value, total, detail, aid }) => <div className={`pe-criterion ${aid ? 'is-aid' : ''}`} key={key}>
-          <Icon size={25} strokeWidth={1.8} /><div><h2>{title}</h2><span className="pe-criterion-tag">{t(key === 'memory' ? 'rd.extra' : aid ? 'rd.aid' : 'rd.decides')}</span><b>{value}/{total} · {percentage(value, total)}%</b><Meter value={percentage(value, total)} label={title} /><p>{detail}</p></div>
+        {criteria.map(({ key, art, title, value, total, detail, aid }) => <div className={`pe-criterion ${aid ? 'is-aid' : ''}`} key={key}>
+          <ProgressArtwork kind={art} /><div><h2>{title}</h2><span className="pe-criterion-tag">{t(key === 'memory' ? 'rd.extra' : aid ? 'rd.aid' : 'rd.decides')}</span><b>{value}/{total} · {percentage(value, total)}%</b><Meter value={percentage(value, total)} label={title} /><p>{detail}</p></div>
         </div>)}
       </section>
       <div className="pe-lower">
@@ -88,18 +97,18 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
         <div className="pe-sidebar">
           <section className="pe-next pe-paper" aria-labelledby="pe-next-title">
             <h2 id="pe-next-title">{t('rd.editorial.next')}</h2>
-            {data.blockers.length > 0 ? <ul className="pe-blockers">{data.blockers.map((blocker) => <li key={blocker.kind + (blocker.topic ?? '')}>{blocker.kind === 'words' ? <BookOpen size={25} /> : <TopicIcon topic={blocker.topic ?? ''} />}<div><b>{blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')}</b><span>{blocker.known}/{blocker.total} · {percentage(blocker.known, blocker.total)}%</span></div></li>)}</ul> : <p>{t('rd.verdictHint.ready')}</p>}
+            {data.blockers.length > 0 ? <ul className="pe-blockers">{data.blockers.map((blocker) => <li key={blocker.kind + (blocker.topic ?? '')}>{blocker.kind === 'words' ? <ProgressArtwork kind="words" /> : <TopicArtwork topic={blocker.topic ?? ''} />}<div><b>{blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')}</b><span>{blocker.known}/{blocker.total} · {percentage(blocker.known, blocker.total)}%</span></div></li>)}</ul> : <p>{t('rd.verdictHint.ready')}</p>}
             <p className="pe-next-hint">{t('rd.nextHint')}</p>
             <div className="pe-actions">
               {(needsQuestions || !needsWords) && <button className="pe-button" onClick={onCheckGreek}>{t('rd.checkGreek')}</button>}
               {needsWords && <button className={`pe-button${needsQuestions ? ' is-secondary' : ''}`} onClick={() => onNavigate('vocab')}>{t('rd.studyWords')}</button>}
             </div>
-            <div className="pe-due"><button onClick={() => onNavigate('flashcards')}><RotateCcw size={21} /><span><b>{data.due.cards} {countWord(data.due.cards, 'card', language)}</b><small>{t('rd.toReview')}</small></span></button><button onClick={() => onNavigate('vocab')}><BookOpen size={21} /><span><b>{data.due.words} {countWord(data.due.words, 'word', language)}</b><small>{t('rd.toReview')}</small></span></button></div>
+            <div className="pe-due"><button onClick={() => onNavigate('flashcards')}><ProgressArtwork kind="repeat" /><span><b>{data.due.cards} {countWord(data.due.cards, 'card', language)}</b><small>{t('rd.toReview')}</small></span></button><button onClick={() => onNavigate('vocab')}><ProgressArtwork kind="words" /><span><b>{data.due.words} {countWord(data.due.words, 'word', language)}</b><small>{t('rd.toReview')}</small></span></button></div>
           </section>
           <section className="pe-statistics" aria-label={t('rd.activity')}>
-            <div><Flame size={25} /><b>{data.activity.streak} {countWord(data.activity.streak, 'day', language)}</b><span>{t('rd.inRow')}</span></div>
-            <div><Target size={25} /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
-            <div><ClipboardCheck size={25} /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
+            <div><ProgressArtwork kind="streak" /><b>{data.activity.streak} {countWord(data.activity.streak, 'day', language)}</b><span>{t('rd.inRow')}</span></div>
+            <div><ProgressArtwork kind="precision" /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
+            <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
           </section>
 
         </div>
@@ -107,7 +116,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
       <section className="pe-history" aria-labelledby="pe-history-title">
         <h2 id="pe-history-title">{t('rd.recent')}</h2>
         {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
-        {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicIcon topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
+        {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicArtwork topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
         {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
       </section>
       <button className="pe-home" onClick={onHome}>{t('nav.menu')}</button>
