@@ -11,12 +11,10 @@ import {
 import { SlideArrow } from '../components/SlideArrow';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple } from '../components/statsArt';
-import { TopicIcon } from '../components/StudyIcon';
+import { StudyIcon, TopicIcon } from '../components/StudyIcon';
 import { TopicDecor } from '../components/TopicDecor';
 import { SectionLabel } from '../components/SectionLabel';
 import { RewardSides, RewardWreath } from '../components/RewardArt';
-import { Owl } from '../components/homeArt';
-import { TopicBand, TopicScene, hasTopicScene } from './topicScenes';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
@@ -291,109 +289,61 @@ export function Quiz({ onHome }: { onHome: () => void }) {
 
   // ---- Playing ----
   const q = questions[idx];
+  const answered = chosen !== null;
+  const correct = chosen === q.correct_answer;
+  const questionTopic = q.topic ?? topic;
+  const art = questionTopic === 'history'
+    ? 'quiz-paper-v1/archive-collage.png'
+    : 'pureplay/paper-art-' + (['culture', 'laws', 'geography'].includes(questionTopic) ? questionTopic : 'mixed') + '.webp';
   return (
-    // Only the question card is keyed: the scene, counter and progress bar stay
-    // mounted, so the backdrop no longer flashes on every question and the
-    // leaf on the progress bar glides forward instead of jumping.
-    <div className="fade-in qz-play">
-      {hasTopicScene(topic) ? <TopicScene topic={topic} /> : <TopicDecor />}
-      <div className="topbar">
-        <span className="meta qz-topic">
-          <TopicIcon topic={topic} className="qz-emblem" />
-          {topicLabel}
-        </span>
-        <span className="counter">
-          {idx + 1}/{questions.length}
-        </span>
+    <div className="fade-in qz-play qz-paper-screen">
+      <div className="qz-paper-heading">
+        <h1><StudyIcon name="quiz" />{t('nav.quiz')}</h1>
+        <div className="qz-paper-progress">
+          <ProgressBar value={idx + (answered ? 1 : 0)} total={questions.length} />
+          <span className="counter">{idx + 1} / {questions.length}</span>
+        </div>
       </div>
-      <ProgressBar value={idx + (chosen ? 1 : 0)} total={questions.length} />
-      <div className="spacer" />
       <Fragment key={idx}>
-      <div className="card swap-in">
-        {/* Pronunciation only where there is Greek to pronounce — in RU mode the
-            question and options are Russian and the voice is Greek-only. */}
-        <div className="speak-row">
-          <div className="qtext">{q.question}</div>
-          {hasGreek(q.question) && (
-            <button
-              className="speak-btn"
-              aria-label={t('common.pronounce')}
-              onClick={() => { haptic(); speakGreek(q.question, `q_${q.id}`); }}
-            >
-              <Volume2 size={17} strokeWidth={2.3} />
-            </button>
-          )}
-        </div>
-        <div className="options">
-          {q.options.map((opt, i) => {
-            let cls = 'option';
-            if (chosen) {
-              if (opt === q.correct_answer) cls += ' correct';
-              else if (opt === chosen) cls += ' wrong';
-              else cls += ' dim';
-            }
-            const showCheck = chosen && opt === q.correct_answer;
-            const showX = chosen && opt === chosen && opt !== q.correct_answer;
-            return (
-              <div
-                key={i}
-                className={cls}
-                role="button"
-                tabIndex={chosen ? -1 : 0}
-                aria-disabled={!!chosen}
-                onClick={() => choose(opt)}
-                onKeyDown={(e) => {
-                  if (e.target === e.currentTarget && !chosen && (e.key === 'Enter' || e.key === ' ')) {
-                    e.preventDefault();
-                    choose(opt);
-                  }
-                }}
-              >
-                <span className="lt">{LETTERS[i] ?? i + 1}</span>
-                <span style={{ flex: 1 }}>{opt}</span>
-                {showCheck && <Check size={20} strokeWidth={3} />}
-                {showCheck && opt === chosen && (
-                  <span className="hs-deco leaf-burst" aria-hidden="true">
-                    {[0, 1, 2, 3, 4, 5].map((n) => (
-                      <i key={n} style={{ ['--n' as string]: n }} />
-                    ))}
-                  </span>
-                )}
-                {showX && <X size={20} strokeWidth={3} />}
-                {hasGreek(opt) && (
-                  <button
-                    className="opt-speak"
-                    aria-label={t('common.pronounce')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      haptic();
-                      speakGreek(opt, textKey(opt));
-                    }}
-                  >
-                    <Volume2 size={15} strokeWidth={2.3} />
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        {chosen && q.explanation && (
-          <div className="explain">
-            <Owl className="qz-owl" />
-            <span>{q.explanation}</span>
+        <div className="qz-paper-card swap-in">
+          <span className={'qz-paper-topic ft-' + questionTopic}>{topicLabel}</span>
+          <div className="qz-paper-intro">
+            <div className="speak-row">
+              <h2 className="qtext">{q.question}</h2>
+              {hasGreek(q.question) && <button className="speak-btn" aria-label={t('common.pronounce')}
+                onClick={() => { haptic(); speakGreek(q.question, 'q_' + q.id); }}>
+                <Volume2 size={18} />
+              </button>}
+            </div>
+            <img className="qz-paper-art" src={import.meta.env.BASE_URL + 'assets/' + art} alt="" aria-hidden="true" />
           </div>
-        )}
-      </div>
-      </Fragment>
-      <TopicBand topic={topic} />
-      {chosen && (
-        <div className="actionbar">
-          <button className="btn btn-block" onClick={next}>
-            {idx + 1 >= questions.length ? t('quiz.result') : t('quiz.next')}
-            <SlideArrow size={20} strokeWidth={2.6} />
-          </button>
+          <div className="options" aria-label={t('quiz.paper.choose')}>
+            {q.options.map((opt, i) => {
+              const isCorrect = answered && opt === q.correct_answer;
+              const isWrong = answered && opt === chosen && !isCorrect;
+              return <div key={i} className={'option' + (isCorrect ? ' correct' : isWrong ? ' wrong' : '')}>
+                <button className="qz-answer-hit" disabled={answered} onClick={() => choose(opt)}>
+                  <span className="lt">{LETTERS[i] ?? i + 1}</span>
+                  <span className="qz-answer-copy">{opt}</span>
+                  {isCorrect && <span className="qz-answer-status"><Check size={18} />{t('quiz.paper.correct')}</span>}
+                  {isWrong && <span className="qz-answer-status is-wrong"><X size={18} />{t('quiz.paper.chosen')}</span>}
+                </button>
+                {hasGreek(opt) && <button className="opt-speak" aria-label={t('common.pronounce')}
+                  onClick={() => { haptic(); speakGreek(opt, textKey(opt)); }}><Volume2 size={16} /></button>}
+              </div>;
+            })}
+          </div>
+          {answered && <div className="qz-paper-feedback" role="status">
+            <div className="qz-paper-explanation">
+              <strong>{t(correct ? 'quiz.paper.success' : 'quiz.paper.error')}</strong>
+              {q.explanation && <p>{q.explanation}</p>}
+            </div>
+            <button className="qz-paper-next" onClick={next}>
+              {t(idx + 1 >= questions.length ? 'quiz.result' : 'quiz.paper.next')}
+            </button>
+          </div>}
         </div>
-      )}
+      </Fragment>
     </div>
   );
 }
