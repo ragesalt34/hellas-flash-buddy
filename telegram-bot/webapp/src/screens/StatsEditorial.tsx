@@ -101,14 +101,15 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
             <div><Target size={25} /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
             <div><ClipboardCheck size={25} /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
           </section>
-          <section className="pe-history" aria-labelledby="pe-history-title">
-            <h2 id="pe-history-title">{t('rd.recent')}</h2>
-            {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
-            {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicIcon topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
-            {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
-          </section>
+
         </div>
       </div>
+      <section className="pe-history" aria-labelledby="pe-history-title">
+        <h2 id="pe-history-title">{t('rd.recent')}</h2>
+        {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
+        {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicIcon topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
+        {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
+      </section>
       <button className="pe-home" onClick={onHome}>{t('nav.menu')}</button>
     </div>
   );
