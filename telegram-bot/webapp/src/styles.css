@@ -8057,3 +8057,84 @@ html[data-theme='soft']:has(.vc-screen) { scrollbar-gutter: stable; }
   [data-theme='soft'] .rd-screen .rd-test-title { font-size: 15px; }
   [data-theme='soft'] .rd-screen .rd-test-score { font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 }
+/* Vocabulary completion — approved paper folder reference. All copy and actions
+   are live UI; the familiar two-sheet material is reused from the study cards. */
+.vc-complete-screen { width: 100%; }
+.vc-complete-sheet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 32px; }
+.vc-complete-copy { min-width: 0; align-self: center; }
+.vc-complete-copy h1 { margin: 0; font: 800 clamp(30px, 3.2vw, 46px)/1.12 var(--font-body); letter-spacing: -.03em; text-wrap: balance; }
+.vc-complete-copy h1:focus { outline: none; }
+.vc-complete-count { margin: 16px 0 0; font-size: clamp(24px, 2.4vw, 34px); font-weight: 750; line-height: 1.25; letter-spacing: -.02em; }
+.vc-complete-description { margin: 14px 0 0; max-width: 38ch; font-size: 20px; line-height: 1.45; }
+.vc-complete-actions { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 30px; }
+.vc-complete-button {
+  position: relative; isolation: isolate; display: grid; place-items: center; min-height: 68px;
+  flex: 1 1 210px; padding: 16px 20px; border: 1px solid var(--hair); border-radius: 12px;
+  font: 700 22px/1.25 var(--font-body); letter-spacing: -.02em; text-align: center;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.vc-complete-button.is-primary { background: var(--accent); color: white; }
+.vc-complete-button.is-secondary { background: var(--surface); color: var(--text); }
+.vc-complete-button:focus-visible { outline: 3px solid #2f5d92; outline-offset: 5px; }
+.vc-complete-art { display: none; }
+[data-theme='soft'] .vc-complete-sheet {
+  isolation: isolate; padding: 46px 48px 54px; color: #101211;
+}
+[data-theme='soft'] .vc-complete-sheet::before {
+  content: ''; position: absolute; z-index: -1; inset: -27px -23px -25px -25px; pointer-events: none;
+  border: 0 solid transparent;
+  border-image: url('/assets/pureplay/flashcard-backing-v1.png') 170 160 130 130 fill / 82px 78px 64px 64px stretch;
+}
+[data-theme='soft'] .vc-complete-description { color: #45535e; }
+[data-theme='soft'] .vc-complete-button { border: 0; background: none; box-shadow: none; color: #171a16; }
+[data-theme='soft'] .vc-complete-button.is-primary { color: #fff8eb; }
+[data-theme='soft'] .app .vc-complete-screen .vc-complete-button-paper {
+  display: block !important; position: absolute; z-index: -1; inset: 0; border-radius: 12px; pointer-events: none;
+  background: #f5ead2 url('/assets/pureplay/paper-card-trim.webp') center / 140% 260%;
+  box-shadow: 0 3px 4px rgb(70 43 23 / 21%), inset 0 0 0 1px rgb(91 60 29 / 15%);
+  transition: transform 120ms cubic-bezier(.16, 1, .3, 1), box-shadow 120ms ease-out;
+}
+[data-theme='soft'] .app .vc-complete-screen .is-primary .vc-complete-button-paper {
+  background: #b9573d url('/assets/vocab-reveal-v1/terracotta-paper.webp') center / 100% 100% no-repeat;
+}
+[data-theme='soft'] .app .vc-complete-screen .vc-complete-button-fold {
+  display: block !important; position: absolute; right: 0; bottom: 0; width: 24px; height: 24px;
+  background: url('/assets/vocab-reveal-v1/paper-fold.webp') center / contain no-repeat; pointer-events: none;
+  transform-origin: bottom right; transition: transform 120ms cubic-bezier(.16, 1, .3, 1);
+}
+.vc-complete-button-label { transition: transform 120ms cubic-bezier(.16, 1, .3, 1); }
+@media (min-width: 900px) {
+  [data-theme='soft'] body.focus .hs-shell > .app:has(.vc-complete-screen) {
+    max-width: 1280px; padding: 48px 48px 70px !important; justify-content: center;
+  }
+  [data-theme='soft'] .app .vc-complete-screen { margin: 0; }
+  [data-theme='soft'] .vc-complete-sheet {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 8px; min-height: 410px; padding-left: 96px;
+  }
+  [data-theme='soft'] .app .vc-complete-screen .vc-complete-art {
+    display: block !important; align-self: center; justify-self: end; width: 100%; max-width: 320px; height: auto;
+    object-fit: contain; pointer-events: none;
+  }
+  [data-theme='soft'] .vc-complete-actions { max-width: 640px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-theme='soft'] .vc-complete-button:hover .vc-complete-button-paper {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 7px rgb(70 43 23 / 22%), inset 0 0 0 1px rgb(91 60 29 / 15%);
+  }
+  [data-theme='soft'] .vc-complete-button:hover .vc-complete-button-label { transform: translateY(-2px); }
+  [data-theme='soft'] .vc-complete-button:hover .vc-complete-button-fold { transform: translateY(-2px) rotate(-4deg); }
+}
+[data-theme='soft'] .vc-complete-button:active .vc-complete-button-paper {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgb(70 43 23 / 18%), inset 0 0 0 1px rgb(91 60 29 / 15%);
+}
+[data-theme='soft'] .vc-complete-button:active :is(.vc-complete-button-label, .vc-complete-button-fold) { transform: translateY(2px); }
+@media (prefers-reduced-motion: no-preference) {
+  .vc-complete-sheet { animation: vc-complete-arrive 260ms cubic-bezier(.16, 1, .3, 1); }
+}
+@keyframes vc-complete-arrive { from { opacity: .65; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .vc-complete-button-label,
+  [data-theme='soft'] :is(.vc-complete-button-paper, .vc-complete-button-fold) { transition: none; transform: none !important; }
+}

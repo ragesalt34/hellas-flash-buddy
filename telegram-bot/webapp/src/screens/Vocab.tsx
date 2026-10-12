@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, RotateCcw, House, Volume2, WifiOff, Info } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Volume2, WifiOff, Info } from 'lucide-react';
 import { api, VocabCard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek } from '../speech';
 import { playGrade, playComplete } from '../sound';
-import { CountUp, Empty, Loading, ProgressBar } from '../ui';
-import { countWord, useLanguage } from '../i18n';
+import { Empty, Loading, ProgressBar } from '../ui';
+import { useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
-import { RewardSides, RewardWreath } from '../components/RewardArt';
+import { VocabCompletion } from '../components/VocabCompletion';
 import { StudyIcon } from '../components/StudyIcon';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 import { VOCABULARY_HINTS } from '../data/vocabularyHints';
@@ -95,30 +95,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
   if (cards.length === 0)
     return <Empty icon={CheckCircle2} text={t('vocab.empty')} onHome={onHome} />;
 
-  if (done) {
-    return (
-      <div className="fade-in center-col vc-screen">
-        <VocabularyFrame />
-        <div className="result">
-          <RewardSides left="coin" />
-          <div className="emoji">
-            <RewardWreath className="emoji-wreath" />
-            <span className="wreath-num">
-              <b><CountUp value={cards.length} delay={150} duration={600} /></b>
-              <small>{countWord(cards.length, 'word', language)}</small>
-            </span>
-          </div>
-          <div className="ttl">{t('vocab.done')}</div>
-        </div>
-        <button className="btn btn-block" onClick={load}>
-          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
-        </button>
-        <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
-        </button>
-      </div>
-    );
-  }
+  if (done) return <VocabCompletion count={cards.length} onRepeat={load} onHome={onHome} />;
 
   const card = cards[i];
   // Topic art remains the fallback until a word-specific hint is available.
