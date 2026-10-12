@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, ChevronDown, Menu, X } from './HellasIcons';
 import { useLanguage } from '../i18n';
 import { ThemeSwitch } from './ThemeSwitch';
 import { motion } from 'motion/react';

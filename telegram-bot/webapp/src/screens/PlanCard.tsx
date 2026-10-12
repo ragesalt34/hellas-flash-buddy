@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2 } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { ProgressBar } from '../ui';
 import { api, type StudyPlan } from '../api';

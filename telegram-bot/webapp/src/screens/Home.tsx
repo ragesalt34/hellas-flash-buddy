@@ -1,4 +1,4 @@
-import { ArrowRight, WifiOff, RotateCcw } from 'lucide-react';
+import { ArrowRight, WifiOff, RotateCcw } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { api } from '../api';
 import { haptic } from '../telegram';

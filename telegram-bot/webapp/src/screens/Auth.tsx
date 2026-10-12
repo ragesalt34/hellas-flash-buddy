@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { UserRound, KeyRound, Loader2, Eye, EyeOff } from 'lucide-react';
+import { UserRound, KeyRound, Loader2, Eye, EyeOff } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { api, clearCache } from '../api';
 import { setToken } from '../auth';

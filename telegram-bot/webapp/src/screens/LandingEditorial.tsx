@@ -1,7 +1,7 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
-import { Volume2 } from 'lucide-react';
+import { Volume2 } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
 import { speakGreek } from '../speech';

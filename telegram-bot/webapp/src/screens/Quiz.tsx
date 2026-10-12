@@ -7,7 +7,7 @@ import {
   House,
   Volume2,
   ArrowLeft,
-} from 'lucide-react';
+} from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { api, QuizQuestion, persistWrite } from '../api';
 import { MiniTemple } from '../components/statsArt';

@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { House, type LucideIcon } from 'lucide-react';
+import { House, type HellasIcon } from './components/HellasIcons';
 import { cacheGet, cacheSet } from './api';
 import { useLanguage } from './i18n';
 import { LaurelWreath } from './components/greekArt';
@@ -163,7 +163,7 @@ export function Empty({
   text,
   onHome,
 }: {
-  icon: LucideIcon;
+  icon: HellasIcon;
   text: string;
   onHome: () => void;
 }) {

@@ -1,4 +1,4 @@
-import { Volume2 } from 'lucide-react';
+import { Volume2 } from '../components/HellasIcons';
 import type { WordOfDay as Word } from '../api';
 import { haptic } from '../telegram';
 import { prefetchGreek, speakGreek } from '../speech';

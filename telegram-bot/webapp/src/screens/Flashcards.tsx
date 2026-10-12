@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Eye, CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from 'lucide-react';
+import { Eye, CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from '../components/HellasIcons';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';

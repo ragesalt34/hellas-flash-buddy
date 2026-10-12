@@ -1,7 +1,7 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { MousePointerClick, Volume2 } from 'lucide-react';
+import { MousePointerClick, Volume2 } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
 import { Logo } from '../components/Logo';

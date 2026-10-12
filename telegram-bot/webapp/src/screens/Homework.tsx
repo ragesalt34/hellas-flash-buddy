@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import { CheckCircle2, CircleAlert, CircleX, House, Paperclip, Plus, RotateCcw, Trash2, X } from 'lucide-react';
+import { CheckCircle2, CircleAlert, CircleX, House, Paperclip, Plus, RotateCcw, Trash2, X } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import {
   api,

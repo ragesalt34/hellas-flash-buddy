@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame } from './HellasIcons';
 import { haptic, notify } from '../telegram';
 import { useLanguage } from '../i18n';
 

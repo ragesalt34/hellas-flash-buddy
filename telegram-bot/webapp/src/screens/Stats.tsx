@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StatsEditorial } from './StatsEditorial';
-import { BarChart3, BadgeCheck, TrendingUp, Sprout, House, ChevronDown, ChevronRight, type LucideIcon } from 'lucide-react';
+import { BarChart3, BadgeCheck, TrendingUp, Sprout, House, ChevronDown, ChevronRight, type HellasIcon } from '../components/HellasIcons';
 import { api, type ReadinessResponse } from '../api';
 import type { View } from '../App';
 import { Empty, Loading, ProgressBar, useCached } from '../ui';
@@ -12,7 +12,7 @@ import { Medallion, OliveCalendar, ParthenonProgress, type MedalKind } from '../
 import { StudyIcon, TopicIcon } from '../components/StudyIcon';
 import { OilLamp, Ostraka, Papyrus } from '../components/homeArt';
 
-const VERDICT_ICON: Record<ReadinessResponse['verdict'], LucideIcon> = {
+const VERDICT_ICON: Record<ReadinessResponse['verdict'], HellasIcon> = {
   early: Sprout,
   almost: TrendingUp,
   ready: BadgeCheck,

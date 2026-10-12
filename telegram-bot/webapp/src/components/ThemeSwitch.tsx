@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Feather, Square } from 'lucide-react';
+import { Feather, Square } from './HellasIcons';
 import { haptic } from '../telegram';
 import { useLanguage } from '../i18n';
 import { getStoredTheme, setStoredTheme, type Theme } from '../theme';

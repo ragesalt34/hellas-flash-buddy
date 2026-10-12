@@ -1,36 +1,33 @@
-import { AudioLines, BookOpen, ChartNoAxesColumnIncreasing, ClipboardCheck, GraduationCap, House, Layers, NotebookPen, Target, Flame, Landmark, Theater, ScrollText, MapPin, Globe, Brain, Languages } from 'lucide-react';
-import { Aspis, ColumnChart, CycladicHome, LaurelSprig, OilLamp, Ostraka, Owl, Papyrus, WaxTablet } from './homeArt';
-import { SoundLyre } from './landingArt';
-import { TopicEmblem } from './statsArt';
-
-const ICONS = {
-  home: [CycladicHome, House],
-  quiz: [WaxTablet, ClipboardCheck],
-  flashcards: [Ostraka, Layers],
-  vocab: [Papyrus, BookOpen],
-  stats: [ColumnChart, ChartNoAxesColumnIncreasing],
-  homework: [Owl, NotebookPen],
-  accuracy: [Aspis, Target],
-  streak: [OilLamp, Flame],
-  words: [LaurelSprig, GraduationCap],
-  speech: [SoundLyre, AudioLines],
-  memory: [Owl, Brain],
-  russian: [Papyrus, Languages],
+const ART = {
+  home: 'header-paper-v1/home',
+  quiz: 'progress-artwork-v1/quiz',
+  flashcards: 'header-paper-v1/flashcards',
+  vocab: 'progress-artwork-v1/words',
+  stats: 'header-paper-v1/stats',
+  homework: 'header-paper-v1/homework',
+  accuracy: 'progress-artwork-v1/precision',
+  streak: 'progress-artwork-v1/streak',
+  words: 'progress-artwork-v1/words',
+  speech: 'progress-artwork-v1/greek',
+  memory: 'progress-artwork-v1/memory',
+  russian: 'progress-artwork-v1/russian',
 } as const;
 
-/** Both themes share meaning and accessibility, while retaining their glyphs. */
-export function StudyIcon({ name, className = '' }: { name: keyof typeof ICONS; className?: string }) {
-  const [Legacy, Pureplay] = ICONS[name];
-  return (
-    <span className={`study-icon ${className}`} aria-hidden="true">
-      <Legacy className="study-icon-legacy" />
-      <Pureplay className="study-icon-pureplay" strokeWidth={1.8} />
-    </span>
-  );
+/** Original project artwork; the adjacent live text carries the meaning. */
+export function StudyIcon({ name, className = '' }: { name: keyof typeof ART; className?: string }) {
+  return <span className={`study-icon ${className}`} aria-hidden="true">
+    <img className="study-icon-art" src={`${import.meta.env.BASE_URL}assets/${ART[name]}.webp`} width="48" height="48" alt="" />
+  </span>;
 }
 
-const TOPIC_ICONS = { history: Landmark, culture: Theater, laws: ScrollText, geography: MapPin };
+const TOPIC_ART: Record<string, string> = {
+  history: 'topics/history/helmet',
+  culture: 'topics/culture/masks',
+  laws: 'topics/laws/book',
+  geography: 'topics/geography/map',
+};
 export function TopicIcon({ topic, className = '' }: { topic: string; className?: string }) {
-  const Icon = TOPIC_ICONS[topic as keyof typeof TOPIC_ICONS] ?? Globe;
-  return <span className={`study-icon ${className}`} aria-hidden="true"><TopicEmblem topic={topic} className="study-icon-legacy" /><Icon className="study-icon-pureplay" strokeWidth={1.8} /></span>;
+  return <span className={`study-icon ${className}`} aria-hidden="true">
+    <img className="study-icon-art" src={`${import.meta.env.BASE_URL}assets/${TOPIC_ART[topic] ?? 'progress-artwork-v1/quiz'}.webp`} width="48" height="48" alt="" />
+  </span>;
 }

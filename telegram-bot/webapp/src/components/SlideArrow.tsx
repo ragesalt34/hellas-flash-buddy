@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight } from './HellasIcons';
 
 /** The → arrow with the hover motion used across the app (adapted from the owner's Uiverse pick).
  * Two identical arrows sit in a strip behind a clip window; when the button, link or row that
