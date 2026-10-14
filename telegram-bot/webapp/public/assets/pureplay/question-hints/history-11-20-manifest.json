@@ -1,0 +1,263 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "anatomyReview": {
+    "history-11.png": "One palm: four fingers and thumb; wrist emerges naturally from cuff.",
+    "history-14.png": "Bust: facial features, neck and shoulder proportions reviewed.",
+    "history-20.png": "Full figure: two arms and legs; natural briefcase grip; fingers partially occluded by grip; shoes, knees and stance on stair reviewed."
+  },
+  "items": [
+    {
+      "order": 11,
+      "questionId": "46bef841-2e2a-40d2-a0c6-202ccdc83b10",
+      "file": "history-11.png",
+      "questionRu": "Какое слово использовалось Грецией в ответ на нападение Италии в 1940 году?",
+      "questionEl": "Ποια λέξη χρησιμοποίησε η Ελλάδα ως απάντηση στην επίθεση της Ιταλίας το 1940;",
+      "answerRu": "ОХΙ («Нет»)",
+      "answerEl": "ΟΧΙ",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 2455694,
+      "sha256": "d8d2cf6d61f12805cc6a0bb0288c79d0cdf37f3c2ee1fd2f7090f21ca560112c"
+    },
+    {
+      "order": 12,
+      "questionId": "fb35fc63-6aa6-460b-a4f8-e93df5b97bea",
+      "file": "history-12.png",
+      "questionRu": "Когда Греция вступила в Первую мировую войну на стороне союзников?",
+      "questionEl": "Πότε μπήκε η Ελλάδα στον Α΄ Παγκόσμιο Πόλεμο στο πλευρό των Συμμάχων;",
+      "answerRu": "1917 г.",
+      "answerEl": "Το 1917",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2779535,
+      "sha256": "afc723e1d36ebfccf8a5a39b2e5da31b1d159798bbf3c8c11db48363bb4cdfe0"
+    },
+    {
+      "order": 13,
+      "questionId": "7c2e37fa-2e99-4500-86c9-82605de1e9ca",
+      "file": "history-13.png",
+      "questionRu": "Какая страна напала на Сербию и Грецию во Второй Балканской войне?",
+      "questionEl": "Ποια χώρα επιτέθηκε στη Σερβία και την Ελλάδα στον Δεύτερο Βαλκανικό Πόλεμο;",
+      "answerRu": "Болгария",
+      "answerEl": "Η Βουλγαρία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3106404,
+      "sha256": "65f3528b51e50f6934cd15c720acc02f4538d630f74e4a5bebc6dea250c83ced"
+    },
+    {
+      "order": 14,
+      "questionId": "7bf36e61-f2f8-489a-a73b-b37564f2b86e",
+      "file": "history-14.png",
+      "questionRu": "Кто был главнокомандующим греческой армией в ходе Балканских войн?",
+      "questionEl": "Ποιος ήταν ο αρχιστράτηγος του ελληνικού στρατού κατά τους Βαλκανικούς Πολέμους;",
+      "answerRu": "Король Константин I",
+      "answerEl": "Ο βασιλιάς Κωνσταντίνος Α΄",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1528,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2550962,
+      "sha256": "3641fa544e0c0e70ac5647815dac8cddbe11072170e83aba57a5dea813ffc8e1"
+    },
+    {
+      "order": 15,
+      "questionId": "0507bdba-5f06-4d22-96f6-1e226105b1a7",
+      "file": "history-15.png",
+      "questionRu": "Как вошло в историю поражение греков в Малой Азии?",
+      "questionEl": "Πώς έμεινε στην ιστορία η ήττα των Ελλήνων στη Μικρά Ασία;",
+      "answerRu": "Малоазийская катастрофа",
+      "answerEl": "Ως Μικρασιατική Καταστροφή",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1510,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2951779,
+      "sha256": "ca7d9c5b3935c7d08f4d033b9301b333960f3ad3adb81f68e20f0d7c24fef34b"
+    },
+    {
+      "order": 16,
+      "questionId": "2a444544-61cc-4e32-95fa-de2abf2de0a2",
+      "file": "history-16.png",
+      "questionRu": "Какие территории Греция получила по итогам Первой мировой войны?",
+      "questionEl": "Ποια εδάφη απέκτησε η Ελλάδα μετά τον Α΄ Παγκόσμιο Πόλεμο;",
+      "answerRu": "Западную Фракию и временные права на управление Смирной",
+      "answerEl": "Τη Δυτική Θράκη και προσωρινά δικαιώματα διοίκησης της Σμύρνης",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1774,
+      "height": 887,
+      "visibleBounds": [
+        16,
+        8,
+        1760,
+        887
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2560669,
+      "sha256": "848766b0cb05de7e6b621ebe83ccc6f26d508047b892b41f4496139ec87bfdf4"
+    },
+    {
+      "order": 17,
+      "questionId": "9d37efbb-df4e-477d-9bed-894a096b6415",
+      "file": "history-17.png",
+      "questionRu": "В каком году Греция официально вступила в Европейское экономическое сообщество?",
+      "questionEl": "Ποια χρονιά εντάχθηκε επίσημα η Ελλάδα στην Ευρωπαϊκή Οικονομική Κοινότητα;",
+      "answerRu": "1981",
+      "answerEl": "Το 1981",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        29,
+        9,
+        1508,
+        992
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2538478,
+      "sha256": "8141c7748a55aecd59178a39664070af1fb77e00233bae40a0c32d83f46a5ca5"
+    },
+    {
+      "order": 18,
+      "questionId": "af722d0b-7507-4bf3-844e-d46a1b931707",
+      "file": "history-18.png",
+      "questionRu": "Как назывался период «Перехода к демократии» после падения диктатуры?",
+      "questionEl": "Πώς ονομάστηκε η περίοδος της «Μετάβασης στη δημοκρατία» μετά την πτώση της δικτατορίας;",
+      "answerRu": "Метаполитевси",
+      "answerEl": "Μεταπολίτευση",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1516,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2402907,
+      "sha256": "cc3306250bcafe0ace91f31b400fd6799bd6286aa49af3377fdddeb8a652dfa5"
+    },
+    {
+      "order": 19,
+      "questionId": "a75c563a-1079-4c99-9d65-426b7815a09c",
+      "file": "history-19.png",
+      "questionRu": "В каком году группа военных совершила переворот, начав диктатуру «чёрных полковников»?",
+      "questionEl": "Ποια χρονιά μια ομάδα στρατιωτικών έκανε πραξικόπημα, ξεκινώντας τη δικτατορία των «μαύρων συνταγματαρχών»;",
+      "answerRu": "1967",
+      "answerEl": "Το 1967",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        2,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2789503,
+      "sha256": "14ff267ea3af39145af76ba8e42daf4362e98cc3a6ab8e82567097095ed8d216"
+    },
+    {
+      "order": 20,
+      "questionId": "a57b16eb-c3d3-4ac3-96d7-576257896b55",
+      "file": "history-20.png",
+      "questionRu": "Кто вернулся к власти из эмиграции после падения диктатуры?",
+      "questionEl": "Ποιος επέστρεψε στην εξουσία από την εξορία μετά την πτώση της δικτατορίας;",
+      "answerRu": "Константинос Караманлис",
+      "answerEl": "Ο Κωνσταντίνος Καραμανλής",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1532,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 2317190,
+      "sha256": "1404dc46dc584cb32ee288c99379312e77e0ac7846dc8aabe8e429edb38ed71f"
+    }
+  ]
+}
