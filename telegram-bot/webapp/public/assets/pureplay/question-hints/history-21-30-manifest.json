@@ -1,0 +1,263 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "anatomyReview": {
+    "history-22.png": "Writing grip, resting hand, wrists, elbows, face and seated posture inspected.",
+    "history-26.png": "Portrait anatomy inspected. Background minarets removed using imagegen.",
+    "history-27.png": "Both adults: pitcher and cross grips, relaxed hands, shoulders, stance and priest foot support inspected. Lower legs of baptized figure intentionally occluded by water."
+  },
+  "items": [
+    {
+      "order": 21,
+      "questionId": "4eaa1643-cb7f-4e1a-b4f4-f59f5125ac04",
+      "file": "history-21.png",
+      "questionRu": "Какая страна вторглась в Грецию весной 1941 года и оккупировала её?",
+      "questionEl": "Ποια χώρα εισέβαλε στην Ελλάδα την άνοιξη του 1941 και την κατέλαβε;",
+      "answerRu": "Германия",
+      "answerEl": "Η Γερμανία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        14,
+        1528,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 3241788,
+      "sha256": "eebb48c375f5441a4dc17b88edfd8914d2e37649ac2f9b86608dd0b9a527790c"
+    },
+    {
+      "order": 22,
+      "questionId": "ffb27a47-5162-458a-b6bd-08483cbf491f",
+      "file": "history-22.png",
+      "questionRu": "Каков был основной язык Византии?",
+      "questionEl": "Ποια ήταν η κύρια γλώσσα του Βυζαντίου;",
+      "answerRu": "Греческий",
+      "answerEl": "Η ελληνική",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        1,
+        1504,
+        1014
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2961762,
+      "sha256": "1f6e695fb38d0ab7f95ea203b022bd09334b93009808f06379b82ca33efbd622"
+    },
+    {
+      "order": 23,
+      "questionId": "73a8ecb8-7b24-4433-b0cd-50aec5105df6",
+      "file": "history-23.png",
+      "questionRu": "Какие меры характеризовали режим хунты 1967–1974 годов?",
+      "questionEl": "Ποια μέτρα χαρακτήρισαν το καθεστώς της χούντας των ετών 1967–1974;",
+      "answerRu": "Цензура, подавление инакомыслия, политические репрессии",
+      "answerEl": "Λογοκρισία, καταστολή της αντιφρόνησης, πολιτικές διώξεις",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        23,
+        0,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2929001,
+      "sha256": "7b7931e43f23735c2cef189cfe827da759e8865bfa96ec7f0c5e7a832986044d"
+    },
+    {
+      "order": 24,
+      "questionId": "475afbe4-679b-4894-ad65-e26f31b7ad1a",
+      "file": "history-24.png",
+      "questionRu": "Какова была основная религия Византии?",
+      "questionEl": "Ποια ήταν η κύρια θρησκεία του Βυζαντίου;",
+      "answerRu": "Православие",
+      "answerEl": "Η Ορθοδοξία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 6,
+      "byteLength": 3272010,
+      "sha256": "4de654959a42ddcf78401043d27f1b4488637509b7be55a463d821a90a72a207"
+    },
+    {
+      "order": 25,
+      "questionId": "1b41daac-64b3-4314-9ef0-2c93cab69f08",
+      "file": "history-25.png",
+      "questionRu": "Какая цивилизация использовала линейное письмо B?",
+      "questionEl": "Ποιος πολιτισμός χρησιμοποιούσε τη Γραμμική Γραφή Β;",
+      "answerRu": "Микенская цивилизация",
+      "answerEl": "Ο Μυκηναϊκός πολιτισμός",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1517,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3429338,
+      "sha256": "e366b7ba2271da342f65bfd33b894f9559b76c936ca326f9f4da85f6fca54603"
+    },
+    {
+      "order": 26,
+      "questionId": "450780e2-1b34-4f9b-87da-5bda1096a661",
+      "file": "history-26.png",
+      "questionRu": "Кто был султаном турок-османов, осаждавших Константинополь в 1453 году?",
+      "questionEl": "Ποιος ήταν ο σουλτάνος των Οθωμανών Τούρκων που πολιόρκησε την Κωνσταντινούπολη το 1453;",
+      "answerRu": "Мехмед II Завоеватель",
+      "answerEl": "Ο Μωάμεθ Β΄ ο Πορθητής",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1006
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 2704367,
+      "sha256": "7fe0ac4d27cd3d94c8bdd68b4b7a241dfa996bcac8238d7c05178c79d77ee06b"
+    },
+    {
+      "order": 27,
+      "questionId": "4c33a5a7-615b-458d-b1ca-2f30fca70503",
+      "file": "history-27.png",
+      "questionRu": "В каком году произошло Крещение Руси?",
+      "questionEl": "Ποια χρονιά έγινε η Βάπτιση των Ρως;",
+      "answerRu": "988 г.",
+      "answerEl": "Το 988",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        9,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 4,
+      "byteLength": 2877899,
+      "sha256": "747e5b2e6f0ff04b975045058fd44a9f8c18996c40e71f7c8e0c50acd36e85e5"
+    },
+    {
+      "order": 28,
+      "questionId": "671337c0-8ccb-4e14-bb09-f98b08477c6e",
+      "file": "history-28.png",
+      "questionRu": "Как назывался свод законов, созданный Юстинианом I?",
+      "questionEl": "Πώς ονομαζόταν ο κώδικας νόμων που δημιούργησε ο Ιουστινιανός Α΄;",
+      "answerRu": "Кодекс Юстиниана",
+      "answerEl": "Ο Κώδικας του Ιουστινιανού",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        5,
+        1536,
+        1007
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 2804982,
+      "sha256": "2ca4997c45fb2de1a527e4f19a53470bca498e714b63377720e64a5ee5da139c"
+    },
+    {
+      "order": 29,
+      "questionId": "0d1796a9-b21b-4ae2-80d2-4fad00baba3e",
+      "file": "history-29.png",
+      "questionRu": "Какой город был первой столицей независимой Греции?",
+      "questionEl": "Ποια πόλη ήταν η πρώτη πρωτεύουσα της ανεξάρτητης Ελλάδας;",
+      "answerRu": "Нафплион",
+      "answerEl": "Το Ναύπλιο",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1536,
+        1002
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3010042,
+      "sha256": "e45d03bd40bc741632ab7af3e761b2aab4b8c83b8b792ed1654225d4ad5bcc01"
+    },
+    {
+      "order": 30,
+      "questionId": "30af279c-f465-42b8-9a2d-2f89eacb7b5b",
+      "file": "history-30.png",
+      "questionRu": "Какой договор закрепил победу Греции во Второй Балканской войне?",
+      "questionEl": "Ποια συνθήκη επικύρωσε τη νίκη της Ελλάδας στον Δεύτερο Βαλκανικό Πόλεμο;",
+      "answerRu": "Бухарестский договор (1913)",
+      "answerEl": "Η Συνθήκη του Βουκουρεστίου (1913)",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 3,
+      "byteLength": 2771959,
+      "sha256": "4963bbbf258f5e8982d82fc9f877a4b3f5afb8540cd9f91c0c1f7b3b6318b3a6"
+    }
+  ]
+}
