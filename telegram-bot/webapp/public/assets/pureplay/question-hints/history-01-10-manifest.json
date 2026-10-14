@@ -1,0 +1,258 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "items": [
+    {
+      "order": 1,
+      "questionId": "5afc5d39-49b1-4ac8-8bde-7d8ce4c74515",
+      "file": "history-01.png",
+      "questionRu": "Какой археолог обнаружил дворец Кносс на Крите в начале XX века?",
+      "questionEl": "Ποιος αρχαιολόγος ανακάλυψε το ανάκτορο της Κνωσού στην Κρήτη στις αρχές του 20ού αιώνα;",
+      "answerRu": "Артур Эванс",
+      "answerEl": "Ο Άρθουρ Έβανς",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 26,
+      "byteLength": 3016320,
+      "sha256": "d7f6c63354444b07d6da5580363402d9f9944072cb2c735c357474b597607b0b"
+    },
+    {
+      "order": 2,
+      "questionId": "c9ac778c-352a-49ef-aad2-9bc4cf6aff46",
+      "file": "history-02.png",
+      "questionRu": "Кто такие арматолы?",
+      "questionEl": "Ποιοι ήταν οι αρματολοί;",
+      "answerRu": "Греки-христиане, имевшие право носить оружие для защиты перевалов",
+      "answerEl": "Χριστιανοί Έλληνες που είχαν το δικαίωμα να φέρουν όπλα για τη φύλαξη των ορεινών περασμάτων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        25,
+        1516,
+        1002
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2959461,
+      "sha256": "51a5532c6f37836dcaa81497d7b181dc7ea1f5413929105957542730016969e3"
+    },
+    {
+      "order": 3,
+      "questionId": "9da90277-257d-46f1-a3ca-f51ff3296dc0",
+      "file": "history-03.png",
+      "questionRu": "В каком году Юстиниан I взошёл на престол?",
+      "questionEl": "Ποια χρονιά ανέβηκε στον θρόνο ο Ιουστινιανός Α΄;",
+      "answerRu": "527 г.",
+      "answerEl": "Το 527",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1520,
+        1010
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 2,
+      "byteLength": 3063760,
+      "sha256": "2935219f912cbd8b2f6914f2e895df7dd031ed64333327e6b2313a8fa2d1d318"
+    },
+    {
+      "order": 4,
+      "questionId": "c9d45327-ee06-4cae-9787-3cf6ff011559",
+      "file": "history-04.png",
+      "questionRu": "Какое письмо использовалось в Микенской цивилизации?",
+      "questionEl": "Ποια γραφή χρησιμοποιούνταν στον Μυκηναϊκό πολιτισμό;",
+      "answerRu": "Линейное письмо B",
+      "answerEl": "Η Γραμμική Γραφή Β",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        15,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2989290,
+      "sha256": "3d343a46f5c0e9e119501eb6661107586142eb39290b16fa8b0f6d192a04d618"
+    },
+    {
+      "order": 5,
+      "questionId": "5d4d01e1-99b1-4142-98d6-01088e2cbe71",
+      "file": "history-05.png",
+      "questionRu": "Какую империю продолжила Византийская империя на Востоке?",
+      "questionEl": "Ποια αυτοκρατορία συνέχισε η Βυζαντινή Αυτοκρατορία στην Ανατολή;",
+      "answerRu": "Римскую империю",
+      "answerEl": "Τη Ρωμαϊκή Αυτοκρατορία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        15,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2794951,
+      "sha256": "8fdb63a0b51acb380680dbf8f789b22f6d1d0155159db13797e83b6f93795ddb"
+    },
+    {
+      "order": 6,
+      "questionId": "be76546f-cb90-4456-9089-c1433c0b146f",
+      "file": "history-06.png",
+      "questionRu": "В каком году пала Византийская империя?",
+      "questionEl": "Ποια χρονιά έπεσε η Βυζαντινή Αυτοκρατορία;",
+      "answerRu": "1453 г.",
+      "answerEl": "Το 1453",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1254,
+      "height": 1254,
+      "visibleBounds": [
+        33,
+        43,
+        1240,
+        1230
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2531250,
+      "sha256": "7727573137377de26a2368da0b8313e7e326caea07318cd674b1dfe2f2741d8c"
+    },
+    {
+      "order": 7,
+      "questionId": "29b3a321-bbf6-40b9-9f48-255a9eac2b07",
+      "file": "history-07.png",
+      "questionRu": "Когда было основано тайное общество Филики Этерия?",
+      "questionEl": "Πότε ιδρύθηκε η μυστική εταιρεία Φιλική Εταιρεία;",
+      "answerRu": "1814 год",
+      "answerEl": "Το 1814",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1254,
+      "height": 1254,
+      "visibleBounds": [
+        19,
+        21,
+        1239,
+        1254
+      ],
+      "alphaRange": [
+        0,
+        255
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2173191,
+      "sha256": "17bfde9892689218d604714a10b5db1e31b6401893dd3412187525a730c3316e"
+    },
+    {
+      "order": 8,
+      "questionId": "f4b061d6-da6f-4c5c-87c2-5148b7c89ed4",
+      "file": "history-08.png",
+      "questionRu": "В каком году началась Византийская империя?",
+      "questionEl": "Ποια χρονιά ξεκίνησε η Βυζαντινή Αυτοκρατορία;",
+      "answerRu": "330 г.",
+      "answerEl": "Το 330",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        35,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 7,
+      "byteLength": 3036060,
+      "sha256": "2d4c32505865fe1eb35b4122823f7f227c388432ad50d31561a1299d362c01d1"
+    },
+    {
+      "order": 9,
+      "questionId": "f293984e-4320-4fd1-b04f-d764ca64a529",
+      "file": "history-09.png",
+      "questionRu": "Какое известное сражение Персидских войн было морской победой греков?",
+      "questionEl": "Ποια διάσημη μάχη των Περσικών Πολέμων ήταν ναυτική νίκη των Ελλήνων;",
+      "answerRu": "Битва при Саламине",
+      "answerEl": "Η Ναυμαχία της Σαλαμίνας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        9,
+        1535,
+        1000
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3054705,
+      "sha256": "09aab3773d2900b9d6d0cab304ceaf4d809e8b3a8785bb649893a75df720d621"
+    },
+    {
+      "order": 10,
+      "questionId": "c368e0c8-0ec6-4f32-8d3f-f7f1790e0aa8",
+      "file": "history-10.png",
+      "questionRu": "На сколько увеличились территории Греции по итогам Балканских войн?",
+      "questionEl": "Κατά πόσο αυξήθηκαν τα εδάφη της Ελλάδας μετά τους Βαλκανικούς Πολέμους;",
+      "answerRu": "Почти вдвое",
+      "answerEl": "Σχεδόν στο διπλάσιο",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1516,
+        1010
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2725588,
+      "sha256": "46ec51eb61493c76581d468e9418ed9edfe2bf58f8b4819dbf7e83c321e3e0d6"
+    }
+  ]
+}

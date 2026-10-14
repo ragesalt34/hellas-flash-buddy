@@ -1,4 +1,4 @@
-// Hand-made paper illustrations for specific flashcards (geography 16 + culture 22 + laws 17 pictures).
+// Individual paper hints: geography 16, culture 22, laws 17, history 10.
 // Generated from the delivered manifests (geography-all-16, culture-question-hints-v1, laws-question-hints-v1): the link is the question id
 // and nothing else. NN is the manifest order; the files are alpha-trimmed WebP copies of
 // the delivered PNGs. `before` = the picture may show while the answer is hidden; the
@@ -67,6 +67,17 @@ export const QUESTION_HINTS: Record<string, QuestionHint> = {
   '69bb6d47-d7c4-42dd-abb7-1ff6af947502': { file: 'laws-15.webp', before: true },
   '6301c464-7fe0-4ae4-883c-357a4f4864fd': { file: 'laws-16.webp', before: true },
   '79d1ba3f-ee95-4c87-9d0d-a11678a74bcf': { file: 'laws-17.webp', before: true },
+  // history, batch 01–10: original transparent PNGs, matched by question UUID
+  '5afc5d39-49b1-4ac8-8bde-7d8ce4c74515': { file: 'history-01.png', before: true },
+  'c9ac778c-352a-49ef-aad2-9bc4cf6aff46': { file: 'history-02.png', before: true },
+  '9da90277-257d-46f1-a3ca-f51ff3296dc0': { file: 'history-03.png', before: true },
+  'c9d45327-ee06-4cae-9787-3cf6ff011559': { file: 'history-04.png', before: true },
+  '5d4d01e1-99b1-4142-98d6-01088e2cbe71': { file: 'history-05.png', before: true },
+  'be76546f-cb90-4456-9089-c1433c0b146f': { file: 'history-06.png', before: true },
+  '29b3a321-bbf6-40b9-9f48-255a9eac2b07': { file: 'history-07.png', before: true },
+  'f4b061d6-da6f-4c5c-87c2-5148b7c89ed4': { file: 'history-08.png', before: true },
+  'f293984e-4320-4fd1-b04f-d764ca64a529': { file: 'history-09.png', before: true },
+  'c368e0c8-0ec6-4f32-8d3f-f7f1790e0aa8': { file: 'history-10.png', before: true },
 };
 
 export const questionHintUrl = (file: string) => `${import.meta.env.BASE_URL}assets/pureplay/question-hints/${file}`;
