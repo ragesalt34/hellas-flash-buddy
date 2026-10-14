@@ -5,6 +5,9 @@ export type Language = 'ru' | 'el';
 type Translations = Record<string, { ru: string; el: string }>;
 
 const translations: Translations = {
+  'flashcards.completedCount': { ru: '{count} {cards} повторено', el: 'Επανέλαβες {count} {cards}' },
+  'quiz.completedCount': { ru: 'Верно: {score} из {total}', el: 'Σωστές απαντήσεις: {score} από {total}' },
+  'quiz.completedDescription': { ru: 'Точность — {percent}%. Ошибок: {wrong}. Можно повторить тест или выбрать другую тему.', el: 'Ακρίβεια: {percent}%. Λάθη: {wrong}. Μπορείς να ξανακάνεις το κουίζ ή να διαλέξεις άλλο θέμα.' },
   'quiz.sessionLanguage': { ru: 'Этот тест продолжится на языке, выбранном в начале. Новый язык применится к следующему тесту.', el: 'Αυτό το κουίζ συνεχίζεται στη γλώσσα που επέλεξες στην αρχή. Η νέα γλώσσα θα ισχύσει στο επόμενο κουίζ.' },
   // ---- Nav ----
   'header.theme.soft': { ru: 'Мягкое', el: 'Απαλό' },

@@ -3,8 +3,6 @@ import {
   Check,
   X,
   RotateCcw,
-  LayoutGrid,
-  House,
   Volume2,
   ArrowLeft,
 } from '../components/HellasIcons';
@@ -14,11 +12,11 @@ import { MiniTemple } from '../components/statsArt';
 import { StudyIcon, TopicIcon } from '../components/StudyIcon';
 import { TopicDecor } from '../components/TopicDecor';
 import { SectionLabel } from '../components/SectionLabel';
-import { RewardSides, RewardWreath } from '../components/RewardArt';
+import { StudyCompletion } from '../components/StudyCompletion';
 import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
-import { CountUp, Loading, ProgressBar, Ring, useCached } from '../ui';
+import { Loading, ProgressBar, useCached } from '../ui';
 import { countWord, useLanguage, t as translate, type Language } from '../i18n';
 import { Greek } from '../components/greek';
 
@@ -253,39 +251,14 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     const pct = total ? Math.round((score / total) * 100) : 0;
     const ttlKey =
       pct >= 80 ? 'quiz.result.great' : pct >= 60 ? 'quiz.result.good' : pct >= 40 ? 'quiz.result.keepGoing' : 'quiz.result.tryHarder';
-    return (
-      <div className="fade-in center-col quiz-result-screen">
-        <div className="result">
-          <RewardSides />
-          <div className="ring-wreath">
-            <RewardWreath />
-            <Ring pct={pct} size={150} stroke={13}>
-              <div className="ring-pct"><CountUp value={pct} />%</div>
-              <div className="ring-sub">{score}/{total}</div>
-            </Ring>
-          </div>
-          <div className="ttl">{t(ttlKey)}</div>
-          <div className="line" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <Check size={15} strokeWidth={3} /> {score} {t('common.correct')}
-            </span>
-            ·
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <X size={15} strokeWidth={3} /> {total - score} {t('common.wrong')}
-            </span>
-          </div>
-        </div>
-        <button className="btn btn-block" onClick={() => start(topic)}>
-          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
-        </button>
-        <button className="btn btn-block secondary" onClick={() => setPhase('topic')}>
-          <LayoutGrid size={18} strokeWidth={2.4} /> {t('quiz.otherTopic')}
-        </button>
-        <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
-        </button>
-      </div>
-    );
+    return <StudyCompletion
+      title={t(ttlKey)}
+      result={t('quiz.completedCount').replace('{score}', String(score)).replace('{total}', String(total))}
+      description={t('quiz.completedDescription').replace('{percent}', String(pct)).replace('{wrong}', String(total - score))}
+      repeat={{ label: t('common.retry'), onClick: () => void start(topic) }}
+      home={{ label: t('nav.menu'), onClick: onHome }}
+      other={{ label: t('quiz.otherTopic'), onClick: () => setPhase('topic') }}
+    />;
   }
 
   // ---- Playing ----

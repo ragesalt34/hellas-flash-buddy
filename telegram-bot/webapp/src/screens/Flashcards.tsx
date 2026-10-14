@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, RotateCcw, House, Check, Volume2, WifiOff, Info } from '../components/HellasIcons';
+import { CheckCircle2, RotateCcw, Check, Volume2, WifiOff, Info } from '../components/HellasIcons';
 import { api, Flashcard, persistWrite } from '../api';
 import { haptic } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playGrade, playComplete } from '../sound';
-import { CountUp, Empty, Loading, ProgressBar } from '../ui';
+import { Empty, Loading, ProgressBar } from '../ui';
 import { countWord, useLanguage } from '../i18n';
 import { gradeIntervalLabel } from '../srs';
 import { QUESTION_HINTS, questionHintUrl } from '../questionHints';
 import { Owl } from '../components/homeArt';
 import { Greek } from '../components/greek';
-import { RewardSides, RewardWreath } from '../components/RewardArt';
+import { StudyCompletion } from '../components/StudyCompletion';
 import { StudyIcon } from '../components/StudyIcon';
 import { StudyRevealButton } from '../components/StudyRevealButton';
 import { VocabDecorImg } from './vocabularyDecor';
@@ -132,28 +132,13 @@ export function Flashcards({ onHome }: { onHome: () => void }) {
     return <Empty icon={CheckCircle2} text={t('flashcards.empty')} onHome={onHome} />;
 
   if (done) {
-    return (
-      <div className="fade-in center-col fc-screen">
-        <FcDecor />
-        <div className="result">
-          <RewardSides left="coin" />
-          <div className="emoji">
-            <RewardWreath className="emoji-wreath" />
-            <span className="wreath-num">
-              <b><CountUp value={cards.length} delay={150} duration={600} /></b>
-              <small>{countWord(cards.length, 'card', language)}</small>
-            </span>
-          </div>
-          <div className="ttl">{t('flashcards.done')}</div>
-        </div>
-        <button className="btn btn-block" onClick={load}>
-          <RotateCcw size={18} strokeWidth={2.4} /> {t('common.retry')}
-        </button>
-        <button className="btn btn-block secondary" onClick={onHome}>
-          <House size={18} strokeWidth={2.4} /> {t('nav.menu')}
-        </button>
-      </div>
-    );
+    return <StudyCompletion
+      title={t('vocab.completedTitle')}
+      result={t('flashcards.completedCount').replace('{count}', String(cards.length)).replace('{cards}', countWord(cards.length, 'card', language))}
+      description={t('vocab.completedDescription')}
+      repeat={{ label: t('common.retry'), onClick: load }}
+      home={{ label: t('nav.menu'), onClick: onHome }}
+    />;
   }
 
   const card = cards[i];
