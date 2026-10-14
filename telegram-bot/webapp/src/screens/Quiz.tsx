@@ -19,7 +19,7 @@ import { haptic, notify } from '../telegram';
 import { speakGreek, prefetchGreek, textKey, hasGreek } from '../speech';
 import { playCorrect, playWrong, playComplete, playTap } from '../sound';
 import { CountUp, Loading, ProgressBar, Ring, useCached } from '../ui';
-import { countWord, useLanguage } from '../i18n';
+import { countWord, useLanguage, t as translate, type Language } from '../i18n';
 import { Greek } from '../components/greek';
 
 /* Round-theme ornaments for the topic picker: one classical element per
@@ -47,12 +47,13 @@ interface AnswerRec {
 type Phase = 'topic' | 'loading' | 'play' | 'result';
 
 export function Quiz({ onHome }: { onHome: () => void }) {
-  const { t, language } = useLanguage();
+  const { t: uiText, language } = useLanguage();
+  const [sessionLanguage, setSessionLanguage] = useState<Language>(language);
   // Same report the readiness screen shows, so each tile can say how far along that topic is.
   const { data: readiness } = useCached(`readiness:${language}`, api.readiness);
   const [phase, setPhase] = useState<Phase>('topic');
+  const t = phase === 'play' || phase === 'result' ? (key: string) => translate(key, sessionLanguage) : uiText;
   const [topic, setTopic] = useState('mixed');
-  const [topicLabel, setTopicLabel] = useState('');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [idx, setIdx] = useState(0);
   const [chosen, setChosen] = useState<string | null>(null);
@@ -79,13 +80,13 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     if (startingRef.current) return;
     startingRef.current = true;
     haptic();
+    setSessionLanguage(language);
     setStartError(null);
     setTopic(topicId);
     setPhase('loading');
     try {
       const r = await api.quiz(topicId, 10);
       setQuestions(r.questions);
-      setTopicLabel(r.topicLabel);
       setIdx(0);
       setChosen(null);
       chosenRef.current = null;
@@ -304,9 +305,10 @@ export function Quiz({ onHome }: { onHome: () => void }) {
           <span className="counter">{idx + 1} / {questions.length}</span>
         </div>
       </div>
+      {language !== sessionLanguage && <p className="qz-language-note" role="status">{uiText('quiz.sessionLanguage')}</p>}
       <Fragment key={idx}>
         <div className="qz-paper-card swap-in">
-          <span className={'qz-paper-topic ft-' + questionTopic}>{topicLabel}</span>
+          <span className={'qz-paper-topic ft-' + questionTopic}>{t('topic.' + questionTopic)}</span>
           <div className="qz-paper-intro">
             <div className="speak-row">
               <h2 className="qtext">{q.question}</h2>

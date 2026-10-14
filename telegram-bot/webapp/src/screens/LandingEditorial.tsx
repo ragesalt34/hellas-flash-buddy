@@ -36,7 +36,7 @@ function Art({ name, vw, className = '' }: { name: LandingArtKey; vw?: number; c
 
 // The demo card cycles through a few words; the first one is the reference's. `speak` is the exact
 // vocabulary entry the server will pronounce (/api/tts only serves known texts), `id` its clip key;
-// words without one show the sound icon as a plain picture.
+// Words without a supported clip do not show a non-functional audio control.
 const DEMO_WORDS: { word: string; ru: string; speak?: string; id?: number }[] = [
   { word: 'η ιστορία', ru: 'история' },
   { word: 'η ιθαγένεια', ru: 'гражданство', speak: 'ιθαγένεια', id: 1 },
@@ -100,11 +100,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
               >
                 <Volume2 size={22} strokeWidth={2} aria-hidden="true" />
               </button>
-            ) : (
-              <span className="le-demo-sound" aria-hidden="true">
-                <Volume2 size={22} strokeWidth={2} />
-              </span>
-            )}
+            ) : null}
             <span className="le-demo-word" lang="el">{word.word}</span>
             <span className="le-demo-ru">{word.ru}</span>
             <button

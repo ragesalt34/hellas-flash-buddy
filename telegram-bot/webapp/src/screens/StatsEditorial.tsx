@@ -58,7 +58,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
         <figure className="pe-construction">
           <PaperParthenon topics={data.topics.map((topic) => ({ topic: topic.topic, label: label(topic.topic), pct: topic.total > 0 ? topic.greek.known / topic.total : 0 }))} />
           <div className="pe-column-labels">
-            {data.topics.map((topic) => <div className={`pe-tone-${topic.topic}`} key={topic.topic}><span /><b>{percentage(topic.greek.known, topic.total)}%</b><strong>{label(topic.topic)}</strong></div>)}
+            {data.topics.map((topic) => <div className={`pe-tone-${topic.topic}`} key={topic.topic}><span /><strong>{label(topic.topic)}</strong></div>)}
           </div>
           <figcaption>{t('rd.templeHint')}</figcaption>
         </figure>
@@ -71,6 +71,10 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
           <p className="pe-score-note">{t('rd.scoreHint')}</p>
           <div className="pe-goal"><ProgressArtwork kind="precision" /><span>{t('rd.questionsTarget')}<br />{t('rd.wordsTarget')}</span></div>
           {data.plan?.date && (data.plan.phase === 'learn' || data.plan.phase === 'final') && <p className="pe-plan">{t(data.plan.pace === 'behind' ? 'plan.offTrack' : 'plan.onTrack').replace('{date}', new Date(`${data.plan.date}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long' }))}</p>}
+            <div className="pe-actions">
+              {(needsQuestions || !needsWords) && <button className="pe-button" onClick={onCheckGreek}>{t('rd.checkGreek')}</button>}
+              {needsWords && <button className={`pe-button${needsQuestions ? ' is-secondary' : ''}`} onClick={() => onNavigate('vocab')}>{t('rd.studyWords')}</button>}
+            </div>
         </div>
       </section>
       <section className="pe-topics" aria-label={t('rd.byTopic')}>
@@ -99,10 +103,6 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
             <h2 id="pe-next-title">{t('rd.editorial.next')}</h2>
             {data.blockers.length > 0 ? <ul className="pe-blockers">{data.blockers.map((blocker) => <li key={blocker.kind + (blocker.topic ?? '')}>{blocker.kind === 'words' ? <ProgressArtwork kind="words" /> : <TopicArtwork topic={blocker.topic ?? ''} />}<div><b>{blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')}</b><span>{blocker.known}/{blocker.total} · {percentage(blocker.known, blocker.total)}%</span></div></li>)}</ul> : <p>{t('rd.verdictHint.ready')}</p>}
             <p className="pe-next-hint">{t('rd.nextHint')}</p>
-            <div className="pe-actions">
-              {(needsQuestions || !needsWords) && <button className="pe-button" onClick={onCheckGreek}>{t('rd.checkGreek')}</button>}
-              {needsWords && <button className={`pe-button${needsQuestions ? ' is-secondary' : ''}`} onClick={() => onNavigate('vocab')}>{t('rd.studyWords')}</button>}
-            </div>
             <div className="pe-due"><button onClick={() => onNavigate('flashcards')}><ProgressArtwork kind="repeat" /><span><b>{data.due.cards} {countWord(data.due.cards, 'card', language)}</b><small>{t('rd.toReview')}</small></span></button><button onClick={() => onNavigate('vocab')}><ProgressArtwork kind="words" /><span><b>{data.due.words} {countWord(data.due.words, 'word', language)}</b><small>{t('rd.toReview')}</small></span></button></div>
           </section>
           <section className="pe-statistics" aria-label={t('rd.activity')}>

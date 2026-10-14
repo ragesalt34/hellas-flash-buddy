@@ -314,7 +314,7 @@ export function Homework({ onHome }: { onHome: () => void }) {
         </div>
         <aside className="hw-new-aside pureplay-desktop">
           <div className="hw-new-preview" aria-hidden="true"><span lang="el">Α β γ</span></div>
-          <div className="card hw-new-help"><h2>{t('hw.pureplay.helpTitle')}</h2><p>{t('hw.pastePlaceholder')}</p><p>{t('hw.pureplay.reviewHint')}</p></div>
+          <div className="card hw-new-help"><h2>{t('hw.pureplay.helpTitle')}</h2><p>{t('hw.pureplay.reviewHint')}</p></div>
         </aside>
         </div>
       </div>

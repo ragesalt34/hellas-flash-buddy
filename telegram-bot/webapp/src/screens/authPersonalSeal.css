@@ -280,3 +280,18 @@
   [data-theme='soft'] body:has(.auth-personal-seal) .gate-back:focus-visible { outline: 2px solid #0860ff; outline-offset: 4px; }
   [data-theme='soft'] .auth-personal-seal ::selection { background: #bee0fc; color: #111114; }
 }
+
+/* Height-aware desktop composition: keep registration and guest access visible. */
+@media (min-width: 1100px) and (max-height: 900px) {
+  [data-theme='soft'] .auth-screen.auth-personal-seal { min-height: 100svh; padding-bottom: 24px; }
+  [data-theme='soft'] .auth-personal-seal .auth-form-column { padding-top: 36px; }
+  [data-theme='soft'] .auth-screen.auth-personal-seal .auth-title { font-size: 48px; }
+  [data-theme='soft'] .auth-screen.auth-personal-seal .auth-tabs { margin-bottom: 20px; }
+  [data-theme='soft'] .auth-personal-seal .field { margin-bottom: 18px; }
+  [data-theme='soft'] .auth-personal-seal .field-label { margin-bottom: 8px; }
+  [data-theme='soft'] .auth-personal-seal .input { height: 48px; }
+  [data-theme='soft'] .auth-personal-seal .auth-form-column .btn { min-height: 48px; padding-block: 10px; }
+  [data-theme='soft'] .auth-personal-seal .auth-form-column .btn.secondary { min-height: 48px; margin-top: 12px; }
+  [data-theme='soft'] .auth-seal-visual img { width: 100%; height: min(52vh, 440px); left: 0; top: 24px; object-fit: contain; }
+  [data-theme='soft'] .auth-seal-visual h2 { margin-top: calc(min(52vh, 440px) + 48px); font-size: 48px; width: auto; white-space: normal; }
+}

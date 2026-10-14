@@ -5,6 +5,7 @@ export type Language = 'ru' | 'el';
 type Translations = Record<string, { ru: string; el: string }>;
 
 const translations: Translations = {
+  'quiz.sessionLanguage': { ru: 'Этот тест продолжится на языке, выбранном в начале. Новый язык применится к следующему тесту.', el: 'Αυτό το κουίζ συνεχίζεται στη γλώσσα που επέλεξες στην αρχή. Η νέα γλώσσα θα ισχύσει στο επόμενο κουίζ.' },
   // ---- Nav ----
   'header.theme.soft': { ru: 'Мягкое', el: 'Απαλό' },
   'header.theme.brut': { ru: 'Контрастное', el: 'Έντονο' },
