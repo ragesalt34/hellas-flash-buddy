@@ -1,0 +1,258 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "items": [
+    {
+      "order": 41,
+      "questionId": "dadf172d-7ddb-41d6-93cd-78e05105a4ed",
+      "file": "history-41.png",
+      "questionRu": "По итогам референдума в декабре 1974 года народ Греции проголосовал за что?",
+      "questionEl": "Υπέρ τίνος ψήφισε ο ελληνικός λαός στο δημοψήφισμα του Δεκεμβρίου 1974;",
+      "answerRu": "За отмену монархии и провозглашение Парламентской республики",
+      "answerEl": "Υπέρ της κατάργησης της μοναρχίας και της ανακήρυξης Κοινοβουλευτικής Δημοκρατίας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2581659,
+      "sha256": "ee0e04e2c19aacc2eb7ae1d5093cef80b4028c54c707be3335b6c1eafc5eb5a9"
+    },
+    {
+      "order": 42,
+      "questionId": "f2771340-5347-40b5-8f87-3b9816867680",
+      "file": "history-42.png",
+      "questionRu": "Какая сторона победила в Гражданской войне в Греции в 1949 году?",
+      "questionEl": "Ποια πλευρά νίκησε στον Εμφύλιο Πόλεμο της Ελλάδας το 1949;",
+      "answerRu": "Правительственные войска",
+      "answerEl": "Οι κυβερνητικές δυνάμεις",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2972589,
+      "sha256": "ff474474e6abe87547b66cef520874034ff9305c9d642b77591e6c894ef967c3"
+    },
+    {
+      "order": 43,
+      "questionId": "5a4e62e6-f6f1-42d2-9185-bf4b219699c4",
+      "file": "history-43.png",
+      "questionRu": "Почему союзники по Первой Балканской войне вступили во Вторую Балканскую войну?",
+      "questionEl": "Γιατί οι σύμμαχοι του Πρώτου Βαλκανικού Πολέμου μπήκαν στον Δεύτερο Βαλκανικό Πόλεμο;",
+      "answerRu": "Раздел Македонии",
+      "answerEl": "Λόγω του διαμοιρασμού της Μακεδονίας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1512,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2787026,
+      "sha256": "3a491f8b54f2ea876982e311b6087de2b75aa8dc936fd30ef5ce5a3ca40a528d"
+    },
+    {
+      "order": 44,
+      "questionId": "1b0cd7fa-d35c-47ac-b8ea-a18c7893d02d",
+      "file": "history-44.png",
+      "questionRu": "Как назывался период диктатуры в новейшей греческой истории?",
+      "questionEl": "Πώς ονομαζόταν η περίοδος της δικτατορίας στη νεότερη ελληνική ιστορία;",
+      "answerRu": "Χούντα (Хунта)",
+      "answerEl": "Χούντα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        4,
+        1508,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2781416,
+      "sha256": "d3b1794e5deb4dfc0213fa0662eff0d4bc96b50198cc15975ed2d063858afb6d"
+    },
+    {
+      "order": 45,
+      "questionId": "deb253b3-bc27-4247-ac41-ddb3b3454ba2",
+      "file": "history-45.png",
+      "questionRu": "Когда началась Гражданская война в Греции после освобождения?",
+      "questionEl": "Πότε ξεκίνησε ο Εμφύλιος Πόλεμος στην Ελλάδα μετά την απελευθέρωση;",
+      "answerRu": "1946 год",
+      "answerEl": "Το 1946",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1516,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3251012,
+      "sha256": "7d8d36fd20c196f22a43f10d5983b5fe53452445c7f3d0f551153b9ba9ed7ecf"
+    },
+    {
+      "order": 46,
+      "questionId": "b7274336-7d2a-4f04-828e-4399c950618a",
+      "file": "history-46.png",
+      "questionRu": "С какими достижениями связан «Золотой век Афин»?",
+      "questionEl": "Με ποια επιτεύγματα συνδέεται ο «Χρυσός Αιώνας της Αθήνας»;",
+      "answerRu": "Демократия, философия, искусство",
+      "answerEl": "Η δημοκρατία, η φιλοσοφία, η τέχνη",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        8,
+        1520,
+        1008
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2666019,
+      "sha256": "cadc17b5fa4fc1ffdb61c6dd81d4431b2700f34d1b7a5d10ade979667066bc22"
+    },
+    {
+      "order": 47,
+      "questionId": "657bbb1b-0cfa-4cfd-b310-e5ce38311cf3",
+      "file": "history-47.png",
+      "questionRu": "В чём историческое значение Кодекса Юстиниана?",
+      "questionEl": "Ποια είναι η ιστορική σημασία του Κώδικα του Ιουστινιανού;",
+      "answerRu": "Систематизация римского права",
+      "answerEl": "Η συστηματοποίηση του ρωμαϊκού δικαίου",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        19,
+        17,
+        1507,
+        1008
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2841376,
+      "sha256": "6c77923600170da95f3d3b78cb38c1c27ed164cfb4f6043e65809accfd6ba1b2"
+    },
+    {
+      "order": 48,
+      "questionId": "60e83e21-8411-47e0-85e7-d9ba986e726e",
+      "file": "history-48.png",
+      "questionRu": "Что означает «Золотой век Афин»?",
+      "questionEl": "Τι σημαίνει ο «Χρυσός Αιώνας της Αθήνας»;",
+      "answerRu": "Период расцвета Афин после Греко-персидских войн",
+      "answerEl": "Η περίοδος ακμής της Αθήνας μετά τους Περσικούς Πολέμους",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3047274,
+      "sha256": "70a15c0669fbabf184f935d247fa6441f2405e8b814fc036dc4b55805895c1e5"
+    },
+    {
+      "order": 49,
+      "questionId": "bb86e44b-2830-4f87-bde9-e364866b8a90",
+      "file": "history-49.png",
+      "questionRu": "Какие ключевые особенности минойской цивилизации, кроме дворца Кносс?",
+      "questionEl": "Ποια ήταν τα βασικά χαρακτηριστικά του μινωικού πολιτισμού, εκτός από το ανάκτορο της Κνωσού;",
+      "answerRu": "Матроцентрическое общество и фрески",
+      "answerEl": "Η μητροκεντρική κοινωνία και οι τοιχογραφίες",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        43,
+        16,
+        1506,
+        1016
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 3177469,
+      "sha256": "90d85fba174870aad4950940e753157403297dda940cacab809d661d775875c0"
+    },
+    {
+      "order": 50,
+      "questionId": "15ed8eaf-39a4-4fac-9286-f9f5e6d1d369",
+      "file": "history-50.png",
+      "questionRu": "Какой город стал важным культурным центром в эллинистический период?",
+      "questionEl": "Ποια πόλη έγινε σημαντικό πολιτιστικό κέντρο κατά την ελληνιστική περίοδο;",
+      "answerRu": "Александрия",
+      "answerEl": "Η Αλεξάνδρεια",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        33,
+        21,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3024667,
+      "sha256": "11af4895391edc578af3226f187ebd79eb798bb723627866820878ab611ef00c"
+    }
+  ]
+}
