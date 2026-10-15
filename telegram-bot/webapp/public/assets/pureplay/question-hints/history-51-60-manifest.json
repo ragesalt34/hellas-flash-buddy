@@ -1,0 +1,258 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "items": [
+    {
+      "order": 51,
+      "questionId": "89aff4dd-9120-48b4-bccb-509f4d04fd3e",
+      "file": "history-51.png",
+      "questionRu": "Что определил Лозаннский договор помимо установления границ?",
+      "questionEl": "Τι καθόρισε η Συνθήκη της Λωζάνης εκτός από τον καθορισμό των συνόρων;",
+      "answerRu": "Обмен населением",
+      "answerEl": "Ανταλλαγή πληθυσμών",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        5,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 3,
+      "byteLength": 2834153,
+      "sha256": "bed18bdb5ea6d53dd42cb2bbea48a57e3a51c580a3ffdd8bf18899c283c8b880"
+    },
+    {
+      "order": 52,
+      "questionId": "2dcefe10-792a-4c43-a8f8-f24b0fc0aad5",
+      "file": "history-52.png",
+      "questionRu": "Кто стал первым правителем независимой Греции?",
+      "questionEl": "Ποιος έγινε ο πρώτος κυβερνήτης της ανεξάρτητης Ελλάδας;",
+      "answerRu": "Иоаннис Каподистрия",
+      "answerEl": "Ο Ιωάννης Καποδίστριας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2861293,
+      "sha256": "241bb720d48b7097ac3f94f7d66b55d3773cb86a55d130ba7eb32cfceeb19469"
+    },
+    {
+      "order": 53,
+      "questionId": "03caf3c6-2274-4a44-991f-d639b21a94d9",
+      "file": "history-53.png",
+      "questionRu": "Как звали ученого, стоявшего у истоков новогреческого просвещения?",
+      "questionEl": "Πώς ονομαζόταν ο λόγιος που βρισκόταν στις απαρχές του νεοελληνικού διαφωτισμού;",
+      "answerRu": "Адамантиос Кораис",
+      "answerEl": "Ο Αδαμάντιος Κοραής",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        31,
+        1518,
+        1010
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2707948,
+      "sha256": "8ca9d1ef82eee27070385c4923da7f048ccdf840e46f48523b11577fcfecd9ca"
+    },
+    {
+      "order": 54,
+      "questionId": "0bb28042-971f-4e22-8e97-70c9e2ef188a",
+      "file": "history-54.png",
+      "questionRu": "Какое морское сражение стало переломным моментом в Греческой революции?",
+      "questionEl": "Ποια ναυμαχία αποτέλεσε σημείο καμπής στην Ελληνική Επανάσταση;",
+      "answerRu": "Наваринское сражение",
+      "answerEl": "Η Ναυμαχία του Ναβαρίνου",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        19,
+        33,
+        1518,
+        990
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2644006,
+      "sha256": "569960ca1e3b8c6b650e5389a5b28e93befe130d4a99a1c15ca3f5a1bad1bd2e"
+    },
+    {
+      "order": 55,
+      "questionId": "27a19f00-7afc-4ecb-94b4-99d57d7aa50d",
+      "file": "history-55.png",
+      "questionRu": "Кто был известным математиком Древней Греции?",
+      "questionEl": "Ποιος ήταν διάσημος μαθηματικός της Αρχαίας Ελλάδας;",
+      "answerRu": "Пифагор",
+      "answerEl": "Ο Πυθαγόρας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1514,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3197931,
+      "sha256": "5b1078cb65e609c6ccb285c18e0932e106bcea333cdd8adb88f37ed2d4651afc"
+    },
+    {
+      "order": 56,
+      "questionId": "f16d204a-fa41-4ac0-baab-a28f2c573cdf",
+      "file": "history-56.png",
+      "questionRu": "Какие страны поддерживали правительственные войска Греции во время Гражданской войны?",
+      "questionEl": "Ποιες χώρες υποστήριξαν τις κυβερνητικές δυνάμεις της Ελλάδας κατά τον Εμφύλιο Πόλεμο;",
+      "answerRu": "Великобритания и затем США",
+      "answerEl": "Η Μεγάλη Βρετανία και στη συνέχεια οι ΗΠΑ",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2787528,
+      "sha256": "6d60124d365139f4e5c55ffb89bf057f6c7ecf98eade4750ad42efdee481ec65"
+    },
+    {
+      "order": 57,
+      "questionId": "334970f6-92bc-4a5b-ae2f-18ff395473d5",
+      "file": "history-57.png",
+      "questionRu": "Какой археолог обнаружил царские гробницы и «маску Агамемнона» в Микенах?",
+      "questionEl": "Ποιος αρχαιολόγος ανακάλυψε τους βασιλικούς τάφους και τη «μάσκα του Αγαμέμνονα» στις Μυκήνες;",
+      "answerRu": "Генрих Шлиман",
+      "answerEl": "Ο Ερρίκος Σλήμαν",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        34,
+        15,
+        1509,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3333268,
+      "sha256": "1446cd8f7c4630de15d51742c8cd996f3b002761a0920a71ad4cc3bd586c4559"
+    },
+    {
+      "order": 58,
+      "questionId": "cd41f782-40ce-48f6-ba01-15254087822e",
+      "file": "history-58.png",
+      "questionRu": "Какие новые земли присоединила Греция после Балканских войн?",
+      "questionEl": "Ποια νέα εδάφη προσάρτησε η Ελλάδα μετά τους Βαλκανικούς Πολέμους;",
+      "answerRu": "Македония, Фракия, Эпир, острова Эгейского моря",
+      "answerEl": "Η Μακεδονία, η Θράκη, η Ήπειρος και τα νησιά του Αιγαίου",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        19,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3273122,
+      "sha256": "df3fffbb5416e0e506655a77f4205c0bb7f7fd701cda25e69e753fb0d6a59dd6"
+    },
+    {
+      "order": 59,
+      "questionId": "f6a92cfd-b1d4-4b63-a6e9-e6e70ef08767",
+      "file": "history-59.png",
+      "questionRu": "Какое событие произошло в октябре 1940 года, связанное с нападением на Грецию?",
+      "questionEl": "Ποιο γεγονός συνέβη τον Οκτώβριο του 1940 σχετικά με την επίθεση κατά της Ελλάδας;",
+      "answerRu": "Италия напала на Грецию",
+      "answerEl": "Η Ιταλία επιτέθηκε στην Ελλάδα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        23,
+        1518,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3153269,
+      "sha256": "b3ebef5c445d8d27a41f40a099d392e3b8afb06d9cd65d2efe73f6ad7b4db802"
+    },
+    {
+      "order": 60,
+      "questionId": "11550503-3f36-4755-9312-f826943a9e5b",
+      "file": "history-60.png",
+      "questionRu": "Кто объединил греков и создал империю, простирающуюся до Египта и Индии в Эллинистический период?",
+      "questionEl": "Ποιος ένωσε τους Έλληνες και δημιούργησε μια αυτοκρατορία που εκτεινόταν μέχρι την Αίγυπτο και την Ινδία κατά την Ελληνιστική περίοδο;",
+      "answerRu": "Александр Македонский",
+      "answerEl": "Ο Μέγας Αλέξανδρος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        21,
+        1524,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2991114,
+      "sha256": "a143bc3302d66178da26436798fc315b2bdea8541ee488273be42dee7e9e6cb0"
+    }
+  ]
+}
