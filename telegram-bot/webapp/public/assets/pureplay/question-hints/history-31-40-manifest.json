@@ -1,0 +1,265 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "anatomyReview": {
+    "history-32.png": "Face, spectacles, neck and shoulders inspected. Bust contains no hands.",
+    "history-34.png": "Sculpted Constantine bust: proportions reviewed as stylised sculpture.",
+    "history-35.png": "Face identity follows history-14 reference; facial and shoulder anatomy inspected in new composition.",
+    "history-38.png": "Face, eyes, moustache, neck and shoulder proportions inspected."
+  },
+  "items": [
+    {
+      "order": 31,
+      "questionId": "25493da7-fbde-42ee-a3c5-0b1907f96351",
+      "file": "history-31.png",
+      "questionRu": "Какой знаменитый храм является примером византийского искусства?",
+      "questionEl": "Ποιος περίφημος ναός αποτελεί παράδειγμα βυζαντινής τέχνης;",
+      "answerRu": "Святая София",
+      "answerEl": "Η Αγία Σοφία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 9,
+      "byteLength": 3352261,
+      "sha256": "9e13cca5621dd6d64cfe976a4b1ef85269d3f5152f42dba1f3911386b2432335"
+    },
+    {
+      "order": 32,
+      "questionId": "b83a605e-1a5e-4671-8348-e3b48d8a7877",
+      "file": "history-32.png",
+      "questionRu": "Кто был премьер-министром Греции во время Балканских войн?",
+      "questionEl": "Ποιος ήταν ο πρωθυπουργός της Ελλάδας κατά τους Βαλκανικούς Πολέμους;",
+      "answerRu": "Элефтериос Венизелос",
+      "answerEl": "Ο Ελευθέριος Βενιζέλος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        19,
+        1523,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2735226,
+      "sha256": "ff4f9652d08237d87f56c414e8327bc70e3530198fc15ce6fde220dabbaf64a3"
+    },
+    {
+      "order": 33,
+      "questionId": "e8c8c613-9c70-4c2f-9f40-118a0433e937",
+      "file": "history-33.png",
+      "questionRu": "Какой греческий город становится демократичнее при Перикле?",
+      "questionEl": "Ποια ελληνική πόλη γίνεται πιο δημοκρατική επί Περικλή;",
+      "answerRu": "Афины",
+      "answerEl": "Η Αθήνα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 5,
+      "byteLength": 2948124,
+      "sha256": "f14cbcd5e9f6dc85f1cbe327c07c312d73c89a620b88633f6954325ed48fc60d"
+    },
+    {
+      "order": 34,
+      "questionId": "d49be3e7-cecf-4394-b638-37455b037c32",
+      "file": "history-34.png",
+      "questionRu": "В каком году Константин выбрал город Византий в качестве новой столицы?",
+      "questionEl": "Ποια χρονιά επέλεξε ο Κωνσταντίνος την πόλη του Βυζαντίου ως νέα πρωτεύουσα;",
+      "answerRu": "324 г.",
+      "answerEl": "Το 324",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        31,
+        1536,
+        1006
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 5,
+      "byteLength": 2791512,
+      "sha256": "2c13cf98f523e03619e7e0a204e5fb399bc2a9938add6de5c9013ba4f3552ca0"
+    },
+    {
+      "order": 35,
+      "questionId": "c1eaf7a5-42d8-4503-b96b-ebba72e6f9c6",
+      "file": "history-35.png",
+      "questionRu": "Кто из греческих лидеров выступал за нейтралитет в Первой мировой войне, испытывая симпатии к Германии?",
+      "questionEl": "Ποιος από τους Έλληνες ηγέτες τασσόταν υπέρ της ουδετερότητας στον Α΄ Παγκόσμιο Πόλεμο, έχοντας συμπάθειες προς τη Γερμανία;",
+      "answerRu": "Король Константин I",
+      "answerEl": "Ο βασιλιάς Κωνσταντίνος Α΄",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        31,
+        1521,
+        1004
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2181362,
+      "sha256": "9048af0b5d27e65fe26b882d1804618f504d90133d0026f582eff3a0c4279701"
+    },
+    {
+      "order": 36,
+      "questionId": "41dc2363-772d-4ce7-8605-6cc91986b112",
+      "file": "history-36.png",
+      "questionRu": "Как звали последнего императора Византии, погибшего в бою при защите Константинополя?",
+      "questionEl": "Πώς ονομαζόταν ο τελευταίος αυτοκράτορας του Βυζαντίου, που έπεσε στη μάχη υπερασπιζόμενος την Κωνσταντινούπολη;",
+      "answerRu": "Константин XI Палеолог",
+      "answerEl": "Ο Κωνσταντίνος ΙΑ΄ Παλαιολόγος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        20,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 9,
+      "byteLength": 2867715,
+      "sha256": "f03af93bcac946d74c78895530720922f8820686342704a2b3e397d4112e0a6c"
+    },
+    {
+      "order": 37,
+      "questionId": "8fbf25bc-bde7-49cc-8c48-a2d16d228eca",
+      "file": "history-37.png",
+      "questionRu": "В каком году греческие войска высадились в Малой Азии?",
+      "questionEl": "Ποια χρονιά αποβιβάστηκαν τα ελληνικά στρατεύματα στη Μικρά Ασία;",
+      "answerRu": "1919 г.",
+      "answerEl": "Το 1919",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        47,
+        1478,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2803877,
+      "sha256": "05c9e518d392547b0be8965c6c909bf2a6d84f97810b31aa343ba10302a9dd24",
+      "compositionReview": "Regenerated framing: full mast and quay edges visible; transparent perimeter."
+    },
+    {
+      "order": 38,
+      "questionId": "95d28652-acb5-47be-a326-9efa7dda24c0",
+      "file": "history-38.png",
+      "questionRu": "Кто командовал турецкой армией, разгромившей греков в Малой Азии?",
+      "questionEl": "Ποιος διοικούσε τον τουρκικό στρατό που συνέτριψε τους Έλληνες στη Μικρά Ασία;",
+      "answerRu": "Мустафа Кемаль Ататюрк",
+      "answerEl": "Ο Μουσταφά Κεμάλ Ατατούρκ",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1521,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2674952,
+      "sha256": "d0cd2f8e0dded0b3adec0846749e8aad8f6432c337e139475b700964b47b3812"
+    },
+    {
+      "order": 39,
+      "questionId": "66d9c5ba-4d8c-451e-b31f-27536052ab0b",
+      "file": "history-39.png",
+      "questionRu": "Какая сторона стремилась установить социалистический режим во время Гражданской войны в Греции?",
+      "questionEl": "Ποια πλευρά επιδίωκε να εγκαθιδρύσει σοσιαλιστικό καθεστώς κατά τον Εμφύλιο Πόλεμο στην Ελλάδα;",
+      "answerRu": "Коммунистические силы",
+      "answerEl": "Οι κομμουνιστικές δυνάμεις",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        2,
+        1532,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2940745,
+      "sha256": "b8d54380be7319d5a4419f4b354e60326d63499909dfdd4859398c8014db0aca"
+    },
+    {
+      "order": 40,
+      "questionId": "9a654664-db69-43df-aa27-6cbe876ce8a0",
+      "file": "history-40.png",
+      "questionRu": "Сколько греков стали беженцами в результате Малоазийской катастрофы?",
+      "questionEl": "Πόσοι Έλληνες έγιναν πρόσφυγες ως αποτέλεσμα της Μικρασιατικής Καταστροφής;",
+      "answerRu": "Более 1 миллиона",
+      "answerEl": "Πάνω από 1 εκατομμύριο",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 3,
+      "byteLength": 3117701,
+      "sha256": "87956a196688bfec4fe7a3167543018a61354b2e0d797d4e20a9b3f05f4170cb"
+    }
+  ]
+}
