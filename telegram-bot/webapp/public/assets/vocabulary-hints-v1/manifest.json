@@ -1039,8 +1039,12 @@
       "word": "παράδοση",
       "translation": "традиция",
       "topic": "culture",
-      "webp": "vocab-130-tradition.webp",
-      "transparent": true
+      "transparent": true,
+      "previousFile": "vocab-130-tradition.webp",
+      "file": "vocab-130-tradition-v2.png",
+      "format": "png",
+      "revision": "v2: two visible people, four anatomically connected arms/hands",
+      "sha256": "c92282a7c5b7c0cf32a9091f9c19b91056dc068497c4fd26540d7389790c1e3b"
     },
     {
       "vocabularyId": 131,
@@ -1202,5 +1206,6 @@
       "webp": "vocab-150-holy-week.webp",
       "transparent": true
     }
-  ]
+  ],
+  "fileMapping": "Use file when present; otherwise webp (legacy filename field)."
 }

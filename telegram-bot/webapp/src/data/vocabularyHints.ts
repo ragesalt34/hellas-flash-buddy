@@ -130,7 +130,7 @@ export const VOCABULARY_HINTS: Readonly<Partial<Record<number, string>>> = {
   127: 'vocab-127-art.webp',
   128: 'vocab-128-architecture.webp',
   129: 'vocab-129-sculpture.webp',
-  130: 'vocab-130-tradition.webp',
+  130: 'vocab-130-tradition-v2.png',
   131: 'vocab-131-civilization.webp',
   132: 'vocab-132-march-independence-day.webp',
   133: 'vocab-133-ohi-day.webp',
