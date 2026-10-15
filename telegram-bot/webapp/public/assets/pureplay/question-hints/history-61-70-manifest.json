@@ -1,0 +1,258 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 10,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "items": [
+    {
+      "order": 61,
+      "questionId": "66a5031b-82ba-4458-bdf9-7ff2c57011cd",
+      "file": "history-61.png",
+      "questionRu": "Какие территории получила Греция по итогам Первой Балканской войны?",
+      "questionEl": "Ποια εδάφη απέκτησε η Ελλάδα μετά τον Πρώτο Βαλκανικό Πόλεμο;",
+      "answerRu": "Салоники, Иоаннина и части Эпира",
+      "answerEl": "Η Θεσσαλονίκη, τα Ιωάννινα και τμήματα της Ηπείρου",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 6,
+      "byteLength": 2949832,
+      "sha256": "eeca90cef3735c2ae18eca5a73f9f4f72632dc75ff009f5878dc07a302bddddd"
+    },
+    {
+      "order": 62,
+      "questionId": "4cedc255-6920-40c5-a82c-97b03d536f83",
+      "file": "history-62.png",
+      "questionRu": "Кто из перечисленных был выдающимся философом Классического периода?",
+      "questionEl": "Ποιος από τους παρακάτω ήταν εξέχων φιλόσοφος της Κλασικής περιόδου;",
+      "answerRu": "Платон",
+      "answerEl": "Ο Πλάτων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        29,
+        21,
+        1516,
+        1007
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2793412,
+      "sha256": "3d40190a09b0211e30b70fae7743725ca5ffdfad0ed8a0481ed6bb21ec4182a4"
+    },
+    {
+      "order": 63,
+      "questionId": "30d1f43e-5a75-49e2-8f22-30a110310dca",
+      "file": "history-63.png",
+      "questionRu": "Чем закончилось восстание в Придунайских княжествах в 1821 году?",
+      "questionEl": "Πώς έληξε η εξέγερση στις Παραδουνάβιες Ηγεμονίες το 1821;",
+      "answerRu": "Быстро подавлено",
+      "answerEl": "Κατεστάλη γρήγορα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1532,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3012767,
+      "sha256": "6c27a0c6cdbef3c1f9a06674a1894d84cf9f7f2155ca6c59e4d6b092cbe79094"
+    },
+    {
+      "order": 64,
+      "questionId": "63ac6292-082c-43e6-abbe-4d092a77b00f",
+      "file": "history-64.png",
+      "questionRu": "Чем клефты отличались от арматолов?",
+      "questionEl": "Σε τι διέφεραν οι κλέφτες από τους αρματολούς;",
+      "answerRu": "Клефты были вне закона, а арматолы сотрудничали с османами",
+      "answerEl": "Οι κλέφτες ήταν εκτός νόμου, ενώ οι αρματολοί συνεργάζονταν με τους Οθωμανούς",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3205209,
+      "sha256": "594c68f8468aac3f32f8c819ac65d39c4fd001c271d4938f279a698ac4f0578c"
+    },
+    {
+      "order": 65,
+      "questionId": "1a6632d2-5c16-4c6a-98cb-b0a8fd33bd85",
+      "file": "history-65.png",
+      "questionRu": "Что помогло османам взять Константинополь в 1453 году?",
+      "questionEl": "Τι βοήθησε τους Οθωμανούς να καταλάβουν την Κωνσταντινούπολη το 1453;",
+      "answerRu": "Новые артиллерийские орудия и численное превосходство",
+      "answerEl": "Τα νέα πυροβόλα όπλα και η αριθμητική υπεροχή",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        19,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2710526,
+      "sha256": "fd4b8359398f91666418187af90f6fed5dbb6fbbb517f3f22dfdaa223e932386"
+    },
+    {
+      "order": 66,
+      "questionId": "f7c9d57b-944d-4644-808d-579f461bf5db",
+      "file": "history-66.png",
+      "questionRu": "Какие страны образовали коалицию против Османской империи в Первой Балканской войне?",
+      "questionEl": "Ποιες χώρες σχημάτισαν συμμαχία εναντίον της Οθωμανικής Αυτοκρατορίας στον Πρώτο Βαλκανικό Πόλεμο;",
+      "answerRu": "Греция, Сербия, Черногория и Болгария",
+      "answerEl": "Η Ελλάδα, η Σερβία, το Μαυροβούνιο και η Βουλγαρία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        15,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2328273,
+      "sha256": "679fc4870e0d6c2963c4be86716ad29b63dffc469851bc2bdc84980d9b6a987e"
+    },
+    {
+      "order": 67,
+      "questionId": "e7854109-03a8-4604-b337-961da392c913",
+      "file": "history-67.png",
+      "questionRu": "Какие партизанские движения организовали сопротивление во время немецкой оккупации Греции?",
+      "questionEl": "Ποια αντιστασιακά κινήματα οργάνωσαν την αντίσταση κατά τη γερμανική κατοχή της Ελλάδας;",
+      "answerRu": "ЭАМ–ЭЛАС и др.",
+      "answerEl": "Το ΕΑΜ–ΕΛΑΣ κ.ά.",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1528,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3037118,
+      "sha256": "0fa5d2e2fe5782aa7b6c0bfcbb8d0150d3103f106fe6b17993f6fb0722fff346"
+    },
+    {
+      "order": 68,
+      "questionId": "62f9b847-76c1-4f24-9fe9-4f093b6497d0",
+      "file": "history-68.png",
+      "questionRu": "Какой английский поэт участвовал в Греческой революции и умер в Месолонгионе?",
+      "questionEl": "Ποιος Άγγλος ποιητής συμμετείχε στην Ελληνική Επανάσταση και πέθανε στο Μεσολόγγι;",
+      "answerRu": "Лорд Байрон",
+      "answerEl": "Ο Λόρδος Βύρων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2801868,
+      "sha256": "9322947ec73ea8298ba9679607d1ddc5c4fe3a7e48552a72c7c8cbd2fa85fca1"
+    },
+    {
+      "order": 69,
+      "questionId": "f18bdb2f-17e3-4130-9bae-159005c558a7",
+      "file": "history-69.png",
+      "questionRu": "Какие формы правления были характерны для полисов в архаическую эпоху?",
+      "questionEl": "Ποιες μορφές διακυβέρνησης ήταν χαρακτηριστικές για τις πόλεις-κράτη κατά την Αρχαϊκή εποχή;",
+      "answerRu": "Аристократия, олигархия, тирания, демократия",
+      "answerEl": "Η αριστοκρατία, η ολιγαρχία, η τυραννία, η δημοκρατία",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        9,
+        1535,
+        1006
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2643663,
+      "sha256": "5566d63d13e0426186fd6d1148904a5f5a2912e36c2cee9e6513f5a75c770630"
+    },
+    {
+      "order": 70,
+      "questionId": "92054e9e-4b46-431b-a807-b9590745db98",
+      "file": "history-70.png",
+      "questionRu": "Какое название получило предание о тайном изучении греческого языка, религии и истории греческими детьми под властью Османской империи?",
+      "questionEl": "Ποια ονομασία έλαβε ο θρύλος για τη μυστική διδασκαλία της ελληνικής γλώσσας, θρησκείας και ιστορίας στα ελληνόπουλα υπό την οθωμανική κυριαρχία;",
+      "answerRu": "Тайная школа",
+      "answerEl": "Το Κρυφό Σχολειό",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        4,
+        1536,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2995261,
+      "sha256": "59c2f110d5c20b79bbfa2dd2f30fd9d14f2c341ff49f5ee7aca6baaab1f4bde0"
+    }
+  ]
+}
