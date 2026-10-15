@@ -112,7 +112,7 @@ export const VOCABULARY_HINTS: Readonly<Partial<Record<number, string>>> = {
   109: 'vocab-109-olympic-games.webp',
   110: 'vocab-110-orthodoxy.webp',
   111: 'vocab-111-easter.webp',
-  112: 'vocab-112-carnival.webp',
+  112: 'vocab-112-carnival-v2.png',
   113: 'vocab-113-christmas.webp',
   114: 'vocab-114-philosophy.webp',
   115: 'vocab-115-theatre.webp',

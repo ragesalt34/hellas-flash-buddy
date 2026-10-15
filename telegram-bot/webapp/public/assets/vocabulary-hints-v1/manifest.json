@@ -895,8 +895,12 @@
       "word": "Απόκριες",
       "translation": "Карнавал",
       "topic": "culture",
-      "webp": "vocab-112-carnival.webp",
-      "transparent": true
+      "transparent": true,
+      "previousFile": "vocab-112-carnival.webp",
+      "file": "vocab-112-carnival-v2.png",
+      "format": "png",
+      "revision": "v2: remove central extra hand; child holds her own cape",
+      "sha256": "271852c06b05491c2343b98e37d5ecdc303d63c061170104d006883d123199b4"
     },
     {
       "vocabularyId": 113,
