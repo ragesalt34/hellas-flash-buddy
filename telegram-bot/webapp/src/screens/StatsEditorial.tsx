@@ -63,6 +63,13 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
   const active = new Set(data.activity.days);
   const activeDays = days.filter((day) => active.has(day)).length;
   const weeks = Array.from({ length: 5 }, (_, index) => days.slice(index * 7, index * 7 + 7));
+  // A week as "12–18" over "сент." (or "26–2" over "сент.–окт."): two short lines that never wrap.
+  const monthOf = (day: string) => new Date(`${day}T12:00:00`).toLocaleDateString(locale, { month: 'short' });
+  const weekLabel = (week: string[]) => {
+    const [first, last] = [week[0], week[6]];
+    const [m1, m2] = [monthOf(first), monthOf(last)];
+    return { days: `${Number(first.slice(8))}–${Number(last.slice(8))}`, months: m1 === m2 ? m1 : `${m1}–${m2}` };
+  };
   const formatDay = (day: string) => new Date(`${day}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
   const time = data.time ?? null;
   const weekSeconds = (week: string[]) => week.reduce((sum, day) => sum + (time?.byDay[day] ?? 0), 0);
@@ -186,7 +193,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
           <p className="pe-calendar-summary">{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}</p>
           <div className="pe-legend"><span><i className="is-on" />{t('rd.editorial.studied')}</span><span><i />{t('rd.editorial.rest')}</span></div>
           <div className="pe-weeks">
-            {weeks.map((week) => <div className="pe-week" key={week[0]}><span className="pe-week-range">{formatDay(week[0])}<br />— {formatDay(week[6])}{time && weekSeconds(week) >= 60 && <small>{formatStudyTime(weekSeconds(week), language)}</small>}</span><div role="img" aria-label={week.map((day) => `${formatDay(day)}: ${t(active.has(day) ? 'rd.editorial.studied' : 'rd.editorial.rest')}${time?.byDay[day] ? `, ${formatStudyTime(time.byDay[day], language)}` : ''}`).join('; ')}><OliveCalendar days={week} active={active} today={days[34]} /></div></div>)}
+            {weeks.map((week) => <div className="pe-week" key={week[0]}><span className="pe-week-range"><b>{weekLabel(week).days}</b><span>{weekLabel(week).months}</span>{time && weekSeconds(week) >= 60 && <small>{formatStudyTime(weekSeconds(week), language)}</small>}</span><div role="img" aria-label={week.map((day) => `${formatDay(day)}: ${t(active.has(day) ? 'rd.editorial.studied' : 'rd.editorial.rest')}${time?.byDay[day] ? `, ${formatStudyTime(time.byDay[day], language)}` : ''}`).join('; ')}><OliveCalendar days={week} active={active} today={days[34]} /></div></div>)}
           </div>
           <p className="pe-calendar-hint">{t('rd.oliveHint')}</p>
         </section>
