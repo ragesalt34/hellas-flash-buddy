@@ -1,0 +1,23 @@
+{
+  "build": "npm run build: exit 0 (tsc -b + vite build)",
+  "originalHashes": "all 5 files byte-identical in handoff, public and dist",
+  "browser": "ChatGPT in-app browser",
+  "checkedWidths": [
+    1440,
+    375
+  ],
+  "checkedLocales": [
+    "ru",
+    "el"
+  ],
+  "interactions": [
+    "open/close",
+    "Enter/Space",
+    "multiple simultaneous answers",
+    "double click during transition",
+    "language switch with answers open"
+  ],
+  "consoleErrors": [],
+  "scope": "assets and standalone preview only; main FAQ unchanged",
+  "overflow": "scrollWidth <= innerWidth; phone scrollbar occupies 15px"
+}

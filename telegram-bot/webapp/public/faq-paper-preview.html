@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hellas Study — FAQ: бумажные вкладки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#fdfbf7; color:#151515; font-family:Inter,Arial,sans-serif; }
+.preview-tools { max-width:1280px; margin:28px auto 0; display:flex; justify-content:space-between; align-items:center; padding:0 4px; gap:16px; color:#69706b; font-size:12px; }
+.preview-tools nav { display:flex; gap:4px; }
+.preview-tools button { font:inherit; color:inherit; background:transparent; border:0; border-bottom:1px solid transparent; padding:10px 12px; cursor:pointer; min-width:44px; min-height:44px; }
+.preview-tools button[aria-pressed="true"] { color:#1c4762; border-color:#b65c3d; font-weight:700; }
+.faq-section { width:min(1280px,calc(100% - 120px)); margin:96px auto 108px; display:grid; grid-template-columns:minmax(0,.34fr) minmax(0,.66fr); column-gap:64px; align-items:start; }
+.faq-intro h1 { margin:0; font-size:clamp(40px,4.1vw,62px); line-height:1.04; font-weight:800; letter-spacing:-.055em; text-wrap:balance; max-width:430px; }
+.faq-intro h1 span { display:block; }
+.art { position:relative; display:block; pointer-events:none; }
+.art img { position:absolute; height:auto; max-width:none; user-select:none; }
+.notebook { width:calc(100% - 16px); max-width:368px; margin:24px 0 0; }
+.faq-list { display:grid; gap:17px; padding:4px 0 0; min-width:0; }
+.faq-item { position:relative; isolation:isolate; min-width:0; margin:0; }
+.sheet-deco { position:absolute; z-index:-1; inset:-7px; overflow:hidden; pointer-events:none; }
+.skin { position:absolute; border:0 solid transparent; border-image-repeat:stretch; }
+.skin-paper-expanded { opacity:0; transition:opacity 180ms ease; }
+.skin-paper-collapsed { opacity:1; transition:opacity 180ms ease; }
+.faq-item[open] .skin-paper-expanded { opacity:1; }
+.faq-item[open] .skin-paper-collapsed { opacity:0; }
+.tab { position:absolute; height:51px; width:auto; left:-17px; top:12px; z-index:-2; }
+summary { list-style:none; display:flex; gap:20px; justify-content:space-between; align-items:center; min-height:79px; padding:21px 28px 21px 34px; cursor:pointer; font-size:22px; line-height:1.35; font-weight:700; letter-spacing:-.035em; -webkit-tap-highlight-color:transparent; }
+summary::-webkit-details-marker { display:none; }
+summary::marker { content:""; }
+summary:focus-visible { outline:2px solid #285e80; outline-offset:3px; border-radius:3px; }
+summary [data-copy="q"] { min-width:0; }
+.toggle { width:24px; height:24px; position:relative; flex:0 0 24px; }
+.toggle::before,.toggle::after { content:""; position:absolute; background:currentColor; border-radius:1px; transition:transform 160ms ease; }
+.toggle::before { width:22px; height:1.5px; top:11px; left:1px; }
+.toggle::after { width:1.5px; height:22px; left:11px; top:1px; }
+.faq-item[open] .toggle::after { transform:scaleY(0); }
+.faq-answer { padding:0 34px 28px; }
+.faq-answer p { margin:0; font-size:18px; line-height:1.6; letter-spacing:-.018em; color:#373b38; overflow-wrap:anywhere; }
+@media(hover:hover) { summary:hover { color:#894c34; } }
+.art-notebook { aspect-ratio: 1006 / 1005; }
+.art-notebook img { left: -15.00994%; top: -16.71642%; width: 124.65209%; }
+.skin-paper-collapsed { inset: -72.600px -22.200px -72.000px -25.500px; border-image-source: url("/assets/faq-paper-v1/faq-paper-collapsed.png"); border-image-slice: 302 134 300 145 fill; border-image-width: 90.600px 40.200px 90.000px 43.500px; }
+.skin-paper-expanded { inset: -67.781px -15.469px -59.906px -26.438px; border-image-source: url("/assets/faq-paper-v1/faq-paper-expanded.png"); border-image-slice: 305 119 277 158 fill; border-image-width: 85.781px 33.469px 77.906px 44.438px; }
+.art-tab-blue { aspect-ratio: 304 / 952; }
+.art-tab-blue img { left: -156.90789%; top: -16.70168%; width: 412.50000%; }
+.art-tab-terracotta { aspect-ratio: 387 / 1021; }
+.art-tab-terracotta img { left: -112.14470%; top: -12.53673%; width: 324.03101%; }
+@media(min-width:1800px) { .faq-section { margin-top:120px; } }
+@media(max-width:1100px) {
+ .preview-tools { margin-left:36px; margin-right:36px; }
+ .faq-section { width:calc(100% - 80px); gap:36px; grid-template-columns:minmax(0,.33fr) minmax(0,.67fr); margin-top:64px; }
+ .faq-intro h1 { font-size:44px; }
+ summary { font-size:20px; padding-left:27px; padding-right:24px; }
+ .faq-answer { padding-left:27px; padding-right:27px; }
+}
+@media(max-width:700px) {
+ .preview-tools { margin:14px 20px 0; gap:8px; font-size:11px; }
+ .faq-section { width:calc(100% - 48px); margin:46px auto 64px; grid-template-columns:minmax(0,1fr); gap:32px; }
+ .faq-intro { display:flex; gap:12px; align-items:center; }
+ .faq-intro h1 { font-size:36px; letter-spacing:-.05em; flex:1; }
+ .notebook { flex:0 0 96px; width:96px; margin:0; }
+ .faq-list { gap:15px; }
+ .tab { height:40px; left:-11px; top:14px; }
+ summary { font-size:18px; line-height:1.4; min-height:76px; padding:20px 17px 20px 22px; gap:12px; letter-spacing:-.03em; }
+ .toggle { transform:scale(.82); }
+ .faq-answer { padding:0 22px 26px; }
+ .faq-answer p { font-size:16px; line-height:1.6; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
+</style>
+</head>
+<body>
+<header class="preview-tools"><span>Hellas Study · FAQ / paper tabs</span><nav aria-label="Язык превью"><button type="button" data-lang="ru" aria-pressed="true">RU</button><button type="button" data-lang="el" aria-pressed="false">EL</button></nav></header>
+<main>
+<section class="faq-section" aria-labelledby="faq-title">
+ <div class="faq-intro">
+  <h1 id="faq-title"><span>Прежде чем</span><span>начать</span></h1>
+  <span class="art art-notebook notebook" aria-hidden="true"><img src="/assets/faq-paper-v1/faq-notebook.png" alt="" draggable="false" fetchpriority="high" decoding="async"></span>
+ </div>
+ <div class="faq-list"><details class="faq-item" id="faq-1" >
+ <summary><span class="art art-tab-terracotta tab" aria-hidden="true"><img src="/assets/faq-paper-v1/faq-tab-terracotta.png" alt="" draggable="false"></span>
+ <span class="sheet-deco" aria-hidden="true"><span class="skin skin-paper-collapsed"></span><span class="skin skin-paper-expanded"></span></span>
+ <span data-copy="q">Сколько нужно готовиться?</span><span class="toggle" aria-hidden="true"></span></summary>
+ <div class="answer-clip"><div class="faq-answer"><p data-copy="a">Регулярность важнее срока: 10 минут каждый день дают больше, чем три часа раз в неделю. Здесь 160+ вопросов — по 10 за подход это две-три недели, чтобы увидеть весь материал. Дальше умное повторение само возвращает то, что начало забываться.</p></div></div>
+</details>
+<details class="faq-item" id="faq-4" open>
+ <summary><span class="art art-tab-blue tab" aria-hidden="true"><img src="/assets/faq-paper-v1/faq-tab-blue.png" alt="" draggable="false"></span>
+ <span class="sheet-deco" aria-hidden="true"><span class="skin skin-paper-collapsed"></span><span class="skin skin-paper-expanded"></span></span>
+ <span data-copy="q">На каком языке готовиться?</span><span class="toggle" aria-hidden="true"></span></summary>
+ <div class="answer-clip"><div class="faq-answer"><p data-copy="a">Собеседование на греческом, поэтому и готовиться стоит на нём. Удобный путь: сначала пройди тему по-русски, чтобы понять смысл, потом переключи язык и пройди её заново по-гречески. Переключение — один тап, прогресс общий.</p></div></div>
+</details>
+<details class="faq-item" id="faq-2" >
+ <summary><span class="art art-tab-terracotta tab" aria-hidden="true"><img src="/assets/faq-paper-v1/faq-tab-terracotta.png" alt="" draggable="false"></span>
+ <span class="sheet-deco" aria-hidden="true"><span class="skin skin-paper-collapsed"></span><span class="skin skin-paper-expanded"></span></span>
+ <span data-copy="q">Почему карточки, а не просто список вопросов?</span><span class="toggle" aria-hidden="true"></span></summary>
+ <div class="answer-clip"><div class="faq-answer"><p data-copy="a">Список читаешь один раз и через три дня помнишь половину. Карточки работают на интервальном повторении: то, что даётся легко, показывается всё реже, а то, на чём спотыкаешься, возвращается быстрее. В итоге время уходит на слабые места, а не на уже выученное.</p></div></div>
+</details>
+<details class="faq-item" id="faq-6" >
+ <summary><span class="art art-tab-blue tab" aria-hidden="true"><img src="/assets/faq-paper-v1/faq-tab-blue.png" alt="" draggable="false"></span>
+ <span class="sheet-deco" aria-hidden="true"><span class="skin skin-paper-collapsed"></span><span class="skin skin-paper-expanded"></span></span>
+ <span data-copy="q">Бесплатно? Нужна регистрация?</span><span class="toggle" aria-hidden="true"></span></summary>
+ <div class="answer-clip"><div class="faq-answer"><p data-copy="a">Полностью бесплатно: без карты, без подписки, без «премиума». Регистрация не нужна — заходи гостем и учись сразу. Аккаунт нужен только чтобы прогресс и серия сохранялись между устройствами.</p></div></div>
+</details></div>
+</section>
+</main>
+<script>
+const copy={"title": {"ru": "Прежде чем начать", "el": "Πριν ξεκινήσεις"}, "items": [{"id": 1, "question": {"ru": "Сколько нужно готовиться?", "el": "Πόσο καιρό πρέπει να διαβάζω;"}, "answer": {"ru": "Регулярность важнее срока: 10 минут каждый день дают больше, чем три часа раз в неделю. Здесь 160+ вопросов — по 10 за подход это две-три недели, чтобы увидеть весь материал. Дальше умное повторение само возвращает то, что начало забываться.", "el": "Η συνέπεια μετράει πιο πολύ από την προθεσμία: 10 λεπτά κάθε μέρα αποδίδουν περισσότερο από τρεις ώρες μια φορά τη βδομάδα. Εδώ υπάρχουν 160+ ερωτήσεις — με 10 ανά γύρο, σε δύο-τρεις βδομάδες έχεις δει όλο το υλικό. Μετά η έξυπνη επανάληψη σου επιστρέφει μόνη της ό,τι αρχίζεις να ξεχνάς."}}, {"id": 4, "question": {"ru": "На каком языке готовиться?", "el": "Σε ποια γλώσσα να προετοιμαστώ;"}, "answer": {"ru": "Собеседование на греческом, поэтому и готовиться стоит на нём. Удобный путь: сначала пройди тему по-русски, чтобы понять смысл, потом переключи язык и пройди её заново по-гречески. Переключение — один тап, прогресс общий.", "el": "Η συνέντευξη γίνεται στα ελληνικά, άρα καλά είναι να προετοιμάζεσαι σε αυτά. Βολικός δρόμος: πέρνα πρώτα το θέμα στα ρωσικά για να πιάσεις το νόημα, μετά άλλαξε γλώσσα και ξανακάνε το στα ελληνικά. Η εναλλαγή είναι ένα άγγιγμα, η πρόοδος κοινή."}}, {"id": 2, "question": {"ru": "Почему карточки, а не просто список вопросов?", "el": "Γιατί κάρτες και όχι απλή λίστα ερωτήσεων;"}, "answer": {"ru": "Список читаешь один раз и через три дня помнишь половину. Карточки работают на интервальном повторении: то, что даётся легко, показывается всё реже, а то, на чём спотыкаешься, возвращается быстрее. В итоге время уходит на слабые места, а не на уже выученное.", "el": "Τη λίστα τη διαβάζεις μια φορά και σε τρεις μέρες θυμάσαι τη μισή. Οι κάρτες δουλεύουν με επαναλήψεις σε διαστήματα: ό,τι σου βγαίνει εύκολα εμφανίζεται πιο αραιά, ό,τι σε δυσκολεύει επιστρέφει πιο γρήγορα. Έτσι ο χρόνος πηγαίνει στα αδύνατα σημεία, όχι σε όσα ξέρεις ήδη."}}, {"id": 6, "question": {"ru": "Бесплатно? Нужна регистрация?", "el": "Δωρεάν; Χρειάζεται εγγραφή;"}, "answer": {"ru": "Полностью бесплатно: без карты, без подписки, без «премиума». Регистрация не нужна — заходи гостем и учись сразу. Аккаунт нужен только чтобы прогресс и серия сохранялись между устройствами.", "el": "Εντελώς δωρεάν: χωρίς κάρτα, χωρίς συνδρομή, χωρίς «premium». Εγγραφή δεν χρειάζεται — μπαίνεις ως επισκέπτης και ξεκινάς αμέσως. Ο λογαριασμός χρειάζεται μόνο για να κρατάς πρόοδο και σερί ανάμεσα σε συσκευές."}}]};
+const running=new WeakMap();
+const entries=[...document.querySelectorAll('.faq-item')];
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+function stop(item) {
+ const state=running.get(item);
+ if(state) { state.animation.cancel(); state.fade?.cancel(); running.delete(item); }
+ const answer=item.querySelector('.answer-clip'); answer.style.height=''; answer.style.overflow='';
+}
+entries.forEach(item=>{
+ const summary=item.querySelector('summary');
+ const answer=item.querySelector('.answer-clip');
+ summary.addEventListener('click',event=>{
+  if(reduced.matches || !item.animate) return;
+  event.preventDefault();
+  const previous=running.get(item);
+  const target=previous ? !previous.target : !item.open;
+  const from=item.open?answer.getBoundingClientRect().height:0;
+  stop(item);
+  item.open=true;
+  const full=answer.getBoundingClientRect().height;
+  answer.style.overflow='clip';
+  const animation=answer.animate([{height:from+'px'},{height:(target?full:0)+'px'}],{duration:260,easing:'cubic-bezier(.22,.68,0,1)',fill:'both'});
+  const fade=item.querySelector('.faq-answer').animate(target?[{opacity:0,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}]:[{opacity:1},{opacity:0}],{duration:target?180:100,delay:target?50:0,fill:'both',easing:'ease-out'});
+  const state={animation,fade,target}; running.set(item,state);
+  animation.onfinish=()=>{
+   if(running.get(item)!==state) return;
+   item.open=target; stop(item);
+  };
+ });
+});
+document.querySelectorAll('[data-lang]').forEach(button=>button.addEventListener('click',()=>{
+ const lang=button.dataset.lang;
+ document.documentElement.lang=lang;
+ const title=document.querySelector('#faq-title');
+ title.replaceChildren();
+ const parts=lang==='ru'?['Прежде чем','начать']:['Πριν','ξεκινήσεις'];
+ parts.forEach(text=>{const span=document.createElement('span');span.textContent=text;title.append(span);});
+ entries.forEach((item,index)=>{
+  const state=running.get(item); if(state) {item.open=state.target; stop(item);}
+  item.querySelector('[data-copy="q"]').textContent=copy.items[index].question[lang];
+  item.querySelector('[data-copy="a"]').textContent=copy.items[index].answer[lang];
+ });
+ document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+}));
+reduced.addEventListener('change',()=>{
+ if(reduced.matches) entries.forEach(item=>{ const s=running.get(item); if(s) {item.open=s.target; stop(item);} });
+});
+</script>
+</body></html>

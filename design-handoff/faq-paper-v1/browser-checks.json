@@ -1,0 +1,114 @@
+[
+  {
+    "lang": "el",
+    "rows": [
+      {
+        "answerFits": true,
+        "height": 79,
+        "open": false
+      },
+      {
+        "answerFits": true,
+        "height": 222.1875,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 79,
+        "open": false
+      },
+      {
+        "answerFits": true,
+        "height": 79,
+        "open": false
+      }
+    ],
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "lang": "el",
+    "rows": [
+      {
+        "answerFits": true,
+        "height": 90.375,
+        "open": false
+      },
+      {
+        "answerFits": true,
+        "height": 321.125,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 90.375,
+        "open": false
+      },
+      {
+        "answerFits": true,
+        "height": 90.375,
+        "open": false
+      }
+    ],
+    "scrollWidth": 360,
+    "width": 375
+  },
+  {
+    "lang": "ru",
+    "rows": [
+      {
+        "answerFits": true,
+        "height": 346.71875,
+        "inlineStyle": "",
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 321.125,
+        "inlineStyle": null,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 346.71875,
+        "inlineStyle": "",
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 295.53125,
+        "inlineStyle": "",
+        "open": true
+      }
+    ],
+    "scrollWidth": 360,
+    "width": 375
+  },
+  {
+    "lang": "el",
+    "rows": [
+      {
+        "answerFits": true,
+        "height": 346.71875,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 321.125,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 346.71875,
+        "open": true
+      },
+      {
+        "answerFits": true,
+        "height": 295.53125,
+        "open": true
+      }
+    ],
+    "scrollWidth": 360,
+    "width": 375
+  }
+]

@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "alphaThreshold": 16,
+  "generation": "built-in image_gen, one call per asset",
+  "originalsUnmodified": true,
+  "assets": [
+    {
+      "key": "notebook",
+      "file": "faq-notebook.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1668192,
+      "sha256": "3672890b9e56c2622b3bf1e742895d47d2277e6d3173c60c5c021f0a4161eaf1",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBounds": [
+        151,
+        168,
+        1157,
+        1173
+      ],
+      "fullAlphaBounds": [
+        0,
+        0,
+        1240,
+        1254
+      ],
+      "maxCanvasEdgeAlpha": 1,
+      "visibleAspectRatio": 1.0009950248756219
+    },
+    {
+      "key": "paper-collapsed",
+      "file": "faq-paper-collapsed.png",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "bytes": 979715,
+      "sha256": "a3171cc0c9074dfe2479208683c6de9dcc7375065a91e08e2cd274c0cb3ae7da",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBounds": [
+        85,
+        242,
+        2098,
+        484
+      ],
+      "fullAlphaBounds": [
+        77,
+        19,
+        2107,
+        622
+      ],
+      "maxCanvasEdgeAlpha": 0,
+      "visibleAspectRatio": 8.318181818181818,
+      "nineSlice": {
+        "sourceCornerPx": 60,
+        "displayCornerPx": 18,
+        "slice": [
+          302,
+          134,
+          300,
+          145
+        ],
+        "pseudoInsetsPx": [
+          -72.6,
+          -22.2,
+          -72.0,
+          -25.5
+        ]
+      }
+    },
+    {
+      "key": "paper-expanded",
+      "file": "faq-paper-expanded.png",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGBA",
+      "bytes": 1456737,
+      "sha256": "07889c5d4bb26a623a4da43daecc2c80cdfa5dd06ce80ac8a87e6d7e55ed03ba",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBounds": [
+        94,
+        241,
+        1719,
+        674
+      ],
+      "fullAlphaBounds": [
+        49,
+        25,
+        1729,
+        887
+      ],
+      "maxCanvasEdgeAlpha": 1,
+      "visibleAspectRatio": 3.7528868360277134,
+      "nineSlice": {
+        "sourceCornerPx": 64,
+        "displayCornerPx": 18,
+        "slice": [
+          305,
+          119,
+          277,
+          158
+        ],
+        "pseudoInsetsPx": [
+          -67.78125,
+          -15.46875,
+          -59.90625,
+          -26.4375
+        ]
+      }
+    },
+    {
+      "key": "tab-blue",
+      "file": "faq-tab-blue.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 855463,
+      "sha256": "c98be10816ebb88f2aab27e86ab05a6c38b39c0efaa59e3db7f4b01161630570",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBounds": [
+        477,
+        159,
+        781,
+        1111
+      ],
+      "fullAlphaBounds": [
+        0,
+        21,
+        1232,
+        1236
+      ],
+      "maxCanvasEdgeAlpha": 1,
+      "visibleAspectRatio": 0.31932773109243695
+    },
+    {
+      "key": "tab-terracotta",
+      "file": "faq-tab-terracotta.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1108737,
+      "sha256": "c798736b98917b1b2728a08aa354881f3fb0eb10a6bbb95207089b0eb224bda8",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "visibleBounds": [
+        434,
+        128,
+        821,
+        1149
+      ],
+      "fullAlphaBounds": [
+        33,
+        31,
+        1224,
+        1214
+      ],
+      "maxCanvasEdgeAlpha": 0,
+      "visibleAspectRatio": 0.37904015670910873
+    }
+  ]
+}
