@@ -8,3 +8,8 @@
 @media (min-width: 900px) {
   [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-backlog { order: 5; }
 }
+.pc-studied { margin: 0 0 10px; font-size: 13.5px; color: #4d5547; }
+.pc-studied b { color: #2d3a22; font-weight: 750; }
+@media (min-width: 900px) {
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-studied { order: 5; }
+}

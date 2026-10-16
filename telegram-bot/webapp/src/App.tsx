@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { tg, haptic } from './telegram';
 import { getToken, clearToken } from './auth';
 import { clearCache } from './api';
+import { useStudyTime, type StudyMode } from './studyTime';
 import { SiteHeader } from './components/SiteHeader';
 
 /** Load a code-split chunk, surviving a failed fetch instead of showing nothing.
@@ -72,6 +73,13 @@ export function App() {
   const home = () => navigate('home');
 
   // Focus mode keeps the study column centred beneath the persistent header.
+  // Real study minutes: only on the study screens of a real account (the guest sandbox is shared).
+  const studyMode: StudyMode | null =
+    entered && !showLanding && (!!getToken() || !!tg) && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')
+      ? view
+      : null;
+  useStudyTime(studyMode);
+
   const focus =
     (entered && !showLanding && (view === 'quiz' || view === 'flashcards' || view === 'vocab' || view === 'homework')) ||
     (!entered && gate === 'auth');

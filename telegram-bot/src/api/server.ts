@@ -34,6 +34,7 @@ import { getDueVocab, gradeVocab, getVocabStats } from '../services/vocabProgres
 import { VOCABULARY, VOCAB_BY_ID } from '../data/vocabulary';
 import { getOrSynthesizeGreekSpeech } from '../services/ttsService';
 import { loadReadiness } from '../services/readinessService';
+import { getStudyTime, isStudyMode, recordStudyTime } from '../services/studyTimeService';
 import { loadPlan, setInterviewDate } from '../services/planService';
 import { parseHomeworkText, checkLocal, MAX_TEXT, FILE_TYPES, MAX_FILE_BYTES, type HomeworkFile } from '../services/homework';
 import { aiConfigured, aiParse, aiCheck } from '../services/homeworkAi';
@@ -331,11 +332,13 @@ export function createApiApp(): express.Express {
     '/me',
     wrap(async (req, res) => {
       const a = req.account!;
-      const [stats, streak, vocab, plan] = await Promise.all([
+      const [stats, streak, vocab, plan, time] = await Promise.all([
         getUserStats(a.id),
         getUserStreak(a.id, getTz(req)).catch(() => 0),
         getVocabStats(a.id, ALL_VOCAB_IDS),
         loadPlan(a.id, getTz(req)),
+        // Optional table (supabase/sql/study_time.sql): no table, no minutes.
+        a.isGuest ? null : getStudyTime(a.id, getTz(req), 7).catch(() => null),
       ]);
       const lang = getLang(req);
       res.json({
@@ -349,6 +352,7 @@ export function createApiApp(): express.Express {
         streak,
         vocab,
         plan,
+        time: time && { today: time.today, week: time.week },
         topicLabels: topicLabels(lang),
         wordOfDay: (({ id, word, ru, note }) => ({ id, word, ru, note: note ?? null }))(
           pickWordOfDay(dayKeyIn(new Date(), getTz(req)), VOCABULARY)
@@ -591,8 +595,33 @@ export function createApiApp(): express.Express {
     '/readiness',
     wrap(async (req, res) => {
       const a = req.account!;
-      const [report, plan] = await Promise.all([loadReadiness(a.id, getTz(req)), loadPlan(a.id, getTz(req))]);
-      res.json({ ...report, plan, topicLabels: topicLabels(getLang(req)) });
+      const [report, plan, time] = await Promise.all([
+        loadReadiness(a.id, getTz(req)),
+        loadPlan(a.id, getTz(req)),
+        a.isGuest ? null : getStudyTime(a.id, getTz(req)).catch(() => null),
+      ]);
+      res.json({ ...report, plan, time, topicLabels: topicLabels(getLang(req)) });
+    })
+  );
+
+  // POST /api/time { mode, seconds } — active study seconds from the web app, about once a minute.
+  // The guest sandbox is shared by everyone, so its minutes would mean nothing: not recorded.
+  api.post(
+    '/time',
+    wrap(async (req, res) => {
+      const a = req.account!;
+      const { mode, seconds } = (req.body ?? {}) as { mode?: unknown; seconds?: unknown };
+      if (!isStudyMode(mode) || typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0) {
+        res.status(400).json({ error: 'bad_request' });
+        return;
+      }
+      if (a.isGuest) {
+        res.json({ ok: true, recorded: false });
+        return;
+      }
+      // Best-effort: before the table exists the report is dropped, not an error for the learner.
+      const recorded = await recordStudyTime(a.id, mode, seconds, getTz(req)).then(() => true, () => false);
+      res.json({ ok: true, recorded });
     })
   );
 

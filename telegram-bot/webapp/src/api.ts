@@ -183,6 +183,13 @@ export const api = {
     }),
   homeworkCheck: (body: { question: string; modelAnswer: string; note: string; answer: string }) =>
     request<HomeworkCheck>('/homework/check', { method: 'POST', body: JSON.stringify(body) }),
+  /** Active study seconds (studyTime.ts); keepalive so the last minute survives closing the tab. */
+  reportTime: (mode: 'quiz' | 'flashcards' | 'vocab' | 'homework', seconds: number) =>
+    request<{ ok: boolean; recorded?: boolean }>('/time', {
+      method: 'POST',
+      body: JSON.stringify({ mode, seconds }),
+      keepalive: true,
+    }),
   tts: (text: string, cacheKey: string) =>
     request<{ audioUrl: string }>('/tts', {
       method: 'POST',
@@ -219,6 +226,8 @@ export interface MeResponse {
   streak: number;
   vocab: VocabStats;
   plan: StudyPlan;
+  /** Active study seconds; null for guests or before supabase/sql/study_time.sql is applied. */
+  time?: { today: number; week: number } | null;
   topicLabels: Record<string, string>;
   /** Absent from servers older than the word-of-the-day release. */
   wordOfDay?: WordOfDay;
@@ -279,6 +288,8 @@ export interface ReadinessResponse {
   activity: { streak: number; days: string[] };
   history: { topic: string; score: number; total: number; completed_at: string; lang: 'el' | 'ru' | null }[];
   plan: StudyPlan;
+  /** Active study seconds (see MeResponse.time); byDay covers the 35-day calendar. */
+  time?: { today: number; week: number; todayByMode: Record<string, number>; byDay: Record<string, number> } | null;
   topicLabels: Record<string, string>;
 }
 

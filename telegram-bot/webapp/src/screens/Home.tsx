@@ -212,7 +212,7 @@ export function Home({ onNavigate }: { onNavigate: (v: View) => void }) {
           </span>
         </button>
       </div>
-      {me.plan && <PlanCard plan={me.plan} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
+      {me.plan && <PlanCard plan={me.plan} studied={me.time?.today ?? null} isGuest={me.user.is_guest} onNavigate={onNavigate} onSaved={reload} />}
       </section>
       </div>
 

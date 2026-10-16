@@ -8,6 +8,7 @@ import { countWord, useLanguage } from '../i18n';
 import { haptic, notify } from '../telegram';
 import { Hourglass, Ostraka, Papyrus } from '../components/homeArt';
 import { dayGoal } from '../planToday';
+import { formatStudyTime } from '../studyTime';
 import './planCard.css';
 
 function localKey(d: Date): string {
@@ -23,11 +24,14 @@ function fromKey(key: string): Date {
 /** "Plan to the interview" on the home screen: set the date, then see today's share. */
 export function PlanCard({
   plan,
+  studied = null,
   isGuest,
   onNavigate,
   onSaved,
 }: {
   plan: StudyPlan;
+  /** Real active seconds today (null when not measured). */
+  studied?: number | null;
   isGuest: boolean;
   onNavigate: (v: View) => void;
   onSaved: () => void;
@@ -177,6 +181,11 @@ export function PlanCard({
           <ProgressBar value={goal.done} total={goal.total} />
           <span>{t('plan.doneOf').replace('{done}', String(goal.done)).replace('{total}', String(goal.total))}</span>
         </div>
+      )}
+      {studied !== null && (
+        <p className="pc-studied">
+          {t('plan.studied')} <b>{formatStudyTime(studied, language)}</b>
+        </p>
       )}
       {goal.carried > 0 && (
         <p className="pc-backlog">

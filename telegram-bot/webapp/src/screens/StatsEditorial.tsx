@@ -4,6 +4,8 @@ import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
 import { OliveCalendar } from '../components/statsArt';
 import { BASE_TOP, PaperParthenon, SHAFT_CENTERS, SHAFT_TOP, TEMPLE_H } from '../components/PaperParthenon';
+import { Hourglass } from '../components/homeArt';
+import { formatStudyTime } from '../studyTime';
 import './statsTemple.css';
 
 const percentage = (value: number, total: number) => total > 0 ? Math.round(value / total * 100) : 0;
@@ -62,6 +64,8 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
   const activeDays = days.filter((day) => active.has(day)).length;
   const weeks = Array.from({ length: 5 }, (_, index) => days.slice(index * 7, index * 7 + 7));
   const formatDay = (day: string) => new Date(`${day}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  const time = data.time ?? null;
+  const weekSeconds = (week: string[]) => week.reduce((sum, day) => sum + (time?.byDay[day] ?? 0), 0);
   const needsWords = data.blockers.some((blocker) => blocker.kind === 'words');
   const needsQuestions = data.blockers.some((blocker) => blocker.kind === 'topic');
   const history = allHistory ? data.history : data.history.slice(0, 5);
@@ -145,7 +149,10 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
           <h2 id="pe-rhythm-title">{t('rd.editorial.rhythm')}</h2>
           <div><ProgressArtwork kind="streak" /><b>{data.activity.streak}</b><span>{countWord(data.activity.streak, 'day', language)} {t('rd.inRow')}</span></div>
           <div><ProgressArtwork kind="precision" /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
-          <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
+          {/* Real minutes replace the test count once they are measured; the count moves to the tests list. */}
+          {time
+            ? <div className="pe-time-tile"><Hourglass className="pe-art-icon" /><b>{formatStudyTime(time.week, language)}</b><span>{t('rd.time.week')} · {t('rd.time.today')} {formatStudyTime(time.today, language)}</span></div>
+            : <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>}
           <div><ProgressArtwork kind="memory" /><b>{activeDays}</b><span>{countWord(activeDays, 'day', language)} {t('rd.daysActive')}</span></div>
         </section>
       </div>
@@ -179,12 +186,12 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
           <p className="pe-calendar-summary">{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}</p>
           <div className="pe-legend"><span><i className="is-on" />{t('rd.editorial.studied')}</span><span><i />{t('rd.editorial.rest')}</span></div>
           <div className="pe-weeks">
-            {weeks.map((week) => <div className="pe-week" key={week[0]}><span className="pe-week-range">{formatDay(week[0])}<br />— {formatDay(week[6])}</span><div role="img" aria-label={week.map((day) => `${formatDay(day)}: ${t(active.has(day) ? 'rd.editorial.studied' : 'rd.editorial.rest')}`).join('; ')}><OliveCalendar days={week} active={active} today={days[34]} /></div></div>)}
+            {weeks.map((week) => <div className="pe-week" key={week[0]}><span className="pe-week-range">{formatDay(week[0])}<br />— {formatDay(week[6])}{time && weekSeconds(week) >= 60 && <small>{formatStudyTime(weekSeconds(week), language)}</small>}</span><div role="img" aria-label={week.map((day) => `${formatDay(day)}: ${t(active.has(day) ? 'rd.editorial.studied' : 'rd.editorial.rest')}${time?.byDay[day] ? `, ${formatStudyTime(time.byDay[day], language)}` : ''}`).join('; ')}><OliveCalendar days={week} active={active} today={days[34]} /></div></div>)}
           </div>
           <p className="pe-calendar-hint">{t('rd.oliveHint')}</p>
         </section>
         <section className="pe-history pe-card" aria-labelledby="pe-history-title">
-          <h2 id="pe-history-title">{t('rd.recent')}</h2>
+          <h2 id="pe-history-title">{t('rd.recent')}{time && me && <small className="pe-history-total">{t('rd.time.total').replace('{n}', String(me.stats.total_sessions))}</small>}</h2>
           {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
           {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicArtwork topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
           {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
