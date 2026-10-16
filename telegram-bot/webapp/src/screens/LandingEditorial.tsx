@@ -12,6 +12,7 @@ import { LANDING_ART, type LandingArtKey } from './landingArt';
 import './landingEditorial.css';
 import './landingResponsive.css';
 import './landingFeatures.css';
+import './landingJourney.css';
 
 /* Desktop landing, first editorial reference (design-handoff/landing-editorial-assets-v1).
    Text, numbers, buttons and the FAQ are live HTML; the 19 pictures are the delivered ones
@@ -114,27 +115,32 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
         </section>
 
         {/* ---- facts: one paper ribbon, four groups ---- */}
-        <section className="le-facts" aria-label={t('landing.stat.topics')}>
-          <Art name="surface-facts-ribbon" className="le-facts-paper" />
-          <ul>
-            <li className="f1"><Art name="fact-questions" /><b>160+</b><span>{t('le.facts.questions')}</span></li>
-            <li className="f2"><Art name="fact-vocabulary" /><b>150</b><span>{t('le.facts.words')}</span></li>
-            <li className="f3"><Art name="fact-topics" /><b>4</b><span>{t('le.facts.topics')}</span></li>
-            <li className="f4"><Art name="fact-srs" /><b>SRS</b><span>{t('le.facts.srs')}</span></li>
+        <section className="le-ribbon" aria-label={t('landing.stat.topics')}>
+          <Art name="surface-facts-ribbon" className="le-ribbon-paper" />
+          <ul className="le-ribbon-list">
+            <li><Art name="fact-questions" className="le-ribbon-art" /><b>160+</b><span className="le-ribbon-label">{t('le.facts.questions')}</span></li>
+            <li><Art name="fact-vocabulary" className="le-ribbon-art" /><b>150</b><span className="le-ribbon-label">{t('le.facts.words')}</span></li>
+            <li><Art name="fact-topics" className="le-ribbon-art" /><b>4</b><span className="le-ribbon-label">{t('le.facts.topics')}</span></li>
+            <li><Art name="fact-srs" className="le-ribbon-art" /><b>SRS</b><span className="le-ribbon-label">{t('le.facts.srs')}</span></li>
           </ul>
         </section>
 
         {/* ---- how it works ---- */}
-        <section className="le-steps" id="how-it-works">
-          <h2 data-motion-title>{t('landing.steps.title')}</h2>
+        <section className="le-journey" id="how-it-works" aria-labelledby="landing-journey-title">
+          <h2 id="landing-journey-title" data-motion-title>{t('landing.steps.title')}</h2>
           <ol>
             {STEPS.map((s, i) => (
-              <li key={s.art} className={`s${i + 1}`}>
-                <span className="le-step-no" aria-hidden="true">{i + 1}</span>
-                <h3>{t(s.title)}</h3>
-                <p>{t(s.text)}</p>
-                <Art name={s.art} className="le-step-art" />
-                {i < 2 && <SlideArrow className="le-step-go" size={26} strokeWidth={1.8} aria-hidden="true" />}
+              <li key={s.art}>
+                <div className="le-journey-copy">
+                  <span className="le-journey-number" aria-hidden="true">{i + 1}</span>
+                  <div>
+                    <h3>{t(s.title)}</h3>
+                    <p>{t(s.text)}</p>
+                  </div>
+                </div>
+                <div className="le-journey-picture">
+                  <Art name={s.art} className="le-journey-art" />
+                </div>
               </li>
             ))}
           </ol>
