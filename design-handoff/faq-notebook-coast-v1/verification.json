@@ -1,0 +1,65 @@
+{
+  "browser": [
+    {
+      "bannerTop": 1073.421875,
+      "book": {
+        "box": {
+          "bottom": 1001.421875,
+          "height": 416.21875,
+          "left": 82,
+          "right": 450,
+          "top": 585.203125,
+          "width": 368,
+          "x": 82,
+          "y": 585.203125
+        },
+        "loaded": true,
+        "src": "/assets/faq-paper-v1/faq-notebook-coast.png"
+      },
+      "faq": {
+        "bottom": 1001.421875,
+        "height": 563.03125,
+        "left": 82,
+        "right": 1348,
+        "top": 438.390625,
+        "width": 1266,
+        "x": 82,
+        "y": 438.390625
+      },
+      "scrollWidth": 1430,
+      "width": 1440
+    },
+    {
+      "bannerTop": 1135.625,
+      "book": {
+        "box": {
+          "bottom": 460.71875,
+          "height": 108.578125,
+          "left": 249,
+          "right": 345,
+          "top": 352.140625,
+          "width": 96,
+          "x": 249,
+          "y": 352.140625
+        },
+        "loaded": true,
+        "src": "/assets/faq-paper-v1/faq-notebook-coast.png"
+      },
+      "faq": {
+        "bottom": 1079.625,
+        "height": 727.484375,
+        "left": 20,
+        "right": 345,
+        "top": 352.140625,
+        "width": 325,
+        "x": 20,
+        "y": 352.140625
+      },
+      "scrollWidth": 365,
+      "width": 375
+    }
+  ],
+  "build": "npm run build: exit 0",
+  "originalHashMatches": true,
+  "protectedFilesUnchanged": true
+}

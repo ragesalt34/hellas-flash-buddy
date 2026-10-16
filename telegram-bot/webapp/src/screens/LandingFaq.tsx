@@ -5,7 +5,7 @@ import './landingFaq.css';
 const ASSETS = import.meta.env.BASE_URL + 'assets/faq-paper-v1/';
 const FAQ_IDS = [1, 4, 2, 6] as const;
 const ART = {
-  notebook: { file: 'faq-notebook.png', aspect: '1006 / 1005', left: -15.00994, top: -16.71642, width: 124.65209 },
+  notebook: { file: 'faq-notebook-coast.png', aspect: '1076 / 1217', left: -8.45725, top: -2.13640, width: 116.54275 },
   blue: { file: 'faq-tab-blue.png', aspect: '304 / 952', left: -156.90789, top: -16.70168, width: 412.5 },
   terracotta: { file: 'faq-tab-terracotta.png', aspect: '387 / 1021', left: -112.1447, top: -12.53673, width: 324.03101 },
 } as const;

@@ -1,0 +1,28 @@
+{
+  "file": "faq-notebook-coast.png",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "visibleBoundsAlpha16": [
+    91,
+    26,
+    1167,
+    1243
+  ],
+  "alphaRange": [
+    0,
+    255
+  ],
+  "maxCanvasEdgeAlpha": 1,
+  "sha256": "301af19e95f4bd1a392259bbea28fcf2569a8ddf9de2376caccd2eb856710116",
+  "bytes": 2380166,
+  "css": {
+    "aspect": "1076 / 1217",
+    "left": -8.45724907063197,
+    "top": -2.1364009860312243,
+    "width": 116.54275092936803
+  },
+  "generation": "built-in image_gen",
+  "source": "C:\\Users\\user\\.codex\\generated_images\\01a11027-6e30-7392-9c52-aaa74271fbfe\\exec-757b7237-c814-4ac7-868d-29ef542e40ac.png",
+  "originalUnmodified": true
+}
