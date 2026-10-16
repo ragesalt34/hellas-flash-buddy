@@ -125,10 +125,16 @@ export function Stats({ onHome, onNavigate }: { onHome: () => void; onNavigate: 
     setLanguage('el');
     navigate('quiz');
   };
+  // A temple column's "train" button: the same Greek check, but straight into that topic's quiz
+  // (Quiz picks the topic up from sessionStorage once, on mount).
+  const topicQuiz = (topic: string) => {
+    try { sessionStorage.setItem('hs_quiz_topic', topic); } catch { /* private mode: falls back to the topic list */ }
+    checkGreek();
+  };
 
   return (
     <>
-      <StatsEditorial data={data} me={me} onNavigate={navigate} onCheckGreek={checkGreek} onHome={onHome} />
+      <StatsEditorial data={data} me={me} onNavigate={navigate} onCheckGreek={checkGreek} onTopicQuiz={topicQuiz} onHome={onHome} />
       <div className="fade-in rd-screen rd-legacy-screen">
       <Label k="rd.title" />
       <div className={`card rd-verdict v-${data.verdict}`}>

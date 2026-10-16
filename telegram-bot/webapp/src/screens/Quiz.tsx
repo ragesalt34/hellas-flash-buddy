@@ -74,6 +74,15 @@ export function Quiz({ onHome }: { onHome: () => void }) {
     q.options.forEach((opt) => prefetchGreek(opt, textKey(opt)));
   }, [phase, idx, questions]);
 
+  // Opened from a Progress temple column: start that topic right away (one shot; the key is
+  // removed first so a remount or the next visit shows the topic list as usual).
+  useEffect(() => {
+    let pending: string | null = null;
+    try { pending = sessionStorage.getItem('hs_quiz_topic'); sessionStorage.removeItem('hs_quiz_topic'); } catch { /* ignore */ }
+    if (pending) void start(pending);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function start(topicId: string) {
     if (startingRef.current) return;
     startingRef.current = true;

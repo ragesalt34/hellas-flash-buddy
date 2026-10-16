@@ -3,7 +3,8 @@ import type { MeResponse, ReadinessResponse } from '../api';
 import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
 import { OliveCalendar } from '../components/statsArt';
-import { PaperParthenon } from '../components/PaperParthenon';
+import { BASE_TOP, PaperParthenon, SHAFT_CENTERS, SHAFT_TOP, TEMPLE_H } from '../components/PaperParthenon';
+import './statsTemple.css';
 
 const percentage = (value: number, total: number) => total > 0 ? Math.round(value / total * 100) : 0;
 const ART: Record<string, string> = { history: 'helmet', culture: 'masks', laws: 'book', geography: 'map' };
@@ -24,12 +25,32 @@ function Meter({ value, label }: { value: number; label: string }) {
   return <div className="pe-meter" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={safe}><i style={{ width: `${safe}%` }} /></div>;
 }
 
-export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
+/** Questions still to answer right in Greek before a topic's column counts as built (85%). */
+const toBuild = (known: number, total: number) => Math.max(0, Math.ceil(total * 0.85) - known);
+
+export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz, onHome }: {
   data: ReadinessResponse; me?: MeResponse;
-  onNavigate: (view: View) => void; onCheckGreek: () => void; onHome: () => void;
+  onNavigate: (view: View) => void; onCheckGreek: () => void; onTopicQuiz: (topic: string) => void; onHome: () => void;
 }) {
   const { t, language } = useLanguage();
   const [allHistory, setAllHistory] = useState(false);
+  // The temple is the topic picker: the column under the pointer (preview) or the one chosen by click or
+  // keyboard (selected) is highlighted and described below it. Starts on the weakest topic.
+  const templeTopics = data.topics.slice(0, 4);
+  const weakest = templeTopics.reduce((best, topic, index) =>
+    (topic.total ? topic.greek.known / topic.total : 0) < (templeTopics[best]?.total ? templeTopics[best].greek.known / templeTopics[best].total : 1) ? index : best, 0);
+  const [selected, setSelected] = useState(weakest);
+  const [preview, setPreview] = useState<number | null>(null);
+  const shown = preview ?? selected;
+  const pick = (index: number) => { setSelected(index); setPreview(null); };
+  const onColumnKey = (event: React.KeyboardEvent, index: number) => {
+    const n = templeTopics.length;
+    const go = event.key === 'ArrowRight' ? (index + 1) % n : event.key === 'ArrowLeft' ? (index - 1 + n) % n : -1;
+    if (go < 0) return;
+    event.preventDefault();
+    pick(go);
+    (event.currentTarget.parentElement?.children[go] as HTMLElement | undefined)?.focus();
+  };
   const locale = language === 'ru' ? 'ru-RU' : 'el-GR';
   const label = (topic: string) => data.topicLabels[topic] ?? topic;
   const today = new Date(); today.setHours(12, 0, 0, 0);
@@ -56,10 +77,45 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onHome }: {
       <header className="pe-heading"><div><h1>{t('nav.stats')}</h1><p>{t('rd.editorial.subtitle')}</p></div><p className="pe-heading-note">{t('rd.greekOnly')}</p></header>
       <section className="pe-hero pe-paper" aria-labelledby="pe-readiness">
         <figure className="pe-construction">
-          <PaperParthenon topics={data.topics.map((topic) => ({ topic: topic.topic, label: label(topic.topic), pct: topic.total > 0 ? topic.greek.known / topic.total : 0 }))} />
-          <div className="pe-column-labels">
-            {data.topics.map((topic) => <div className={`pe-tone-${topic.topic}`} key={topic.topic}><span /><strong>{label(topic.topic)}</strong></div>)}
+          <div className="pe-temple-stage" onMouseLeave={() => setPreview(null)}>
+            <PaperParthenon active={shown} topics={templeTopics.map((topic) => ({ topic: topic.topic, label: label(topic.topic), pct: topic.total > 0 ? topic.greek.known / topic.total : 0 }))} />
+            {/* pointer targets over the four columns (keyboard uses the labels below) */}
+            {templeTopics.map((topic, index) => (
+              <button key={topic.topic} type="button" tabIndex={-1} aria-hidden="true"
+                className={`pe-col-hit pe-tone-${topic.topic}${index === shown ? ' is-active' : ''}`}
+                style={{ left: `${(SHAFT_CENTERS[index] - 105) / 10}%`, width: '21%', top: `${(SHAFT_TOP - 20) / TEMPLE_H * 100}%`, height: `${(BASE_TOP - SHAFT_TOP + 40) / TEMPLE_H * 100}%` }}
+                onMouseEnter={() => setPreview(index)} onClick={() => pick(index)}>
+                <span className="pe-col-chip">{percentage(topic.greek.known, topic.total)}%</span>
+              </button>
+            ))}
           </div>
+          <div className="pe-column-labels" role="group" aria-label={t('rd.byTopic')}>
+            {templeTopics.map((topic, index) => (
+              <button key={topic.topic} type="button" aria-pressed={index === selected}
+                className={`pe-tone-${topic.topic}${index === shown ? ' is-active' : ''}`}
+                onMouseEnter={() => setPreview(index)} onMouseLeave={() => setPreview(null)}
+                onFocus={() => setSelected(index)} onClick={() => pick(index)} onKeyDown={(event) => onColumnKey(event, index)}>
+                <span /><strong>{label(topic.topic)}</strong><em>{percentage(topic.greek.known, topic.total)}%</em>
+              </button>
+            ))}
+          </div>
+          {templeTopics[shown] && (() => {
+            const topic = templeTopics[shown];
+            const value = percentage(topic.greek.known, topic.total);
+            const left = toBuild(topic.greek.known, topic.total);
+            return (
+              <div className={`pe-col-card pe-tone-${topic.topic}`} aria-live="polite">
+                <img src={`${import.meta.env.BASE_URL}assets/topics/${topic.topic}/${ART[topic.topic] ?? 'band'}.webp`} alt="" width="56" height="62" />
+                <div className="pe-col-card-copy">
+                  <div className="pe-col-card-head"><b>{label(topic.topic)}</b><span>{value}%</span></div>
+                  <Meter value={value} label={`${label(topic.topic)} · ${t('rd.onGreek')}`} />
+                  <p>{left > 0 ? t('rd.temple.toGo').replace('{n}', String(left)).replace('{q}', countWord(left, 'question', language)) : t('rd.temple.built')}</p>
+                  <p className="pe-col-card-meta">{topic.greek.known}/{topic.total} {t('rd.onGreek')} · {t('rd.onRussian')} {percentage(topic.russian.known, topic.total)}% · {t('rd.inMemory')} {percentage(topic.memory, topic.total)}%</p>
+                </div>
+                <button type="button" className="pe-col-train" onClick={() => onTopicQuiz(topic.topic)}>{t('rd.temple.train')}</button>
+              </div>
+            );
+          })()}
           <figcaption>{t('rd.templeHint')}</figcaption>
         </figure>
         <div className={`pe-readiness pe-verdict-${data.verdict}`}>

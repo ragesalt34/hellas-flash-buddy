@@ -1,0 +1,76 @@
+/* Progress: the interactive Parthenon (StatsEditorial + components/PaperParthenon).
+   Each column is a topic: point at it, click it or use ←/→ on the topic buttons to see that topic below,
+   and start its Greek quiz from there. Loaded with the Progress screen. */
+
+[data-theme='soft'] .pe-screen .pe-temple-stage { position: relative; }
+
+/* column glow and marks drawn inside the SVG */
+[data-theme='soft'] .pe-screen .pe-col-glow { fill: color-mix(in srgb, var(--pe-tone) 8%, transparent); stroke: color-mix(in srgb, var(--pe-tone) 45%, transparent); stroke-width: 2.5; stroke-dasharray: 6 6; opacity: 0; transition: opacity 0.25s ease; }
+[data-theme='soft'] .pe-screen .pe-col-glow.is-active { opacity: 1; }
+[data-theme='soft'] .pe-screen .pe-goal-label { fill: var(--pe-tone); font: 700 22px/1 Inter, system-ui, sans-serif; }
+[data-theme='soft'] .pe-screen .pe-goal-line { stroke: var(--pe-tone); stroke-width: 3; stroke-dasharray: 10 8; opacity: 0.75; }
+[data-theme='soft'] .pe-screen .pe-level-line { stroke: var(--pe-tone); stroke-width: 5; stroke-linecap: round; }
+
+/* pointer targets over the columns */
+[data-theme='soft'] .pe-screen .pe-col-hit {
+  position: absolute; z-index: 2; padding: 0; border: 0; background: none; cursor: pointer;
+  display: flex; justify-content: center; align-items: flex-start;
+}
+[data-theme='soft'] .pe-screen .pe-col-chip {
+  margin-top: -14px; padding: 3px 9px; border-radius: 999px; background: var(--pe-tone); color: #fff;
+  font-size: 13px; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums;
+  opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+  pointer-events: none; box-shadow: 0 6px 14px -8px rgba(40, 30, 20, 0.6);
+}
+[data-theme='soft'] .pe-screen .pe-col-hit.is-active .pe-col-chip { opacity: 1; transform: none; }
+
+/* topic buttons under the temple (also the keyboard way in) */
+[data-theme='soft'] .pe-screen .pe-column-labels > button {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 9px;
+  border: 1px solid transparent; border-radius: 10px; background: none; cursor: pointer; font: inherit; color: inherit;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+[data-theme='soft'] .pe-screen .pe-column-labels > button > span { width: 46px; height: 5px; margin-bottom: 3px; border-radius: 3px; background: var(--pe-tone); transition: width 0.25s cubic-bezier(.16,1,.3,1); }
+[data-theme='soft'] .pe-screen .pe-column-labels > button strong { font-size: 14px; line-height: 1.3; }
+[data-theme='soft'] .pe-screen .pe-column-labels > button em { font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--pe-tone); font-variant-numeric: tabular-nums; }
+[data-theme='soft'] .pe-screen .pe-column-labels > button.is-active { background: color-mix(in srgb, var(--pe-tone) 10%, transparent); border-color: color-mix(in srgb, var(--pe-tone) 35%, transparent); }
+[data-theme='soft'] .pe-screen .pe-column-labels > button.is-active > span { width: 64px; }
+[data-theme='soft'] .pe-screen .pe-column-labels > button:focus-visible { outline: 3px solid var(--pe-tone); outline-offset: 2px; }
+
+/* the selected topic, described under the temple */
+[data-theme='soft'] .pe-screen .pe-col-card {
+  display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 16px;
+  margin: 14px 2% 0; padding: 14px 16px; border-radius: 12px;
+  background: color-mix(in srgb, var(--pe-tone) 7%, #fffdf6); border: 1px solid color-mix(in srgb, var(--pe-tone) 25%, transparent);
+  animation: pe-card-in 0.3s cubic-bezier(.16,1,.3,1);
+}
+[data-theme='soft'] .pe-screen .pe-col-card > img { width: 56px; height: 62px; object-fit: contain; }
+[data-theme='soft'] .pe-screen .pe-col-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+[data-theme='soft'] .pe-screen .pe-col-card-head b { font-size: 18px; line-height: 1.2; }
+[data-theme='soft'] .pe-screen .pe-col-card-head span { font-size: 22px; font-weight: 800; color: var(--pe-tone); font-variant-numeric: tabular-nums; }
+[data-theme='soft'] .pe-screen .pe-col-card-copy p { margin: 7px 0 0; font-size: 13.5px; line-height: 1.4; }
+[data-theme='soft'] .pe-screen .pe-col-card-copy .pe-col-card-meta { margin-top: 3px; font-size: 12.5px; color: var(--pe-muted); }
+[data-theme='soft'] .pe-screen .pe-col-train {
+  align-self: center; padding: 10px 16px; border: 0; border-radius: 8px; background: var(--pe-tone); color: #fff;
+  font: 700 14px/1.2 inherit; cursor: pointer; white-space: nowrap; transition: filter 0.2s ease, transform 0.15s ease;
+}
+[data-theme='soft'] .pe-screen .pe-col-train:hover { filter: brightness(1.12); }
+[data-theme='soft'] .pe-screen .pe-col-train:active { transform: translateY(1px); }
+[data-theme='soft'] .pe-screen .pe-col-train:focus-visible { outline: 3px solid var(--pe-tone); outline-offset: 3px; }
+@keyframes pe-card-in { from { opacity: 0.4; transform: translateY(4px); } }
+
+@media (max-width: 640px) {
+  [data-theme='soft'] .pe-screen .pe-col-card { grid-template-columns: 44px minmax(0, 1fr); }
+  [data-theme='soft'] .pe-screen .pe-col-card > img { width: 44px; height: 50px; }
+  [data-theme='soft'] .pe-screen .pe-col-train { grid-column: 1 / -1; width: 100%; }
+  /* topic names must not break mid-word ("Истори-я") in the narrow buttons */
+  [data-theme='soft'] .app .pe-screen .pe-column-labels { gap: 2px; margin-left: 0; margin-right: 0; }
+  [data-theme='soft'] .app .pe-screen .pe-column-labels > button { padding: 7px 0 8px; min-width: 0; }
+  [data-theme='soft'] .app .pe-screen .pe-column-labels > button strong { font-size: 11.5px; overflow-wrap: normal; word-break: normal; white-space: nowrap; letter-spacing: -0.2px; }
+  [data-theme='soft'] .app .pe-screen .pe-column-labels > button > span { width: 34px; }
+  [data-theme='soft'] .app .pe-screen .pe-column-labels > button.is-active > span { width: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .pe-screen :is(.pe-col-glow, .pe-col-chip, .pe-column-labels > button, .pe-column-labels > button > span) { transition: none; }
+  [data-theme='soft'] .pe-screen .pe-col-card { animation: none; }
+}
