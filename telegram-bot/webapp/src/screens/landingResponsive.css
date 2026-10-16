@@ -1,0 +1,95 @@
+/* One editorial landing on phones, tablets and desktops. Art uses the delivered bounds. */
+@media (max-width: 1099px) {
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-wrap { width: calc(100% - 48px); max-width: 900px; padding-bottom: 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-wrap > * { --u: 1px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: center; gap: 20px; height: auto; min-height: 440px; margin-top: 32px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero-copy { position: relative; inset: auto; width: auto; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero h1 { font-size: clamp(36px, 5.1vw, 52px); line-height: 1.03; letter-spacing: -.035em; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-sub { max-width: 42ch; font-size: 17px; line-height: 1.5; margin-top: 20px; text-wrap: pretty; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-eyebrow { font-size: 15px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-cta { width: 100%; gap: 12px; margin-top: 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-cta .le-btn { min-height: 52px; height: auto; padding: 14px 12px; font-size: 18px; line-height: 1.25; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero-art { position: relative; inset: auto; width: 100%; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo { position: relative; inset: auto; grid-column: 2; justify-self: end; width: 260px; height: 145px; margin-top: -90px; --u: .9px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-try { min-height: 44px; top: 81px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-sound { width: 44px; height: 44px; left: auto; right: 12px; top: 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts { height: auto; padding: 24px 0; margin-top: 24px; border-block: 1px solid #ded9cd; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts-paper,
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts::before,
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts::after,
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts ul::before { display: none; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts ul { position: static; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li { position: static; height: auto; display: grid; justify-items: center; gap: 6px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li .le-art { position: relative; inset: auto; width: 76px; height: 66px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li b { position: static; font-size: 30px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li span:not(.le-art) { position: static; font-size: 15px; text-align: center; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page :is(.le-steps, .le-features) { margin-top: 56px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page :is(.le-steps, .le-features) h2 { height: auto; font-size: clamp(30px, 4.5vw, 44px); line-height: 1.12; letter-spacing: -.03em; text-wrap: balance; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps ol { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; margin-top: 28px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps li { height: auto; padding: 0; border: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-step-no { position: static; width: 38px; height: 38px; margin-bottom: 16px; font-size: 21px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps h3 { margin: 0; padding: 0; font-size: 20px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps p { margin: 10px 0 0; font-size: 16px; line-height: 1.45; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps li .le-step-art { position: relative; inset: auto; width: 100%; margin-top: 18px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-step-go { display: none; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features-sub { height: auto; margin-top: 14px; font-size: 18px; line-height: 1.5; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features ul { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: none; margin: 28px 0 0; gap: 0 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features li { grid-template-columns: 100px minmax(0,1fr); padding: 24px 0; gap: 16px; border-left: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-feature-art { width: 100%; margin: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features h3 { font-size: 20px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features li p { font-size: 16px; line-height: 1.45; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-plan-wash { inset: 8px -12px; width: calc(100% + 24px); height: calc(100% - 16px); aspect-ratio: auto; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-plan-wash img { height: 100%; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq { grid-template-columns: 1fr 1.5fr; gap: 32px; height: auto; min-height: 0; margin-top: 56px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq h2 { font-size: 36px; letter-spacing: -.03em; max-width: 100%; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq-art { position: relative; inset: auto; width: 160px; margin-top: 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq-list { margin: 0; gap: 12px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq summary { min-height: 56px; padding: 16px; font-size: 16px; line-height: 1.4; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq details p { padding: 0 16px 18px; font-size: 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close { min-height: 300px; height: auto; margin-top: 56px; padding: 32px 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close-art { width: calc(100% + 40px); left: -20px; top: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close-copy { position: relative; inset: auto; width: 48%; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close h2 { font-size: 36px; max-width: 100%; line-height: 1.1; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close p { font-size: 17px; margin-top: 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close .le-btn { width: 100%; height: auto; min-height: 52px; padding: 14px; font-size: 18px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-footer { height: auto; min-height: 90px; gap: 20px; padding-top: 24px; margin-top: 28px; flex-wrap: wrap; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-footer-rule { display: none; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .lang-switch button { min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 639px) {
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-wrap { width: calc(100% - 40px); }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero { grid-template-columns: minmax(0,1fr); gap: 24px; min-height: 0; margin-top: 28px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero h1 { font-size: clamp(36px, 10vw, 52px); white-space: normal; max-width: 14ch; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-sub { font-size: 17px; margin-top: 18px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-hero-art { width: 100%; margin-top: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo { grid-column: 1; margin-top: -110px; margin-bottom: -8px; width: 234px; height: 132px; --u: .82px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-word { font-size: 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-ru { font-size: 14px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-demo-try { font-size: 14px; top: 72px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts { margin-top: 32px; padding: 20px 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts ul { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li { grid-template-columns: 60px minmax(0,1fr); justify-items: start; gap: 4px 8px; align-content: center; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li .le-art { width: 60px; height: auto; grid-row: span 2; align-self: center; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li b { font-size: 26px; align-self: end; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts li span:not(.le-art) { font-size: 13px; text-align: left; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps ol { grid-template-columns: minmax(0,1fr); gap: 28px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps li { display: grid; grid-template-columns: 38px minmax(0,1fr) 78px; gap: 0 14px; align-items: start; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-step-no { grid-row: span 2; margin: 0; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps h3 { font-size: 19px; grid-column: 2; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps p { grid-column: 2; font-size: 15px; margin-top: 7px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps li .le-step-art { grid-row: 1 / span 2; grid-column: 3; margin-top: 0; align-self: center; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-steps li:is(.s1,.s2,.s3) .le-step-art { inset: auto; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features ul { grid-template-columns: minmax(0,1fr); }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-features li { grid-template-columns: 100px minmax(0,1fr); min-height: 145px; padding-block: 22px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq h2 { font-size: 32px; white-space: normal; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-faq-art { display: none; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close { display: flex; flex-direction: column; min-height: 0; padding: 0; gap: 16px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close-copy { width: 100%; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close h2 { font-size: 34px; max-width: 14ch; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-close-art { position: relative; inset: auto; width: 100%; order: 2; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-footer-tag { order: 3; width: 100%; font-size: 13px; }
+  :is([data-theme='soft'], [data-theme='brut']) .le-page .le-footer .logo.logo-rocks { width: 170px; }
+}
+

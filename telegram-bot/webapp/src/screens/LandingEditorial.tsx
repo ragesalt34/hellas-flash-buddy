@@ -9,11 +9,11 @@ import { Logo } from '../components/Logo';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { LANDING_ART, type LandingArtKey } from './landingArt';
 import './landingEditorial.css';
+import './landingResponsive.css';
 
 /* Desktop landing, first editorial reference (design-handoff/landing-editorial-assets-v1).
    Text, numbers, buttons and the FAQ are live HTML; the 19 pictures are the delivered ones
-   (WebP re-encodes of the PNGs, placed by the manifest's visible bounds). Wide screens only:
-   Landing.tsx renders the older layout below 1100px. */
+   (WebP re-encodes of the PNGs, placed by the manifest's visible bounds). Shared by desktop, tablet and phone; layouts reflow in landingResponsive.css. */
 
 const BASE = import.meta.env.BASE_URL;
 

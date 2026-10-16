@@ -48,6 +48,7 @@ import { Vocab } from './screens/Vocab';
 import { Stats } from './screens/Stats';
 import { Homework } from './screens/Homework';
 import { Auth } from './screens/Auth';
+import './responsive.css';
 
 export type View = 'home' | 'quiz' | 'flashcards' | 'vocab' | 'stats' | 'homework';
 

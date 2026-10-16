@@ -8139,10 +8139,10 @@ html[data-theme='soft']:has(.vc-screen) { scrollbar-gutter: stable; }
   [data-theme='soft'] :is(.vc-complete-button-paper, .vc-complete-button-fold) { transition: none; transform: none !important; }
 }
 
-/* Progress editorial — selected restoration-workshop reference. The narrow
-   and contrast-theme screens retain their existing layout and interactions. */
+/* Progress editorial — one paper system across viewport sizes.
+   responsive.css reflows the same content for phones and tablets. */
 .pe-screen { display: none; }
-@media (min-width: 1100px) {
+@media (min-width: 0px) {
   [data-theme='soft'] .rd-legacy-screen { display: none; }
   [data-theme='soft'] body:not(.focus) .app:has(.pe-screen) { max-width: 1360px; padding: 24px 44px 32px; }
   [data-theme='soft'] .rd-screen.pe-screen {

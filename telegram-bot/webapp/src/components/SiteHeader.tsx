@@ -52,7 +52,7 @@ export function SiteHeader({ page, accountEntry, onNavigate, onAccount, onLogin,
         settings.current.querySelector('summary')?.focus();
       } else if (open) { setOpen(false); toggle.current?.focus(); }
     };
-    const desktop = window.matchMedia('(min-width: 1280px)');
+    const desktop = window.matchMedia('(min-width: 1400px)');
     const resize = () => { if (desktop.matches) setOpen(false); };
     document.addEventListener('pointerdown', closeOutside);
     document.addEventListener('keydown', escape);
