@@ -152,6 +152,8 @@ export function PlanCard({
     plan.newWords > 0 && `${plan.newWords} ${countWord(plan.newWords, 'newWord', language)}`,
     reviewsShown > 0 && `${reviewsShown} ${countWord(reviewsShown, 'review', language)}`,
   ].filter(Boolean) as string[];
+  // Measured minutes appear once there is at least one; a "0 min" line only looks broken.
+  const showClock = studied !== null && studied >= 60;
   const reviewCount = (n: number) => `${n} ${countWord(n, 'review', language)}`;
 
   return (
@@ -164,8 +166,9 @@ export function PlanCard({
             {countWord(days, 'day', language)} · {t('plan.until')} {fmt(plan.date)}
           </span>
         </div>
-        <div className={`pc-today${complete ? ' is-done' : ''}`}>
+        <div className={`pc-today${complete ? ' is-done' : ''}${showClock ? ' has-clock' : ''}`}>
           <span>{complete ? t('plan.today') : t('plan.todayLeft')}</span>
+          {showClock && <em className="pc-clock">{formatStudyTime(studied!, language)} {t('plan.studied')}</em>}
           <b>{complete ? <Check size={22} strokeWidth={3} /> : <>≈ {goal.minutes} {t('plan.min')}</>}</b>
         </div>
       </div>
@@ -176,23 +179,16 @@ export function PlanCard({
       ) : (
         parts.length > 0 && <div className="pc-parts">{parts.join(' · ')}</div>
       )}
+      {goal.carried > 0 && (
+        <p className="pc-later">
+          {t(complete ? 'plan.backlogMore' : 'plan.backlog').replace('{n}', reviewCount(goal.carried))}
+        </p>
+      )}
       {plan.today && goal.total > 0 && (
         <div className="pc-progress">
           <ProgressBar value={goal.done} total={goal.total} />
           <span>{t('plan.doneOf').replace('{done}', String(goal.done)).replace('{total}', String(goal.total))}</span>
         </div>
-      )}
-      {studied !== null && (
-        <p className="pc-studied">
-          {t('plan.studied')} <b>{formatStudyTime(studied, language)}</b>
-        </p>
-      )}
-      {goal.carried > 0 && (
-        <p className="pc-backlog">
-          {complete
-            ? t('plan.backlogMore').replace('{n}', reviewCount(goal.carried))
-            : t('plan.backlog').replace('{all}', reviewCount(goal.reviewsDue)).replace('{n}', String(goal.carried))}
-        </p>
       )}
       <p className="pc-pace">
         <i aria-hidden="true" /> {t(`plan.pace.${plan.pace}`)}

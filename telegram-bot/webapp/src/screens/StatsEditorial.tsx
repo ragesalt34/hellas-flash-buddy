@@ -4,13 +4,13 @@ import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
 import { OliveCalendar } from '../components/statsArt';
 import { BASE_TOP, PaperParthenon, SHAFT_CENTERS, SHAFT_TOP, TEMPLE_H } from '../components/PaperParthenon';
-import { Hourglass } from '../components/homeArt';
+import { SlideArrow } from '../components/SlideArrow';
 import { formatStudyTime } from '../studyTime';
 import './statsTemple.css';
 
 const percentage = (value: number, total: number) => total > 0 ? Math.round(value / total * 100) : 0;
 const ART: Record<string, string> = { history: 'helmet', culture: 'masks', laws: 'book', geography: 'map' };
-type ProgressArtworkKind = 'greek' | 'words' | 'memory' | 'russian' | 'precision' | 'repeat' | 'streak' | 'quiz';
+type ProgressArtworkKind = 'greek' | 'words' | 'memory' | 'russian' | 'precision' | 'repeat' | 'streak' | 'quiz' | 'time';
 
 function ProgressArtwork({ kind }: { kind: ProgressArtworkKind }) {
   return <img className="pe-art-icon" src={`${import.meta.env.BASE_URL}assets/progress-artwork-v1/${kind}.webp`} width="48" height="48" alt="" aria-hidden="true" />;
@@ -116,7 +116,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
                   <p>{left > 0 ? t('rd.temple.toGo').replace('{n}', String(left)).replace('{q}', countWord(left, 'question', language)) : t('rd.temple.built')}</p>
                   <p className="pe-col-card-meta">{topic.greek.known}/{topic.total} {t('rd.onGreek')} · {t('rd.onRussian')} {percentage(topic.russian.known, topic.total)}% · {t('rd.inMemory')} {percentage(topic.memory, topic.total)}%</p>
                 </div>
-                <button type="button" className="pe-col-train" onClick={() => onTopicQuiz(topic.topic)}>{t('rd.temple.train')}</button>
+                <button type="button" className="pe-col-train" onClick={() => onTopicQuiz(topic.topic)}>{t('rd.temple.train')}<SlideArrow size={16} strokeWidth={2.2} aria-hidden="true" /></button>
               </div>
             );
           })()}
@@ -151,7 +151,7 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
           <div><ProgressArtwork kind="precision" /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
           {/* Real minutes replace the test count once they are measured; the count moves to the tests list. */}
           {time
-            ? <div className="pe-time-tile"><Hourglass className="pe-art-icon" /><b>{formatStudyTime(time.week, language)}</b><span>{t('rd.time.week')} · {t('rd.time.today')} {formatStudyTime(time.today, language)}</span></div>
+            ? <div className="pe-time-tile"><ProgressArtwork kind="time" /><b>{formatStudyTime(time.week, language)}</b><span>{t('rd.time.week')} · {t('rd.time.today')} {formatStudyTime(time.today, language)}</span></div>
             : <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>}
           <div><ProgressArtwork kind="memory" /><b>{activeDays}</b><span>{countWord(activeDays, 'day', language)} {t('rd.daysActive')}</span></div>
         </section>
