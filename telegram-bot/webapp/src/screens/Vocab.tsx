@@ -10,6 +10,7 @@ import { gradeIntervalLabel } from '../srs';
 import { Greek } from '../components/greek';
 import { VocabCompletion } from '../components/VocabCompletion';
 import { StudyIcon } from '../components/StudyIcon';
+import './vocabWord.css';
 import { VocabularyFrame, VocabDecorImg } from './vocabularyDecor';
 import { VOCABULARY_HINTS } from '../data/vocabularyHints';
 import { StudyRevealButton } from '../components/StudyRevealButton';
@@ -155,7 +156,7 @@ export function Vocab({ onHome }: { onHome: () => void }) {
         <div className="study-card-label pureplay-desktop">{t('vocab.languagePair')}</div>
         <VocabDecorImg slot="cardGreekCorner" className="vc-corner tl" />
         <VocabDecorImg slot="cardOliveBranch" className="vc-corner-olive" />
-        <div className="speak-row center">
+        <div className="speak-row center vc-word-row">
           {/* Long phrases ("Εθνικό Αρχαιολογικό Μουσείο") step down a size so they
               wrap inside the card instead of running into its corner ornaments. */}
           <div className={`vocab-word${card.word.length > 22 ? ' xlong' : card.word.length > 14 ? ' long' : ''}`}>

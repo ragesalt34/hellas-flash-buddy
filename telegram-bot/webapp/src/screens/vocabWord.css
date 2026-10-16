@@ -1,0 +1,12 @@
+/* Vocabulary card: the Greek word is centred on the card by itself; the speaker button hangs off its
+   right side instead of being counted in the centring (it pushed the word ~25px left of the answer
+   strip below). Side tracks are equal, so the word's centre is the card's centre. */
+[data-theme='soft'] .app .vc-screen .vc-card .speak-row.center.vc-word-row {
+  display: grid; grid-template-columns: minmax(48px, 1fr) auto minmax(48px, 1fr); align-items: center; column-gap: 0;
+}
+[data-theme='soft'] .app .vc-screen .vc-card .speak-row.center.vc-word-row .vocab-word { grid-column: 2; justify-self: center; }
+[data-theme='soft'] .app .vc-screen .vc-card .speak-row.center.vc-word-row .speak-btn { grid-column: 3; justify-self: start; margin-left: 14px; }
+@media (max-width: 640px) {
+  [data-theme='soft'] .app .vc-screen .vc-card .speak-row.center.vc-word-row { grid-template-columns: minmax(40px, 1fr) auto minmax(40px, 1fr); }
+  [data-theme='soft'] .app .vc-screen .vc-card .speak-row.center.vc-word-row .speak-btn { margin-left: 8px; }
+}
