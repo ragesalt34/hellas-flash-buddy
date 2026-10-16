@@ -1,6 +1,7 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
 import { useEffect, useRef, useState } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
+import { LandingFaq } from './LandingFaq';
 import { Volume2 } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
@@ -59,9 +60,6 @@ const FEATURES = [
   { art: 'feature-plan', title: 'plan.title', text: 'le.f5.text', plan: true },
   { art: 'feature-progress', title: 'landing.feature.progress.title', text: 'le.f6.text' },
 ] as const;
-
-// Existing FAQ entries, the four the reference shows (landing.faq.q1/q4/q2/q6).
-const FAQ = [1, 4, 2, 6];
 
 export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; onGuest: () => void }) {
   const { t } = useLanguage();
@@ -160,23 +158,7 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
         </section>
 
         {/* ---- FAQ ---- */}
-        <section className="le-faq" id="faq">
-          <div className="le-faq-side">
-            <h2 data-motion-title>{t('le.faq.title')}</h2>
-            <Art name="faq-column-olive" className="le-faq-art" />
-          </div>
-          <div className="le-faq-list">
-            {FAQ.map((n) => (
-              <details key={n}>
-                <summary>
-                  {t(`landing.faq.q${n}`)}
-                  <span className="le-plus" aria-hidden="true" />
-                </summary>
-                <p>{t(`landing.faq.a${n}`)}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        <LandingFaq />
 
         {/* ---- closing banner ---- */}
         <section className="le-close">

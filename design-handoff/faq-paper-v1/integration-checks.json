@@ -1,0 +1,179 @@
+{
+  "browser": "ChatGPT in-app browser",
+  "checks": [
+    {
+      "banner": {
+        "bottom": 1372.078125,
+        "height": 347.25,
+        "left": 82,
+        "right": 1348,
+        "top": 1024.828125,
+        "width": 1266,
+        "x": 82,
+        "y": 1024.828125
+      },
+      "faq": {
+        "bottom": 952.828125,
+        "height": 514.4375,
+        "left": 82,
+        "right": 1348,
+        "top": 438.390625,
+        "width": 1266,
+        "x": 82,
+        "y": 438.390625
+      },
+      "language": "Прежде чем\nначать",
+      "rows": [
+        {
+          "fit": true,
+          "open": false,
+          "question": "Сколько нужно готовиться?"
+        },
+        {
+          "fit": true,
+          "open": true,
+          "question": "На каком языке готовиться?"
+        },
+        {
+          "fit": true,
+          "open": false,
+          "question": "Почему карточки, а не просто список вопросов?"
+        },
+        {
+          "fit": true,
+          "open": false,
+          "question": "Бесплатно? Нужна регистрация?"
+        }
+      ],
+      "scrollWidth": 1430,
+      "width": 1440
+    },
+    {
+      "banner": {
+        "bottom": 1448.9375,
+        "height": 320,
+        "left": 20,
+        "right": 345,
+        "top": 1128.9375,
+        "width": 325,
+        "x": 20,
+        "y": 1128.9375
+      },
+      "faq": {
+        "bottom": 1072.9375,
+        "height": 714.796875,
+        "left": 20,
+        "right": 345,
+        "top": 358.140625,
+        "width": 325,
+        "x": 20,
+        "y": 358.140625
+      },
+      "images": [
+        {
+          "display": "block",
+          "loaded": true
+        },
+        {
+          "display": "block",
+          "loaded": true
+        },
+        {
+          "display": "block",
+          "loaded": true
+        },
+        {
+          "display": "block",
+          "loaded": true
+        },
+        {
+          "display": "block",
+          "loaded": true
+        }
+      ],
+      "language": "Прежде чем\nначать",
+      "rows": [
+        {
+          "fit": true,
+          "open": false,
+          "question": "Сколько нужно готовиться?"
+        },
+        {
+          "fit": true,
+          "open": true,
+          "question": "На каком языке готовиться?"
+        },
+        {
+          "fit": true,
+          "open": false,
+          "question": "Почему карточки, а не просто список вопросов?"
+        },
+        {
+          "fit": true,
+          "open": false,
+          "question": "Бесплатно? Нужна регистрация?"
+        }
+      ],
+      "scrollWidth": 365,
+      "width": 375
+    },
+    {
+      "banner": {
+        "bottom": 766.875,
+        "height": 320,
+        "left": 20,
+        "right": 345,
+        "top": 446.875,
+        "width": 325,
+        "x": 20,
+        "y": 446.875
+      },
+      "faq": {
+        "bottom": 390.875,
+        "height": 1461.390625,
+        "left": 20,
+        "right": 345,
+        "top": -1070.515625,
+        "width": 325,
+        "x": 20,
+        "y": -1070.515625
+      },
+      "language": "Πριν\nξεκινήσεις",
+      "rows": [
+        {
+          "fit": true,
+          "inlineStyle": "",
+          "open": true,
+          "question": "Πόσο καιρό πρέπει να διαβάζω;"
+        },
+        {
+          "fit": true,
+          "inlineStyle": "",
+          "open": true,
+          "question": "Σε ποια γλώσσα να προετοιμαστώ;"
+        },
+        {
+          "fit": true,
+          "inlineStyle": "",
+          "open": true,
+          "question": "Γιατί κάρτες και όχι απλή λίστα ερωτήσεων;"
+        },
+        {
+          "fit": true,
+          "inlineStyle": "",
+          "open": true,
+          "question": "Δωρεάν; Χρειάζεται εγγραφή;"
+        }
+      ],
+      "scrollWidth": 365,
+      "width": 375
+    }
+  ],
+  "protectedFilesSha256": {
+    "screens/landingResponsive.css": "6e6b167542268cc52498fe27b37f19abc32fc0bcf642fcea133ff848b947eaa2",
+    "App.tsx": "102fbd89928eda31f05f43db27a4a96043dce4236d2636ced84b8d1dae638a31",
+    "styles.css": "4bcf05a66b9342975b6e943d78ec53cfdd368c32e9eb68953e53698daea68b74",
+    "screens/Quiz.tsx": "e3f4a0bfce06ca2d39fef73d659951e75de41835a9e910c9fdccac2b64d9d4ce",
+    "screens/quizAnswerMotion.css": "b659d22f5c8ea198bd40bb6d9e50d6b25ac16559e1eea9e821d5be482e4afbf2"
+  }
+}

@@ -350,7 +350,7 @@ const translations: Translations = {
   'landing.pureplay.step3': { ru: 'Закрывай слабые темы', el: 'Δούλεψε στα αδύναμα θέματα' },
   // Desktop editorial landing (screens/LandingEditorial.tsx)
   'le.h1': { ru: 'Твой путь\nк греческому\nгражданству.', el: 'Ο δρόμος σου\nπρος την\nιθαγένεια.' },
-  'le.faq.title': { ru: 'Прежде\nчем начать', el: 'Πριν\nξεκινήσεις' },
+  'le.faq.title': { ru: 'Прежде чем\nначать', el: 'Πριν\nξεκινήσεις' },
   'le.facts.questions': { ru: 'вопросов', el: 'ερωτήσεις' },
   'le.facts.words': { ru: 'слов', el: 'λέξεις' },
   'le.facts.topics': { ru: 'темы', el: 'θέματα' },

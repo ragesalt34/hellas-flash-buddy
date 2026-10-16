@@ -1,0 +1,186 @@
+/* Approved FAQ paper-tabs v1. Original PNGs stay intact; only blank paper uses nine-slice. */
+[data-theme='soft'] .landing-screen.le-page .le-paper-faq {
+  display: grid;
+  grid-template-columns: minmax(0, .34fr) minmax(0, .66fr);
+  gap: clamp(28px, 4.4vw, 64px);
+  align-items: start;
+  margin-block: clamp(56px, 6vw, 88px) clamp(40px, 5vw, 72px);
+  scroll-margin-top: 104px;
+}
+[data-theme='soft'] .landing-screen.le-page .le-paper-faq h2 {
+  margin: 0;
+  max-width: 430px;
+  font-size: clamp(40px, 4.1vw, 62px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -.04em;
+  white-space: pre-line;
+  color: var(--le-ink);
+}
+/* The legacy global soft-theme reset hides hs-deco; restore only this approved FAQ artwork. */
+[data-theme='soft'] .landing-screen.le-page .le-paper-faq .hs-deco { display: block !important; }
+[data-theme='soft'] .landing-screen.le-page .lfq-art {
+  position: relative;
+  display: block;
+  pointer-events: none;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-art img {
+  position: absolute;
+  height: auto;
+  max-width: none;
+  user-select: none;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-notebook {
+  width: calc(100% - 16px);
+  max-width: 368px;
+  margin-top: 24px;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-list {
+  display: grid;
+  gap: 17px;
+  min-width: 0;
+  padding-top: 4px;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-item {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-sheet {
+  position: absolute;
+  z-index: -1;
+  inset: -7px;
+  overflow: hidden;
+  pointer-events: none;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-skin {
+  position: absolute;
+  border: 0 solid transparent;
+  border-image-repeat: stretch;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-skin-closed {
+  inset: -72.6px -22.2px -72px -25.5px;
+  border-image-source: var(--lfq-paper-closed);
+  border-image-slice: 302 134 300 145 fill;
+  border-image-width: 90.6px 40.2px 90px 43.5px;
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-skin-open {
+  inset: -67.781px -15.469px -59.906px -26.438px;
+  border-image-source: var(--lfq-paper-open);
+  border-image-slice: 305 119 277 158 fill;
+  border-image-width: 85.781px 33.469px 77.906px 44.438px;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-item[open]:not([data-expanded='false']) .lfq-skin-open { opacity: 1; }
+[data-theme='soft'] .landing-screen.le-page .lfq-item[open]:not([data-expanded='false']) .lfq-skin-closed { opacity: 0; }
+[data-theme='soft'] .landing-screen.le-page .lfq-tab {
+  position: absolute;
+  z-index: -2;
+  height: 51px;
+  width: auto;
+  left: -17px;
+  top: 12px;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 79px;
+  padding: 21px 28px 21px 34px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -.03em;
+  color: var(--le-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-item summary::-webkit-details-marker { display: none; }
+[data-theme='soft'] .landing-screen.le-page .lfq-item summary::marker { content: ''; }
+[data-theme='soft'] .landing-screen.le-page .lfq-item summary:focus-visible {
+  outline: 2px solid #285e80;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-question { min-width: 0; }
+[data-theme='soft'] .landing-screen.le-page .lfq-toggle {
+  position: relative;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-toggle::before,
+[data-theme='soft'] .landing-screen.le-page .lfq-toggle::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 160ms ease;
+}
+[data-theme='soft'] .landing-screen.le-page .lfq-toggle::before { width: 22px; height: 1.5px; left: 1px; top: 11px; }
+[data-theme='soft'] .landing-screen.le-page .lfq-toggle::after { width: 1.5px; height: 22px; left: 11px; top: 1px; }
+[data-theme='soft'] .landing-screen.le-page .lfq-item[open]:not([data-expanded='false']) .lfq-toggle::after { transform: scaleY(0); }
+[data-theme='soft'] .landing-screen.le-page .lfq-answer { padding: 0 34px 28px; }
+[data-theme='soft'] .landing-screen.le-page .lfq-answer p {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -.018em;
+  color: #373b38;
+  overflow-wrap: anywhere;
+}
+[data-theme='soft'] .landing-screen.le-page .le-paper-faq ::selection { background: #dfb895; color: #151515; }
+
+@media (hover: hover) {
+  [data-theme='soft'] .landing-screen.le-page .lfq-item summary:hover { color: #894c34; }
+}
+@media (max-width: 1100px) {
+  [data-theme='soft'] .landing-screen.le-page .le-paper-faq {
+    grid-template-columns: minmax(0, .33fr) minmax(0, .67fr);
+    gap: 36px;
+  }
+  [data-theme='soft'] .landing-screen.le-page .le-paper-faq h2 { font-size: 44px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-item summary { font-size: 20px; padding-inline: 27px 24px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-answer { padding-inline: 27px; }
+}
+@media (max-width: 700px) {
+  [data-theme='soft'] .landing-screen.le-page .le-paper-faq { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-side { display: flex; align-items: center; gap: 12px; }
+  [data-theme='soft'] .landing-screen.le-page .le-paper-faq h2 { flex: 1; min-width: 0; font-size: 36px; letter-spacing: -.04em; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-notebook { flex: 0 0 96px; width: 96px; margin: 0; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-list { gap: 15px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-tab { height: 40px; left: -11px; top: 14px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-item summary {
+    min-height: 76px;
+    gap: 12px;
+    padding: 20px 17px 20px 22px;
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  [data-theme='soft'] .landing-screen.le-page .lfq-toggle { transform: scale(.82); }
+  [data-theme='soft'] .landing-screen.le-page .lfq-answer { padding: 0 22px 26px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-answer p { font-size: 16px; }
+}
+@media (max-width: 360px) {
+  [data-theme='soft'] .landing-screen.le-page .le-paper-faq h2 { font-size: 32px; }
+  [data-theme='soft'] .landing-screen.le-page .lfq-notebook { flex-basis: 80px; width: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='soft'] .landing-screen.le-page .lfq-skin,
+  [data-theme='soft'] .landing-screen.le-page .lfq-toggle::before,
+  [data-theme='soft'] .landing-screen.le-page .lfq-toggle::after { transition: none; }
+}
