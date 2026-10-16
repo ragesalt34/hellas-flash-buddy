@@ -1,11 +1,9 @@
 import { LiquidMetalButton } from '../components/ui/liquid-metal-button';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { mountLandingMotion } from './landingMotion.js';
 import { LandingFaq } from './LandingFaq';
-import { Volume2 } from '../components/HellasIcons';
 import { SlideArrow } from '../components/SlideArrow';
 import { useLanguage } from '../i18n';
-import { speakGreek } from '../speech';
 import { Logo } from '../components/Logo';
 import { LanguageSwitch } from '../components/LanguageSwitch';
 import { LANDING_ART, type LandingArtKey } from './landingArt';
@@ -37,17 +35,6 @@ function Art({ name, vw, className = '' }: { name: LandingArtKey; vw?: number; c
   );
 }
 
-// The demo card cycles through a few words; the first one is the reference's. `speak` is the exact
-// vocabulary entry the server will pronounce (/api/tts only serves known texts), `id` its clip key;
-// Words without a supported clip do not show a non-functional audio control.
-const DEMO_WORDS: { word: string; ru: string; speak?: string; id?: number }[] = [
-  { word: 'η ιστορία', ru: 'история' },
-  { word: 'η ιθαγένεια', ru: 'гражданство', speak: 'ιθαγένεια', id: 1 },
-  { word: 'η σημαία', ru: 'флаг', speak: 'σημαία', id: 124 },
-  { word: 'η πατρίδα', ru: 'родина' },
-  { word: 'το σύνταγμα', ru: 'конституция', speak: 'Σύνταγμα', id: 5 },
-];
-
 const STEPS = [
   { art: 'step-choose', title: 'landing.step1.title', text: 'landing.pureplay.step1' },
   { art: 'step-repeat', title: 'landing.step2.title', text: 'landing.pureplay.step2' },
@@ -65,8 +52,6 @@ const FEATURES = [
 
 export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; onGuest: () => void }) {
   const { t } = useLanguage();
-  const [wordIndex, setWordIndex] = useState(0);
-  const word = DEMO_WORDS[wordIndex % DEMO_WORDS.length];
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => mountLandingMotion(root.current), []);
 
@@ -89,29 +74,6 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
             </div>
           </div>
           <Art name="hero-collage" vw={840} className="le-hero-art" />
-          <div className="le-demo" data-motion-card>
-            <Art name="surface-word-card" vw={320} className="le-demo-paper" />
-            {word.speak ? (
-              <button
-                type="button"
-                className="le-demo-sound"
-                aria-label={t('common.pronounce')}
-                onClick={() => void speakGreek(word.speak!, `vocab_${word.id}`)}
-              >
-                <Volume2 size={22} strokeWidth={2} aria-hidden="true" />
-              </button>
-            ) : null}
-            <span className="le-demo-word" lang="el">{word.word}</span>
-            <span className="le-demo-ru">{word.ru}</span>
-            <button
-              type="button"
-              className="le-demo-try"
-              onClick={() => setWordIndex((n) => n + 1)}
-              aria-label={`${word.word} — ${word.ru}. ${t('landing.pureplay.demo.next')}`}
-            >
-              {t('landing.pureplay.demo.try')} <SlideArrow size={18} strokeWidth={2} aria-hidden="true" />
-            </button>
-          </div>
         </section>
 
         {/* ---- facts: one paper ribbon, four groups ---- */}

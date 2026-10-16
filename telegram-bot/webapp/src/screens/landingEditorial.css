@@ -88,6 +88,11 @@
 :is([data-theme='soft'], [data-theme='brut']) .le-page button.le-demo-sound { cursor: pointer; }
 :is([data-theme='soft'], [data-theme='brut']) .le-page button.le-demo-sound:hover { background: #eef2ff; }
 
+/* Quiet hero ink; existing typography, geometry and button treatments stay intact. */
+[data-theme='soft'] .landing-screen.le-page .le-hero h1 { color: #1d3028; }
+[data-theme='soft'] .landing-screen.le-page .le-hero .le-sub { color: #535a55; }
+[data-theme='soft'] .landing-screen.le-page .le-hero .le-eyebrow { color: #59684d; }
+
 /* ---- facts ribbon ---- */
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts { position: relative; height: calc(179 * var(--u)); margin-top: calc(16 * var(--u)); }
 :is([data-theme='soft'], [data-theme='brut']) .le-page .le-facts-paper { position: absolute; left: calc(-40 * var(--u)); top: 0; }
