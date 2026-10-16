@@ -1,0 +1,958 @@
+{
+  "topic": "history",
+  "generatedWith": "built-in image_gen",
+  "count": 38,
+  "sourceExportedAt": "2026-10-06T19:49:34.761Z",
+  "items": [
+    {
+      "order": 71,
+      "questionId": "758f7a56-a48e-42eb-bafb-81dec012e053",
+      "file": "history-71.png",
+      "questionRu": "Какая из древних цивилизаций Греции получила свое название от легендарного царя Миноса?",
+      "questionEl": "Ποιος από τους αρχαίους πολιτισμούς της Ελλάδας πήρε το όνομά του από τον θρυλικό βασιλιά Μίνωα;",
+      "answerRu": "Минойская цивилизация",
+      "answerEl": "Ο Μινωικός πολιτισμός",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1533,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3055345,
+      "sha256": "f26fde9285abceac235123eb8a1c7f90017caab01b7a757a0db0a73a572b8a01"
+    },
+    {
+      "order": 72,
+      "questionId": "e05f7a12-3920-4d6f-909a-f4b2405e65e8",
+      "file": "history-72.png",
+      "questionRu": "Что произошло на албанском фронте в 1940 году после ответа «ОХИ»?",
+      "questionEl": "Τι συνέβη στο αλβανικό μέτωπο το 1940 μετά την απάντηση «ΟΧΙ»;",
+      "answerRu": "Греческая армия отбила итальянское наступление и перешла в контрнаступление",
+      "answerEl": "Ο ελληνικός στρατός απέκρουσε την ιταλική επίθεση και πέρασε σε αντεπίθεση",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1532,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3056798,
+      "sha256": "14c63e128eebb0ca842f7851fe9eb3ad2b712f9ffaf2f8f74dd5ac7b5b919b5f"
+    },
+    {
+      "order": 73,
+      "questionId": "5b526dc3-3763-4826-af8f-762f722f06e5",
+      "file": "history-73.png",
+      "questionRu": "Что стало с Константинополем после его падения в 1453 году?",
+      "questionEl": "Τι απέγινε η Κωνσταντινούπολη μετά την πτώση της το 1453;",
+      "answerRu": "Стал столицей Османской империи",
+      "answerEl": "Έγινε πρωτεύουσα της Οθωμανικής Αυτοκρατορίας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1518,
+        994
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3003531,
+      "sha256": "c46b0265bf3acfd07c08fe33d412bc9772751548afcec8d086a9b56102d9bbac"
+    },
+    {
+      "order": 74,
+      "questionId": "6050c8b0-2fe4-4cda-be1a-5f6187356991",
+      "file": "history-74.png",
+      "questionRu": "Кто стал премьер-министром Греции в 1936 году и установил авторитарный режим, известный как «диктатура 4 августа»?",
+      "questionEl": "Ποιος έγινε πρωθυπουργός της Ελλάδας το 1936 και εγκαθίδρυσε αυταρχικό καθεστώς, γνωστό ως «δικτατορία της 4ης Αυγούστου»;",
+      "answerRu": "Иоаннис Метаксас",
+      "answerEl": "Ο Ιωάννης Μεταξάς",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1496,
+        1000
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2871020,
+      "sha256": "8e8558b6c47ec9dfa7ed58e0981cd12b7c4fb46531b9b0be910cf7e9f1d03de0"
+    },
+    {
+      "order": 75,
+      "questionId": "0738cca7-226d-4206-a48a-8967fb82a9de",
+      "file": "history-75.png",
+      "questionRu": "Какая цивилизация использовала линейное письмо А?",
+      "questionEl": "Ποιος πολιτισμός χρησιμοποιούσε τη Γραμμική Γραφή Α;",
+      "answerRu": "Минойская цивилизация",
+      "answerEl": "Ο Μινωικός πολιτισμός",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        31,
+        21,
+        1488,
+        996
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2980133,
+      "sha256": "fd03b055fc7a7a66484a6ba1c7c2ccbfdb15291b276a1dc0876ef72cba8d8a76"
+    },
+    {
+      "order": 76,
+      "questionId": "fb4c0320-63ae-4daf-a953-33bb4f45a946",
+      "file": "history-76.png",
+      "questionRu": "Когда закончилась Гражданская война в Греции?",
+      "questionEl": "Πότε έληξε ο Εμφύλιος Πόλεμος στην Ελλάδα;",
+      "answerRu": "1949 год",
+      "answerEl": "Το 1949",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2921450,
+      "sha256": "81a7f3d519bcdc97db66424307d5a9760386bff8eba5e54add44676a302a4258"
+    },
+    {
+      "order": 77,
+      "questionId": "1e7d74a6-e124-48a8-a633-c89bbbc25dab",
+      "file": "history-77.png",
+      "questionRu": "Какая дата считается символическим началом Греческой революции?",
+      "questionEl": "Ποια ημερομηνία θεωρείται η συμβολική έναρξη της Ελληνικής Επανάστασης;",
+      "answerRu": "25 марта 1821 года",
+      "answerEl": "Η 25η Μαρτίου 1821",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        15,
+        1518,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2960597,
+      "sha256": "afaa406d828dc506efd6120eb0244af60fa365b7f63ab244e97ca9499dfdd657"
+    },
+    {
+      "order": 78,
+      "questionId": "ac05aff9-6db6-4713-b3f9-cd63612bf5c8",
+      "file": "history-78.png",
+      "questionRu": "В чём состояло расхождение позиций короля Константина I и Элефтериоса Венизелоса по Первой мировой войне?",
+      "questionEl": "Σε τι διέφεραν οι θέσεις του βασιλιά Κωνσταντίνου Α΄ και του Ελευθερίου Βενιζέλου για τον Α΄ Παγκόσμιο Πόλεμο;",
+      "answerRu": "Король хотел нейтралитета, Венизелос - вступления в войну на стороне Антанты",
+      "answerEl": "Ο βασιλιάς ήθελε ουδετερότητα, ο Βενιζέλος την είσοδο στον πόλεμο στο πλευρό της Αντάντ",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        8,
+        1503,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3115906,
+      "sha256": "4e5a899a6e1d4a8f50f849e6be1804229f054010671f05c451ca2b7396367e46"
+    },
+    {
+      "order": 79,
+      "questionId": "a2dded16-223e-4374-8354-0c500afcb81d",
+      "file": "history-79.png",
+      "questionRu": "Что использовала Византия для укрепления связей с другими государствами?",
+      "questionEl": "Τι χρησιμοποιούσε το Βυζάντιο για την ενίσχυση των σχέσεων με άλλα κράτη;",
+      "answerRu": "Династические браки",
+      "answerEl": "Δυναστικούς γάμους",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        8,
+        1533,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3213210,
+      "sha256": "c3efdbc4db5495897be4fdcccd27728783ae7d0ab0bc8c73dcc324c261ae40c6"
+    },
+    {
+      "order": 80,
+      "questionId": "8d5cab55-69b9-4ec0-96a2-e59ce67609ae",
+      "file": "history-80.png",
+      "questionRu": "Между какими странами был подписан Лозаннский договор в 1923 году?",
+      "questionEl": "Μεταξύ ποιων χωρών υπογράφηκε η Συνθήκη της Λωζάνης το 1923;",
+      "answerRu": "Грецией и Турцией",
+      "answerEl": "Της Ελλάδας και της Τουρκίας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2800412,
+      "sha256": "ddf9da723443c35841c574214e83d47c05d4e36df76e830cbd7299aef28b8302"
+    },
+    {
+      "order": 81,
+      "questionId": "4955fe01-f739-452b-be9f-89d343da4d53",
+      "file": "history-81.png",
+      "questionRu": "Сколько лет продлилась диктатура «чёрных полковников»?",
+      "questionEl": "Πόσα χρόνια διήρκεσε η δικτατορία των «μαύρων συνταγματαρχών»;",
+      "answerRu": "7 лет",
+      "answerEl": "7 χρόνια",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        9,
+        1506,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2847877,
+      "sha256": "563570a9b0653a8b3acf35e77a371c730a13bd6a9a4f0d599373bde8f0171bd9"
+    },
+    {
+      "order": 82,
+      "questionId": "ba6d8b83-de1b-4cb6-b447-f0bcb0182357",
+      "file": "history-82.png",
+      "questionRu": "Где было поднято первое восстание в 1821 году, помимо Пелопоннеса?",
+      "questionEl": "Πού ξέσπασε η πρώτη εξέγερση το 1821, εκτός από την Πελοπόννησο;",
+      "answerRu": "Придунайские княжества",
+      "answerEl": "Στις Παραδουνάβιες Ηγεμονίες",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1532,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3135698,
+      "sha256": "467e9fb1cf59da7ec9e40d59746eed979938d27a5269af75e0c18d9962e4c35e"
+    },
+    {
+      "order": 83,
+      "questionId": "cb0dfccf-8f85-40a0-92ea-65be72ec41cb",
+      "file": "history-83.png",
+      "questionRu": "Сколько мусульман переселилось в Турцию в результате Лозаннского договора?",
+      "questionEl": "Πόσοι μουσουλμάνοι μετακινήθηκαν στην Τουρκία ως αποτέλεσμα της Συνθήκης της Λωζάνης;",
+      "answerRu": "Около 500 тыс.",
+      "answerEl": "Περίπου 500 χιλιάδες",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1516,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3000326,
+      "sha256": "66b3177d18e0b76781cb803c219c137f424ab587a573a96f0a85131a06e491d7"
+    },
+    {
+      "order": 84,
+      "questionId": "7ea3a649-e3c7-4bd8-81da-a266ef0eb6ba",
+      "file": "history-84.png",
+      "questionRu": "Кто из перечисленных был одним из организаторов военного переворота в Греции в 1967 году?",
+      "questionEl": "Ποιος από τους παρακάτω ήταν ένας από τους οργανωτές του στρατιωτικού πραξικοπήματος στην Ελλάδα το 1967;",
+      "answerRu": "Георгиос Пападопулос",
+      "answerEl": "Ο Γεώργιος Παπαδόπουλος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        35,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2900163,
+      "sha256": "861ce170464b0f956227eb70b0f26db27507cde655ce0766862699369332140c"
+    },
+    {
+      "order": 85,
+      "questionId": "a65c4a4a-d7a0-4e20-ad2d-1c3b7ff1788e",
+      "file": "history-85.png",
+      "questionRu": "Почему кипрский кризис 1974 года стал решающим фактором падения диктатуры?",
+      "questionEl": "Γιατί η κυπριακή κρίση του 1974 έγινε καθοριστικός παράγοντας για την πτώση της δικτατορίας;",
+      "answerRu": "Попытка свергнуть президента Кипра и турецкое вторжение, выявившие слабость режима",
+      "answerEl": "Η απόπειρα ανατροπής του προέδρου της Κύπρου και η τουρκική εισβολή, που αποκάλυψαν την αδυναμία του καθεστώτος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2897308,
+      "sha256": "d292bdc3b3b586f6af737cff6f5d5379fe8817c13ee82b2697158e5484009f30"
+    },
+    {
+      "order": 86,
+      "questionId": "5ef88972-bfa5-4b29-8b83-192497e33a12",
+      "file": "history-86.png",
+      "questionRu": "В каком году великие державы признали независимость Греции по Лондонскому протоколу?",
+      "questionEl": "Ποια χρονιά αναγνώρισαν οι Μεγάλες Δυνάμεις την ανεξαρτησία της Ελλάδας με το Πρωτόκολλο του Λονδίνου;",
+      "answerRu": "1830 год",
+      "answerEl": "Το 1830",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        48,
+        9,
+        1488,
+        988
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2734672,
+      "sha256": "9d2840d7c563579a79b2dbe4c2228ae06e1a667276f33575eb436c20b7b8e956"
+    },
+    {
+      "order": 87,
+      "questionId": "d7c69333-49c5-49e2-9d5e-70acaebf6521",
+      "file": "history-87.png",
+      "questionRu": "Как называлась новая столица, основанная императором Константином Великим?",
+      "questionEl": "Πώς ονομαζόταν η νέα πρωτεύουσα που ίδρυσε ο αυτοκράτορας Μέγας Κωνσταντίνος;",
+      "answerRu": "Константинополь",
+      "answerEl": "Κωνσταντινούπολη",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3291558,
+      "sha256": "62cb52f1f2be27d6a9e82ca47b1e5c53860fd1e792840e4a40ce519d915e8b22"
+    },
+    {
+      "order": 88,
+      "questionId": "355df29b-7281-4e1a-a975-5700b861cf4c",
+      "file": "history-88.png",
+      "questionRu": "Как называется период массовых убийств и депортаций греков на севере Турции?",
+      "questionEl": "Πώς ονομάζεται η περίοδος των μαζικών δολοφονιών και εκτοπισμών των Ελλήνων στη βόρεια Τουρκία;",
+      "answerRu": "Понтийский геноцид",
+      "answerEl": "Η Γενοκτονία των Ποντίων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        39,
+        0,
+        1522,
+        998
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3272833,
+      "sha256": "78d935ee18ca6d05b5ad1b58704ed455c0f2c903f1533bd00cc4d3cf8caecfaf"
+    },
+    {
+      "order": 89,
+      "questionId": "8db3fabc-a23b-4aec-8a31-4130935f71a5",
+      "file": "history-89.png",
+      "questionRu": "Что такое «тайная школа» (κρυφό σχολειό)?",
+      "questionEl": "Τι είναι το «Κρυφό Σχολειό» (κρυφό σχολειό);",
+      "answerRu": "Символ сохранения греческой культуры и православия под османским игом",
+      "answerEl": "Σύμβολο της διατήρησης του ελληνικού πολιτισμού και της Ορθοδοξίας υπό τον οθωμανικό ζυγό",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 10,
+      "byteLength": 3045438,
+      "sha256": "3c08700c90061281a048c3bf7a657acd61bf8f1133c7b869c794d9a40a1ad045"
+    },
+    {
+      "order": 90,
+      "questionId": "cddc62df-79e0-429f-8e4a-082974a22967",
+      "file": "history-90.png",
+      "questionRu": "Какое было начальное отношение Греции к Первой мировой войне?",
+      "questionEl": "Ποια ήταν η αρχική στάση της Ελλάδας απέναντι στον Α΄ Παγκόσμιο Πόλεμο;",
+      "answerRu": "Нейтралитет",
+      "answerEl": "Ουδετερότητα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1524,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3090855,
+      "sha256": "6f85fe1cdb5f52293079f62397b151783bde9502457e476561e1f913bdf6ccc3"
+    },
+    {
+      "order": 91,
+      "questionId": "df872171-59fa-4275-bcb7-28c0e3d944cb",
+      "file": "history-91.png",
+      "questionRu": "Кто захватил Константинополь в 1453 году?",
+      "questionEl": "Ποιος κατέλαβε την Κωνσταντινούπολη το 1453;",
+      "answerRu": "Турки-османы",
+      "answerEl": "Οι Οθωμανοί Τούρκοι",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        25,
+        23,
+        1516,
+        1000
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2701292,
+      "sha256": "43ef69af54d04f0f3bc726e6dab8802882fc192175936591cb44429eaafe9870"
+    },
+    {
+      "order": 92,
+      "questionId": "8f1b0fe5-6c5d-439c-8381-94ffa8abc217",
+      "file": "history-92.png",
+      "questionRu": "Где располагалась Кикладская цивилизация?",
+      "questionEl": "Πού βρισκόταν ο Κυκλαδικός πολιτισμός;",
+      "answerRu": "На островах Киклады",
+      "answerEl": "Στα νησιά των Κυκλάδων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        8,
+        1530,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2788054,
+      "sha256": "3b92abb3f2e0d385a89bcdb049236755ff4dcc7ae10f254af855d7683aac9bd8"
+    },
+    {
+      "order": 93,
+      "questionId": "bbcb1721-7be5-4e53-8c9f-8c8c30286059",
+      "file": "history-93.png",
+      "questionRu": "Каковы были основные трудности, с которыми столкнулась Греция в десятилетии 1920–1930 годов после Малоазийской катастрофы и обмена населением?",
+      "questionEl": "Ποιες ήταν οι κύριες δυσκολίες που αντιμετώπισε η Ελλάδα τη δεκαετία 1920–1930 μετά τη Μικρασιατική Καταστροφή και την ανταλλαγή πληθυσμών;",
+      "answerRu": "Бедность, экономический кризис, политическая нестабильность, необходимость интеграции беженцев",
+      "answerEl": "Η φτώχεια, η οικονομική κρίση, η πολιτική αστάθεια, η ανάγκη ένταξης των προσφύγων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        19,
+        1520,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3005365,
+      "sha256": "68f6989f57806ee6d8c1377b6264a3587a34cb484aa931508b30e73be63fc064"
+    },
+    {
+      "order": 94,
+      "questionId": "f5b45f5b-a97b-4b4d-83c6-b99de694c828",
+      "file": "history-94.png",
+      "questionRu": "С какой древней цивилизацией связан центр Акротири?",
+      "questionEl": "Με ποιον αρχαίο πολιτισμό συνδέεται το κέντρο του Ακρωτηρίου;",
+      "answerRu": "Минойская цивилизация",
+      "answerEl": "Ο Μινωικός πολιτισμός",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        63,
+        19,
+        1472,
+        978
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2827681,
+      "sha256": "fd899bf5de514ef4673cb1674de894b6b27116a0f48762333fb78795efc80ef2"
+    },
+    {
+      "order": 95,
+      "questionId": "126e9ea0-b541-4950-aecd-e9bab6c526d8",
+      "file": "history-95.png",
+      "questionRu": "Где располагался центр Акротири?",
+      "questionEl": "Πού βρισκόταν το κέντρο του Ακρωτηρίου;",
+      "answerRu": "Остров Санторини",
+      "answerEl": "Στο νησί της Σαντορίνης",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1530,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3123369,
+      "sha256": "dfde6086515e3af6863bd6e6fa438547e4687609e5484cc3263a2b17938a8f93"
+    },
+    {
+      "order": 96,
+      "questionId": "772536f7-090d-424e-9375-8a71827ded26",
+      "file": "history-96.png",
+      "questionRu": "Почему Византийскую империю называют продолжением Римской империи на Востоке?",
+      "questionEl": "Γιατί η Βυζαντινή Αυτοκρατορία θεωρείται συνέχεια της Ρωμαϊκής Αυτοκρατορίας στην Ανατολή;",
+      "answerRu": "Сохранение римских законов и традиций",
+      "answerEl": "Λόγω της διατήρησης των ρωμαϊκών νόμων και παραδόσεων",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        19,
+        1484,
+        1020
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3021567,
+      "sha256": "8435a459853d90f009d87c6124b7de6eacae845d8fb0e2bb4f664992d084b084"
+    },
+    {
+      "order": 97,
+      "questionId": "938baac6-a72d-4b57-b013-f6fd9f4a0642",
+      "file": "history-97.png",
+      "questionRu": "Кто из перечисленных был одним из основателей тайного общества Филики Этерия?",
+      "questionEl": "Ποιος από τους παρακάτω ήταν ένας από τους ιδρυτές της μυστικής εταιρείας Φιλική Εταιρεία;",
+      "answerRu": "Эммануил Ксантос",
+      "answerEl": "Ο Εμμανουήλ Ξάνθος",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        9,
+        1533,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2895966,
+      "sha256": "85362726c510e561677c02d8616a08c729fbf0026e491604b2c24caee3a13314"
+    },
+    {
+      "order": 98,
+      "questionId": "3722513b-1f49-47c4-8528-c623d0dbbe1a",
+      "file": "history-98.png",
+      "questionRu": "Что ускорило крах диктатуры «чёрных полковников»?",
+      "questionEl": "Τι επιτάχυνε την κατάρρευση της δικτατορίας των «μαύρων συνταγματαρχών»;",
+      "answerRu": "Турецкая интервенция на Кипр",
+      "answerEl": "Η τουρκική εισβολή στην Κύπρο",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1524,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2967864,
+      "sha256": "906eccf9470864ca4c8021c11d732ae01a4272ed5603b20e4fce412b8bb0c11f"
+    },
+    {
+      "order": 99,
+      "questionId": "deb96006-d0a8-4fb2-a9d0-2965c0afe93c",
+      "file": "history-99.png",
+      "questionRu": "Сколько греков стали беженцами в Греции в результате Лозаннского договора?",
+      "questionEl": "Πόσοι Έλληνες έγιναν πρόσφυγες στην Ελλάδα ως αποτέλεσμα της Συνθήκης της Λωζάνης;",
+      "answerRu": "Более 1,5 млн",
+      "answerEl": "Πάνω από 1,5 εκατομμύριο",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        3,
+        1520,
+        1010
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3001541,
+      "sha256": "db9f25dc30bad11afc9b364f77d358353ac0f243509cc7f82fb567ade5f310e7"
+    },
+    {
+      "order": 100,
+      "questionId": "97d4608e-e242-4813-93c2-e9038851ca34",
+      "file": "history-100.png",
+      "questionRu": "Кто вышла замуж за князя Владимира Святославича в конце X века?",
+      "questionEl": "Ποια παντρεύτηκε τον πρίγκιπα Βλαδίμηρο Σβιατοσλάβιτς στα τέλη του 10ου αιώνα;",
+      "answerRu": "Принцесса Анна",
+      "answerEl": "Η πριγκίπισσα Άννα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        110,
+        35,
+        1440,
+        952
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 0,
+      "byteLength": 2516389,
+      "sha256": "badbf710dcde74eaf42bbcec0e67ed4acbbc95d0b7513a83d701249f8f4f0f62"
+    },
+    {
+      "order": 101,
+      "questionId": "0e4fbe76-d098-4724-96c4-30c001b17ad3",
+      "file": "history-101.png",
+      "questionRu": "Кто был известным философом классического периода?",
+      "questionEl": "Ποιος ήταν διάσημος φιλόσοφος της κλασικής περιόδου;",
+      "answerRu": "Сократ",
+      "answerEl": "Ο Σωκράτης",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1535,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2856403,
+      "sha256": "d3e1e61e188d3a1d6d8045fd0c1f65121a40863b6ac4e8caa8eeb0e87d030cdc"
+    },
+    {
+      "order": 102,
+      "questionId": "7a993dcf-2014-42c3-a924-ff520ed6bd4a",
+      "file": "history-102.png",
+      "questionRu": "Какой период в истории Древней Греции характеризуется возникновением городов-государств (полисов)?",
+      "questionEl": "Ποια περίοδος της ιστορίας της Αρχαίας Ελλάδας χαρακτηρίζεται από τη γέννηση των πόλεων-κρατών;",
+      "answerRu": "Архаическая эпоха",
+      "answerEl": "Η Αρχαϊκή εποχή",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        10,
+        1512,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2769825,
+      "sha256": "1d9000ee932e550afb2e65f0b059318a96f70a94be39cafd7805eb0c57d13789"
+    },
+    {
+      "order": 103,
+      "questionId": "22768422-ec21-465c-950d-088320c2301d",
+      "file": "history-103.png",
+      "questionRu": "Как назывались вооружённые отряды, жившие в горах и воевавшие против османов, символизирующие сопротивление и свободу?",
+      "questionEl": "Πώς ονομάζονταν τα ένοπλα σώματα που ζούσαν στα βουνά και πολεμούσαν εναντίον των Οθωμανών, συμβολίζοντας την αντίσταση και την ελευθερία;",
+      "answerRu": "Клефты",
+      "answerEl": "Οι κλέφτες",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1514,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2988708,
+      "sha256": "444eb69a95ebf5d45635f8b539c88c26626c32fb042d1e9df73b0d12c3a42db0"
+    },
+    {
+      "order": 104,
+      "questionId": "83436acf-3df7-452c-9158-4d9e3fc3bb47",
+      "file": "history-104.png",
+      "questionRu": "Какие проблемы сопровождали период немецкой оккупации Греции (1941–1944)?",
+      "questionEl": "Ποια προβλήματα συνόδευσαν την περίοδο της γερμανικής κατοχής της Ελλάδας (1941–1944);",
+      "answerRu": "Голод, массовые репрессии, разрушения",
+      "answerEl": "Η πείνα, οι μαζικές διώξεις, οι καταστροφές",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1522,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3166819,
+      "sha256": "0f2e0f01bcd238ec9fb3c53229a1f30977cf8e73d979b76218c3cbf7b982195a"
+    },
+    {
+      "order": 105,
+      "questionId": "0102d4b8-719f-4511-ac5a-be1e8b7b5f3a",
+      "file": "history-105.png",
+      "questionRu": "Кто был автором революционных идей и гимнов, а также одним из важных 'учителей нации', казненный в 1798 году?",
+      "questionEl": "Ποιος ήταν ο δημιουργός επαναστατικών ιδεών και ύμνων, καθώς και ένας από τους σημαντικούς «δασκάλους του γένους», που εκτελέστηκε το 1798;",
+      "answerRu": "Ригас Велестинлис (Фереос)",
+      "answerEl": "Ο Ρήγας Βελεστινλής (Φεραίος)",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1528,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3088732,
+      "sha256": "16a73786e9b69a890acc7706047f60cbed94e005ea59d4e6600c54c9ad62a093"
+    },
+    {
+      "order": 106,
+      "questionId": "e92c624f-e4a4-4785-8b19-8ddd9211e603",
+      "file": "history-106.png",
+      "questionRu": "Каковы основные последствия гражданской войны в Греции (1946–1949)?",
+      "questionEl": "Ποιες ήταν οι κύριες συνέπειες του εμφυλίου πολέμου στην Ελλάδα (1946–1949);",
+      "answerRu": "Раскол общества, экономический кризис, усиление правой диктатуры",
+      "answerEl": "Ο διχασμός της κοινωνίας, η οικονομική κρίση, η ενίσχυση της δεξιάς δικτατορίας",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        8,
+        1496,
+        1024
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3275924,
+      "sha256": "6b4bde169ea2aac0f6fcdd694820208533e82bf074c41edfc71caef8a896aae5"
+    },
+    {
+      "order": 107,
+      "questionId": "78d8dba1-d693-4c8a-a79a-e83674305e0e",
+      "file": "history-107.png",
+      "questionRu": "Какова была главная цель Греции в Первой Балканской войне (1912–1913)?",
+      "questionEl": "Ποιος ήταν ο κύριος στόχος της Ελλάδας στον Πρώτο Βαλκανικό Πόλεμο (1912–1913);",
+      "answerRu": "Объединение всех греческих территорий",
+      "answerEl": "Η ένωση όλων των ελληνικών εδαφών",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        17,
+        1520,
+        990
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 3037967,
+      "sha256": "492b0b04b44beaec634bf20036f8f010a2e96ea69e187a034218fb018710ef7a"
+    },
+    {
+      "order": 108,
+      "questionId": "ba6404da-5613-417c-bbef-1fe235441b4f",
+      "file": "history-108.png",
+      "questionRu": "Что принесло Греции вступление в Европейское экономическое сообщество?",
+      "questionEl": "Τι έφερε στην Ελλάδα η ένταξη στην Ευρωπαϊκή Οικονομική Κοινότητα;",
+      "answerRu": "Укрепление демократических институтов и стабильность",
+      "answerEl": "Ενίσχυση των δημοκρατικών θεσμών και σταθερότητα",
+      "recommendedVisibility": "hint-before-reveal",
+      "width": 1536,
+      "height": 1024,
+      "visibleBounds": [
+        0,
+        0,
+        1508,
+        980
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "maxEdgeAlpha": 1,
+      "byteLength": 2873712,
+      "sha256": "120e49131124d6f098e12e09ae93ebce5c0ca3a13dc367558a19700c0e329c47"
+    }
+  ]
+}

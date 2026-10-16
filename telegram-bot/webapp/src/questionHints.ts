@@ -1,4 +1,4 @@
-// Individual paper hints: geography 16, culture 22, laws 17, history 70.
+// Individual paper hints: geography 16, culture 22, laws 17, history 108.
 // Generated from the delivered manifests (geography-all-16, culture-question-hints-v1, laws-question-hints-v1): the link is the question id
 // and nothing else. NN is the manifest order; the files are alpha-trimmed WebP copies of
 // the delivered PNGs. `before` = the picture may show while the answer is hidden; the
@@ -144,6 +144,45 @@ export const QUESTION_HINTS: Record<string, QuestionHint> = {
   '62f9b847-76c1-4f24-9fe9-4f093b6497d0': { file: 'history-68.png', before: true },
   'f18bdb2f-17e3-4130-9bae-159005c558a7': { file: 'history-69.png', before: true },
   '92054e9e-4b46-431b-a807-b9590745db98': { file: 'history-70.png', before: true },
+  // history, batch 71–108: original PNGs; individual historical mnemonic scenes
+  '758f7a56-a48e-42eb-bafb-81dec012e053': { file: 'history-71.png', before: true },
+  'e05f7a12-3920-4d6f-909a-f4b2405e65e8': { file: 'history-72.png', before: true },
+  '5b526dc3-3763-4826-af8f-762f722f06e5': { file: 'history-73.png', before: true },
+  '6050c8b0-2fe4-4cda-be1a-5f6187356991': { file: 'history-74.png', before: true },
+  '0738cca7-226d-4206-a48a-8967fb82a9de': { file: 'history-75.png', before: true },
+  'fb4c0320-63ae-4daf-a953-33bb4f45a946': { file: 'history-76.png', before: true },
+  '1e7d74a6-e124-48a8-a633-c89bbbc25dab': { file: 'history-77.png', before: true },
+  'ac05aff9-6db6-4713-b3f9-cd63612bf5c8': { file: 'history-78.png', before: true },
+  'a2dded16-223e-4374-8354-0c500afcb81d': { file: 'history-79.png', before: true },
+  '8d5cab55-69b9-4ec0-96a2-e59ce67609ae': { file: 'history-80.png', before: true },
+  '4955fe01-f739-452b-be9f-89d343da4d53': { file: 'history-81.png', before: true },
+  'ba6d8b83-de1b-4cb6-b447-f0bcb0182357': { file: 'history-82.png', before: true },
+  'cb0dfccf-8f85-40a0-92ea-65be72ec41cb': { file: 'history-83.png', before: true },
+  '7ea3a649-e3c7-4bd8-81da-a266ef0eb6ba': { file: 'history-84.png', before: true },
+  'a65c4a4a-d7a0-4e20-ad2d-1c3b7ff1788e': { file: 'history-85.png', before: true },
+  '5ef88972-bfa5-4b29-8b83-192497e33a12': { file: 'history-86.png', before: true },
+  'd7c69333-49c5-49e2-9d5e-70acaebf6521': { file: 'history-87.png', before: true },
+  '355df29b-7281-4e1a-a975-5700b861cf4c': { file: 'history-88.png', before: true },
+  '8db3fabc-a23b-4aec-8a31-4130935f71a5': { file: 'history-89.png', before: true },
+  'cddc62df-79e0-429f-8e4a-082974a22967': { file: 'history-90.png', before: true },
+  'df872171-59fa-4275-bcb7-28c0e3d944cb': { file: 'history-91.png', before: true },
+  '8f1b0fe5-6c5d-439c-8381-94ffa8abc217': { file: 'history-92.png', before: true },
+  'bbcb1721-7be5-4e53-8c9f-8c8c30286059': { file: 'history-93.png', before: true },
+  'f5b45f5b-a97b-4b4d-83c6-b99de694c828': { file: 'history-94.png', before: true },
+  '126e9ea0-b541-4950-aecd-e9bab6c526d8': { file: 'history-95.png', before: true },
+  '772536f7-090d-424e-9375-8a71827ded26': { file: 'history-96.png', before: true },
+  '938baac6-a72d-4b57-b013-f6fd9f4a0642': { file: 'history-97.png', before: true },
+  '3722513b-1f49-47c4-8528-c623d0dbbe1a': { file: 'history-98.png', before: true },
+  'deb96006-d0a8-4fb2-a9d0-2965c0afe93c': { file: 'history-99.png', before: true },
+  '97d4608e-e242-4813-93c2-e9038851ca34': { file: 'history-100.png', before: true },
+  '0e4fbe76-d098-4724-96c4-30c001b17ad3': { file: 'history-101.png', before: true },
+  '7a993dcf-2014-42c3-a924-ff520ed6bd4a': { file: 'history-102.png', before: true },
+  '22768422-ec21-465c-950d-088320c2301d': { file: 'history-103.png', before: true },
+  '83436acf-3df7-452c-9158-4d9e3fc3bb47': { file: 'history-104.png', before: true },
+  '0102d4b8-719f-4511-ac5a-be1e8b7b5f3a': { file: 'history-105.png', before: true },
+  'e92c624f-e4a4-4785-8b19-8ddd9211e603': { file: 'history-106.png', before: true },
+  '78d8dba1-d693-4c8a-a79a-e83674305e0e': { file: 'history-107.png', before: true },
+  'ba6404da-5613-417c-bbef-1fe235441b4f': { file: 'history-108.png', before: true },
 };
 
 export const questionHintUrl = (file: string) => `${import.meta.env.BASE_URL}assets/pureplay/question-hints/${file}`;
