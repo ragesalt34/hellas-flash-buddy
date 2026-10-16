@@ -7,6 +7,8 @@ import type { View } from '../App';
 import { countWord, useLanguage } from '../i18n';
 import { haptic, notify } from '../telegram';
 import { Hourglass, Ostraka, Papyrus } from '../components/homeArt';
+import { dayGoal } from '../planToday';
+import './planCard.css';
 
 function localKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -136,17 +138,17 @@ export function PlanCard({
     );
 
   const days = plan.daysLeft ?? 0;
-  // Today's share: what is done and what is left, so the card only counts down.
-  const td = plan.today;
-  const doneToday = td ? td.reviews.done + td.newQuestions.done + td.newWords.done : 0;
-  const leftToday = plan.newQuestions + plan.newWords + plan.reviews.cards + plan.reviews.words;
-  const complete = td ? td.complete : leftToday === 0;
+  // Today's share: what is done and what is left, so the card only counts down. A long pile of due
+  // reviews (after a break) is capped to a day's budget; the rest is named as waiting for later days.
+  const goal = dayGoal(plan);
+  const complete = goal.complete;
+  const reviewsShown = goal.reviewsLeft;
   const parts = [
     plan.newQuestions > 0 && `${plan.newQuestions} ${countWord(plan.newQuestions, 'newQuestion', language)}`,
     plan.newWords > 0 && `${plan.newWords} ${countWord(plan.newWords, 'newWord', language)}`,
-    plan.reviews.cards + plan.reviews.words > 0 &&
-      `${plan.reviews.cards + plan.reviews.words} ${countWord(plan.reviews.cards + plan.reviews.words, 'review', language)}`,
+    reviewsShown > 0 && `${reviewsShown} ${countWord(reviewsShown, 'review', language)}`,
   ].filter(Boolean) as string[];
+  const reviewCount = (n: number) => `${n} ${countWord(n, 'review', language)}`;
 
   return (
     <div className={`card plan-card pace-${plan.pace}`}>
@@ -160,7 +162,7 @@ export function PlanCard({
         </div>
         <div className={`pc-today${complete ? ' is-done' : ''}`}>
           <span>{complete ? t('plan.today') : t('plan.todayLeft')}</span>
-          <b>{complete ? <Check size={22} strokeWidth={3} /> : <>≈ {plan.minutes} {t('plan.min')}</>}</b>
+          <b>{complete ? <Check size={22} strokeWidth={3} /> : <>≈ {goal.minutes} {t('plan.min')}</>}</b>
         </div>
       </div>
       {complete ? (
@@ -170,11 +172,18 @@ export function PlanCard({
       ) : (
         parts.length > 0 && <div className="pc-parts">{parts.join(' · ')}</div>
       )}
-      {td && doneToday + leftToday > 0 && (
+      {plan.today && goal.total > 0 && (
         <div className="pc-progress">
-          <ProgressBar value={doneToday} total={doneToday + leftToday} />
-          <span>{t('plan.doneOf').replace('{done}', String(doneToday)).replace('{total}', String(doneToday + leftToday))}</span>
+          <ProgressBar value={goal.done} total={goal.total} />
+          <span>{t('plan.doneOf').replace('{done}', String(goal.done)).replace('{total}', String(goal.total))}</span>
         </div>
+      )}
+      {goal.carried > 0 && (
+        <p className="pc-backlog">
+          {complete
+            ? t('plan.backlogMore').replace('{n}', reviewCount(goal.carried))
+            : t('plan.backlog').replace('{all}', reviewCount(goal.reviewsDue)).replace('{n}', String(goal.carried))}
+        </p>
       )}
       <p className="pc-pace">
         <i aria-hidden="true" /> {t(`plan.pace.${plan.pace}`)}

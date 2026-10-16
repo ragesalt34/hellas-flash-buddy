@@ -1,0 +1,10 @@
+/* Backlog note under today's goal: due reviews beyond the day's ~25 min budget wait for later days. */
+.pc-backlog {
+  margin: 0 0 12px; padding: 10px 12px; border-radius: 8px;
+  background: rgba(176, 125, 48, 0.1); border-left: 3px solid #b07d30;
+  font-size: 13.5px; line-height: 1.45; color: #5a4a2c;
+}
+[data-theme='brut'] .pc-backlog { border-radius: 2px; }
+@media (min-width: 900px) {
+  [data-theme='soft'] .home-screen .plan-card[class*='pace-'] .pc-backlog { order: 5; }
+}
