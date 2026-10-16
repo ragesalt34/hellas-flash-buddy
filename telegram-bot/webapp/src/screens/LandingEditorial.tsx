@@ -11,6 +11,7 @@ import { LanguageSwitch } from '../components/LanguageSwitch';
 import { LANDING_ART, type LandingArtKey } from './landingArt';
 import './landingEditorial.css';
 import './landingResponsive.css';
+import './landingFeatures.css';
 
 /* Desktop landing, first editorial reference (design-handoff/landing-editorial-assets-v1).
    Text, numbers, buttons and the FAQ are live HTML; the 19 pictures are the delivered ones
@@ -57,7 +58,7 @@ const FEATURES = [
   { art: 'feature-flashcards', title: 'landing.feature.flashcards.title', text: 'le.f2.text' },
   { art: 'feature-vocabulary', title: 'landing.feature.vocab.title', text: 'le.f3.text' },
   { art: 'feature-pronunciation', title: 'landing.feature.speech.title', text: 'le.f4.text' },
-  { art: 'feature-plan', title: 'plan.title', text: 'le.f5.text', plan: true },
+  { art: 'feature-plan', title: 'plan.title', text: 'le.f5.text' },
   { art: 'feature-progress', title: 'landing.feature.progress.title', text: 'le.f6.text' },
 ] as const;
 
@@ -140,15 +141,14 @@ export function LandingEditorial({ onStart, onGuest }: { onStart: () => void; on
         </section>
 
         {/* ---- everything for the preparation ---- */}
-        <section className="le-features" id="features">
-          <h2 data-motion-title>{t('le.features.title')}</h2>
-          <p className="le-features-sub">{t('le.features.sub')}</p>
-          <ul>
+        <section className="le-prep" id="features" aria-labelledby="landing-features-title">
+          <h2 id="landing-features-title" data-motion-title>{t('le.features.title')}</h2>
+          <p className="le-prep-sub">{t('le.features.sub')}</p>
+          <ul className="le-prep-list">
             {FEATURES.map((f) => (
-              <li key={f.art} data-motion-card className={'plan' in f ? 'is-plan' : undefined}>
-                {'plan' in f && <Art name="surface-plan-wash" className="le-plan-wash" />}
-                <Art name={f.art} className="le-feature-art" />
-                <div className="le-feature-text">
+              <li key={f.art} data-motion-card>
+                <Art name={f.art} className="le-prep-art" />
+                <div className="le-prep-text">
                   <h3>{t(f.title)}</h3>
                   <p>{t(f.text)}</p>
                 </div>

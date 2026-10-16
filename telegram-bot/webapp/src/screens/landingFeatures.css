@@ -1,0 +1,111 @@
+/* Approved editorial preparation catalog. Original illustrations and live i18n copy. */
+[data-theme='soft'] .landing-screen.le-page .le-prep {
+  --prep-ink: #1d3028;
+  --prep-body: #535a55;
+  --prep-rule: #ded7ca;
+  margin-top: clamp(48px, 4.5vw, 68px);
+  font-family: 'Onest', 'Manrope', 'Inter', sans-serif;
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep h2 {
+  height: auto;
+  margin: 0;
+  max-width: 100%;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-optical-sizing: auto;
+  font-size: clamp(48px, 5.4vw, 80px);
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  color: var(--prep-ink);
+  text-wrap: balance;
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep-sub {
+  margin: 16px 0 0;
+  max-width: 48ch;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -.015em;
+  color: var(--prep-body);
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(216px, auto);
+  column-gap: 56px;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep-list > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(168px, 16vw, 228px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  padding: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--prep-rule);
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep .le-prep-art {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  align-self: center;
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep-text { min-width: 0; align-self: start; padding-top: 36px; }
+[data-theme='soft'] .landing-screen.le-page .le-prep h3 {
+  margin: 0;
+  padding: 0;
+  font-family: 'Onest', 'Manrope', 'Inter', sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+  color: var(--prep-ink);
+  text-wrap: balance;
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep-text p {
+  margin: 10px 0 0;
+  padding: 0;
+  max-width: 30ch;
+  font-family: 'Onest', 'Manrope', 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -.01em;
+  color: var(--prep-body);
+}
+[data-theme='soft'] .landing-screen.le-page .le-prep ::selection {
+  background: #d7dfce;
+  color: var(--prep-ink);
+}
+@media (max-width: 1099px) {
+  [data-theme='soft'] .landing-screen.le-page .le-prep { margin-top: 56px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep h2 { font-size: clamp(44px, 6vw, 64px); }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-sub { font-size: 20px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-list { grid-auto-rows: minmax(184px, auto); column-gap: 32px; margin-top: 32px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-list > li { grid-template-columns: 140px minmax(0, 1fr); gap: 22px; padding-block: 24px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-text { padding-top: 16px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep h3 { font-size: 22px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-text p { font-size: 16px; }
+}
+@media (max-width: 760px) {
+  [data-theme='soft'] .landing-screen.le-page .le-prep h2 { font-size: clamp(38px, 8vw, 52px); line-height: 1.12; letter-spacing: -.03em; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-sub { margin-top: 14px; font-size: 18px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-list { grid-template-columns: minmax(0, 1fr); grid-auto-rows: minmax(156px, auto); margin-top: 28px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-list > li { grid-template-columns: 112px minmax(0, 1fr); gap: 20px; padding-block: 24px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-text { align-self: center; padding-top: 0; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep h3 { font-size: 20px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep-text p { margin-top: 8px; }
+}
+@media (max-width: 359px) {
+  [data-theme='soft'] .landing-screen.le-page .le-prep-list > li { grid-template-columns: 88px minmax(0, 1fr); gap: 16px; }
+  [data-theme='soft'] .landing-screen.le-page .le-prep h3 { font-size: 19px; }
+}
