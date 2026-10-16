@@ -133,18 +133,47 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
             </div>
         </div>
       </section>
-      <section className="pe-topics" aria-label={t('rd.byTopic')}>
-        {data.topics.map((topic) => <article key={topic.topic} className={`pe-topic pe-tone-${topic.topic}`}>
-          <img src={`${import.meta.env.BASE_URL}assets/topics/${topic.topic}/${ART[topic.topic] ?? 'band'}.webp`} alt="" width="80" height="90" />
-          <div className="pe-topic-copy"><h2>{label(topic.topic)}</h2><b className="pe-topic-value">{percentage(topic.greek.known, topic.total)}%</b><Meter value={percentage(topic.greek.known, topic.total)} label={`${label(topic.topic)} · ${t('rd.onGreek')}`} /><p>{topic.greek.known}/{topic.total} · {t('rd.onGreek')}</p><p className="pe-topic-secondary">{t('rd.onRussian')} {percentage(topic.russian.known, topic.total)}% · {t('rd.inMemory')} {percentage(topic.memory, topic.total)}%</p></div>
-        </article>)}
+      {/* 1. what to do now, and the rhythm so far */}
+      <div className="pe-focus">
+        <section className="pe-next pe-paper" aria-labelledby="pe-next-title">
+          <h2 id="pe-next-title">{t('rd.editorial.next')}</h2>
+          {data.blockers.length > 0 ? <ul className="pe-blockers">{data.blockers.map((blocker) => <li key={blocker.kind + (blocker.topic ?? '')}>{blocker.kind === 'words' ? <ProgressArtwork kind="words" /> : <TopicArtwork topic={blocker.topic ?? ''} />}<div><b>{blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')}</b><span>{blocker.known}/{blocker.total} · {percentage(blocker.known, blocker.total)}%</span><Meter value={percentage(blocker.known, blocker.total)} label={blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')} /></div></li>)}</ul> : <p>{t('rd.verdictHint.ready')}</p>}
+          <p className="pe-next-hint">{t('rd.nextHint')}</p>
+          <div className="pe-due"><button onClick={() => onNavigate('flashcards')}><ProgressArtwork kind="repeat" /><span><b>{data.due.cards} {countWord(data.due.cards, 'card', language)}</b><small>{t('rd.toReview')}</small></span></button><button onClick={() => onNavigate('vocab')}><ProgressArtwork kind="words" /><span><b>{data.due.words} {countWord(data.due.words, 'word', language)}</b><small>{t('rd.toReview')}</small></span></button></div>
+        </section>
+        <section className="pe-statistics pe-card" aria-labelledby="pe-rhythm-title">
+          <h2 id="pe-rhythm-title">{t('rd.editorial.rhythm')}</h2>
+          <div><ProgressArtwork kind="streak" /><b>{data.activity.streak}</b><span>{countWord(data.activity.streak, 'day', language)} {t('rd.inRow')}</span></div>
+          <div><ProgressArtwork kind="precision" /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
+          <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
+          <div><ProgressArtwork kind="memory" /><b>{activeDays}</b><span>{countWord(activeDays, 'day', language)} {t('rd.daysActive')}</span></div>
+        </section>
+      </div>
+
+      {/* 2. what readiness is made of: two that decide it, two that help learning */}
+      <section className="pe-criteria-block pe-card" aria-labelledby="pe-criteria-title">
+        <h2 id="pe-criteria-title">{t('rd.editorial.criteriaTitle')}</h2>
+        <div className="pe-criteria-groups">
+          {[{ key: 'decide', items: criteria.filter((c) => !c.aid) }, { key: 'help', items: criteria.filter((c) => c.aid) }].map((group) => (
+            <div className={`pe-criteria-group is-${group.key}`} key={group.key}>
+              <h3>{t(`rd.editorial.${group.key}`)}</h3>
+              {group.items.map(({ key, art, title, value, total, detail }) => (
+                <div className="pe-criterion" key={key}>
+                  <ProgressArtwork kind={art} />
+                  <div>
+                    <div className="pe-criterion-head"><h4>{title}</h4><b>{percentage(value, total)}%</b></div>
+                    <Meter value={percentage(value, total)} label={title} />
+                    <p><span>{value}/{total}</span> · {detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </section>
-      <section className="pe-criteria" aria-label={t('rd.criteria')}>
-        {criteria.map(({ key, art, title, value, total, detail, aid }) => <div className={`pe-criterion ${aid ? 'is-aid' : ''}`} key={key}>
-          <ProgressArtwork kind={art} /><div><h2>{title}</h2><span className="pe-criterion-tag">{t(key === 'memory' ? 'rd.extra' : aid ? 'rd.aid' : 'rd.decides')}</span><b>{value}/{total} · {percentage(value, total)}%</b><Meter value={percentage(value, total)} label={title} /><p>{detail}</p></div>
-        </div>)}
-      </section>
-      <div className="pe-lower">
+
+      {/* 3. the record: activity calendar and recent tests */}
+      <div className="pe-record">
         <section className="pe-calendar pe-paper" aria-labelledby="pe-calendar-title">
           <h2 id="pe-calendar-title">{t('rd.editorial.calendar')}</h2>
           <p className="pe-calendar-summary">{activeDays} {countWord(activeDays, 'day', language)} {t('rd.daysActive')}</p>
@@ -154,27 +183,13 @@ export function StatsEditorial({ data, me, onNavigate, onCheckGreek, onTopicQuiz
           </div>
           <p className="pe-calendar-hint">{t('rd.oliveHint')}</p>
         </section>
-        <div className="pe-sidebar">
-          <section className="pe-next pe-paper" aria-labelledby="pe-next-title">
-            <h2 id="pe-next-title">{t('rd.editorial.next')}</h2>
-            {data.blockers.length > 0 ? <ul className="pe-blockers">{data.blockers.map((blocker) => <li key={blocker.kind + (blocker.topic ?? '')}>{blocker.kind === 'words' ? <ProgressArtwork kind="words" /> : <TopicArtwork topic={blocker.topic ?? ''} />}<div><b>{blocker.kind === 'words' ? t('rd.blocker.words') : label(blocker.topic ?? '')}</b><span>{blocker.known}/{blocker.total} · {percentage(blocker.known, blocker.total)}%</span></div></li>)}</ul> : <p>{t('rd.verdictHint.ready')}</p>}
-            <p className="pe-next-hint">{t('rd.nextHint')}</p>
-            <div className="pe-due"><button onClick={() => onNavigate('flashcards')}><ProgressArtwork kind="repeat" /><span><b>{data.due.cards} {countWord(data.due.cards, 'card', language)}</b><small>{t('rd.toReview')}</small></span></button><button onClick={() => onNavigate('vocab')}><ProgressArtwork kind="words" /><span><b>{data.due.words} {countWord(data.due.words, 'word', language)}</b><small>{t('rd.toReview')}</small></span></button></div>
-          </section>
-          <section className="pe-statistics" aria-label={t('rd.activity')}>
-            <div><ProgressArtwork kind="streak" /><b>{data.activity.streak} {countWord(data.activity.streak, 'day', language)}</b><span>{t('rd.inRow')}</span></div>
-            <div><ProgressArtwork kind="precision" /><b>{accuracy === null ? '—' : `${accuracy}%`}</b><span>{t('home.accuracy')}</span></div>
-            <div><ProgressArtwork kind="quiz" /><b>{me?.stats.total_sessions ?? '—'}</b><span>{t('home.sessions')}</span></div>
-          </section>
-
-        </div>
+        <section className="pe-history pe-card" aria-labelledby="pe-history-title">
+          <h2 id="pe-history-title">{t('rd.recent')}</h2>
+          {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
+          {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicArtwork topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
+          {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
+        </section>
       </div>
-      <section className="pe-history" aria-labelledby="pe-history-title">
-        <h2 id="pe-history-title">{t('rd.recent')}</h2>
-        {history.length === 0 && <p>{t('rd.historyEmpty')}</p>}
-        {history.map((session, index) => <div className="pe-test" key={`${session.completed_at}-${index}`}><TopicArtwork topic={session.topic} /><div><b>{label(session.topic)}</b><span>{new Date(session.completed_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{session.lang === 'el' ? ` · ${t('rd.counts')}` : ''}</span></div><span className={`pe-lang is-${session.lang}`}>{session.lang?.toUpperCase() ?? '—'}</span><strong>{session.score}/{session.total}</strong></div>)}
-        {!allHistory && data.history.length > 5 && <button className="pe-more" onClick={() => setAllHistory(true)}>{t('rd.showMore')}</button>}
-      </section>
       <button className="pe-home" onClick={onHome}>{t('nav.menu')}</button>
     </div>
   );
